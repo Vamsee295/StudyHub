@@ -1,0 +1,208 @@
+import { RoadmapStage } from "@/types";
+
+export const roadmap: RoadmapStage[] = [
+  {
+    id: "programming",
+    title: "Programming Fundamentals & Memory",
+    phase: "Phase 01 · Baseline Logic",
+    description:
+      "Variables, control flow, and reading a stack trace before writing a single new line of code.",
+    topics: [
+      "Pointers, addresses, and call stacks",
+      "Value types vs reference types",
+      "Time & space complexity (Big-O)",
+      "Fast buffered I/O",
+      "Bitwise operations & masks",
+    ],
+    testedBy: ["Amazon", "Microsoft", "TCS Digital", "Infosys", "Zoho"],
+    resourceHighlight: { title: "Programming Foundations Notes", detail: "C++ & Python fast-track" },
+    sampleQuestion: "Explain pass-by-value vs pass-by-reference with an example.",
+  },
+  {
+    id: "oop",
+    title: "Object-Oriented Programming",
+    phase: "Phase 02 · Architectural Paradigm",
+    description:
+      "Classes, inheritance and polymorphism — the vocabulary every interview assumes you already have.",
+    topics: [
+      "Encapsulation & access boundaries",
+      "Compile-time vs runtime polymorphism",
+      "Virtual tables & dynamic dispatch",
+      "Abstract classes vs interfaces",
+      "SOLID principles in practice",
+    ],
+    testedBy: ["Zoho", "Microsoft", "Accenture", "Deloitte"],
+    resourceHighlight: { title: "Java OOP Complete Guide", detail: "Runnable examples, interview framing" },
+    sampleQuestion: "Difference between method overloading and overriding.",
+  },
+  {
+    id: "sql",
+    title: "SQL & Relational Databases",
+    phase: "Phase 03 · Core Storage & Queries",
+    description:
+      "Joins, aggregation and window functions, then writing queries fast enough for a timed round.",
+    topics: [
+      "Relational algebra & join internals",
+      "Indexing — B-Trees vs LSM trees",
+      "Normalization, 1NF through BCNF",
+      "ACID transactions & isolation levels",
+      "Window functions (RANK, LEAD)",
+    ],
+    testedBy: ["Amazon", "Oracle", "Deloitte", "Walmart Labs"],
+    resourceHighlight: { title: "SQL Interview Query Handbook", detail: "45 real assessment queries" },
+    sampleQuestion: "Write a query to find the 2nd highest salary.",
+  },
+  {
+    id: "dsa",
+    title: "Data Structures & Algorithms",
+    phase: "Phase 04 · High-Performance Problem Solving",
+    description:
+      "Arrays through graphs, organized by pattern instead of by data structure.",
+    topics: [
+      "Arrays, stacks & sliding windows",
+      "Linked lists & cycle detection",
+      "Trees, heaps & priority queues",
+      "Graph traversal — BFS/DFS/Dijkstra",
+      "Dynamic programming patterns",
+    ],
+    testedBy: ["Google", "Microsoft", "Amazon", "Adobe"],
+    resourceHighlight: { title: "DSA Patterns Guide", detail: "Categorized by pattern, not topic" },
+    sampleQuestion: "When would you use a sliding window vs two pointers?",
+  },
+  {
+    id: "dbms",
+    title: "Database Management Systems",
+    phase: "Phase 05 · Engine Internals",
+    description:
+      "The trade-offs behind schema design, and what happens when a query actually runs.",
+    topics: [
+      "Storage engines & buffer pools",
+      "Write-ahead logging & recovery",
+      "Concurrency control & locking",
+      "Query execution plans",
+      "Replication basics",
+    ],
+    testedBy: ["Oracle", "Amazon", "SAP Labs"],
+    resourceHighlight: { title: "DBMS Revision Guide", detail: "Schema design drills" },
+    sampleQuestion: "Explain ACID properties with an example.",
+  },
+  {
+    id: "os",
+    title: "Operating Systems & Concurrency",
+    phase: "Phase 06 · Low-Level Execution",
+    description:
+      "Processes, threads, scheduling and the deadlock questions that repeat every season.",
+    topics: [
+      "Process vs thread lifecycle",
+      "Virtual memory & page replacement",
+      "Mutexes, semaphores & deadlocks",
+      "CPU scheduling policies",
+      "System calls & context switching",
+    ],
+    testedBy: ["Microsoft", "Google", "Qualcomm"],
+    resourceHighlight: { title: "OS Interview Notes", detail: "Process/thread scenario bank" },
+    sampleQuestion: "What causes a deadlock, and how do you prevent one?",
+  },
+  {
+    id: "cn",
+    title: "Computer Networks & Protocols",
+    phase: "Phase 07 · Distributed Transport",
+    description:
+      "TCP/IP, HTTP and DNS — the full story of what happens when you load a URL.",
+    topics: [
+      "OSI & TCP/IP stack layers",
+      "TCP handshake & congestion control",
+      "DNS hierarchy & resolution",
+      "HTTP/1.1 vs HTTP/2 vs HTTP/3",
+      "Subnetting & NAT",
+    ],
+    testedBy: ["Cisco", "Amazon", "Cloudflare"],
+    resourceHighlight: { title: "Computer Networks Essentials", detail: "Packet-trace walkthroughs" },
+    sampleQuestion: "Walk through what happens when you load a URL.",
+  },
+  {
+    id: "projects",
+    title: "Production Projects",
+    phase: "Phase 08 · Applied Engineering",
+    description:
+      "Two or three projects that show depth, not just a finished tutorial.",
+    topics: [
+      "Clean REST/gRPC API contracts",
+      "Schema design & migrations",
+      "Containerization basics",
+      "Test harnesses",
+      "Auth — JWT, sessions, OAuth2",
+    ],
+    testedBy: ["Most product companies", "High-growth startups"],
+    resourceHighlight: { title: "Project Explanation Template", detail: "Architecture defense prep" },
+    sampleQuestion: "Why did you choose this architecture?",
+  },
+  {
+    id: "oa",
+    title: "Online Assessment Simulation",
+    phase: "Phase 09 · Timed Test Filter",
+    description:
+      "Coding rounds plus aptitude and logical reasoning under a strict timer.",
+    topics: [
+      "Test-environment habits",
+      "Edge cases — overflow, empty input",
+      "Time allotment strategy",
+      "Work-simulation surveys",
+      "Partial test-case credit",
+    ],
+    testedBy: ["Amazon", "Microsoft", "TCS NQT", "Infosys"],
+    resourceHighlight: { title: "Timed Aptitude Practice", detail: "Mirrors real OA formats" },
+    sampleQuestion: "Simulate a 90-minute OA under real conditions.",
+  },
+  {
+    id: "technical-interview",
+    title: "Technical Interview Rounds",
+    phase: "Phase 10 · Live Technical Scrutiny",
+    description:
+      "DSA, CS fundamentals and project deep-dives, live and under pressure.",
+    topics: [
+      "Thinking out loud",
+      "Responding to interviewer hints",
+      "Clean, modular naming",
+      "Low-level design on a whiteboard",
+      "Resume technology deep-dives",
+    ],
+    testedBy: ["Google", "Amazon", "Microsoft", "Zoho"],
+    resourceHighlight: { title: "Interview Simulator", detail: "Live mock technical rounds" },
+    sampleQuestion: "Explain a time you debugged a hard issue.",
+  },
+  {
+    id: "hr-interview",
+    title: "HR & Behavioral Round",
+    phase: "Phase 11 · Culture & Team Fit",
+    description:
+      "Fit, motivation and communication — the round people under-prepare for most.",
+    topics: [
+      "STAR framework for stories",
+      "Company principles research",
+      "Salary & career questions",
+      "\"Why this company?\" framing",
+      "Questions to ask back",
+    ],
+    testedBy: ["Amazon", "Google", "Deloitte", "TCS"],
+    resourceHighlight: { title: "HR Answers Template", detail: "Self-introduction drills" },
+    sampleQuestion: "Why should we hire you?",
+  },
+  {
+    id: "offer",
+    title: "Offer Evaluation",
+    phase: "Phase 12 · Offer Stage",
+    description:
+      "Reading a campus offer letter line by line, before you sign anything.",
+    topics: [
+      "Base vs bonus vs variable pay",
+      "ESOP / RSU vesting basics",
+      "Service bonds & agreements",
+      "Joining notice etiquette",
+      "Your Day 1 roadmap",
+    ],
+    testedBy: ["Your target company"],
+    resourceHighlight: { title: "CTC Breakdown Sheet", detail: "In-hand salary calculator" },
+    sampleQuestion: "What should you clarify before accepting an offer?",
+  },
+];
