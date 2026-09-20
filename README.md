@@ -82,6 +82,17 @@ types/                Shared TypeScript interfaces
 13. Dashboard — count-up score, animated bars, sequential checklist
 14. Final CTA + Footer
 
+## Authentication pages
+
+`/login`, `/signup`, `/forgot-password`, `/reset-password`, `/verify-email` — a
+split-screen auth flow (shared `BrandPanel` left, form right) using the same
+design tokens, fonts and blue accent as the landing page. All are frontend
+only right now: forms validate client-side and simulate a network delay, with
+no real backend wired up. `Sign in`/`Create account` redirect to `/` and
+`/login` respectively after the simulated delay, as placeholders for real
+session handling. `components/auth/` holds the shared pieces (`BrandPanel`,
+`AuthRightPanel`, `AuthTabs`, `TextField`, `PasswordField`, `GoogleButton`).
+
 ## Content
 
 Section copy is **original writing**, structured with the same depth and

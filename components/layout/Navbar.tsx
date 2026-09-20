@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { Menu, Search, X } from "lucide-react";
 
 const navLinks = [
@@ -58,12 +59,15 @@ export function Navbar() {
             <Search size={14} />
             Search
           </button>
-          <a href="#" className="hidden sm:block text-[14px] text-ink-secondary hover:text-ink px-2">
+          <Link
+            href="/login"
+            className="hidden sm:block text-[14px] text-ink-secondary hover:text-ink px-2"
+          >
             Sign in
-          </a>
-          <a href="#roadmap" className="btn-primary">
+          </Link>
+          <Link href="/signup" className="btn-primary">
             Get Started
-          </a>
+          </Link>
           <button className="lg:hidden text-ink-secondary" onClick={() => setOpen((v) => !v)}>
             {open ? <X size={22} /> : <Menu size={22} />}
           </button>
@@ -77,6 +81,14 @@ export function Navbar() {
               {l.label}
             </a>
           ))}
+          <div className="pt-2 mt-1 border-t border-border flex items-center gap-3">
+            <Link href="/login" onClick={() => setOpen(false)} className="text-ink-secondary">
+              Sign in
+            </Link>
+            <Link href="/signup" onClick={() => setOpen(false)} className="btn-primary text-[13.5px] h-9 px-4">
+              Get Started
+            </Link>
+          </div>
         </div>
       )}
     </header>

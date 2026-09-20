@@ -94,6 +94,10 @@ body {
   background-image: linear-gradient(to right, rgba(15, 23, 42, 0.045) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(15, 23, 42, 0.045) 1px, transparent 1px);
   background-size: 24px 24px;
+}
+
+/* fade mask for decorative background overlays */
+.grid-fade-mask {
   -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, black 40%, transparent 100%);
   mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, black 40%, transparent 100%);
 }
@@ -254,4 +258,52 @@ button:hover .arrow {
   padding: 14px 16px;
   box-shadow: 0 1px 2px -1px rgba(15, 23, 42, 0.04);
 }
+
+/* ===== Auth split-screen (light — matches the rest of the app) ===== */
+.auth-grid-light {
+  background-image: linear-gradient(to right, rgba(29, 78, 216, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(29, 78, 216, 0.05) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+.auth-dots-light {
+  background-image: radial-gradient(rgba(29, 78, 216, 0.08) 1px, transparent 0);
+  background-size: 22px 22px;
+}
+.auth-ambient-glow {
+  background: radial-gradient(circle at 42% 38%, rgba(29, 78, 216, 0.06) 0%, rgba(244, 244, 241, 0) 68%);
+}
+.field-error {
+  border-color: var(--error) !important;
+}
+.field-error:focus {
+  box-shadow: 0 0 0 3px var(--error-soft) !important;
+  border-color: var(--error) !important;
+}
+.auth-tab {
+  padding: 6px 20px;
+  border-radius: var(--radius-md);
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--ink-secondary);
+  transition: all 0.15s ease;
+}
+.auth-tab.active {
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+}
+.field.field-lg {
+  height: 50px;
+}
+.btn-primary.auth-btn,
+.btn-secondary.auth-btn {
+  height: 50px;
+  width: 100%;
+}
+.btn-primary.auth-btn:active,
+.btn-secondary.auth-btn:active {
+  transform: translateY(1px);
+}
+
 

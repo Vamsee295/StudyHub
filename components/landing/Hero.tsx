@@ -56,7 +56,7 @@ export function Hero() {
     <section id="top" ref={ref} className="relative overflow-hidden border-b border-border">
       <motion.div
         style={reduced ? undefined : { y: gridY }}
-        className="absolute inset-0 grid-texture pointer-events-none"
+        className="absolute inset-0 grid-texture grid-fade-mask pointer-events-none"
       />
 
       <div className="relative container-max px-5 md:px-8 pt-20 pb-14 md:pt-28 md:pb-16 text-center">
