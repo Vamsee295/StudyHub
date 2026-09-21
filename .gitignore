@@ -40,4 +40,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+#Rules And Workflows
 .agents
+.docs
+

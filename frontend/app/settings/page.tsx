@@ -20,12 +20,14 @@ import {
   ExternalLink
 } from "lucide-react";
 import { UserProfile } from "@/types";
-import { onboardingService, DEFAULT_USER_PROFILE } from "@/lib/services/onboardingService";
+import { useAuth } from "@/components/providers/AuthProvider";
+import { useProfile } from "@/components/providers/ProfileProvider";
 
 type TabType = "account" | "notifications" | "appearance" | "security" | "privacy" | "danger";
 
 export default function SettingsPage() {
-  const [profile, setProfile] = useState<UserProfile>(DEFAULT_USER_PROFILE);
+  const { user } = useAuth();
+  const { draftProfile: profile, isLoading } = useProfile();
   const [activeTab, setActiveTab] = useState<TabType>("account");
   const [savedSuccess, setSavedSuccess] = useState(false);
 
@@ -55,10 +57,6 @@ export default function SettingsPage() {
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
-  useEffect(() => {
-    const current = onboardingService.getProfileWithDefaults();
-    setProfile(current);
-  }, []);
 
   const handleSaveGeneral = () => {
     setSavedSuccess(true);
@@ -195,7 +193,7 @@ export default function SettingsPage() {
                     Primary University Email
                   </span>
                   <span className="text-sm font-semibold text-[var(--ink)] block font-mono">
-                    {profile.identity?.email || "aditya@university.edu"}
+                    {profile.identity?.email || user?.email || ""}
                   </span>
                   <span className="text-[11px] text-slate-400 mt-1 block">
                     Contact your university administrator to modify primary campus email.

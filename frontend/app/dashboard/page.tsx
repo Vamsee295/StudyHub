@@ -19,24 +19,103 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { UserProfile, RoadmapGenerationResult } from "@/types";
+import { dashboardApi } from "@/lib/api/dashboard";
+import { profileApi } from "@/lib/api/profile";
 import { onboardingService } from "@/lib/services/onboardingService";
+import { useAuth } from "@/components/providers/AuthProvider";
+import { useProfile } from "@/components/providers/ProfileProvider";
 
 export default function DashboardPage() {
   const reduced = useReducedMotion();
-  const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [roadmap, setRoadmap] = useState<RoadmapGenerationResult | null>(null);
+  const [mounted, setMounted] = useState(false);
+  const { user } = useAuth();
+  const { draftProfile: profile, isLoading } = useProfile();
+  const [dashboardData, setDashboardData] = useState<any>(null);
 
   useEffect(() => {
-    const data = onboardingService.getProfile();
-    if (data) {
-      setProfile(data);
-      setRoadmap(onboardingService.generateInitialRoadmap(data));
+    // Read cached dashboard data on mount (client-side only)
+    if (typeof window !== 'undefined') {
+      try {
+        const cached = localStorage.getItem('pathward-dashboard-cache');
+        if (cached) {
+          setDashboardData(JSON.parse(cached));
+        }
+      } catch (e) {}
     }
   }, []);
 
-  const firstName = profile?.identity?.fullName?.split(" ")[0] || "Aditya";
-  const currentTrack = roadmap?.primaryTrack || "Software Engineer";
-  const readiness = profile ? "0%" : "74%";
+  useEffect(() => {
+    async function loadDashboard() {
+      try {
+        let data: any = null;
+        try {
+          data = await dashboardApi.getDashboard();
+          if (data) {
+            setDashboardData(data);
+            if (typeof window !== 'undefined') {
+              localStorage.setItem('pathward-dashboard-cache', JSON.stringify(data));
+            }
+          }
+        } catch (apiErr) {
+          console.warn("Backend dashboard fetch failed, using cached/profile record:", apiErr);
+        }
+      } catch (err) {
+        console.error("Failed to load dashboard data:", err);
+      }
+    }
+
+    loadDashboard();
+    setMounted(true);
+  }, []);
+
+  let displayName = "Learner";
+  if (!mounted || isLoading) {
+    displayName = "Loading...";
+  } else if (profile?.identity?.fullName) {
+    displayName = profile.identity.fullName;
+  } else {
+    displayName = user?.email ? user.email.split("@")[0] : "Learner";
+  }
+
+  const firstName = displayName.split(" ")[0] || "Learner";
+
+  const currentTrack = mounted 
+    ? (dashboardData?.current_track || profile?.identity?.targetRole || profile?.careerTracks?.[0] || "Software Development Engineer")
+    : "Software Development Engineer";
+
+  const readiness = mounted 
+    ? (dashboardData?.metrics?.readiness !== undefined && dashboardData?.metrics?.readiness > 0
+      ? `${dashboardData.metrics.readiness}%` 
+      : (profile?.completionPercentage ? `${profile.completionPercentage}%` : "0%"))
+    : "0%";
+
+  const streak = mounted ? (dashboardData?.metrics?.streak ?? (profile?.identity?.fullName ? 1 : 0)) : 0;
+  
+  const continueLearning = dashboardData?.continue_learning || {
+    module: "Start First Module",
+    topic: `Begin your ${currentTrack} preparation path`,
+    progress: 0,
+    has_started: false
+  };
+  
+  const learningProgress = dashboardData?.learning_progress || [
+    { name: "Programming", progress: 0, icon: "TerminalSquare" },
+    { name: "DSA", progress: 0, icon: "Code2" },
+    { name: "SQL", progress: 0, icon: "Database" },
+    { name: "Core CS", progress: 0, icon: "Server" },
+    { name: "Aptitude", progress: 0, icon: "Network" }
+  ];
+  
+  const todayPlan = dashboardData?.today_plan || {
+    tasks: [],
+    completion: 0,
+    has_plan: false
+  };
+  
+  const upcomingTarget = mounted && dashboardData?.upcoming_target ? dashboardData.upcoming_target : {
+    title: profile?.targets?.companies?.[0] ? `${profile.targets.companies[0]} Target Prep` : "Set Target Companies",
+    subtitle: profile?.targets?.companies?.[0] ? `Preparation calibrated for ${profile.targets.companies[0]}.` : "Track companies to personalize interview rubrics."
+  };
 
   return (
     <div className="flex flex-col gap-8 pb-12 w-full min-w-0 box-border">
@@ -49,7 +128,7 @@ export default function DashboardPage() {
       >
         <div className="min-w-0">
           <h1 className="font-newsreader text-3xl sm:text-4xl text-[var(--ink)] font-normal tracking-tight leading-tight">
-            Good morning, {firstName}.
+            Good morning, {displayName}.
           </h1>
           <p className="text-[var(--ink-secondary)] text-[15px] mt-2 font-normal">
             Let's continue your placement preparation.
@@ -70,7 +149,7 @@ export default function DashboardPage() {
             <span className="text-[11px] font-mono text-[var(--ink-tertiary)] uppercase tracking-wider">Current Streak</span>
             <span className="text-[13.5px] font-semibold text-[var(--success)] mt-1 flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-[var(--success)]"></span>
-              7 days
+              {streak} days
             </span>
           </div>
         </div>
@@ -99,21 +178,21 @@ export default function DashboardPage() {
               
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-1">
                 <div>
-                  <h2 className="text-2xl font-newsreader font-normal text-[var(--ink)]">Java OOP</h2>
-                  <p className="text-[var(--ink-secondary)] text-[15px] mt-1">Inheritance & Polymorphism</p>
+                  <h2 className="text-2xl font-newsreader font-normal text-[var(--ink)]">{continueLearning.module}</h2>
+                  <p className="text-[var(--ink-secondary)] text-[15px] mt-1">{continueLearning.topic}</p>
                 </div>
-                <Link href="/learn/java-oop" className="btn-primary shrink-0">
-                  Continue Module <ArrowRight className="w-4 h-4" />
+                <Link href="/learn" className="btn-primary shrink-0">
+                  {continueLearning.has_started ? "Continue Module" : "Explore Modules"} <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
 
               <div className="mt-4 pt-4 border-t border-[var(--border)] flex flex-col gap-2">
                 <div className="flex justify-between items-center text-sm">
                   <span className="font-mono text-[12px] text-[var(--ink-tertiary)] uppercase">Module Progress</span>
-                  <span className="font-mono text-[12px] text-[var(--accent)] font-semibold">68%</span>
+                  <span className="font-mono text-[12px] text-[var(--accent)] font-semibold">{continueLearning.progress}%</span>
                 </div>
                 <div className="w-full bg-[var(--border-strong)]/30 h-1.5 rounded-full overflow-hidden">
-                  <div className="bg-[var(--accent)] h-full rounded-full w-[68%]"></div>
+                  <div className="bg-[var(--accent)] h-full rounded-full" style={{ width: `${continueLearning.progress}%` }}></div>
                 </div>
               </div>
             </div>
@@ -129,21 +208,21 @@ export default function DashboardPage() {
           >
             <h3 className="text-[13px] font-bold text-[var(--ink)] uppercase tracking-wider">Learning Progress</h3>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-              {[
-                { name: "Java", progress: 72, icon: <TerminalSquare className="w-5 h-5 text-blue-600" /> },
-                { name: "DSA", progress: 48, icon: <Code2 className="w-5 h-5 text-emerald-600" /> },
-                { name: "SQL", progress: 81, icon: <Database className="w-5 h-5 text-purple-600" /> },
-                { name: "DBMS", progress: 55, icon: <Server className="w-5 h-5 text-amber-600" /> },
-                { name: "OS", progress: 31, icon: <TerminalSquare className="w-5 h-5 text-rose-600" /> },
-                { name: "Networks", progress: 20, icon: <Network className="w-5 h-5 text-cyan-600" /> },
-              ].map((subject) => (
+              {learningProgress.map((subject: any) => {
+                let iconComponent = <TerminalSquare className="w-5 h-5 text-blue-600" />;
+                if (subject.icon === "Code2") iconComponent = <Code2 className="w-5 h-5 text-emerald-600" />;
+                if (subject.icon === "Database") iconComponent = <Database className="w-5 h-5 text-purple-600" />;
+                if (subject.icon === "Server") iconComponent = <Server className="w-5 h-5 text-amber-600" />;
+                if (subject.icon === "Network") iconComponent = <Network className="w-5 h-5 text-cyan-600" />;
+                
+                return (
                 <div 
                   key={subject.name} 
                   className="bg-[var(--surface)] p-4 rounded-xl border border-[var(--border)] shadow-sm hover:border-[var(--border-strong)] transition-all hover:-translate-y-0.5 min-w-0"
                 >
                   <div className="flex items-center gap-3 mb-3 min-w-0">
                     <div className="p-2 rounded-lg bg-[var(--surface-subdued)] shrink-0">
-                      {subject.icon}
+                      {iconComponent}
                     </div>
                     <span className="font-semibold text-[14px] text-[var(--ink)] truncate">{subject.name}</span>
                   </div>
@@ -155,7 +234,8 @@ export default function DashboardPage() {
                     <div className="bg-[var(--accent)] h-full rounded-full" style={{ width: `${subject.progress}%` }}></div>
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
           </motion.section>
 
@@ -218,31 +298,38 @@ export default function DashboardPage() {
             </h3>
             
             <div className="flex flex-col gap-3">
-              <label className="flex items-start gap-3 cursor-pointer group">
-                <CheckCircle2 className="w-5 h-5 text-[var(--success)] shrink-0 mt-0.5" />
-                <span className="text-[14px] text-[var(--ink-secondary)] line-through group-hover:text-[var(--ink)] transition-colors">Complete Java OOP revision</span>
-              </label>
-              <label className="flex items-start gap-3 cursor-pointer group">
-                <Circle className="w-5 h-5 text-[var(--border-strong)] group-hover:text-[var(--accent)] shrink-0 mt-0.5 transition-colors" />
-                <span className="text-[14px] text-[var(--ink)] font-medium">Solve 5 DSA questions</span>
-              </label>
-              <label className="flex items-start gap-3 cursor-pointer group">
-                <Circle className="w-5 h-5 text-[var(--border-strong)] group-hover:text-[var(--accent)] shrink-0 mt-0.5 transition-colors" />
-                <span className="text-[14px] text-[var(--ink)] font-medium">Practice SQL joins</span>
-              </label>
-              <label className="flex items-start gap-3 cursor-pointer group">
-                <Circle className="w-5 h-5 text-[var(--border-strong)] group-hover:text-[var(--accent)] shrink-0 mt-0.5 transition-colors" />
-                <span className="text-[14px] text-[var(--ink)] font-medium">Complete aptitude test</span>
-              </label>
+              {todayPlan.tasks && todayPlan.tasks.length > 0 ? (
+                todayPlan.tasks.map((task: any) => (
+                  <label key={task.id} className="flex items-start gap-3 cursor-pointer group">
+                    {task.completed ? (
+                      <CheckCircle2 className="w-5 h-5 text-[var(--success)] shrink-0 mt-0.5" />
+                    ) : (
+                      <Circle className="w-5 h-5 text-[var(--border-strong)] group-hover:text-[var(--accent)] shrink-0 mt-0.5 transition-colors" />
+                    )}
+                    <span className={task.completed ? "text-[14px] text-[var(--ink-secondary)] line-through group-hover:text-[var(--ink)] transition-colors" : "text-[14px] text-[var(--ink)] font-medium"}>
+                      {task.text}
+                    </span>
+                  </label>
+                ))
+              ) : (
+                <div className="py-2 text-left">
+                  <p className="text-[13px] text-[var(--ink-secondary)] leading-relaxed">
+                    No active tasks scheduled yet for today.
+                  </p>
+                  <Link href="/practice" className="mt-2.5 inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--accent)] hover:underline">
+                    Start a Practice Session <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
+                </div>
+              )}
             </div>
 
             <div className="mt-5 pt-4 border-t border-[var(--border)]">
               <div className="flex justify-between items-center mb-1.5">
                 <span className="text-[11px] font-mono text-[var(--ink-tertiary)] uppercase">Completion</span>
-                <span className="text-[11px] font-mono font-semibold text-[var(--ink)]">25%</span>
+                <span className="text-[11px] font-mono font-semibold text-[var(--ink)]">{todayPlan.completion}%</span>
               </div>
               <div className="w-full bg-[var(--border-strong)]/30 h-1.5 rounded-full overflow-hidden">
-                <div className="bg-[var(--success)] h-full rounded-full w-[25%]"></div>
+                <div className="bg-[var(--success)] h-full rounded-full" style={{ width: `${todayPlan.completion}%` }}></div>
               </div>
             </div>
           </motion.section>
@@ -259,9 +346,9 @@ export default function DashboardPage() {
               Upcoming Target
             </h3>
             <div className="flex flex-col gap-1">
-              <h4 className="text-[18px] font-newsreader font-medium text-[var(--ink)]">{roadmap?.targetRubric || "TCS Online Assessment"}</h4>
+              <h4 className="text-[18px] font-newsreader font-medium text-[var(--ink)]">{upcomingTarget.title}</h4>
               <p className="text-[13px] text-[var(--ink-secondary)]">
-                {profile ? `${roadmap?.modulesQueued || 0} modules remaining to unlock` : "2 days remaining to clear cut-off."}
+                {upcomingTarget.subtitle}
               </p>
             </div>
             <Link href="/roadmaps" className="mt-4 inline-flex items-center justify-center gap-2 w-full bg-white border border-[var(--border)] text-[var(--ink)] px-4 py-2 rounded-lg text-[13px] font-semibold hover:border-[var(--border-strong)] shadow-sm transition-all hover:-translate-y-0.5">

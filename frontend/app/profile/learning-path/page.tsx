@@ -20,19 +20,20 @@ import {
   Server,
   Network
 } from "lucide-react";
-import { onboardingService, DEFAULT_USER_PROFILE } from "@/lib/services/onboardingService";
 import { UserProfile, RoadmapGenerationResult } from "@/types";
 import { ProfileNavTabs } from "@/components/profile/ProfileNavTabs";
+import { useProfile } from "@/components/providers/ProfileProvider";
 
 export default function MyLearningPathPage() {
-  const [profile, setProfile] = useState<UserProfile>(DEFAULT_USER_PROFILE);
+  const { draftProfile: profile, isLoading } = useProfile();
   const [roadmap, setRoadmap] = useState<RoadmapGenerationResult | null>(null);
 
   useEffect(() => {
-    const data = onboardingService.getProfileWithDefaults();
-    setProfile(data);
-    setRoadmap(onboardingService.generateInitialRoadmap(data));
-  }, []);
+    // Dynamically generate roadmap based on current active profile state
+    import("@/lib/services/onboardingService").then((mod) => {
+      setRoadmap(mod.onboardingService.generateInitialRoadmap(profile));
+    });
+  }, [profile]);
 
   const primaryTrack = roadmap?.primaryTrack || profile.careerTracks?.[0] || "Software Engineer";
 

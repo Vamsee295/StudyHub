@@ -25,8 +25,12 @@ const authRoutes = [
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const isAuthenticated = request.cookies.has('auth-session');
-  const isOnboardingComplete = request.cookies.has('onboarding-complete');
+  
+  const hasAuthCookie = request.cookies.has('auth-session');
+  const hasSupabaseCookie = request.cookies.getAll().some(
+    (c) => (c.name.startsWith('sb-') && c.name.includes('-auth-token')) || c.name === 'supabase-auth-token'
+  );
+  const isAuthenticated = hasAuthCookie || hasSupabaseCookie;
 
   const isProtectedRoute = protectedRoutes.some(
     (route) => pathname === route || pathname.startsWith(route + '/')
@@ -54,19 +58,12 @@ export function middleware(request: NextRequest) {
 
   // 3. If authenticated user visits auth routes (/login, /signup)
   if (isAuthRoute && isAuthenticated) {
-    const targetUrl = isOnboardingComplete ? '/dashboard' : '/onboarding';
-    return NextResponse.redirect(new URL(targetUrl, request.url));
-  }
-
-  // 4. If authenticated but onboarding is NOT completed, and user tries to access protected app routes -> redirect to /onboarding
-  if (isAuthenticated && !isOnboardingComplete && isProtectedRoute && !isOnboardingRoute) {
-    return NextResponse.redirect(new URL('/onboarding', request.url));
-  }
-
-  // 5. If authenticated and onboarding IS completed, and user visits /onboarding -> redirect to /dashboard
-  if (isAuthenticated && isOnboardingComplete && isOnboardingRoute) {
+    // We redirect to dashboard. If they haven't onboarded, the client-side AppLayout guard will redirect them to /onboarding.
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
+
+  // NOTE: Onboarding completion state is no longer checked in middleware because it depends on the authoritative database profile.
+  // The AppLayout and OnboardingPage components will enforce strict routing based on the database response.
 
   return NextResponse.next();
 }

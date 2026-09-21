@@ -21,81 +21,50 @@ import {
   Award
 } from "lucide-react";
 import { UserProfile } from "@/types";
-import { onboardingService, DEFAULT_USER_PROFILE } from "@/lib/services/onboardingService";
+import { profileApi } from "@/lib/api/profile";
 import { ProfileNavTabs } from "@/components/profile/ProfileNavTabs";
+import { useAuth } from "@/components/providers/AuthProvider";
+import { useProfile } from "@/components/providers/ProfileProvider";
 
 export default function ProfilePreferencesPage() {
-  const [profile, setProfile] = useState<UserProfile>(DEFAULT_USER_PROFILE);
+  const { user } = useAuth();
+  const { draftProfile: profile, updateDraft, saveProfile, cancelEdits, isLoading } = useProfile();
+  
   const [isEditing, setIsEditing] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
+  const [saving, setSaving] = useState(false);
 
-  // Form State
-  const [formData, setFormData] = useState({
-    fullName: "",
-    email: "",
-    college: "",
-    degree: "",
-    branch: "",
-    graduationYear: "",
-    currentSemester: "",
-    targetRole: "",
-    preferredJobType: "",
-    locationPreference: "",
-  });
-
-  useEffect(() => {
-    const data = onboardingService.getProfileWithDefaults();
-    setProfile(data);
-    setFormData({
-      fullName: data.identity?.fullName || "Aditya",
-      email: data.identity?.email || "aditya@university.edu",
-      college: data.identity?.college || "Indian Institute of Technology",
-      degree: data.identity?.degree || "B.Tech — Computer Science & Engineering",
-      branch: data.identity?.branch || "Computer Science & Engineering",
-      graduationYear: data.identity?.graduationYear || "2026",
-      currentSemester: data.identity?.currentSemester || "7th Semester (Final Year)",
-      targetRole: data.identity?.targetRole || "Software Development Engineer (SDE-1)",
-      preferredJobType: data.identity?.preferredJobType || "Full-Time Campus & Off-Campus",
-      locationPreference: data.identity?.locationPreference || "Bangalore / Hyderabad / Pune / Remote",
-    });
-
-    const handleProfileUpdate = () => {
-      const refreshed = onboardingService.getProfileWithDefaults();
-      setProfile(refreshed);
-    };
-
-    window.addEventListener("pathward-profile-updated", handleProfileUpdate);
-    return () => window.removeEventListener("pathward-profile-updated", handleProfileUpdate);
-  }, []);
-
-  const handleSave = (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    onboardingService.updateProfile({
-      identity: {
-        ...profile.identity,
-        fullName: formData.fullName,
-        email: formData.email,
-        college: formData.college,
-        degree: formData.degree,
-        branch: formData.branch,
-        graduationYear: formData.graduationYear,
-        currentSemester: formData.currentSemester,
-        targetRole: formData.targetRole,
-        preferredJobType: formData.preferredJobType,
-        locationPreference: formData.locationPreference,
-      },
-      completionPercentage: 96
-    });
-
-    setIsEditing(false);
-    setSavedSuccess(true);
-    setTimeout(() => setSavedSuccess(false), 3500);
+    setSaving(true);
+    try {
+      await saveProfile();
+      setIsEditing(false);
+      setSavedSuccess(true);
+      setTimeout(() => setSavedSuccess(false), 3500);
+    } catch (err) {
+      console.error("Failed to save profile:", err);
+    } finally {
+      setSaving(false);
+    }
   };
 
-  const displayName = profile.identity?.fullName || "Aditya";
-  const displayRole = profile.identity?.targetRole || profile.careerTracks?.[0] || "Software Development Engineer (SDE-1)";
+  const handleCancel = () => {
+    cancelEdits();
+    setIsEditing(false);
+  };
+
+  let displayName = "Learner";
+  if (isLoading) {
+    displayName = "Loading...";
+  } else if (profile.identity?.fullName) {
+    displayName = profile.identity.fullName;
+  } else {
+    displayName = user?.email ? user.email.split("@")[0] : "Learner";
+  }
+  const displayRole = profile.identity?.targetRole || profile.careerTracks?.[0] || "Software Development Engineer";
   const displayAvatar = profile.identity?.avatarUrl || "https://api.dicebear.com/9.x/avataaars/svg?seed=Felix";
-  const completion = profile.completionPercentage || 88;
+  const completion = profile.completionPercentage || (profile.profileCompleted ? 100 : 0);
 
   return (
     <div className="w-full min-w-0 pb-16">
@@ -135,7 +104,7 @@ export default function ProfilePreferencesPage() {
             </button>
           ) : (
             <button
-              onClick={() => setIsEditing(false)}
+              onClick={handleCancel}
               className="text-xs text-[var(--ink-secondary)] hover:text-[var(--ink)] px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
             >
               Cancel
@@ -181,11 +150,11 @@ export default function ProfilePreferencesPage() {
               <div className="flex items-center gap-4 text-xs text-[var(--ink-tertiary)] font-mono mt-2 flex-wrap">
                 <span className="flex items-center gap-1.5">
                   <Mail className="w-3.5 h-3.5 text-slate-400" />
-                  {profile.identity?.email || "aditya@university.edu"}
+                  {profile.identity?.email || user?.email || ""}
                 </span>
                 <span className="flex items-center gap-1.5">
                   <GraduationCap className="w-3.5 h-3.5 text-slate-400" />
-                  {profile.identity?.college || "Indian Institute of Technology"}
+                  {profile.identity?.college || "University Candidate"}
                 </span>
               </div>
             </div>
@@ -227,8 +196,8 @@ export default function ProfilePreferencesPage() {
               </label>
               <input
                 type="text"
-                value={formData.fullName}
-                onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                value={profile.identity?.fullName || ""}
+                onChange={(e) => updateDraft({ identity: { fullName: e.target.value } as any })}
                 className="field w-full"
                 required
               />
@@ -240,8 +209,8 @@ export default function ProfilePreferencesPage() {
               </label>
               <input
                 type="email"
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                value={profile.identity?.email || ""}
+                onChange={(e) => updateDraft({ identity: { email: e.target.value } as any })}
                 className="field w-full"
                 required
               />
@@ -253,8 +222,8 @@ export default function ProfilePreferencesPage() {
               </label>
               <input
                 type="text"
-                value={formData.college}
-                onChange={(e) => setFormData({ ...formData, college: e.target.value })}
+                value={profile.identity?.college || ""}
+                onChange={(e) => updateDraft({ identity: { college: e.target.value } as any })}
                 className="field w-full"
                 required
               />
@@ -266,8 +235,8 @@ export default function ProfilePreferencesPage() {
               </label>
               <input
                 type="text"
-                value={formData.degree}
-                onChange={(e) => setFormData({ ...formData, degree: e.target.value })}
+                value={profile.identity?.degree || ""}
+                onChange={(e) => updateDraft({ identity: { degree: e.target.value } as any })}
                 className="field w-full"
                 required
               />
@@ -279,8 +248,8 @@ export default function ProfilePreferencesPage() {
               </label>
               <input
                 type="text"
-                value={formData.branch}
-                onChange={(e) => setFormData({ ...formData, branch: e.target.value })}
+                value={profile.identity?.branch || ""}
+                onChange={(e) => updateDraft({ identity: { branch: e.target.value } as any })}
                 className="field w-full"
                 required
               />
@@ -291,8 +260,8 @@ export default function ProfilePreferencesPage() {
                 Graduation Year
               </label>
               <select
-                value={formData.graduationYear}
-                onChange={(e) => setFormData({ ...formData, graduationYear: e.target.value })}
+                value={profile.identity?.graduationYear || "2026"}
+                onChange={(e) => updateDraft({ identity: { graduationYear: e.target.value } as any })}
                 className="field w-full cursor-pointer"
               >
                 <option value="2025">2025</option>
@@ -307,8 +276,8 @@ export default function ProfilePreferencesPage() {
                 Current Semester
               </label>
               <select
-                value={formData.currentSemester}
-                onChange={(e) => setFormData({ ...formData, currentSemester: e.target.value })}
+                value={profile.identity?.currentSemester || "Final Year"}
+                onChange={(e) => updateDraft({ identity: { currentSemester: e.target.value } as any })}
                 className="field w-full cursor-pointer"
               >
                 <option value="5th Semester (3rd Year)">5th Semester (3rd Year)</option>
@@ -325,8 +294,8 @@ export default function ProfilePreferencesPage() {
               </label>
               <input
                 type="text"
-                value={formData.targetRole}
-                onChange={(e) => setFormData({ ...formData, targetRole: e.target.value })}
+                value={profile.identity?.targetRole || ""}
+                onChange={(e) => updateDraft({ identity: { targetRole: e.target.value } as any })}
                 className="field w-full"
                 required
               />
@@ -338,8 +307,8 @@ export default function ProfilePreferencesPage() {
               </label>
               <input
                 type="text"
-                value={formData.preferredJobType}
-                onChange={(e) => setFormData({ ...formData, preferredJobType: e.target.value })}
+                value={profile.identity?.preferredJobType || ""}
+                onChange={(e) => updateDraft({ identity: { preferredJobType: e.target.value } as any })}
                 className="field w-full"
               />
             </div>
@@ -350,8 +319,8 @@ export default function ProfilePreferencesPage() {
               </label>
               <input
                 type="text"
-                value={formData.locationPreference}
-                onChange={(e) => setFormData({ ...formData, locationPreference: e.target.value })}
+                value={profile.identity?.locationPreference || ""}
+                onChange={(e) => updateDraft({ identity: { locationPreference: e.target.value } as any })}
                 className="field w-full"
               />
             </div>
@@ -360,16 +329,25 @@ export default function ProfilePreferencesPage() {
           <div className="flex items-center justify-end gap-3 mt-8 pt-6 border-t border-[var(--border)]">
             <button
               type="button"
-              onClick={() => setIsEditing(false)}
-              className="btn-secondary text-xs h-9 px-4"
+              disabled={saving}
+              onClick={handleCancel}
+              className="btn-secondary text-xs h-9 px-4 cursor-pointer disabled:opacity-50"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="btn-primary text-xs h-9 px-6 font-semibold"
+              disabled={saving}
+              className="btn-primary text-xs h-9 px-6 font-semibold flex items-center gap-2 cursor-pointer disabled:opacity-50"
             >
-              Save Profile Changes
+              {saving ? (
+                <>
+                  <span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                  Saving Changes...
+                </>
+              ) : (
+                "Save Profile Changes"
+              )}
             </button>
           </div>
         </form>
@@ -385,15 +363,15 @@ export default function ProfilePreferencesPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div className="p-4 rounded-xl bg-[var(--surface-subdued)] border border-[var(--border)]/70">
                   <span className="text-[11px] font-mono text-[var(--ink-tertiary)] uppercase tracking-wider">Institution</span>
-                  <p className="text-sm font-semibold text-[var(--ink)] mt-1">{profile.identity?.college || "IIT Madras"}</p>
+                  <p className="text-sm font-semibold text-[var(--ink)] mt-1">{profile.identity?.college || "—"}</p>
                 </div>
                 <div className="p-4 rounded-xl bg-[var(--surface-subdued)] border border-[var(--border)]/70">
                   <span className="text-[11px] font-mono text-[var(--ink-tertiary)] uppercase tracking-wider">Degree &amp; Program</span>
-                  <p className="text-sm font-semibold text-[var(--ink)] mt-1">{profile.identity?.degree || "B.Tech — CSE"}</p>
+                  <p className="text-sm font-semibold text-[var(--ink)] mt-1">{profile.identity?.degree || "—"}</p>
                 </div>
                 <div className="p-4 rounded-xl bg-[var(--surface-subdued)] border border-[var(--border)]/70">
                   <span className="text-[11px] font-mono text-[var(--ink-tertiary)] uppercase tracking-wider">Academic Term</span>
-                  <p className="text-sm font-semibold text-[var(--ink)] mt-1">{profile.identity?.currentSemester || "7th Semester (Final Year)"}</p>
+                  <p className="text-sm font-semibold text-[var(--ink)] mt-1">{profile.identity?.currentSemester || "—"}</p>
                 </div>
                 <div className="p-4 rounded-xl bg-[var(--surface-subdued)] border border-[var(--border)]/70">
                   <span className="text-[11px] font-mono text-[var(--ink-tertiary)] uppercase tracking-wider">Batch Graduation</span>

@@ -16,19 +16,22 @@ import {
   ExternalLink
 } from "lucide-react";
 import { UserProfile } from "@/types";
+import { useAuth } from "@/components/providers/AuthProvider";
 
 interface ProfileDropdownProps {
   isOpen: boolean;
   onClose: () => void;
   profile: UserProfile;
   onSignOut: () => void;
+  isLoading?: boolean;
 }
 
 export function ProfileDropdown({
   isOpen,
   onClose,
   profile,
-  onSignOut
+  onSignOut,
+  isLoading = false
 }: ProfileDropdownProps) {
   const router = useRouter();
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -62,12 +65,22 @@ export function ProfileDropdown({
     router.push(path);
   };
 
-  const primaryRole = profile.identity?.targetRole || profile.careerTracks?.[0] || "Software Development Engineer (SDE-1)";
-  const fullName = profile.identity?.fullName || "Aditya";
-  const email = profile.identity?.email || "aditya@university.edu";
+  const { user } = useAuth();
+  const primaryRole = profile.identity?.targetRole || profile.careerTracks?.[0] || "Software Development Engineer";
+  
+  let fullName = "Learner";
+  if (isLoading) {
+    fullName = "Loading...";
+  } else if (profile.identity?.fullName) {
+    fullName = profile.identity.fullName;
+  } else {
+    fullName = user?.email ? user.email.split("@")[0] : "Learner";
+  }
+
+  const email = profile.identity?.email || user?.email || "";
   const avatarUrl = profile.identity?.avatarUrl || "https://api.dicebear.com/9.x/avataaars/svg?seed=Felix";
-  const completion = profile.completionPercentage || 88;
-  const companiesCount = profile.targets?.companies?.length || 4;
+  const completion = profile.completionPercentage || (profile.profileCompleted ? 100 : 0);
+  const companiesCount = profile.targets?.companies?.length || 0;
 
   return (
     <AnimatePresence>

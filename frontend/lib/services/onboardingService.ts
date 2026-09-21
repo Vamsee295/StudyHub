@@ -1,17 +1,19 @@
 import { UserProfile, RoadmapGenerationResult } from '@/types';
+import { profileApi } from '@/lib/api/profile';
+import { supabase } from '@/lib/supabase/client';
 
 const DRAFT_KEY = 'pathward-onboarding-draft';
 const PROFILE_KEY = 'pathward-user-profile';
 
-export const DEFAULT_USER_PROFILE: UserProfile = {
+export const BLANK_USER_PROFILE: UserProfile = {
   identity: {
-    fullName: "Aditya",
-    email: "aditya@university.edu",
-    college: "Indian Institute of Technology",
+    fullName: "",
+    email: "",
+    college: "",
     degree: "B.Tech — Computer Science & Engineering",
     branch: "Computer Science & Engineering",
     graduationYear: "2026",
-    currentSemester: "7th Semester (Final Year)",
+    currentSemester: "Final Year",
     driveCycle: "Campus & Off-Campus 2026–27",
     targetRole: "Software Development Engineer (SDE-1)",
     preferredJobType: "Full-Time Campus & Off-Campus",
@@ -20,20 +22,22 @@ export const DEFAULT_USER_PROFILE: UserProfile = {
   },
   careerTracks: ["Software Engineer"],
   skillBaseline: {
-    programming: "Intermediate",
-    dsa: "Intermediate",
+    programming: "Beginner",
+    dsa: "Beginner",
     sql: "Beginner",
-    coreCS: "Intermediate",
-    aptitude: "Advanced"
+    coreCS: "Beginner",
+    aptitude: "Beginner"
   },
   targets: {
-    objectives: ["Campus Placements", "Product Roles"],
-    companies: ["Google", "Microsoft", "Amazon", "TCS"]
+    objectives: ["Campus Placements"],
+    companies: []
   },
-  profileCompleted: true,
-  completionPercentage: 88,
+  profileCompleted: false,
+  completionPercentage: 0,
   updatedAt: new Date().toISOString()
 };
+
+export const DEFAULT_USER_PROFILE = BLANK_USER_PROFILE;
 
 export const onboardingService = {
   // LocalStorage methods for draft
@@ -65,90 +69,62 @@ export const onboardingService = {
   },
 
   // Save the final completed profile
-  completeOnboarding(profile: UserProfile): RoadmapGenerationResult {
-    const finalProfile = {
+  async completeOnboarding(profile: UserProfile, userId?: string): Promise<RoadmapGenerationResult> {
+    const finalProfile: UserProfile = {
       ...profile,
       profileCompleted: true,
       onboardingCompletedAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
+      completionPercentage: 100
     };
 
     if (typeof window !== 'undefined') {
       localStorage.setItem(PROFILE_KEY, JSON.stringify(finalProfile));
+      if (userId) {
+        localStorage.setItem(`${PROFILE_KEY}:${userId}`, JSON.stringify(finalProfile));
+      }
       // Set a cookie so middleware knows onboarding is complete
       document.cookie = "onboarding-complete=true; path=/; max-age=31536000"; // 1 year
       this.clearDraft();
+    }
+    
+    try {
+      await profileApi.completeOnboarding({
+        identity: {
+          fullName: profile.identity?.fullName || "",
+          university: profile.identity?.college || "",
+          college: profile.identity?.college || "",
+          degree: profile.identity?.degree || "B.Tech",
+          branch: profile.identity?.branch || "CSE",
+          graduationYear: profile.identity?.graduationYear || "2026",
+          driveCycle: profile.identity?.driveCycle || "Campus 2026",
+          targetRole: profile.identity?.targetRole || profile.careerTracks?.[0] || "Software Engineer"
+        },
+        tracks: {
+          selectedPathIds: profile.careerTracks || [],
+          primaryPathId: profile.careerTracks?.[0] || null
+        },
+        baseline: {
+          programming: profile.skillBaseline?.programming || "Intermediate",
+          dsa: profile.skillBaseline?.dsa || "Intermediate",
+          sql: profile.skillBaseline?.sql || "Beginner",
+          coreCS: profile.skillBaseline?.coreCS || "Beginner",
+          aptitude: profile.skillBaseline?.aptitude || "Intermediate"
+        },
+        targets: {
+          placementObjective: profile.targets?.objectives?.[0] || "Campus Placements",
+          companyIds: profile.targets?.companies || []
+        }
+      });
+    } catch (e) {
+      console.error("Failed to sync profile to backend", e);
     }
 
     return this.generateInitialRoadmap(finalProfile);
   },
 
-  getProfile(): UserProfile | null {
-    if (typeof window !== 'undefined') {
-      const data = localStorage.getItem(PROFILE_KEY);
-      if (data) {
-        try {
-          return JSON.parse(data);
-        } catch (e) {
-          console.error('Failed to parse user profile:', e);
-          return null;
-        }
-      }
-    }
-    return null;
-  },
 
-  getProfileWithDefaults(): UserProfile {
-    const existing = this.getProfile();
-    if (!existing) return DEFAULT_USER_PROFILE;
-    return {
-      ...DEFAULT_USER_PROFILE,
-      ...existing,
-      identity: {
-        ...DEFAULT_USER_PROFILE.identity,
-        ...existing.identity
-      },
-      targets: {
-        ...DEFAULT_USER_PROFILE.targets,
-        ...existing.targets
-      },
-      skillBaseline: {
-        ...DEFAULT_USER_PROFILE.skillBaseline,
-        ...existing.skillBaseline
-      },
-      careerTracks: existing.careerTracks?.length ? existing.careerTracks : DEFAULT_USER_PROFILE.careerTracks,
-      completionPercentage: existing.completionPercentage || 88
-    };
-  },
 
-  updateProfile(updates: Partial<UserProfile>): UserProfile {
-    const current = this.getProfileWithDefaults();
-    const updated: UserProfile = {
-      ...current,
-      ...updates,
-      identity: {
-        ...current.identity,
-        ...(updates.identity || {})
-      },
-      targets: {
-        ...current.targets,
-        ...(updates.targets || {})
-      },
-      skillBaseline: {
-        ...current.skillBaseline,
-        ...(updates.skillBaseline || {})
-      },
-      careerTracks: updates.careerTracks || current.careerTracks,
-      updatedAt: new Date().toISOString()
-    };
-
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(PROFILE_KEY, JSON.stringify(updated));
-      window.dispatchEvent(new CustomEvent('pathward-profile-updated', { detail: updated }));
-    }
-
-    return updated;
-  },
 
   // Deterministic Roadmap Generation
   generateInitialRoadmap(profile: UserProfile): RoadmapGenerationResult {

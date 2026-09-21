@@ -2,12 +2,15 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Search, Bell, ChevronDown, Menu, X } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { Search, Bell, ChevronDown, Menu, X, Loader2 } from "lucide-react";
 import { clsx } from "clsx";
 import { ProfileDropdown } from "@/components/layout/ProfileDropdown";
-import { onboardingService, DEFAULT_USER_PROFILE } from "@/lib/services/onboardingService";
+import { onboardingService, BLANK_USER_PROFILE } from "@/lib/services/onboardingService";
 import { UserProfile } from "@/types";
+import { authApi } from "@/lib/api/auth";
+import { useAuth } from "@/components/providers/AuthProvider";
+import { useProfile } from "@/components/providers/ProfileProvider";
 
 const navLinks = [
   { name: "Dashboard", href: "/dashboard" },
@@ -22,48 +25,83 @@ const navLinks = [
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const [mounted, setMounted] = useState(false);
+  const { user } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Profile Quick Launcher Dropdown State
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
 
-  // Active User Profile State
-  const [profile, setProfile] = useState<UserProfile>(DEFAULT_USER_PROFILE);
+  // Active User Profile State from Global Context
+  const { draftProfile: profile, isLoading } = useProfile();
+
+  const router = useRouter();
 
   useEffect(() => {
-    // Load existing profile from storage
-    const current = onboardingService.getProfileWithDefaults();
-    setProfile(current);
-
-    // Subscribe to external profile updates (e.g. from ProfileModal or Onboarding)
-    const handleProfileUpdate = () => {
-      setProfile(onboardingService.getProfileWithDefaults());
-    };
-
-    window.addEventListener("pathward-profile-updated", handleProfileUpdate);
-    return () => {
-      window.removeEventListener("pathward-profile-updated", handleProfileUpdate);
-    };
+    setMounted(true);
   }, []);
 
-  const handleSignOut = () => {
-    // 1. Clear authenticated cookies
+  // Strict Onboarding Route Guard
+  useEffect(() => {
+    if (mounted && !isLoading) {
+      if (!profile.profileCompleted) {
+        console.log("[ROUTE GUARD] Profile not completed, redirecting to /onboarding");
+        router.replace("/onboarding");
+      }
+    }
+  }, [mounted, isLoading, profile.profileCompleted, router]);
+
+  const handleSignOut = async () => {
+    // 1. Clear API authentication
+    await authApi.logout();
+    
+    // 2. Clear authenticated cookies
     document.cookie = "auth-session=; path=/; max-age=0";
     document.cookie = "onboarding-complete=; path=/; max-age=0";
 
-    // 2. Clear stored client-side profile caches
+    // 3. Clear stored client-side profile caches
     if (typeof window !== "undefined") {
       localStorage.removeItem("pathward-user-profile");
       localStorage.removeItem("pathward-onboarding-draft");
+      localStorage.removeItem("pathward-dashboard-cache");
+      if (user?.id) {
+        localStorage.removeItem(`pathward-user-profile:${user.id}`);
+      }
     }
 
-    // 3. Navigate directly to login
+    // 4. Navigate directly to login
     window.location.href = "/login";
   };
 
-  const displayName = profile.identity?.fullName || "Aditya";
-  const displayRole = profile.identity?.targetRole || profile.careerTracks?.[0] || "SDE Candidate";
-  const displayAvatar = profile.identity?.avatarUrl || "https://api.dicebear.com/9.x/avataaars/svg?seed=Felix";
+  let displayName = "Learner";
+  if (!mounted || isLoading) {
+    displayName = "Loading...";
+  } else if (profile.identity?.fullName) {
+    displayName = profile.identity.fullName;
+  } else {
+    displayName = user?.email ? user.email.split("@")[0] : "Learner";
+  }
+  const displayRole = mounted 
+    ? (profile.identity?.targetRole || profile.careerTracks?.[0] || "Software Development Engineer")
+    : "Software Development Engineer";
+  const displayAvatar = mounted 
+    ? (profile.identity?.avatarUrl || "https://api.dicebear.com/9.x/avataaars/svg?seed=Felix")
+    : "https://api.dicebear.com/9.x/avataaars/svg?seed=Felix";
+
+  // If we are strictly guarding, we can also prevent rendering the AppLayout until loading finishes, 
+  // or until it's confirmed they are onboarded, to prevent flashing.
+  if (!mounted || isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[var(--canvas)]">
+        <Loader2 className="w-8 h-8 text-[var(--accent)] animate-spin" />
+      </div>
+    );
+  }
+
+  // If not completed, we are redirecting, so return null to avoid flash
+  if (!profile.profileCompleted) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-[var(--canvas)] grid-texture selection:bg-[var(--accent-soft)] selection:text-[var(--accent-hover)] text-[var(--ink)] font-sans relative">
@@ -159,6 +197,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                 onClose={() => setProfileDropdownOpen(false)}
                 profile={profile}
                 onSignOut={handleSignOut}
+                isLoading={isLoading}
               />
             </div>
 

@@ -18,7 +18,8 @@ import {
   AlertCircle
 } from "lucide-react";
 import { UserProfile } from "@/types";
-import { onboardingService } from "@/lib/services/onboardingService";
+import { useAuth } from "@/components/providers/AuthProvider";
+import { useProfile } from "@/components/providers/ProfileProvider";
 
 interface ProfileModalProps {
   isOpen: boolean;
@@ -28,36 +29,38 @@ interface ProfileModalProps {
 
 export function ProfileModal({ isOpen, onClose, profile }: ProfileModalProps) {
   const router = useRouter();
+  const { user } = useAuth();
+  const { draftProfile, updateDraft, saveProfile } = useProfile();
   const [isEditing, setIsEditing] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
 
   // Editable Form State
   const [formData, setFormData] = useState({
-    fullName: profile.identity?.fullName || "Aditya",
-    email: profile.identity?.email || "aditya@university.edu",
-    college: profile.identity?.college || "Indian Institute of Technology",
+    fullName: profile.identity?.fullName || "",
+    email: profile.identity?.email || "",
+    college: profile.identity?.college || "",
     degree: profile.identity?.degree || "B.Tech — Computer Science & Engineering",
     branch: profile.identity?.branch || "Computer Science & Engineering",
     graduationYear: profile.identity?.graduationYear || "2026",
-    currentSemester: profile.identity?.currentSemester || "7th Semester (Final Year)",
+    currentSemester: profile.identity?.currentSemester || "Final Year",
     targetRole: profile.identity?.targetRole || "Software Development Engineer (SDE-1)",
     preferredJobType: profile.identity?.preferredJobType || "Full-Time Campus & Off-Campus",
-    locationPreference: profile.identity?.locationPreference || "Bangalore / Hyderabad / Pune / Remote",
+    locationPreference: profile.identity?.locationPreference || "Bangalore / Hyderabad / Remote",
   });
 
   // Sync state whenever profile updates
   useEffect(() => {
     setFormData({
-      fullName: profile.identity?.fullName || "Aditya",
-      email: profile.identity?.email || "aditya@university.edu",
-      college: profile.identity?.college || "Indian Institute of Technology",
+      fullName: profile.identity?.fullName || "",
+      email: profile.identity?.email || "",
+      college: profile.identity?.college || "",
       degree: profile.identity?.degree || "B.Tech — Computer Science & Engineering",
       branch: profile.identity?.branch || "Computer Science & Engineering",
       graduationYear: profile.identity?.graduationYear || "2026",
-      currentSemester: profile.identity?.currentSemester || "7th Semester (Final Year)",
+      currentSemester: profile.identity?.currentSemester || "Final Year",
       targetRole: profile.identity?.targetRole || "Software Development Engineer (SDE-1)",
       preferredJobType: profile.identity?.preferredJobType || "Full-Time Campus & Off-Campus",
-      locationPreference: profile.identity?.locationPreference || "Bangalore / Hyderabad / Pune / Remote",
+      locationPreference: profile.identity?.locationPreference || "Bangalore / Hyderabad / Remote",
     });
   }, [profile]);
 
@@ -75,11 +78,13 @@ export function ProfileModal({ isOpen, onClose, profile }: ProfileModalProps) {
     };
   }, [isOpen, onClose]);
 
-  const handleSave = (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    onboardingService.updateProfile({
+    
+    const updatedDraft = {
+      ...draftProfile,
       identity: {
-        ...profile.identity,
+        ...draftProfile.identity,
         fullName: formData.fullName,
         email: formData.email,
         college: formData.college,
@@ -90,9 +95,12 @@ export function ProfileModal({ isOpen, onClose, profile }: ProfileModalProps) {
         targetRole: formData.targetRole,
         preferredJobType: formData.preferredJobType,
         locationPreference: formData.locationPreference,
-      },
-      completionPercentage: 96
-    });
+      } as any,
+      completionPercentage: draftProfile.completionPercentage || 100
+    };
+    
+    updateDraft({ identity: updatedDraft.identity });
+    await saveProfile(updatedDraft);
 
     setIsEditing(false);
     setSavedSuccess(true);

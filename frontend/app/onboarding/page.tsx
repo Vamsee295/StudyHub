@@ -7,10 +7,12 @@ import {
   CircleDot, 
   Circle, 
   Lock, 
-  User
+  User,
+  Loader2
 } from 'lucide-react';
 import { UserProfile, UserIdentity, SkillBaseline, UserTargets } from '@/types';
 import { onboardingService } from '@/lib/services/onboardingService';
+import { useProfile } from '@/components/providers/ProfileProvider';
 
 import Step1Identity from '@/components/onboarding/Step1Identity';
 import Step2Career from '@/components/onboarding/Step2Career';
@@ -46,16 +48,39 @@ export default function OnboardingPage() {
   
   const [isClient, setIsClient] = useState(false);
 
+  const { draftProfile: canonicalProfile, isLoading: profileLoading } = useProfile();
+
   useEffect(() => {
     setIsClient(true);
-    // Load draft if exists
+    // Load draft if exists in local storage
     const draft = onboardingService.getDraft();
     if (draft) {
       setProfile((prev) => ({ ...prev, ...draft }));
     }
   }, []);
 
-  if (!isClient) return null; // Avoid hydration mismatch
+  // Strict route guard
+  useEffect(() => {
+    if (isClient && !profileLoading) {
+      if (canonicalProfile?.profileCompleted) {
+        console.log("[ROUTE GUARD] Profile already completed, redirecting to /dashboard");
+        router.replace('/dashboard');
+      }
+    }
+  }, [isClient, profileLoading, canonicalProfile, router]);
+
+  if (!isClient || profileLoading) {
+    return (
+      <div className="min-h-screen bg-[#fafaf8] grid-texture flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
+      </div>
+    );
+  }
+
+  // Prevent flash while redirecting
+  if (canonicalProfile?.profileCompleted) {
+    return null;
+  }
 
   const handleNext = () => {
     if (currentStep < 4) {
@@ -85,9 +110,15 @@ export default function OnboardingPage() {
     router.push('/login');
   };
 
-  const handleComplete = () => {
+  const handleComplete = async () => {
     // Actually generate roadmap and finish
-    onboardingService.completeOnboarding(profile as UserProfile);
+    await onboardingService.completeOnboarding(profile as UserProfile);
+    try {
+      const { aiApi } = await import('@/lib/api/ai');
+      await aiApi.generatePlan();
+    } catch (error) {
+      console.error("Failed to generate AI plan:", error);
+    }
     router.push('/dashboard');
   };
 

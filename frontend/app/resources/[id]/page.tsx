@@ -15,7 +15,44 @@ export default function ResourceDetailPage({ params }: { params: { id: string } 
   // but in standard App Router client components without async, we can read it directly for simple string matching,
   // or use `React.use()` if it's treated as a promise. Here we just use the string.
   const id = params.id;
-  const content = resourceDetailsMap[id];
+  const [content, setContent] = useState<any>(resourceDetailsMap[id] || null);
+  const [pdfUrl, setPdfUrl] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadResource() {
+      try {
+        const { resourcesApi } = await import('@/lib/api/resources');
+        const res = await resourcesApi.getResource(id);
+        
+        if (res.file_type === 'pdf') {
+          const urlRes = await resourcesApi.getResourceUrl(id);
+          setPdfUrl(urlRes.url);
+          // Set dynamic content if it wasn't in the mock map
+          if (!content) {
+            setContent({
+              id: res.id,
+              title: res.title,
+              topic: res.subject,
+              timeEstimate: "Read",
+              difficulty: "All Levels",
+              summary: "PDF Document",
+              keyTakeaways: [],
+              sections: [],
+              interviewTraps: [],
+              relatedResources: []
+            });
+          }
+        }
+      } catch (e) {
+        console.error("Failed to load backend resource:", e);
+      } finally {
+        setLoading(false);
+      }
+    }
+    
+    loadResource();
+  }, [id, content]);
 
   useEffect(() => {
     setMounted(true);
@@ -32,7 +69,7 @@ export default function ResourceDetailPage({ params }: { params: { id: string } 
     }
 
     // Add to recent history
-    if (content) {
+    if (content && !loading) {
       const localRecent = localStorage.getItem("pathward_recent_resources");
       let recent = [];
       if (localRecent) {
@@ -53,17 +90,16 @@ export default function ResourceDetailPage({ params }: { params: { id: string } 
       
       localStorage.setItem("pathward_recent_resources", JSON.stringify(newRecent));
     }
-  }, [id, content]);
+  }, [id, content, loading]);
 
-  if (!mounted) return null;
+  if (!mounted || loading) return null;
 
-  if (!content) {
-    // If not found in our mock map, we just render a simple mock view 
-    // rather than actual 404, so the preview works for all cards.
+  if (!content && !pdfUrl) {
+    // If not found in our mock map and no backend resource
     return (
       <div className="flex flex-col items-center justify-center py-32 text-center max-w-7xl mx-auto px-6">
         <h1 className="text-2xl font-bold text-[var(--ink)] mb-4">Resource Detail: {id}</h1>
-        <p className="text-[var(--ink-secondary)] mb-8">This is a dynamically generated placeholder for a resource that doesn't have rich mock data yet.</p>
+        <p className="text-[var(--ink-secondary)] mb-8">This resource was not found.</p>
         <Link href="/resources" className="text-[var(--accent)] hover:underline flex items-center gap-2">
           <ArrowLeft className="w-4 h-4" /> Back to Resources
         </Link>
@@ -145,6 +181,16 @@ export default function ResourceDetailPage({ params }: { params: { id: string } 
       {/* Main Content Body */}
       <article className="flex flex-col gap-10">
         
+        {pdfUrl && (
+          <div className="w-full h-[800px] border border-[var(--border)] rounded-2xl overflow-hidden mt-4 shadow-sm bg-[var(--surface-subdued)] relative">
+            <iframe 
+              src={pdfUrl} 
+              className="absolute inset-0 w-full h-full border-0" 
+              title="PDF Viewer" 
+            />
+          </div>
+        )}
+
         {/* Summary */}
         <div className="text-[17px] leading-relaxed text-[var(--ink-secondary)] font-newsreader">
           {content.summary}
@@ -157,7 +203,7 @@ export default function ResourceDetailPage({ params }: { params: { id: string } 
             Key Takeaways
           </h3>
           <ul className="flex flex-col gap-3">
-            {content.keyTakeaways.map((point, i) => (
+            {content.keyTakeaways.map((point: string, i: number) => (
               <li key={i} className="flex items-start gap-3 text-[14px] text-[var(--ink)]">
                 <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] shrink-0 mt-1.5"></span>
                 <span className="leading-relaxed">{point}</span>
@@ -168,7 +214,7 @@ export default function ResourceDetailPage({ params }: { params: { id: string } 
 
         {/* Content Sections */}
         <div className="flex flex-col gap-12">
-          {content.sections.map((section, idx) => (
+          {content.sections.map((section: any, idx: number) => (
             <section key={idx} className="flex flex-col gap-4">
               <h2 className="text-xl font-bold text-[var(--ink)] tracking-tight">
                 {section.heading}
@@ -199,8 +245,8 @@ export default function ResourceDetailPage({ params }: { params: { id: string } 
             Common Interview Traps
           </h3>
           <ul className="flex flex-col gap-3">
-            {content.interviewTraps.map((trap, i) => (
-              <li key={i} className="flex items-start gap-3 text-[14px] text-orange-900">
+            {content.interviewTraps.map((trap: string, i: number) => (
+              <li key={i} className="flex items-start gap-3 text-orange-900">
                 <span className="w-1.5 h-1.5 rounded-full bg-orange-400 shrink-0 mt-1.5"></span>
                 <span className="leading-relaxed">{trap}</span>
               </li>
@@ -214,7 +260,7 @@ export default function ResourceDetailPage({ params }: { params: { id: string } 
             Related Resources
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {content.relatedResources.map((res, i) => (
+            {content.relatedResources.map((res: any, i: number) => (
               <Link 
                 key={i}
                 href={res.href}

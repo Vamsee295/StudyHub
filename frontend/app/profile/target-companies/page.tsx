@@ -17,11 +17,12 @@ import {
   AlertCircle
 } from "lucide-react";
 import { targetCompanies, directoryCompanies, companyWorkspaces } from "@/lib/data/companiesData";
-import { onboardingService } from "@/lib/services/onboardingService";
 import { ProfileNavTabs } from "@/components/profile/ProfileNavTabs";
 import { CompanyTarget } from "@/types";
+import { useProfile } from "@/components/providers/ProfileProvider";
 
 export default function TargetCompaniesPage() {
+  const { draftProfile, updateDraft, saveProfile } = useProfile();
   const [trackedList, setTrackedList] = useState<CompanyTarget[]>(targetCompanies);
   const [searchFilter, setSearchFilter] = useState("");
   const [addModalOpen, setAddModalOpen] = useState(false);
@@ -44,13 +45,13 @@ export default function TargetCompaniesPage() {
     if (typeof window !== "undefined") {
       localStorage.setItem("pathward_tracked_companies_list", JSON.stringify(updated));
       // Also sync company names to user profile
-      const currentProfile = onboardingService.getProfileWithDefaults();
-      onboardingService.updateProfile({
+      updateDraft({
         targets: {
-          ...currentProfile.targets,
+          ...draftProfile.targets,
           companies: updated.map(c => c.name)
         }
       });
+      saveProfile().catch(console.error);
     }
   };
 

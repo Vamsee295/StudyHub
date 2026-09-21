@@ -7,6 +7,11 @@ This is **Stage 1** of the build plan: the landing page, fully componentized and
 ready to grow into routed pages (`/learn`, `/roadmaps`, `/companies`, etc.) in
 later stages.
 
+> [!IMPORTANT]  
+> This project is split into a **Frontend** and **Backend**. Please see their respective documentation for setup, tech stack, and commands:
+> - 🖥️ [Frontend Documentation](./frontend/README.md)
+> - ⚙️ [Backend Documentation](./backend/README.md)
+
 ## Stack
 
 - **Next.js 16** (App Router) + **React 19** + **TypeScript**

@@ -201,7 +201,7 @@ export function SettingsModal({ isOpen, onClose, profile, onSignOut }: SettingsM
                         <input
                           type="text"
                           disabled
-                          value={profile.identity?.email || "aditya@university.edu"}
+                          value={profile.identity?.email || ""}
                           className="w-full bg-slate-100 border border-slate-200 rounded-lg px-3 py-2 text-slate-500 cursor-not-allowed"
                         />
                         <span className="text-[10px] text-slate-400 mt-1 block">Contact your campus administrator to change official student email.</span>

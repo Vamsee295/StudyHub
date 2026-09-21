@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { AuthProvider } from "@/components/providers/AuthProvider";
+import { ProfileProvider } from "@/components/providers/ProfileProvider";
 
 export const metadata: Metadata = {
   title: "Pathward — Everything you need to prepare for your first tech job",
@@ -20,7 +22,13 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        <AuthProvider>
+          <ProfileProvider>
+            {children}
+          </ProfileProvider>
+        </AuthProvider>
+      </body>
     </html>
   );
 }

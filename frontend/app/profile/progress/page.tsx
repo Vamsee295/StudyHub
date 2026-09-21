@@ -19,17 +19,12 @@ import {
   Award,
   Zap
 } from "lucide-react";
-import { onboardingService, DEFAULT_USER_PROFILE } from "@/lib/services/onboardingService";
-import { ProfileNavTabs } from "@/components/profile/ProfileNavTabs";
 import { UserProfile } from "@/types";
+import { useProfile } from "@/components/providers/ProfileProvider";
+import { ProfileNavTabs } from "@/components/profile/ProfileNavTabs";
 
 export default function ProgressReadinessPage() {
-  const [profile, setProfile] = useState<UserProfile>(DEFAULT_USER_PROFILE);
-
-  useEffect(() => {
-    const data = onboardingService.getProfileWithDefaults();
-    setProfile(data);
-  }, []);
+  const { draftProfile: profile, isLoading } = useProfile();
 
   const subjects = [
     { name: "Java OOP", progress: 72, target: 85, icon: TerminalSquare, status: "On Track", color: "bg-blue-600" },
