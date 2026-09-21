@@ -36,3 +36,10 @@ class UserResourceProgress(Base):
     last_page_read = Column(Integer, default=1)
     completion_percentage = Column(Integer, default=0)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+class UserSavedResource(Base):
+    __tablename__ = "user_saved_resources"
+
+    user_id = Column(String, ForeignKey("profiles.id", ondelete="CASCADE"), primary_key=True)
+    resource_id = Column(String, ForeignKey("resources.id", ondelete="CASCADE"), primary_key=True)
+    saved_at = Column(DateTime, default=datetime.utcnow)

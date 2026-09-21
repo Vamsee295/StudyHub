@@ -1,3 +1,5 @@
+import { StudyHubLogo } from "@/components/ui/StudyHubLogo";
+
 const columns = [
   {
     title: "Platform",
@@ -22,16 +24,11 @@ export function Footer() {
     <footer className="bg-white">
       <div className="container-max px-5 md:px-8 py-14 grid sm:grid-cols-2 lg:grid-cols-5 gap-8 text-[13.5px]">
         <div className="lg:col-span-1">
-          <div className="flex items-center gap-2 mb-3">
-            <span className="w-5 h-5 rounded-md bg-ink flex items-center justify-center">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
-                <path d="M7 17.5L13 8L19 17.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </span>
-            <span className="font-display font-medium">Pathward</span>
+          <div className="mb-3">
+            <StudyHubLogo href="#" size="sm" showBadge={false} />
           </div>
           <p className="text-ink-secondary leading-relaxed">
-            A mapped preparation system for engineering students — learn, practice, prepare, build, apply, interview.
+            A unified placement preparation and skill-building platform for engineering students.
           </p>
         </div>
         {columns.map((col) => (
@@ -49,7 +46,7 @@ export function Footer() {
       </div>
       <div className="border-t border-border">
         <div className="container-max px-5 md:px-8 py-5 text-[12.5px] text-ink-secondary flex items-center justify-between flex-wrap gap-2">
-          <span>© 2026 Pathward. All rights reserved.</span>
+          <span>© 2026 StudyHub. All rights reserved.</span>
           <span>Sample data shown for demonstration.</span>
         </div>
       </div>

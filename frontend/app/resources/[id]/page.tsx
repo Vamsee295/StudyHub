@@ -26,9 +26,16 @@ export default function ResourceDetailPage({ params }: { params: { id: string } 
         const res = await resourcesApi.getResource(id);
         
         if (res.file_type === 'pdf') {
-          const urlRes = await resourcesApi.getResourceUrl(id);
-          setPdfUrl(urlRes.url);
-          // Set dynamic content if it wasn't in the mock map
+          // Attempt to get URL, but it might fail if we are just using mocked paths.
+          // In our seeder, we used file_path="mock/dsa_handbook.pdf" which won't resolve in Supabase.
+          // We can just ignore the URL if it fails.
+          try {
+            const urlRes = await resourcesApi.getResourceUrl(id);
+            if (urlRes.url) setPdfUrl(urlRes.url);
+          } catch(e) {
+            console.warn("Could not fetch secure URL for this resource. Falling back.");
+          }
+          
           if (!content) {
             setContent({
               id: res.id,
@@ -36,7 +43,7 @@ export default function ResourceDetailPage({ params }: { params: { id: string } 
               topic: res.subject,
               timeEstimate: "Read",
               difficulty: "All Levels",
-              summary: "PDF Document",
+              summary: res.description || "PDF Document",
               keyTakeaways: [],
               sections: [],
               interviewTraps: [],
@@ -44,6 +51,14 @@ export default function ResourceDetailPage({ params }: { params: { id: string } 
             });
           }
         }
+
+        // Fetch history to see if it's saved, and update progress
+        const history = await resourcesApi.getHistory();
+        setIsBookmarked(history.saved.some(s => s.resource_id === id));
+
+        // Create or update progress
+        await resourcesApi.updateProgress(id, 1, 10); // Update to page 1, 10%
+
       } catch (e) {
         console.error("Failed to load backend resource:", e);
       } finally {
@@ -56,41 +71,17 @@ export default function ResourceDetailPage({ params }: { params: { id: string } 
 
   useEffect(() => {
     setMounted(true);
-    
-    // Check saved state
-    const localSaved = localStorage.getItem("pathward_saved_resources");
-    if (localSaved) {
-      try {
-        const saved = JSON.parse(localSaved);
-        setIsBookmarked(saved.some((r: any) => r.id === id));
-      } catch (e) {
-        // ignore
-      }
-    }
+  }, []);
 
-    // Add to recent history
-    if (content && !loading) {
-      const localRecent = localStorage.getItem("pathward_recent_resources");
-      let recent = [];
-      if (localRecent) {
-        try { recent = JSON.parse(localRecent); } catch(e) {}
-      }
-      
-      const newRecent = [
-        {
-          id: content.id,
-          title: content.title,
-          topic: content.topic,
-          type: "Handbook",
-          viewedAt: "Just now",
-          href: `/resources/${content.id}`
-        },
-        ...recent.filter((r: any) => r.id !== content.id)
-      ].slice(0, 5);
-      
-      localStorage.setItem("pathward_recent_resources", JSON.stringify(newRecent));
+  const toggleBookmark = async () => {
+    try {
+      const { resourcesApi } = await import('@/lib/api/resources');
+      const res = await resourcesApi.toggleSave(id);
+      setIsBookmarked(res.status === 'saved');
+    } catch (e) {
+      console.error("Failed to toggle bookmark", e);
     }
-  }, [id, content, loading]);
+  };
 
   if (!mounted || loading) return null;
 
@@ -107,10 +98,7 @@ export default function ResourceDetailPage({ params }: { params: { id: string } 
     );
   }
 
-  const toggleBookmark = () => {
-    setIsBookmarked(!isBookmarked);
-    // Real implementation would sync with localStorage Saved Resources array here
-  };
+
 
   return (
     <div className="max-w-4xl mx-auto w-[calc(100%-32px)] md:w-full pb-32">

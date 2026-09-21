@@ -11,18 +11,18 @@ import { PlacementSection } from "@/components/practice/PlacementSection";
 import { RecentPracticeSection } from "@/components/practice/RecentPracticeSection";
 import { PracticeShortcutsBar } from "@/components/practice/PracticeShortcutsBar";
 
-import { 
-  quickSprints, 
-  recommendedDiagnostics, 
-  curriculumBanks, 
-  placementSimulations, 
-  practiceLedger 
-} from "@/lib/data/practiceData";
+import { practiceApi, PracticeSet, PracticeAttempt } from "@/lib/api/practice";
+import { QuickPracticeSprint, PracticeAttemptLedger } from "@/types";
 import { SearchX } from "lucide-react";
 
 export default function PracticePage() {
   const reduced = useReducedMotion();
   const [mounted, setMounted] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  
+  // Real data state
+  const [dynamicSprints, setDynamicSprints] = useState<QuickPracticeSprint[]>([]);
+  const [dynamicLedger, setDynamicLedger] = useState<PracticeAttemptLedger[]>([]);
   
   // Filtering state
   const [searchQuery, setSearchQuery] = useState("");
@@ -46,56 +46,73 @@ export default function PracticePage() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const [setsRes, ledgerRes] = await Promise.all([
+          practiceApi.getPracticeSets(),
+          practiceApi.getLedger()
+        ]);
+
+        if (setsRes.sets) {
+          const sprints: QuickPracticeSprint[] = setsRes.sets.map(s => ({
+            id: s.id,
+            tag: `${s.domain.toUpperCase()} · TIMED`,
+            title: s.title,
+            questionsCount: 5, // mock count for now, since we don't have it in the set model
+            estimatedMinutes: s.estimated_minutes,
+            difficulty: s.difficulty,
+            topics: [s.domain],
+            avgTime: `${s.estimated_minutes}m`,
+            targetAccuracy: "80%",
+            engineNote: "",
+            track: s.domain
+          } as any));
+          setDynamicSprints(sprints);
+        }
+
+        if (ledgerRes.ledger) {
+          const ledger: PracticeAttemptLedger[] = ledgerRes.ledger.map(l => ({
+            id: l.id,
+            title: l.title,
+            score: l.score,
+            totalQuestions: l.total_questions,
+            accuracy: l.total_questions > 0 ? Math.round((l.score / l.total_questions) * 100) : 0,
+            durationStr: `${Math.round(l.duration_seconds / 60)}m ${l.duration_seconds % 60}s`,
+            completedDate: new Date(l.completed_at).toLocaleDateString(),
+            track: l.domain,
+            type: "Sprint"
+          } as any));
+          setDynamicLedger(ledger);
+        }
+      } catch (err) {
+        console.error("Failed to load practice data", err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    loadData();
+  }, []);
+
   // Filtered data logic
   const filteredSprints = useMemo(() => {
-    return quickSprints.filter(s => {
+    return dynamicSprints.filter(s => {
       const matchTrack = activeTrack === "all" || s.track === activeTrack;
       const matchSearch = s.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
                           s.topics.some(t => t.toLowerCase().includes(searchQuery.toLowerCase()));
       return matchTrack && matchSearch;
     });
-  }, [activeTrack, searchQuery]);
-
-  const filteredDiagnostics = useMemo(() => {
-    return recommendedDiagnostics.filter(d => {
-      const matchTrack = activeTrack === "all" || d.track === activeTrack;
-      const matchSearch = d.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          d.description.toLowerCase().includes(searchQuery.toLowerCase());
-      return matchTrack && matchSearch;
-    });
-  }, [activeTrack, searchQuery]);
-
-  const filteredBanks = useMemo(() => {
-    return curriculumBanks.filter(b => {
-      const matchTrack = activeTrack === "all" || b.track === activeTrack;
-      const matchSearch = b.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          b.topics.some(t => t.toLowerCase().includes(searchQuery.toLowerCase()));
-      return matchTrack && matchSearch;
-    });
-  }, [activeTrack, searchQuery]);
-
-  // Placement sims don't have a strict track, but we can filter by search
-  const filteredSimulations = useMemo(() => {
-    return placementSimulations.filter(s => {
-      if (activeTrack !== "all") return false; // Placement is mixed, maybe hide if a specific track is selected
-      return s.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-             s.companyTag.toLowerCase().includes(searchQuery.toLowerCase());
-    });
-  }, [activeTrack, searchQuery]);
+  }, [activeTrack, searchQuery, dynamicSprints]);
 
   const filteredLedger = useMemo(() => {
-    return practiceLedger.filter(l => {
+    return dynamicLedger.filter(l => {
       const matchTrack = activeTrack === "all" || l.track === activeTrack;
       const matchSearch = l.title.toLowerCase().includes(searchQuery.toLowerCase());
       return matchTrack && matchSearch;
     });
-  }, [activeTrack, searchQuery]);
+  }, [activeTrack, searchQuery, dynamicLedger]);
 
-  const hasResults = filteredSprints.length > 0 || 
-                     filteredDiagnostics.length > 0 || 
-                     filteredBanks.length > 0 || 
-                     filteredSimulations.length > 0 || 
-                     filteredLedger.length > 0;
+  const hasResults = filteredSprints.length > 0 || filteredLedger.length > 0;
 
   // Stagger variants
   const container: Variants = {
@@ -132,25 +149,31 @@ export default function PracticePage() {
           initial="hidden"
           animate="show"
         >
-          <motion.div variants={reduced ? undefined : item}>
-            <QuickPracticeSection sprints={filteredSprints} />
-          </motion.div>
-          
-          <motion.div variants={reduced ? undefined : item}>
-            <RecommendedSection diagnostics={filteredDiagnostics} />
-          </motion.div>
-          
-          <motion.div variants={reduced ? undefined : item}>
-            <TopicsSection banks={filteredBanks} />
-          </motion.div>
-          
-          <motion.div variants={reduced ? undefined : item}>
-            <PlacementSection simulations={filteredSimulations} />
-          </motion.div>
-          
-          <motion.div variants={reduced ? undefined : item}>
-            <RecentPracticeSection ledger={filteredLedger} />
-          </motion.div>
+          {isLoading ? (
+            <div className="py-20 text-center text-[var(--ink-tertiary)]">Loading practice sets...</div>
+          ) : (
+            <>
+              <motion.div variants={reduced ? undefined : item}>
+                <QuickPracticeSection sprints={filteredSprints} />
+              </motion.div>
+              
+              <motion.div variants={reduced ? undefined : item}>
+                <RecommendedSection diagnostics={[]} />
+              </motion.div>
+              
+              <motion.div variants={reduced ? undefined : item}>
+                <TopicsSection banks={[]} />
+              </motion.div>
+              
+              <motion.div variants={reduced ? undefined : item}>
+                <PlacementSection simulations={[]} />
+              </motion.div>
+              
+              <motion.div variants={reduced ? undefined : item}>
+                <RecentPracticeSection ledger={filteredLedger} />
+              </motion.div>
+            </>
+          )}
         </motion.div>
       ) : (
         <div className="flex flex-col items-center justify-center py-20 text-center">

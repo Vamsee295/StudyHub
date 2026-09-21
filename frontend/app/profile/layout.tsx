@@ -2,8 +2,8 @@ import { AppLayout } from "@/components/layout/AppLayout";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Profile & Career Hub — Pathward",
-  description: "Manage your academic profile, learning path, target companies, and placement readiness.",
+  title: "Profile & Career Hub — StudyHub",
+  description: "Manage your placement profile, target companies, skills, and resume details.",
 };
 
 export default function ProfileLayout({

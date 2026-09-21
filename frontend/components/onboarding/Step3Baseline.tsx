@@ -77,7 +77,7 @@ export default function Step3Baseline({ data, update }: Step3BaselineProps) {
       <div className="bg-blue-50/70 border border-blue-200/80 rounded-xl p-4 flex gap-3 items-start">
         <Info className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
         <p className="text-xs text-slate-600 leading-relaxed">
-          <strong className="text-slate-800">Don't worry about being perfect here.</strong> As you complete practice problems, Pathward Engine will continuously re-calibrate your actual proficiency level.
+          <strong className="text-slate-800">Don't worry about being perfect here.</strong> As you complete practice problems, StudyHub Engine will continuously re-calibrate your actual proficiency level.
         </p>
       </div>
     </div>

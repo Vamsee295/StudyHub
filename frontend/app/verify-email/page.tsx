@@ -28,8 +28,8 @@ export default function VerifyEmailPage() {
             Verify your email
           </motion.h2>
           <motion.p {...fade(0.12)} className="text-[14.5px] text-ink-secondary max-w-sm mx-auto leading-relaxed mb-7">
-            We&rsquo;ve sent a verification link to your inbox. Click it to activate your Pathward
-            account and start your preparation track.
+            We&rsquo;ve sent a verification link to your inbox. Click it to activate your StudyHub
+            account and begin your placement journey.
           </motion.p>
 
           <motion.button

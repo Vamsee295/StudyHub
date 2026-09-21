@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { AppLayout } from "@/components/layout/AppLayout";
 
 export const metadata: Metadata = {
-  title: "Practice — Pathward Placement Engine",
-  description: "Build speed, problem-solving intuition, and interview confidence.",
+  title: "Practice — StudyHub Placement Engine",
+  description: "Curated coding problems, SQL queries, and technical interview questions.",
 };
 
 export default function PracticeLayout({

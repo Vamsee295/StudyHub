@@ -6,11 +6,14 @@ import { usePathname, useRouter } from "next/navigation";
 import { Search, Bell, ChevronDown, Menu, X, Loader2 } from "lucide-react";
 import { clsx } from "clsx";
 import { ProfileDropdown } from "@/components/layout/ProfileDropdown";
+import { NotificationDropdown } from "@/components/layout/NotificationDropdown";
+import { notificationService, AppNotification } from "@/lib/services/notificationService";
 import { onboardingService, BLANK_USER_PROFILE } from "@/lib/services/onboardingService";
 import { UserProfile } from "@/types";
 import { authApi } from "@/lib/api/auth";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { useProfile } from "@/components/providers/ProfileProvider";
+import { StudyHubLogo } from "@/components/ui/StudyHubLogo";
 
 const navLinks = [
   { name: "Dashboard", href: "/dashboard" },
@@ -32,6 +35,12 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   // Profile Quick Launcher Dropdown State
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
 
+  // Notification State
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [notifications, setNotifications] = useState<AppNotification[]>([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [isLoadingNotifications, setIsLoadingNotifications] = useState(true);
+
   // Active User Profile State from Global Context
   const { draftProfile: profile, isLoading } = useProfile();
 
@@ -40,6 +49,56 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (mounted && user?.id) {
+      const loadNotifications = async () => {
+        try {
+          const [notifs, unread] = await Promise.all([
+            notificationService.getNotifications(),
+            notificationService.getUnreadCount()
+          ]);
+          setNotifications(notifs);
+          setUnreadCount(unread);
+        } catch (err) {
+          console.error("Failed to load notifications", err);
+        } finally {
+          setIsLoadingNotifications(false);
+        }
+      };
+
+      loadNotifications();
+
+      const unsubscribe = notificationService.subscribeToNotifications(user.id, (newNotification) => {
+        setNotifications((prev) => [newNotification, ...prev]);
+        setUnreadCount((prev) => prev + 1);
+      });
+
+      return () => {
+        unsubscribe();
+      };
+    }
+  }, [mounted, user?.id]);
+
+  const handleMarkAsRead = async (id: string) => {
+    try {
+      await notificationService.markAsRead(id);
+      setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
+      setUnreadCount(prev => Math.max(0, prev - 1));
+    } catch (err) {
+      console.error("Failed to mark as read", err);
+    }
+  };
+
+  const handleMarkAllAsRead = async () => {
+    try {
+      await notificationService.markAllAsRead();
+      setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+      setUnreadCount(0);
+    } catch (err) {
+      console.error("Failed to mark all as read", err);
+    }
+  };
 
   // Strict Onboarding Route Guard
   useEffect(() => {
@@ -103,26 +162,29 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     return null;
   }
 
+  // Check if current route is a dedicated lesson workspace (/learn/[subject]/[topic])
+  const isLessonWorkspace = Boolean(
+    pathname?.startsWith('/learn/') && 
+    pathname.split('/').filter(Boolean).length >= 3
+  );
+
   return (
-    <div className="min-h-screen flex flex-col bg-[var(--canvas)] grid-texture selection:bg-[var(--accent-soft)] selection:text-[var(--accent-hover)] text-[var(--ink)] font-sans relative">
+    <div className={clsx(
+      "flex flex-col bg-[var(--canvas)] selection:bg-[var(--accent-soft)] selection:text-[var(--accent-hover)] text-[var(--ink)] font-sans relative",
+      isLessonWorkspace ? "h-screen overflow-hidden" : "min-h-screen grid-texture"
+    )}>
       {/* TOP APP NAVIGATION BAR */}
-      <header className="sticky top-0 z-40 w-full max-w-full bg-[var(--surface)]/90 backdrop-blur-md border-b border-[var(--border)]/80 shadow-[0_1px_2px_0_rgba(0,0,0,0.03)] box-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3 sm:gap-4 w-full min-w-0 box-border">
+      <header className={clsx(
+        "shrink-0 z-40 w-full max-w-full bg-[var(--surface)]/90 backdrop-blur-md border-b border-[var(--border)]/80 shadow-[0_1px_2px_0_rgba(0,0,0,0.03)] box-border",
+        !isLessonWorkspace && "sticky top-0"
+      )}>
+        <div className={clsx(
+          "h-16 flex items-center justify-between gap-3 sm:gap-4 w-full min-w-0 box-border",
+          isLessonWorkspace ? "px-4 sm:px-6" : "max-w-7xl mx-auto px-4 sm:px-6"
+        )}>
           {/* Brand & Primary Nav */}
           <div className="flex items-center gap-3 xl:gap-6 min-w-0">
-            <Link href="/dashboard" className="flex items-center gap-2.5 group shrink-0">
-              <div className="w-8 h-8 rounded-lg bg-[var(--accent)] flex items-center justify-center text-white font-newsreader font-bold text-lg shadow-sm shadow-[var(--accent)]/30 transition-transform group-hover:scale-105">
-                P
-              </div>
-              <div className="flex items-baseline gap-1.5">
-                <span className="font-sans font-bold text-[var(--ink)] tracking-tight text-[16px] sm:text-[17px]">
-                  PATHWARD
-                </span>
-                <span className="hidden sm:inline-block text-[10px] font-mono uppercase px-1.5 py-0.5 rounded bg-[var(--surface-subdued)] text-[var(--ink-secondary)] font-semibold tracking-wider">
-                  Engine
-                </span>
-              </div>
-            </Link>
+            <StudyHubLogo href="/dashboard" size="md" showBadge={false} />
 
             {/* Nav Links */}
             <nav className="hidden lg:flex items-center gap-0.5 xl:gap-1 text-[13px] xl:text-[13.5px]">
@@ -150,14 +212,37 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           {/* Right Utility Actions */}
           <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             {/* Notifications */}
-            <button
-              className="relative p-2 text-[var(--ink-secondary)] hover:text-[var(--ink)] hover:bg-[var(--surface-subdued)] rounded-lg transition-colors shrink-0"
-              type="button"
-              aria-label="Notifications"
-            >
-              <Bell className="w-[18px] h-[18px] sm:w-[20px] sm:h-[20px]" />
-              <span className="absolute top-2 right-2.5 w-2 h-2 rounded-full bg-[var(--accent)] ring-2 ring-[var(--surface)]"></span>
-            </button>
+            <div className="relative shrink-0 flex">
+              <button
+                className={clsx(
+                  "relative p-2 rounded-lg transition-colors shrink-0",
+                  notificationsOpen 
+                    ? "text-[var(--ink)] bg-[var(--surface-subdued)]" 
+                    : "text-[var(--ink-secondary)] hover:text-[var(--ink)] hover:bg-[var(--surface-subdued)]"
+                )}
+                type="button"
+                onClick={() => setNotificationsOpen(prev => !prev)}
+                aria-label="Notifications"
+                aria-expanded={notificationsOpen}
+              >
+                <Bell className="w-[18px] h-[18px] sm:w-[20px] sm:h-[20px]" />
+                {unreadCount > 0 && (
+                  <span className="absolute top-1.5 right-1.5 min-w-[16px] h-[16px] px-1 rounded-full bg-[var(--error)] text-white text-[10px] font-bold flex items-center justify-center ring-2 ring-[var(--surface)] shadow-sm">
+                    {unreadCount > 99 ? '99+' : unreadCount}
+                  </span>
+                )}
+              </button>
+              
+              <NotificationDropdown 
+                isOpen={notificationsOpen}
+                onClose={() => setNotificationsOpen(false)}
+                notifications={notifications}
+                isLoading={isLoadingNotifications}
+                onMarkAsRead={handleMarkAsRead}
+                onMarkAllAsRead={handleMarkAllAsRead}
+                onNavigate={(link) => router.push(link)}
+              />
+            </div>
             <div className="h-5 w-px bg-[var(--border)] hidden sm:block shrink-0"></div>
 
             {/* Profile Control with Anchored Dropdown */}
@@ -239,24 +324,31 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       </header>
 
       {/* MAIN PAGE CONTAINER */}
-      <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8 box-border min-w-0">
+      <main className={clsx(
+        "flex-1 w-full box-border min-w-0",
+        isLessonWorkspace 
+          ? "h-[calc(100vh-4rem)] min-h-0 overflow-hidden p-0 m-0" 
+          : "max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8"
+      )}>
         {children}
       </main>
 
       {/* MINIMAL FOOTER */}
-      <footer className="w-full max-w-full bg-[var(--surface)] border-t border-[var(--border)]/80 py-6 mt-16 box-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[var(--ink-secondary)] font-normal box-border min-w-0">
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-[var(--success)]"></span>
-            <span>PATHWARD · Mapped Learning &amp; Placement Engine · Verified Cycle 2026</span>
+      {!isLessonWorkspace && (
+        <footer className="w-full max-w-full bg-[var(--surface)] border-t border-[var(--border)]/80 py-6 mt-16 box-border">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[var(--ink-secondary)] font-normal box-border min-w-0">
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-[var(--success)]"></span>
+              <span>STUDYHUB · Mapped Learning &amp; Placement Engine · Verified Cycle 2026</span>
+            </div>
+            <div className="flex items-center gap-4 text-[var(--ink-tertiary)]">
+              <a className="hover:text-[var(--ink-secondary)] transition-colors" href="#">Privacy</a>
+              <a className="hover:text-[var(--ink-secondary)] transition-colors" href="#">Terms of Verification</a>
+              <a className="hover:text-[var(--ink-secondary)] transition-colors" href="#">Campus Network</a>
+            </div>
           </div>
-          <div className="flex items-center gap-4 text-[var(--ink-tertiary)]">
-            <a className="hover:text-[var(--ink-secondary)] transition-colors" href="#">Privacy</a>
-            <a className="hover:text-[var(--ink-secondary)] transition-colors" href="#">Terms of Verification</a>
-            <a className="hover:text-[var(--ink-secondary)] transition-colors" href="#">Campus Network</a>
-          </div>
-        </div>
-      </footer>
+        </footer>
+      )}
     </div>
   );
 }

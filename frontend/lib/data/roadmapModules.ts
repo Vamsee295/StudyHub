@@ -50,12 +50,12 @@ export const roadmapModules: RoadmapModule[] = [
     shortTitle: "01 Programming Fundamentals",
     description:
       "Master underlying memory models, pointer mechanics, data representations, and standard I/O semantics essential for building reliable code.",
-    status: "completed",
-    statusText: "Completed",
-    progressPct: 100,
-    progressDetail: "180 / 180 exercises completed",
-    targetVelocity: "8 questions/day",
-    clearanceEstimate: "Foundation Mastered",
+    status: "upcoming",
+    statusText: "Not Started",
+    progressPct: 0,
+    progressDetail: "0 / 93 lessons completed",
+    targetVelocity: "2 lessons/day",
+    clearanceEstimate: "Pending",
     topics: [
       "Arrays & Pointers",
       "Call Stack & Heap",

@@ -6,7 +6,7 @@ export function ResourcesHeader() {
       <div className="max-w-2xl">
         <div className="flex items-center gap-2 text-[11px] font-mono tracking-wider text-[var(--accent)] font-semibold mb-4 uppercase">
           <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] animate-pulse"></span>
-          PATHWARD RESOURCE LIBRARY // CURATED PREPARATION MATERIAL
+          STUDYHUB RESOURCE LIBRARY // CURATED PREPARATION MATERIAL
         </div>
         <h1 className="text-3xl md:text-4xl font-newsreader font-medium text-[var(--ink)] tracking-tight mb-3">
           Your preparation library.<br />

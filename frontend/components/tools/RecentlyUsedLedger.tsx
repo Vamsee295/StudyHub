@@ -98,7 +98,7 @@ export function RecentlyUsedLedger({ items }: { items: RecentToolAuditRecord[] }
         <div className="bg-[var(--surface-subdued)]/50 border-t border-[var(--border)] py-2.5 px-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-[10.5px] font-mono text-[var(--ink-tertiary)] uppercase tracking-wider">
           <div className="flex items-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full bg-[var(--success)]"></span>
-            Verified Pathward Workbench Tools v2.6 · Real-time local execution & progress sync
+            Verified StudyHub Workbench Tools v2.6 · Real-time local execution & progress sync
           </div>
           <div>LATENCY: 12ms · ALL SYSTEMS OPERATIONAL</div>
         </div>

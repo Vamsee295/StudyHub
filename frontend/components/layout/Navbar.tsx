@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Menu, Search, X } from "lucide-react";
+import { StudyHubLogo } from "@/components/ui/StudyHubLogo";
 
 const navLinks = [
   { href: "#learn", label: "Learn" },
@@ -34,14 +35,7 @@ export function Navbar() {
       }`}
     >
       <div className="container-max px-5 md:px-8 h-16 flex items-center justify-between gap-4">
-        <a href="#top" className="flex items-center gap-2 shrink-0">
-          <span className="w-6 h-6 rounded-md bg-ink flex items-center justify-center">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-              <path d="M7 17.5L13 8L19 17.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </span>
-          <span className="font-display font-medium text-[17px] tracking-tight">Pathward</span>
-        </a>
+        <StudyHubLogo href="#top" size="md" showBadge={false} />
 
         <nav className="hidden lg:flex items-center gap-7 text-[14px]">
           {navLinks.map((l) => (

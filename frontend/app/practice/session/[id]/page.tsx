@@ -1,27 +1,50 @@
+"use client";
+
 import Link from "next/link";
-import { ArrowLeft, Play, Layout, Terminal, Code2, Database } from "lucide-react";
-import { quickSprints, recommendedDiagnostics, placementSimulations } from "@/lib/data/practiceData";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { ArrowLeft, Play, Layout, Terminal, Code2, Database, Check } from "lucide-react";
+import { practiceApi, PracticeSet, PracticeQuestion } from "@/lib/api/practice";
 
-// Generate static params for existing practice IDs if desired
-export function generateStaticParams() {
-  const sprintIds = quickSprints.map(s => ({ id: s.id }));
-  const diagIds = recommendedDiagnostics.map(d => ({ id: d.id }));
-  const simIds = placementSimulations.map(s => ({ id: s.id }));
+export default function PracticeSessionPage({ params }: { params: { id: string } }) {
+  const router = useRouter();
+  const id = params.id;
   
-  return [...sprintIds, ...diagIds, ...simIds];
-}
+  const [practiceSet, setPracticeSet] = useState<PracticeSet | null>(null);
+  const [questions, setQuestions] = useState<PracticeQuestion[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  useEffect(() => {
+    async function loadSet() {
+      try {
+        const data = await practiceApi.getPracticeSet(id);
+        if (data.set) setPracticeSet(data.set);
+        if (data.questions) setQuestions(data.questions);
+      } catch (err) {
+        console.error("Failed to load practice set", err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    loadSet();
+  }, [id]);
 
-export default async function PracticeSessionPage({ params }: { params: Promise<{ id: string }> }) {
-  const resolvedParams = await params;
-  const id = resolvedParams.id;
-  
-  // Try to find what they clicked
-  const sprint = quickSprints.find(s => s.id === id);
-  const diag = recommendedDiagnostics.find(d => d.id === id);
-  const sim = placementSimulations.find(s => s.id === id);
-  
-  const title = sprint?.title || diag?.title || sim?.title || "Practice Session";
-  const desc = sprint?.tag || diag?.badge || sim?.companyTag || "Interactive Workspace";
+  const handleSubmit = async () => {
+    if (!practiceSet) return;
+    setIsSubmitting(true);
+    try {
+      // Mock score: assume they got all questions right for now
+      await practiceApi.createAttempt(practiceSet.id, questions.length, questions.length, 300);
+      router.push("/practice");
+    } catch (err) {
+      console.error("Failed to submit attempt", err);
+      setIsSubmitting(false);
+    }
+  };
+
+  const title = practiceSet?.title || "Practice Session";
+  const desc = practiceSet ? `${practiceSet.domain.toUpperCase()} · ${practiceSet.difficulty.toUpperCase()}` : "Interactive Workspace";
 
   return (
     <div className="min-h-[80vh] flex flex-col bg-[var(--canvas)] -mt-8 -mx-6 rounded-t-xl overflow-hidden border-t border-[var(--border)]">
@@ -43,9 +66,17 @@ export default async function PracticeSessionPage({ params }: { params: Promise<
             <Layout className="w-3.5 h-3.5" />
             Workspace Layout
           </button>
-          <button className="flex items-center gap-1.5 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white px-4 py-1.5 rounded-md text-[12px] font-semibold transition-colors">
-            <Play className="w-3.5 h-3.5" />
-            Run Code
+          <button 
+            onClick={handleSubmit}
+            disabled={isSubmitting || isLoading}
+            className="flex items-center gap-1.5 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white px-4 py-1.5 rounded-md text-[12px] font-semibold transition-colors disabled:opacity-50"
+          >
+            {isSubmitting ? <span className="animate-pulse">Submitting...</span> : (
+              <>
+                <Check className="w-3.5 h-3.5" />
+                Submit Attempt
+              </>
+            )}
           </button>
         </div>
       </header>
@@ -57,20 +88,21 @@ export default async function PracticeSessionPage({ params }: { params: Promise<
           <div className="p-6">
             <h1 className="text-xl font-bold text-[var(--ink)] mb-4">{title}</h1>
             
-            <div className="prose prose-sm max-w-none text-[var(--ink)] prose-headings:font-bold prose-headings:text-[var(--ink)] prose-a:text-[var(--accent)]">
-              <p className="text-[14px] leading-relaxed mb-6">
-                Welcome to the interactive session for <strong>{title}</strong>. This is a placeholder workspace designed to demonstrate the routing structure.
-              </p>
-              
-              <div className="bg-[var(--surface-subdued)] border border-[var(--border)] rounded-lg p-4 mb-6">
-                <h3 className="text-[13px] font-semibold mb-2 flex items-center gap-1.5">
-                  <Terminal className="w-4 h-4" /> Example Input
-                </h3>
-                <pre className="text-[12px] font-mono bg-[var(--canvas)] border border-[var(--border)] rounded p-2 text-[var(--ink-secondary)]">
-                  {`Input: nums = [2,7,11,15], target = 9\nOutput: [0,1]\nExplanation: Because nums[0] + nums[1] == 9, we return [0, 1].`}
-                </pre>
+            {isLoading ? (
+              <div className="text-[var(--ink-tertiary)]">Loading problem statements...</div>
+            ) : (
+              <div className="prose prose-sm max-w-none text-[var(--ink)] prose-headings:font-bold prose-headings:text-[var(--ink)] prose-a:text-[var(--accent)] flex flex-col gap-8">
+                {questions.map((q, i) => (
+                  <div key={q.id} className="border-b border-[var(--border)] pb-6 last:border-0">
+                    <h3 className="text-[16px] font-bold mb-2">Question {i + 1}: {q.title}</h3>
+                    <p className="text-[14px] leading-relaxed mb-4">{q.problem_statement}</p>
+                    <div className="text-[12px] text-[var(--ink-secondary)] font-mono bg-[var(--surface-subdued)] p-2 rounded">
+                      <span className="font-semibold">Hint:</span> {q.explanation}
+                    </div>
+                  </div>
+                ))}
               </div>
-            </div>
+            )}
           </div>
         </div>
         

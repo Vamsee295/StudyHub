@@ -20,6 +20,8 @@ import {
 } from "lucide-react";
 import { clsx } from "clsx";
 import { roadmapModules, RoadmapModule } from "@/lib/data/roadmapModules";
+import { DsaRoadmapView } from "@/components/roadmaps/DsaRoadmapView";
+import { ProgrammingCurriculumView } from "@/components/roadmaps/ProgrammingCurriculumView";
 
 function RoadmapContent() {
   const searchParams = useSearchParams();
@@ -205,15 +207,27 @@ function RoadmapContent() {
           <div className="bg-[var(--surface)] rounded-2xl p-6 sm:p-10 border border-[var(--border)] shadow-card flex flex-col gap-8">
             
             <AnimatePresence mode="wait">
-              <motion.div
-                key={activeModule.slug}
-                initial={reduced ? undefined : { opacity: 0, y: 8 }}
-                animate={reduced ? undefined : { opacity: 1, y: 0 }}
-                exit={reduced ? undefined : { opacity: 0, y: -8 }}
-                transition={{ duration: 0.25 }}
-                className="flex flex-col gap-8 w-full"
-              >
-                {/* STAGE HEADER & METADATA */}
+              {selectedSlug === "dsa" ? (
+                <motion.div
+                  key="dsa"
+                  initial={reduced ? undefined : { opacity: 0, y: 8 }}
+                  animate={reduced ? undefined : { opacity: 1, y: 0 }}
+                  exit={reduced ? undefined : { opacity: 0, y: -8 }}
+                  transition={{ duration: 0.25 }}
+                  className="w-full"
+                >
+                  <DsaRoadmapView />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key={activeModule.slug}
+                  initial={reduced ? undefined : { opacity: 0, y: 8 }}
+                  animate={reduced ? undefined : { opacity: 1, y: 0 }}
+                  exit={reduced ? undefined : { opacity: 0, y: -8 }}
+                  transition={{ duration: 0.25 }}
+                  className="flex flex-col gap-8 w-full"
+                >
+                  {/* STAGE HEADER & METADATA */}
                 <div className="flex flex-col gap-3 pb-2">
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-[var(--accent-soft)] border border-[var(--accent-soft-border)] text-[var(--accent)] text-[11px] font-mono font-bold tracking-wider uppercase">
@@ -267,10 +281,13 @@ function RoadmapContent() {
                   </div>
                 </div>
 
-                {/* 3 BALANCED SUB-CARDS GRID */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
-                  
-                  {/* CARD 1: WHAT TO LEARN */}
+                {/* DYNAMIC CONTENT BLOCK */}
+                {selectedSlug === "programming-fundamentals" ? (
+                  <ProgrammingCurriculumView />
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
+                    
+                    {/* CARD 1: WHAT TO LEARN */}
                   <div className="bg-[var(--surface)] p-6 rounded-xl border border-[var(--border)] hover:border-[var(--border-strong)] transition-all flex flex-col justify-between shadow-sm hover:shadow-md">
                     <div className="flex flex-col gap-3.5">
                       <div className="flex items-center gap-2 pb-2.5 border-b border-[var(--border)]/60">
@@ -380,8 +397,8 @@ function RoadmapContent() {
                       <ArrowRight className="w-4 h-4" />
                     </Link>
                   </div>
-
                 </div>
+                )}
 
                 {/* FEATURED SAMPLE INTERVIEW QUESTION CALLOUT CARD */}
                 <div className="mt-2 rounded-xl border border-[var(--accent-soft-border)] bg-[var(--accent-soft)]/40 p-6 sm:p-7 flex flex-col gap-4 relative overflow-hidden shadow-sm">
@@ -433,7 +450,8 @@ function RoadmapContent() {
                   </AnimatePresence>
                 </div>
 
-              </motion.div>
+                </motion.div>
+              )}
             </AnimatePresence>
 
           </div>

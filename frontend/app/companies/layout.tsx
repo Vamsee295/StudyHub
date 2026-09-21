@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { AppLayout } from "@/components/layout/AppLayout";
 
 export const metadata: Metadata = {
-  title: "Companies — Pathward Placement Engine",
+  title: "Companies — StudyHub Placement Engine",
   description: "Explore verified hiring patterns, selection rounds, role requirements, and company-specific preparation sprints.",
 };
 

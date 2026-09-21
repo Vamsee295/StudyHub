@@ -134,7 +134,7 @@ export const curatedPlacementResources: LibraryResource[] = [
     rating: 4.9,
     reviewsCount: 1240,
     isVerified: true,
-    author: "Pathward Engine",
+    author: "StudyHub Engine",
     description: "Deep dive into internal workings of HashMap, ConcurrentHashMap, ArrayList vs LinkedList, and tree-based collections.",
     tags: ["Java", "Collections", "Data Structures", "Interviews"],
     slug: "java-collections-handbook"
@@ -149,7 +149,7 @@ export const curatedPlacementResources: LibraryResource[] = [
     rating: 4.8,
     reviewsCount: 890,
     isVerified: true,
-    author: "Pathward Engine",
+    author: "StudyHub Engine",
     description: "Master the sliding window technique. Fixed vs dynamic windows, optimized string manipulation, and classic interview problems.",
     tags: ["DSA", "Arrays", "Strings", "Algorithms"],
     slug: "dsa-sliding-window"
@@ -164,7 +164,7 @@ export const curatedPlacementResources: LibraryResource[] = [
     rating: 4.9,
     reviewsCount: 2100,
     isVerified: true,
-    author: "Pathward Engine",
+    author: "StudyHub Engine",
     description: "Understanding ROW_NUMBER, RANK, DENSE_RANK, LEAD, LAG, and advanced analytical queries for product MNC interviews.",
     tags: ["SQL", "Analytics", "Database", "Queries"],
     slug: "sql-window-functions"
@@ -179,7 +179,7 @@ export const curatedPlacementResources: LibraryResource[] = [
     rating: 4.7,
     reviewsCount: 560,
     isVerified: true,
-    author: "Pathward Engine",
+    author: "StudyHub Engine",
     description: "TLB cache, page faults, page replacement algorithms (LRU, FIFO), and memory segmentation explained visually.",
     tags: ["OS", "Memory", "Architecture"],
     slug: "os-virtual-memory"
@@ -194,7 +194,7 @@ export const curatedPlacementResources: LibraryResource[] = [
     rating: 4.9,
     reviewsCount: 3400,
     isVerified: true,
-    author: "Pathward Engine",
+    author: "StudyHub Engine",
     description: "Load balancing, consistent hashing, database sharding, CAP theorem, and designing rate limiters.",
     tags: ["System Design", "Architecture", "Scalability"],
     slug: "system-design-patterns"
@@ -209,7 +209,7 @@ export const curatedPlacementResources: LibraryResource[] = [
     rating: 4.8,
     reviewsCount: 920,
     isVerified: true,
-    author: "Pathward Engine",
+    author: "StudyHub Engine",
     description: "From physical layer to application layer. Detailed breakdown of TCP 3-way handshake, congestion control, and UDP differences.",
     tags: ["Networks", "Protocols", "TCP/IP"],
     slug: "cn-tcp-ip"

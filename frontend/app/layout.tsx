@@ -4,9 +4,9 @@ import { AuthProvider } from "@/components/providers/AuthProvider";
 import { ProfileProvider } from "@/components/providers/ProfileProvider";
 
 export const metadata: Metadata = {
-  title: "Pathward — Everything you need to prepare for your first tech job",
+  title: "StudyHub — Everything you need to prepare for your tech career",
   description:
-    "Structured roadmaps, technical resources, company preparation, practice and career tools for engineering students — mapped into one system instead of five hundred PDFs.",
+    "Structured roadmaps, technical resources, company preparation, practice and career tools for engineering students — mapped into one unified learning system.",
 };
 
 export default function RootLayout({

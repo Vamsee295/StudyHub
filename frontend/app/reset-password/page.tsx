@@ -49,7 +49,7 @@ export default function ResetPasswordPage() {
             >
               <AuthHeading
                 title="Create a new password."
-                subtitle="Choose a new password for your Pathward account."
+                subtitle="Choose a new password for your StudyHub account."
               />
 
               <form className="space-y-4" onSubmit={handleSubmit} noValidate>

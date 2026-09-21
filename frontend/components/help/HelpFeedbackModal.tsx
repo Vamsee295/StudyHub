@@ -119,7 +119,7 @@ export function HelpFeedbackModal({ isOpen, onClose }: HelpFeedbackModalProps) {
                 {submitted ? (
                   <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-center text-xs text-emerald-800 flex items-center justify-center gap-2 animate-in fade-in">
                     <Check className="w-4 h-4 text-emerald-600" />
-                    Thank you! Your feedback has been transmitted to the Pathward Engine team.
+                    Thank you! Your feedback has been transmitted to the StudyHub Engine team.
                   </div>
                 ) : (
                   <form onSubmit={handleSubmit} className="space-y-3">
@@ -144,7 +144,7 @@ export function HelpFeedbackModal({ isOpen, onClose }: HelpFeedbackModalProps) {
                       rows={3}
                       value={feedbackText}
                       onChange={(e) => setFeedbackText(e.target.value)}
-                      placeholder="Describe what happened, or share an idea to improve Pathward..."
+                      placeholder="Describe what happened, or share an idea to improve StudyHub..."
                       required
                       className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-blue-500 focus:bg-white transition-all"
                     />

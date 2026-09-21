@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import { StudyHubLogo } from "@/components/ui/StudyHubLogo";
 
 const pipeline = ["Learn", "Practice", "Prepare", "Build", "Interview"];
 
@@ -61,20 +62,7 @@ export function BrandPanel() {
         </motion.div>
 
         <motion.div {...fade(1)} className="mt-8 sm:mt-12 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-ink flex items-center justify-center shrink-0 shadow-sm">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-              <path d="M7 17.5L13 8L19 17.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </div>
-          <div>
-            <div className="flex items-center gap-1.5">
-              <span className="text-lg font-bold tracking-tight text-ink">PATHWARD</span>
-              <span className="text-[10px] tag-mono font-medium uppercase bg-surface-subdued text-ink-secondary px-1.5 py-0.5 rounded border border-border/60">
-                PLATFORM
-              </span>
-            </div>
-            <p className="text-[11px] text-ink-tertiary tag-mono tracking-wide">MAPPED LEARNING &amp; CAREER ENGINE</p>
-          </div>
+          <StudyHubLogo href="/" size="lg" showBadge={false} />
         </motion.div>
       </header>
 
@@ -119,7 +107,7 @@ export function BrandPanel() {
           ))}
         </div>
         <div className="mt-5 text-[11px] tag-mono text-ink-tertiary">
-          Pathward · Mapped Learning &amp; Placement Preparation Platform
+          StudyHub · Engineering Placement Preparation &amp; Career Engine
         </div>
       </motion.footer>
     </section>

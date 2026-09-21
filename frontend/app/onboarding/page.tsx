@@ -20,6 +20,7 @@ import Step3Baseline from '@/components/onboarding/Step3Baseline';
 import Step4Targets from '@/components/onboarding/Step4Targets';
 import StepCompletionOverlay from '@/components/onboarding/StepCompletionOverlay';
 import WizardNav from '@/components/onboarding/WizardNav';
+import { StudyHubLogo } from '@/components/ui/StudyHubLogo';
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -48,7 +49,7 @@ export default function OnboardingPage() {
   
   const [isClient, setIsClient] = useState(false);
 
-  const { draftProfile: canonicalProfile, isLoading: profileLoading } = useProfile();
+  const { draftProfile: canonicalProfile, isLoading: profileLoading, refreshProfile } = useProfile();
 
   useEffect(() => {
     setIsClient(true);
@@ -111,15 +112,26 @@ export default function OnboardingPage() {
   };
 
   const handleComplete = async () => {
-    // Actually generate roadmap and finish
-    await onboardingService.completeOnboarding(profile as UserProfile);
+    try {
+      await onboardingService.completeOnboarding(profile as UserProfile);
+    } catch (error) {
+      console.error("Failed to complete onboarding:", error);
+    }
+    
+    try {
+      await refreshProfile();
+    } catch (error) {
+      console.error("Failed to refresh profile:", error);
+    }
+
     try {
       const { aiApi } = await import('@/lib/api/ai');
       await aiApi.generatePlan();
     } catch (error) {
       console.error("Failed to generate AI plan:", error);
     }
-    router.push('/dashboard');
+    
+    router.replace('/dashboard');
   };
 
   // State update helpers
@@ -168,17 +180,7 @@ export default function OnboardingPage() {
       {/* Header */}
       <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <span className="w-7 h-7 rounded-md bg-slate-900 flex items-center justify-center shrink-0">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-                <path d="M7 17.5L13 8L19 17.5" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </span>
-            <span className="font-bold text-[16px] tracking-tight text-slate-900">PATHWARD</span>
-            <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 font-semibold border border-blue-200 tracking-wider">
-              ENGINE
-            </span>
-          </div>
+          <StudyHubLogo href="/onboarding" size="md" showBadge={false} />
 
           <div className="flex items-center gap-4 sm:gap-6">
             <div className="hidden sm:flex items-center gap-2 text-xs font-mono text-slate-500">

@@ -333,7 +333,7 @@ export default function HelpPage() {
               For urgent queries regarding upcoming campus drive schedules or college slot approvals, reach out to your faculty placement officer or email:
             </p>
             <div className="pt-1">
-              <span className="font-mono text-slate-800 font-semibold block">support@pathward.edu</span>
+              <span className="font-mono text-slate-800 font-semibold block">support@studyhub.edu</span>
               <span className="text-[11px] text-slate-400">Response time within 4 campus working hours.</span>
             </div>
           </div>

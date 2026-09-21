@@ -182,7 +182,7 @@ export default function TargetCompaniesPage() {
           <Building2 className="w-12 h-12 text-slate-300 mx-auto mb-3" />
           <h3 className="text-base font-bold text-[var(--ink)]">No companies tracked yet</h3>
           <p className="text-xs text-[var(--ink-secondary)] max-w-sm mx-auto mt-1 mb-4">
-            Select organizations from the Pathward directory to track hiring requirements and test pattern alignment.
+            Select organizations from the StudyHub directory to track hiring requirements and test pattern alignment.
           </p>
           <button
             onClick={() => setAddModalOpen(true)}

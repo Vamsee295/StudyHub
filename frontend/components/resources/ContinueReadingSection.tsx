@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { ArrowRight, BookOpen } from "lucide-react";
-import { continueReadingList } from "@/lib/data/resourcesData";
+interface ContinueReadingProps {
+  items: any[];
+}
 
-export function ContinueReadingSection() {
-  if (!continueReadingList || continueReadingList.length === 0) return null;
+export function ContinueReadingSection({ items }: ContinueReadingProps) {
+  if (!items || items.length === 0) return null;
 
   return (
     <section className="flex flex-col gap-6">
@@ -15,7 +17,7 @@ export function ContinueReadingSection() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-        {continueReadingList.map((item) => (
+        {items.map((item) => (
           <div 
             key={item.id}
             className="group relative bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-5 hover:border-[var(--accent)] hover:shadow-md hover:shadow-[var(--accent)]/5 transition-all flex flex-col h-full"

@@ -181,7 +181,12 @@ export default function DashboardPage() {
                   <h2 className="text-2xl font-newsreader font-normal text-[var(--ink)]">{continueLearning.module}</h2>
                   <p className="text-[var(--ink-secondary)] text-[15px] mt-1">{continueLearning.topic}</p>
                 </div>
-                <Link href="/learn" className="btn-primary shrink-0">
+                <Link 
+                  href={continueLearning.has_started && continueLearning.subject_slug && continueLearning.topic_slug 
+                    ? `/learn/${continueLearning.subject_slug}/${continueLearning.topic_slug}` 
+                    : "/learn"} 
+                  className="btn-primary shrink-0"
+                >
                   {continueLearning.has_started ? "Continue Module" : "Explore Modules"} <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>

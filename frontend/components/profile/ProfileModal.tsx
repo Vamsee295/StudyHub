@@ -190,7 +190,7 @@ export function ProfileModal({ isOpen, onClose, profile }: ProfileModalProps) {
             {savedSuccess && (
               <div className="bg-emerald-50 border-b border-emerald-200 px-6 py-2.5 flex items-center gap-2 text-xs font-medium text-emerald-800 animate-in fade-in duration-200">
                 <Check className="w-4 h-4 text-emerald-600 shrink-0" />
-                Profile changes successfully updated across Pathward.
+                Profile changes successfully updated across StudyHub.
               </div>
             )}
 

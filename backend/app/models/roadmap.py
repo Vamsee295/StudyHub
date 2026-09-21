@@ -1,5 +1,5 @@
 from datetime import datetime
-from sqlalchemy import Column, String, Integer, DateTime, ForeignKey
+from sqlalchemy import Column, String, Integer, DateTime, ForeignKey, Text, UniqueConstraint
 from sqlalchemy.orm import relationship
 from app.core.database import Base
 
@@ -37,3 +37,22 @@ class UserRoadmapProgress(Base):
     current_stage_id = Column(String, ForeignKey("roadmap_stages.id"))
     completed_stages = Column(Integer, default=0)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+class UserDsaProblemProgress(Base):
+    __tablename__ = "user_dsa_problem_progress"
+
+    id = Column(String, primary_key=True)
+    user_id = Column(String, ForeignKey("profiles.id", ondelete="CASCADE"), index=True)
+    problem_id = Column(Integer, index=True)
+    status = Column(String, default="not_started") # "not_started", "attempted", "solved"
+    attempts = Column(Integer, default=0)
+    solved_at = Column(DateTime, nullable=True)
+    attempted_at = Column(DateTime, nullable=True)
+    notes = Column(Text, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    __table_args__ = (
+        UniqueConstraint('user_id', 'problem_id', name='uq_user_dsa_problem'),
+    )
+

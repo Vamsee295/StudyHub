@@ -94,7 +94,7 @@ export function SettingsModal({ isOpen, onClose, profile, onSignOut }: SettingsM
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(profile, null, 2));
     const downloadAnchor = document.createElement("a");
     downloadAnchor.setAttribute("href", dataStr);
-    downloadAnchor.setAttribute("download", `pathward_profile_${profile.identity?.fullName || "user"}.json`);
+    downloadAnchor.setAttribute("download", `studyhub_profile_${profile.identity?.fullName || "user"}.json`);
     document.body.appendChild(downloadAnchor);
     downloadAnchor.click();
     downloadAnchor.remove();
@@ -307,7 +307,7 @@ export function SettingsModal({ isOpen, onClose, profile, onSignOut }: SettingsM
                           <span className="text-xs font-bold text-slate-700">Dark Mode</span>
                           <span className="text-[10px] font-mono text-slate-400 uppercase">Coming Soon</span>
                         </div>
-                        <p className="text-[11px] text-slate-400">Pathward's design language prioritizes technical clarity on white paper surfaces.</p>
+                        <p className="text-[11px] text-slate-400">StudyHub's design language prioritizes technical clarity on white paper surfaces.</p>
                       </div>
                     </div>
                   </div>
@@ -388,7 +388,7 @@ export function SettingsModal({ isOpen, onClose, profile, onSignOut }: SettingsM
                         />
                         <div className="flex flex-col">
                           <span className="font-semibold text-slate-800">Diagnostic Practice Telemetry</span>
-                          <span className="text-slate-500">Permit Pathward to calibrate problem recommendations based on your time-to-solve data.</span>
+                          <span className="text-slate-500">Permit StudyHub to calibrate problem recommendations based on your time-to-solve data.</span>
                         </div>
                       </label>
 

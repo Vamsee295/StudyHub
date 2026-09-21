@@ -7,7 +7,7 @@ from sqlalchemy.future import select
 from app.models.profile import Profile, ProfileCareerPath, ProfileSkillBaseline
 from app.models.company import UserCompanyTarget, Company
 from app.models.daily_plans import DailyPlan, DailyPlanItem
-from app.models.learning import UserTopicProgress, LearningTopic, LearningModule
+from app.models.learning import UserLearningProgress, LearningTopic, LearningModule, LearningSubject
 
 router = APIRouter(prefix="/api/dashboard", tags=["dashboard"])
 
@@ -67,20 +67,23 @@ async def get_dashboard(user: Any = Depends(get_current_user)):
         
         # 4. Fetch Continue Learning Progress
         recent_prog = await session.execute(
-            select(UserTopicProgress, LearningTopic, LearningModule)
-            .join(LearningTopic, UserTopicProgress.topic_id == LearningTopic.id)
+            select(UserLearningProgress, LearningTopic, LearningModule, LearningSubject)
+            .join(LearningTopic, UserLearningProgress.topic_id == LearningTopic.id)
             .join(LearningModule, LearningTopic.module_id == LearningModule.id)
-            .where(UserTopicProgress.user_id == user.id)
-            .order_by(UserTopicProgress.completed_at.desc())
+            .join(LearningSubject, LearningModule.subject_id == LearningSubject.id)
+            .where(UserLearningProgress.user_id == user.id)
+            .order_by(UserLearningProgress.last_accessed_at.desc())
         )
         first_recent = recent_prog.first()
         
         if first_recent:
-            _, topic, module = first_recent
+            prog_rec, topic, module, subject = first_recent
             continue_learning = {
                 "module": module.title,
                 "topic": topic.title,
-                "progress": 50, # In progress
+                "subject_slug": subject.slug,
+                "topic_slug": topic.slug,
+                "progress": prog_rec.progress,
                 "has_started": True
             }
         else:

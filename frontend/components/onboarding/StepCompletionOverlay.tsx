@@ -41,7 +41,7 @@ export default function StepCompletionOverlay({ profile, onComplete, onEdit }: S
         </h2>
         <p className="text-sm text-slate-500 leading-relaxed">
           {generating 
-            ? 'Pathward Engine is mapping your skills against current industry benchmarks and structuring your personalized learning syllabus.'
+            ? 'StudyHub Engine is mapping your skills against current industry benchmarks and structuring your personalized learning syllabus.'
             : 'Your roadmap has been successfully generated based on your academic baseline and target company archetypes.'}
         </p>
       </div>

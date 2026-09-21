@@ -31,7 +31,7 @@ function AuthTabs({ active, onChange }: { active: "login" | "signup", onChange: 
           Sign up
         </button>
       </div>
-      <span className="text-[11px] tag-mono text-ink-tertiary tracking-wider uppercase">Pathward ID</span>
+      <span className="text-[11px] tag-mono text-ink-tertiary tracking-wider uppercase">StudyHub ID</span>
     </div>
   );
 }
@@ -239,7 +239,7 @@ function AuthForm() {
             </motion.div>
           ) : (
             <motion.p {...fade(0.36)} className="text-[11px] text-ink-tertiary leading-tight pt-1">
-              By creating an account, you agree to Pathward&rsquo;s{" "}
+              By creating an account, you agree to StudyHub&rsquo;s{" "}
               <a href="#" className="underline hover:text-ink">
                 Terms of Study
               </a>{" "}

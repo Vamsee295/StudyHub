@@ -2,7 +2,7 @@ import { AppLayout } from "@/components/layout/AppLayout";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Help & Feedback — Pathward",
+  title: "Help & Feedback — StudyHub",
   description: "Placement preparation support, frequently asked questions, problem reports, and student assistance.",
 };
 

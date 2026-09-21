@@ -2,8 +2,8 @@ import { AppLayout } from "@/components/layout/AppLayout";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Templates — Pathward Placement Engine",
-  description: "Curated templates for resumes, cover letters, and outreach.",
+  title: "Templates — StudyHub Placement Engine",
+  description: "Verified engineering resume templates, cold email scripts, and preparation rubrics.",
 };
 
 export default function TemplatesLayout({

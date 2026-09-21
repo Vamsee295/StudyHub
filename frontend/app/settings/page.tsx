@@ -90,7 +90,7 @@ export default function SettingsPage() {
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(profile, null, 2));
     const downloadAnchor = document.createElement("a");
     downloadAnchor.setAttribute("href", dataStr);
-    downloadAnchor.setAttribute("download", `pathward_profile_${profile.identity?.fullName || "user"}.json`);
+    downloadAnchor.setAttribute("download", `studyhub_profile_${profile.identity?.fullName || "user"}.json`);
     document.body.appendChild(downloadAnchor);
     downloadAnchor.click();
     downloadAnchor.remove();
@@ -595,7 +595,7 @@ export default function SettingsPage() {
                   <Trash2 className="w-5 h-5 text-red-600" /> Delete Account
                 </h2>
                 <p className="text-xs text-[var(--ink-secondary)] mt-0.5">
-                  Permanently erase your Pathward preparation workspace, submission history, and placement targets.
+                  Permanently erase your StudyHub preparation workspace, submission history, and placement targets.
                 </p>
               </div>
 

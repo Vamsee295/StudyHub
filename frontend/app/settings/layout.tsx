@@ -2,7 +2,7 @@ import { AppLayout } from "@/components/layout/AppLayout";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Settings — Pathward",
+  title: "Settings — StudyHub",
   description: "Configure your account, alerts, privacy, security, and system preferences.",
 };
 

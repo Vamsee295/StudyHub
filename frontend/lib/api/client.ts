@@ -72,6 +72,18 @@ export const apiClient = {
   
   async delete(endpoint: string, options: RequestInit = {}) {
     return fetchAPI(endpoint, { ...options, method: 'DELETE' });
+  },
+  
+  async patch(endpoint: string, data: unknown, options: RequestInit = {}) {
+    return fetchAPI(endpoint, {
+      ...options,
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        ...options.headers,
+      },
+      body: JSON.stringify(data),
+    });
   }
 };
 

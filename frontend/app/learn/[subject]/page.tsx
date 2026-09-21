@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams, notFound } from "next/navigation";
 import { motion, useReducedMotion } from "framer-motion";
@@ -13,22 +13,58 @@ import {
   Clock,
   Terminal,
   ChevronRight,
-  FileText
+  FileText,
+  Loader2
 } from "lucide-react";
 import { clsx } from "clsx";
-import { learnSubjects } from "@/lib/data/learnData";
+import { learnService, SubjectDetails } from "@/lib/services/learnService";
 
 export default function SubjectPage() {
   const params = useParams();
   const reduced = useReducedMotion();
   const subjectSlug = params.subject as string;
 
-  const subject = useMemo(() => {
-    return learnSubjects.find(s => s.slug === subjectSlug);
+  const [subject, setSubject] = useState<SubjectDetails | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        setLoading(true);
+        const data = await learnService.getSubjectDetails(subjectSlug);
+        setSubject(data);
+      } catch (err: any) {
+        console.error("Failed to load subject details:", err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadData();
   }, [subjectSlug]);
 
-  if (!subject) {
-    notFound();
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[50vh] gap-4 w-full">
+        <Loader2 className="w-8 h-8 text-[var(--accent)] animate-spin" />
+        <p className="text-[var(--ink-secondary)] text-[13px] font-mono">Loading subject details...</p>
+      </div>
+    );
+  }
+
+  if (error || !subject) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[50vh] gap-4 w-full">
+        <div className="p-4 bg-[var(--error-soft)] text-[var(--error)] rounded-xl border border-[var(--error)]/20 max-w-md text-center">
+          <h3 className="font-bold mb-2">Subject not found</h3>
+          <p className="text-[14px]">The subject you are looking for does not exist or an error occurred.</p>
+          <Link href="/learn" className="inline-block mt-4 text-[13px] font-bold hover:underline">
+            ← Back to Learn
+          </Link>
+        </div>
+      </div>
+    );
   }
 
   const getModuleIcon = (type: string) => {
@@ -66,7 +102,7 @@ export default function SubjectPage() {
           </div>
           
           <h1 className="font-newsreader text-3xl sm:text-4xl lg:text-[40px] text-[var(--ink)] font-normal tracking-tight leading-tight">
-            {subject.title}
+            {subject.name}
           </h1>
           
           <p className="text-[var(--ink-secondary)] text-[16px] font-normal leading-relaxed">
@@ -78,18 +114,18 @@ export default function SubjectPage() {
         <div className="flex flex-col gap-2.5 mt-2 bg-[var(--surface-subdued)]/50 p-4 rounded-xl border border-[var(--border)]/80">
           <div className="flex justify-between items-center text-[12px] font-mono">
             <span className="text-[var(--ink-secondary)] font-medium">Your Progress</span>
-            <span className="text-[var(--accent)] font-bold">{subject.progress}%</span>
+            <span className="text-[var(--accent)] font-bold">{subject.progress_percentage}%</span>
           </div>
           <div className="w-full bg-[var(--border-strong)]/30 h-2 rounded-full overflow-hidden">
             <motion.div 
               className="bg-[var(--accent)] h-full rounded-full transition-all duration-700 ease-out"
-              initial={reduced ? { width: `${subject.progress}%` } : { width: 0 }}
-              animate={{ width: `${subject.progress}%` }}
+              initial={reduced ? { width: `${subject.progress_percentage}%` } : { width: 0 }}
+              animate={{ width: `${subject.progress_percentage}%` }}
               transition={{ duration: 0.6, ease: "easeOut" }}
             />
           </div>
           <div className="text-[11px] text-[var(--ink-tertiary)] flex justify-between">
-            <span>{subject.completedModules} of {subject.totalModules} modules completed</span>
+            <span>{subject.completed_topics} of {subject.total_topics} topics completed</span>
           </div>
         </div>
       </motion.section>
@@ -106,61 +142,105 @@ export default function SubjectPage() {
         </h2>
         
         <div className="flex flex-col gap-3">
-          {subject.modules.map((module, index) => (
-            <Link 
-              key={module.id} 
-              href={`/learn/${subject.slug}/${module.id}`}
-              className={clsx(
-                "group flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 sm:p-5 rounded-xl border transition-all shadow-sm",
-                module.completed 
-                  ? "bg-[var(--surface-subdued)]/40 border-[var(--border)] hover:border-[var(--border-strong)]"
-                  : "bg-[var(--surface)] border-[var(--border)] hover:border-[var(--accent)] hover:shadow-md"
-              )}
-            >
-              <div className="flex items-start gap-4">
-                <div className={clsx(
-                  "w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-0.5",
-                  module.completed
-                    ? "bg-[var(--success-soft)] text-[var(--success)]"
-                    : "bg-[var(--surface-subdued)] text-[var(--ink-secondary)] group-hover:bg-[var(--accent-soft)] group-hover:text-[var(--accent)]"
-                )}>
-                  {module.completed ? <CheckCircle2 className="w-5 h-5" /> : <span className="text-[13px] font-mono font-bold">{index + 1}</span>}
-                </div>
-                
-                <div className="flex flex-col gap-1">
-                  <div className="flex items-center gap-2">
-                    <h3 className={clsx(
-                      "text-[15px] font-bold transition-colors",
-                      module.completed ? "text-[var(--ink)]" : "text-[var(--ink)] group-hover:text-[var(--accent)]"
+          {subject.modules.map((module, index) => {
+            const moduleCompleted = module.topics.length > 0 && module.topics.every(t => t.status === 'completed');
+            
+            return (
+              <div key={module.id} className="flex flex-col gap-2">
+                <div
+                  className={clsx(
+                    "group flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 sm:p-5 rounded-xl border transition-all shadow-sm",
+                    moduleCompleted 
+                      ? "bg-[var(--surface-subdued)]/40 border-[var(--border)]"
+                      : "bg-[var(--surface)] border-[var(--border)]"
+                  )}
+                >
+                  <div className="flex items-start gap-4">
+                    <div className={clsx(
+                      "w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-0.5",
+                      moduleCompleted
+                        ? "bg-[var(--success-soft)] text-[var(--success)]"
+                        : "bg-[var(--surface-subdued)] text-[var(--ink-secondary)]"
                     )}>
-                      {module.title}
-                    </h3>
+                      {moduleCompleted ? <CheckCircle2 className="w-5 h-5" /> : <span className="text-[13px] font-mono font-bold">{index + 1}</span>}
+                    </div>
+                    
+                    <div className="flex flex-col gap-1">
+                      <div className="flex items-center gap-2">
+                        <h3 className={clsx(
+                          "text-[15px] font-bold transition-colors",
+                          moduleCompleted ? "text-[var(--ink)]" : "text-[var(--ink)]"
+                        )}>
+                          {module.title}
+                        </h3>
+                      </div>
+                      <p className="text-[13px] text-[var(--ink-secondary)]">
+                        {module.description}
+                      </p>
+                    </div>
                   </div>
-                  <p className="text-[13px] text-[var(--ink-secondary)]">
-                    {module.description}
-                  </p>
+                  
+                  <div className="flex items-center gap-4 pl-12 sm:pl-0 sm:shrink-0 mt-2 sm:mt-0">
+                    <div className="flex items-center gap-3 text-[11px] font-mono text-[var(--ink-tertiary)]">
+                      <span className="flex items-center gap-1 border border-[var(--border)] px-2 py-0.5 rounded bg-[var(--surface)]">
+                        <span className="capitalize">{module.difficulty || "Intermediate"}</span>
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <Clock className="w-3.5 h-3.5" />
+                        {module.estimated_minutes || 60}m
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Module Topics */}
+                <div className="flex flex-col pl-14 sm:pl-16 gap-2 mt-1 mb-4">
+                  {module.topics.map((topic, tIndex) => (
+                    <Link 
+                      key={topic.id}
+                      href={`/learn/${subject.slug}/${topic.slug}`}
+                      className={clsx(
+                        "flex items-center justify-between p-3 rounded-lg border transition-colors",
+                        topic.status === 'completed'
+                          ? "bg-[var(--surface-subdued)] border-[var(--border)]"
+                          : "bg-[var(--surface)] border-[var(--border)] hover:border-[var(--accent)]"
+                      )}
+                    >
+                      <div className="flex items-center gap-3">
+                        {topic.status === 'completed' ? (
+                          <CheckCircle2 className="w-4 h-4 text-[var(--success)]" />
+                        ) : topic.status === 'in_progress' ? (
+                          <div className="w-4 h-4 rounded-full border-2 border-[var(--accent)] border-t-transparent animate-spin" />
+                        ) : (
+                          <div className="w-4 h-4 rounded-full border-2 border-[var(--border-strong)]" />
+                        )}
+                        <div className="flex flex-col gap-1">
+                          <span className={clsx(
+                            "text-[14px]",
+                            topic.status === 'completed' ? "text-[var(--ink-secondary)] line-through" : "text-[var(--ink)] font-medium"
+                          )}>
+                            <span className="font-mono text-[var(--ink-secondary)] mr-2">{String(tIndex + 1).padStart(2, '0')}</span> 
+                            {topic.title}
+                          </span>
+                          <span className="text-[13px] text-[var(--ink-secondary)] pl-6">
+                            {topic.description}
+                          </span>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center gap-3 text-[11px] font-mono text-[var(--ink-tertiary)]">
+                        <span className="flex items-center gap-1">
+                          <Clock className="w-3.5 h-3.5" />
+                          {topic.estimated_minutes}m
+                        </span>
+                        <ChevronRight className="w-4 h-4 text-[var(--ink-tertiary)]" />
+                      </div>
+                    </Link>
+                  ))}
                 </div>
               </div>
-              
-              <div className="flex items-center gap-4 pl-12 sm:pl-0 sm:shrink-0 mt-2 sm:mt-0">
-                <div className="flex items-center gap-3 text-[11px] font-mono text-[var(--ink-tertiary)]">
-                  <span className="flex items-center gap-1 border border-[var(--border)] px-2 py-0.5 rounded bg-[var(--surface)]">
-                    {getModuleIcon(module.type)}
-                    <span className="capitalize">{module.type}</span>
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Clock className="w-3.5 h-3.5" />
-                    {module.duration}
-                  </span>
-                </div>
-                
-                <ChevronRight className={clsx(
-                  "w-4 h-4 hidden sm:block transition-colors",
-                  module.completed ? "text-[var(--ink-tertiary)]" : "text-[var(--ink-secondary)] group-hover:text-[var(--accent)]"
-                )} />
-              </div>
-            </Link>
-          ))}
+            );
+          })}
         </div>
       </motion.section>
 
