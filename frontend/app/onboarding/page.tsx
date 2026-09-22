@@ -8,11 +8,13 @@ import {
   Circle, 
   Lock, 
   User,
-  Loader2
+  Loader2,
+  ArrowRight
 } from 'lucide-react';
 import { UserProfile, UserIdentity, SkillBaseline, UserTargets } from '@/types';
 import { onboardingService } from '@/lib/services/onboardingService';
 import { useProfile } from '@/components/providers/ProfileProvider';
+import { useAuth } from '@/components/providers/AuthProvider';
 
 import Step1Identity from '@/components/onboarding/Step1Identity';
 import Step2Career from '@/components/onboarding/Step2Career';
@@ -24,6 +26,7 @@ import { StudyHubLogo } from '@/components/ui/StudyHubLogo';
 
 export default function OnboardingPage() {
   const router = useRouter();
+  const { user } = useAuth();
   const [currentStep, setCurrentStep] = useState(1);
   const [profile, setProfile] = useState<Partial<UserProfile>>({
     identity: {
@@ -63,12 +66,13 @@ export default function OnboardingPage() {
   // Strict route guard
   useEffect(() => {
     if (isClient && !profileLoading) {
-      if (canonicalProfile?.profileCompleted) {
+      const isCookieComplete = typeof document !== 'undefined' && document.cookie.includes('onboarding-complete=true');
+      if (canonicalProfile?.profileCompleted || isCookieComplete) {
         console.log("[ROUTE GUARD] Profile already completed, redirecting to /dashboard");
         router.replace('/dashboard');
       }
     }
-  }, [isClient, profileLoading, canonicalProfile, router]);
+  }, [isClient, profileLoading, canonicalProfile?.profileCompleted, router]);
 
   if (!isClient || profileLoading) {
     return (
@@ -79,7 +83,8 @@ export default function OnboardingPage() {
   }
 
   // Prevent flash while redirecting
-  if (canonicalProfile?.profileCompleted) {
+  const isCookieComplete = typeof document !== 'undefined' && document.cookie.includes('onboarding-complete=true');
+  if (canonicalProfile?.profileCompleted || isCookieComplete) {
     return null;
   }
 
@@ -106,14 +111,40 @@ export default function OnboardingPage() {
     }
   };
 
-  const handleSaveAndExit = () => {
+  const handleSkipForNow = async () => {
+    if (typeof document !== 'undefined') {
+      document.cookie = "onboarding-complete=true; path=/; max-age=31536000; SameSite=Lax";
+    }
+    try {
+      await onboardingService.completeOnboarding(profile as UserProfile, user?.id);
+      await refreshProfile();
+    } catch (e) {
+      console.warn("Skip for now background sync:", e);
+    }
+    window.location.href = '/dashboard';
+  };
+
+  const handleSaveAndExit = async () => {
     onboardingService.saveDraft(profile);
-    router.push('/login');
+    if (typeof document !== 'undefined') {
+      document.cookie = "onboarding-complete=true; path=/; max-age=31536000; SameSite=Lax";
+    }
+    try {
+      await onboardingService.completeOnboarding(profile as UserProfile, user?.id);
+      await refreshProfile();
+    } catch (e) {
+      console.warn("Save and exit background sync:", e);
+    }
+    window.location.href = '/dashboard';
   };
 
   const handleComplete = async () => {
+    if (typeof document !== 'undefined') {
+      document.cookie = "onboarding-complete=true; path=/; max-age=31536000; SameSite=Lax";
+    }
+    
     try {
-      await onboardingService.completeOnboarding(profile as UserProfile);
+      await onboardingService.completeOnboarding(profile as UserProfile, user?.id);
     } catch (error) {
       console.error("Failed to complete onboarding:", error);
     }
@@ -131,7 +162,7 @@ export default function OnboardingPage() {
       console.error("Failed to generate AI plan:", error);
     }
     
-    router.replace('/dashboard');
+    window.location.href = '/dashboard';
   };
 
   // State update helpers
@@ -188,7 +219,16 @@ export default function OnboardingPage() {
               <span>Profile Setup // First-Time Initialization</span>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2.5">
+              <button 
+                onClick={handleSkipForNow} 
+                className="inline-flex items-center gap-1.5 text-xs font-mono font-semibold text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100/80 border border-blue-200 px-3.5 py-1.5 rounded-lg transition-colors cursor-pointer shadow-2xs"
+                title="Skip onboarding and go directly to dashboard"
+              >
+                <span>Skip for now</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+
               <button 
                 onClick={handleSaveAndExit} 
                 className="text-xs font-mono font-medium text-slate-600 hover:text-slate-900 px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-100 transition-colors"
@@ -297,6 +337,7 @@ export default function OnboardingPage() {
                 currentStep={currentStep} 
                 handleNext={handleNext} 
                 handleBack={handleBack} 
+                handleSkip={handleSkipForNow}
                 isValid={isStepValid()} 
               />
             )}

@@ -9,11 +9,30 @@ app = FastAPI(
     version="1.0.0",
 )
 
+from app.models import company, daily_plans, learning, practice, profile, resource, roadmap, templates, tools, settings as user_settings_model
+from sqlalchemy import text
+
+def sync_table_columns(connection):
+    for table_name, table in Base.metadata.tables.items():
+        try:
+            result = connection.execute(text(f"PRAGMA table_info({table_name})"))
+            db_cols = {row[1] for row in result.fetchall()}
+            if not db_cols:
+                continue
+            for col in table.columns:
+                if col.name not in db_cols:
+                    col_type = col.type.compile(connection.dialect)
+                    connection.execute(text(f"ALTER TABLE {table_name} ADD COLUMN {col.name} {col_type}"))
+        except Exception:
+            pass
+
 @app.on_event("startup")
 async def startup_event():
     async with engine.begin() as conn:
         # Create all tables (safe because it only creates tables that don't exist yet)
         await conn.run_sync(Base.metadata.create_all)
+        # Sync any newly added columns in models
+        await conn.run_sync(sync_table_columns)
 
 from app.api.routes import profile, dashboard, learn, ai, resources, roadmaps, practice
 

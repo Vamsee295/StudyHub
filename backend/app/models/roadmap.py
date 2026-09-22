@@ -56,3 +56,24 @@ class UserDsaProblemProgress(Base):
         UniqueConstraint('user_id', 'problem_id', name='uq_user_dsa_problem'),
     )
 
+
+class UserRoadmapItemProgress(Base):
+    __tablename__ = "user_roadmap_item_progress"
+
+    id = Column(String, primary_key=True)
+    user_id = Column(String, ForeignKey("profiles.id", ondelete="CASCADE"), index=True)
+    roadmap_slug = Column(String, index=True)
+    item_id = Column(String, index=True)
+    status = Column(String, default="not_started") # "not_started", "attempted", "solved", "completed"
+    attempts = Column(Integer, default=0)
+    solved_at = Column(DateTime, nullable=True)
+    attempted_at = Column(DateTime, nullable=True)
+    notes = Column(Text, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    __table_args__ = (
+        UniqueConstraint('user_id', 'roadmap_slug', 'item_id', name='uq_user_roadmap_item'),
+    )
+
+

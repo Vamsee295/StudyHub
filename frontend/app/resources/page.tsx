@@ -4,55 +4,53 @@ import { useState, useEffect, useMemo } from "react";
 import { motion, useReducedMotion, Variants } from "framer-motion";
 
 import { ResourcesHeader } from "@/components/resources/ResourcesHeader";
-import { ResourcesSearchFilter } from "@/components/resources/ResourcesSearchFilter";
+import { ResourcesSearchFilter, SortOption } from "@/components/resources/ResourcesSearchFilter";
 import { ContinueReadingSection } from "@/components/resources/ContinueReadingSection";
 import { ExploreCategoriesSection } from "@/components/resources/ExploreCategoriesSection";
 import { CuratedResourcesSection } from "@/components/resources/CuratedResourcesSection";
 import { RecommendedPathSection } from "@/components/resources/RecommendedPathSection";
 import { SavedAndRecentSection } from "@/components/resources/SavedAndRecentSection";
 
-import { resourcesApi, Resource, ResourceCategory, UserResourceProgress, UserSavedResource } from "@/lib/api/resources";
-import { SavedResourceRecord, RecentlyViewedRecord } from "@/types";
+import { resourceService, Resource } from "@/lib/resources";
+import { resourceStorage } from "@/lib/resourceStorage";
 
 export default function ResourcesPage() {
   const reduced = useReducedMotion();
   const [mounted, setMounted] = useState(false);
 
-  // State
+  // Search & Filter State
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState("All");
-  
-  // Data
-  const [categories, setCategories] = useState<ResourceCategory[]>([]);
-  const [resources, setResources] = useState<Resource[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [sortBy, setSortBy] = useState<SortOption>("Relevant");
 
-  // Bookmarks & History
-  const [savedResources, setSavedResources] = useState<any[]>([]);
-  const [recentResources, setRecentResources] = useState<any[]>([]);
+  // Telemetry & Storage State
+  const [savedIds, setSavedIds] = useState<string[]>([]);
+  const [completedIds, setCompletedIds] = useState<string[]>([]);
+  const [recentResources, setRecentResources] = useState<(Resource & { viewedAt: string; lastPage?: number })[]>([]);
+  const [savedResources, setSavedResources] = useState<Resource[]>([]);
+  const [stats, setStats] = useState({ saved: 0, recent: 0, completed: 0 });
+
+  const categories = useMemo(() => {
+    return resourceService.getCategoriesWithCounts();
+  }, []);
+
+  const refreshStorageData = () => {
+    const sIds = resourceStorage.getSavedIds();
+    const cIds = resourceStorage.getCompletedIds();
+    const recents = resourceStorage.getRecentResources();
+    const saveds = resourceStorage.getSavedResources();
+    const currentStats = resourceStorage.getStats();
+
+    setSavedIds(sIds);
+    setCompletedIds(cIds);
+    setRecentResources(recents);
+    setSavedResources(saveds);
+    setStats(currentStats);
+  };
 
   useEffect(() => {
     setMounted(true);
-    
-    async function loadData() {
-      try {
-        const [resourcesRes, historyRes] = await Promise.all([
-          resourcesApi.getResources(),
-          resourcesApi.getHistory()
-        ]);
-        
-        if (resourcesRes.categories) setCategories(resourcesRes.categories);
-        if (resourcesRes.resources) setResources(resourcesRes.resources);
-        
-        if (historyRes.recent) setRecentResources(historyRes.recent);
-        if (historyRes.saved) setSavedResources(historyRes.saved);
-      } catch (err) {
-        console.error("Failed to load resources:", err);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    loadData();
+    refreshStorageData();
 
     // Global keyboard shortcut for search
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -66,44 +64,21 @@ export default function ResourcesPage() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  const handleToggleBookmark = async (id: string, e: React.MouseEvent) => {
+  const handleToggleBookmark = (id: string, e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    try {
-      const res = await resourcesApi.toggleSave(id);
-      if (res.status === "saved") {
-        const resource = resources.find(r => r.id === id);
-        if (resource) {
-          setSavedResources(prev => [{
-            id: resource.id,
-            title: resource.title,
-            topic: resource.category_id,
-            type: resource.file_type.toUpperCase(),
-            savedAt: "Just now",
-            iconName: "book",
-            href: `/resources/${resource.id}`
-          }, ...prev]);
-        }
-      } else {
-        setSavedResources(prev => prev.filter(r => r.id !== id));
-      }
-    } catch (err) {
-      console.error("Failed to toggle bookmark", err);
-    }
+    resourceStorage.toggleSave(id);
+    refreshStorageData();
   };
 
-  const handleRemoveSaved = async (id: string) => {
-    try {
-      await resourcesApi.toggleSave(id);
-      setSavedResources(prev => prev.filter(r => r.id !== id));
-    } catch (err) {
-      console.error("Failed to remove bookmark", err);
-    }
+  const handleRemoveSaved = (id: string) => {
+    resourceStorage.toggleSave(id);
+    refreshStorageData();
   };
 
   const handleClearHistory = () => {
-    // Ideally call API to clear history, but we'll mock it for now
-    setRecentResources([]);
+    resourceStorage.clearRecent();
+    refreshStorageData();
   };
 
   const handleCategoryClick = (filterKey: string) => {
@@ -114,41 +89,42 @@ export default function ResourcesPage() {
     }
   };
 
-  // Derived state for filtered curated resources
-  const formattedResources = useMemo(() => {
-    return resources.map(r => ({
-      id: r.id,
-      title: r.title,
-      description: r.description,
-      category: categories.find(c => c.id === r.category_id)?.name || r.category_id,
-      type: r.file_type.toUpperCase(),
-      author: r.author,
-      pageCount: r.page_count,
-      fileSizeBytes: r.file_size_bytes || 0,
-      readTimeMinutes: Math.round(r.page_count * 2), // roughly 2 mins per page
-      tags: [categories.find(c => c.id === r.category_id)?.name || r.category_id],
-      slug: r.id
-    }));
-  }, [resources, categories]);
-
-  const filteredCuratedResources = useMemo(() => {
-    return formattedResources.filter(resource => {
-      const matchesSearch = resource.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                            resource.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
-      const matchesFilter = activeFilter === "All" || resource.category === activeFilter || resource.tags.includes(activeFilter);
-      return matchesSearch && matchesFilter;
+  // Filtered resources based on query, category, and sort
+  const filteredResources = useMemo(() => {
+    return resourceService.searchAndFilter({
+      query: searchQuery,
+      category: activeFilter,
+      sortBy
     });
-  }, [searchQuery, activeFilter, formattedResources]);
+  }, [searchQuery, activeFilter, sortBy]);
 
-  const bookmarkedIds = useMemo(() => savedResources.map(r => r.id), [savedResources]);
+  // Format continue reading items
+  const continueReadingItems = useMemo(() => {
+    return recentResources.slice(0, 3).map((r) => {
+      const page = r.lastPage || 1;
+      const totalPages = r.pageCount || 10;
+      const percentage = Math.min(100, Math.round((page / totalPages) * 100));
+
+      return {
+        id: r.id,
+        title: r.title,
+        track: `Official StudyHub · ${r.category}`,
+        unitProgress: `Page ${page} of ${totalPages}`,
+        percentage: percentage > 0 ? percentage : 15,
+        timeEstimate: r.readTimeEstimate || "Read",
+        typeBadge: "PDF Document",
+        href: `/resources/${r.id}`
+      };
+    });
+  }, [recentResources]);
 
   // Framer Motion configuration
   const container: Variants = {
     hidden: { opacity: 0 },
-    show: { opacity: 1, transition: { staggerChildren: 0.1 } }
+    show: { opacity: 1, transition: { staggerChildren: 0.08 } }
   };
   const item: Variants = {
-    hidden: { opacity: 0, y: 20 },
+    hidden: { opacity: 0, y: 16 },
     show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
   };
 
@@ -156,13 +132,20 @@ export default function ResourcesPage() {
 
   return (
     <div className="flex flex-col gap-10 md:gap-14 pb-24 relative max-w-[1440px] mx-auto w-full min-w-0">
-      <ResourcesHeader />
+      <ResourcesHeader 
+        savedCount={stats.saved}
+        recentCount={stats.recent}
+        completedCount={stats.completed}
+      />
       
       <ResourcesSearchFilter 
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
         activeFilter={activeFilter}
         setActiveFilter={setActiveFilter}
+        categories={categories}
+        sortBy={sortBy}
+        setSortBy={setSortBy}
       />
 
       <motion.div 
@@ -172,46 +155,43 @@ export default function ResourcesPage() {
         whileInView="show"
         viewport={{ once: true, margin: "-50px" }}
       >
-        {isLoading ? (
-          <div className="py-20 text-center text-[var(--ink-tertiary)]">Loading resources...</div>
-        ) : (
-          <>
-            {searchQuery === "" && activeFilter === "All" && (
-              <>
-                <motion.div variants={reduced ? undefined : item}>
-                  <ContinueReadingSection items={recentResources} />
-                </motion.div>
-                <motion.div variants={reduced ? undefined : item}>
-                  <ExploreCategoriesSection onCategoryClick={handleCategoryClick} />
-                </motion.div>
-              </>
-            )}
-
-            <motion.div variants={reduced ? undefined : item}>
-              <CuratedResourcesSection 
-                resources={filteredCuratedResources as any} 
-                bookmarkedIds={bookmarkedIds}
-                onToggleBookmark={handleToggleBookmark}
-              />
-            </motion.div>
-
-            {searchQuery === "" && activeFilter === "All" && (
-              <motion.div variants={reduced ? undefined : item}>
-                <RecommendedPathSection />
-              </motion.div>
-            )}
-
-            <motion.div variants={reduced ? undefined : item}>
-              <SavedAndRecentSection 
-                savedResources={savedResources}
-                recentResources={recentResources}
-                onRemoveSaved={handleRemoveSaved}
-                onClearHistory={handleClearHistory}
-              />
-            </motion.div>
-          </>
+        {searchQuery === "" && activeFilter === "All" && continueReadingItems.length > 0 && (
+          <motion.div variants={reduced ? undefined : item}>
+            <ContinueReadingSection items={continueReadingItems} />
+          </motion.div>
         )}
+
+        {searchQuery === "" && activeFilter === "All" && (
+          <motion.div variants={reduced ? undefined : item}>
+            <ExploreCategoriesSection onCategoryClick={handleCategoryClick} />
+          </motion.div>
+        )}
+
+        <motion.div variants={reduced ? undefined : item}>
+          <CuratedResourcesSection 
+            resources={filteredResources} 
+            bookmarkedIds={savedIds}
+            completedIds={completedIds}
+            onToggleBookmark={handleToggleBookmark}
+          />
+        </motion.div>
+
+        {searchQuery === "" && activeFilter === "All" && (
+          <motion.div variants={reduced ? undefined : item}>
+            <RecommendedPathSection />
+          </motion.div>
+        )}
+
+        <motion.div variants={reduced ? undefined : item}>
+          <SavedAndRecentSection 
+            savedResources={savedResources}
+            recentResources={recentResources}
+            onRemoveSaved={handleRemoveSaved}
+            onClearHistory={handleClearHistory}
+          />
+        </motion.div>
       </motion.div>
     </div>
   );
 }
+

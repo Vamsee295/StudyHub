@@ -100,35 +100,35 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // Strict Onboarding Route Guard
-  useEffect(() => {
-    if (mounted && !isLoading) {
-      if (!profile.profileCompleted) {
-        console.log("[ROUTE GUARD] Profile not completed, redirecting to /onboarding");
-        router.replace("/onboarding");
-      }
-    }
-  }, [mounted, isLoading, profile.profileCompleted, router]);
+  // Onboarding is optional: authenticated users can access all dashboard and application features directly.
 
   const handleSignOut = async () => {
-    // 1. Clear API authentication
-    await authApi.logout();
-    
-    // 2. Clear authenticated cookies
-    document.cookie = "auth-session=; path=/; max-age=0";
-    document.cookie = "onboarding-complete=; path=/; max-age=0";
-
-    // 3. Clear stored client-side profile caches
-    if (typeof window !== "undefined") {
-      localStorage.removeItem("pathward-user-profile");
-      localStorage.removeItem("pathward-onboarding-draft");
-      localStorage.removeItem("pathward-dashboard-cache");
-      if (user?.id) {
-        localStorage.removeItem(`pathward-user-profile:${user.id}`);
-      }
+    // 1. Clear Supabase auth session
+    try {
+      const { supabase } = await import('@/lib/supabase/client');
+      await supabase.auth.signOut();
+    } catch (e) {
+      console.warn("Supabase signOut error:", e);
     }
 
-    // 4. Navigate directly to login
+    // 2. Clear API authentication
+    try {
+      await authApi.logout();
+    } catch (e) {}
+    
+    // 3. Clear authenticated cookies
+    if (typeof document !== "undefined") {
+      document.cookie = "auth-session=; path=/; max-age=0; SameSite=Lax";
+      document.cookie = "onboarding-complete=; path=/; max-age=0; SameSite=Lax";
+    }
+
+    // 4. Clear stored client-side caches and session
+    if (typeof window !== "undefined") {
+      localStorage.clear();
+      sessionStorage.clear();
+    }
+
+    // 5. Navigate cleanly to login
     window.location.href = "/login";
   };
 
@@ -147,19 +147,13 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     ? (profile.identity?.avatarUrl || "https://api.dicebear.com/9.x/avataaars/svg?seed=Felix")
     : "https://api.dicebear.com/9.x/avataaars/svg?seed=Felix";
 
-  // If we are strictly guarding, we can also prevent rendering the AppLayout until loading finishes, 
-  // or until it's confirmed they are onboarded, to prevent flashing.
+  // If loading or unmounted, show clean loader
   if (!mounted || isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[var(--canvas)]">
         <Loader2 className="w-8 h-8 text-[var(--accent)] animate-spin" />
       </div>
     );
-  }
-
-  // If not completed, we are redirecting, so return null to avoid flash
-  if (!profile.profileCompleted) {
-    return null;
   }
 
   // Check if current route is a dedicated lesson workspace (/learn/[subject]/[topic])

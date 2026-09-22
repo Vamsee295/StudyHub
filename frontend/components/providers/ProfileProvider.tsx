@@ -40,10 +40,27 @@ export const ProfileProvider = ({ children }: { children: React.ReactNode }) => 
     setIsLoading(true);
     setError(null);
 
+    // 1. First hydrate from local cache if present to prevent redirect flicker
+    let cachedProfile: UserProfile | null = null;
+    if (typeof window !== 'undefined') {
+      try {
+        const raw = localStorage.getItem(`pathward-user-profile:${user.id}`) || localStorage.getItem('pathward-user-profile');
+        if (raw) {
+          cachedProfile = JSON.parse(raw);
+          if (cachedProfile) {
+            setSavedProfile(cachedProfile);
+            setDraftProfile(cachedProfile);
+          }
+        }
+      } catch (e) {
+        console.warn("[PROFILE CACHE READ ERROR]", e);
+      }
+    }
+
     try {
       console.log("[AUTH] user id:", user.id);
       
-      // Fetch authoritative profile from Supabase
+      // Fetch authoritative profile from backend API
       const dbRes = await profileApi.getProfile();
       console.log("\n=======================================");
       console.log("[PROFILE HYDRATION]");
@@ -51,57 +68,78 @@ export const ProfileProvider = ({ children }: { children: React.ReactNode }) => 
       console.log("ProfileProvider fullName =", dbRes.full_name);
       console.log("=======================================\n");
 
-      
       let targetsRes = { companies: [] };
       try {
         targetsRes = await profileApi.getTargetCompanies();
       } catch (e) {}
 
+      const isCompleted = dbRes.profile_completed || 
+        (typeof document !== 'undefined' && document.cookie.includes('onboarding-complete=true')) ||
+        (cachedProfile?.profileCompleted ?? false);
+
       const finalProfile: UserProfile = {
         ...BLANK_USER_PROFILE,
         identity: {
           ...BLANK_USER_PROFILE.identity,
-          fullName: dbRes.full_name || '',
+          fullName: dbRes.full_name || cachedProfile?.identity?.fullName || '',
           email: dbRes.email || user.email || '',
-          college: dbRes.university || '',
-          degree: dbRes.degree || '',
-          branch: dbRes.branch || '',
-          graduationYear: dbRes.graduation_year || '',
-          targetRole: dbRes.target_role || '',
-          currentSemester: dbRes.current_semester || '',
-          driveCycle: dbRes.drive_cycle || '',
-          preferredJobType: dbRes.preferred_job_type || '',
-          locationPreference: dbRes.location_preference || '',
+          college: dbRes.university || cachedProfile?.identity?.college || '',
+          degree: dbRes.degree || cachedProfile?.identity?.degree || '',
+          branch: dbRes.branch || cachedProfile?.identity?.branch || '',
+          graduationYear: dbRes.graduation_year || cachedProfile?.identity?.graduationYear || '',
+          targetRole: dbRes.target_role || cachedProfile?.identity?.targetRole || '',
+          currentSemester: dbRes.current_semester || cachedProfile?.identity?.currentSemester || '',
+          driveCycle: dbRes.drive_cycle || cachedProfile?.identity?.driveCycle || '',
+          preferredJobType: dbRes.preferred_job_type || cachedProfile?.identity?.preferredJobType || '',
+          locationPreference: dbRes.location_preference || cachedProfile?.identity?.locationPreference || '',
         },
-        careerTracks: dbRes.career_tracks || [],
+        careerTracks: (dbRes.career_tracks && dbRes.career_tracks.length > 0) ? dbRes.career_tracks : (cachedProfile?.careerTracks || []),
         skillBaseline: {
           ...BLANK_USER_PROFILE.skillBaseline,
-          ...(dbRes.skill_baseline || {})
+          ...(dbRes.skill_baseline || cachedProfile?.skillBaseline || {})
         },
         targets: {
           ...BLANK_USER_PROFILE.targets,
-          companies: targetsRes.companies || []
+          companies: (targetsRes.companies && targetsRes.companies.length > 0) ? targetsRes.companies : (cachedProfile?.targets?.companies || [])
         },
-        completionPercentage: dbRes.completion_percentage || 0,
-        profileCompleted: dbRes.profile_completed || false,
+        completionPercentage: dbRes.completion_percentage || cachedProfile?.completionPercentage || (isCompleted ? 100 : 0),
+        profileCompleted: isCompleted,
       };
 
       setSavedProfile(finalProfile);
       setDraftProfile(finalProfile);
+
+      // Persist to local cache
+      if (typeof window !== 'undefined') {
+        try {
+          localStorage.setItem(`pathward-user-profile:${user.id}`, JSON.stringify(finalProfile));
+          localStorage.setItem('pathward-user-profile', JSON.stringify(finalProfile));
+          if (finalProfile.profileCompleted) {
+            document.cookie = "onboarding-complete=true; path=/; max-age=31536000";
+          }
+        } catch (e) {}
+      }
+
       console.log("[PROFILE REFRESH] success");
     } catch (err) {
       console.warn("[PROFILE LOAD ERROR]", err);
-      // If DB fails, do not silently fallback to stale auth metadata
-      const errorProfile: UserProfile = {
+      // If DB/backend fails, preserve existing cached profile or cookie state if available
+      const isCookieComplete = typeof document !== 'undefined' && document.cookie.includes('onboarding-complete=true');
+      const hasCompletedCache = cachedProfile?.profileCompleted || isCookieComplete;
+
+      const fallbackProfile: UserProfile = cachedProfile || {
         ...BLANK_USER_PROFILE,
         identity: {
           ...BLANK_USER_PROFILE.identity,
-          fullName: "Unable to load profile",
+          fullName: user.email ? user.email.split('@')[0] : "Learner",
           email: user.email || ''
-        }
+        },
+        profileCompleted: Boolean(hasCompletedCache),
       };
-      setSavedProfile(errorProfile);
-      setDraftProfile(errorProfile);
+
+      setSavedProfile(fallbackProfile);
+      setDraftProfile(fallbackProfile);
+      setError("Unable to sync profile with server");
     } finally {
       setIsLoading(false);
     }

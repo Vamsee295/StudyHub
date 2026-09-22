@@ -48,8 +48,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           setSession(session);
           setUser(session?.user ?? null);
           setLoading(false);
-          if (session && typeof document !== 'undefined') {
-            document.cookie = "auth-session=true; path=/; max-age=2592000; SameSite=Lax";
+          if (typeof document !== 'undefined') {
+            if (session) {
+              document.cookie = "auth-session=true; path=/; max-age=2592000; SameSite=Lax";
+            } else {
+              document.cookie = "auth-session=; path=/; max-age=0; SameSite=Lax";
+            }
           }
         }
       } catch (error) {
@@ -71,7 +75,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             if (session) {
               document.cookie = "auth-session=true; path=/; max-age=2592000; SameSite=Lax";
             } else {
-              document.cookie = "auth-session=; path=/; max-age=0";
+              document.cookie = "auth-session=; path=/; max-age=0; SameSite=Lax";
             }
           }
         }
@@ -84,18 +88,30 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
   }, []);
 
-  // Route protection effect
+  // Route protection effect with loop-breaker circuit
   useEffect(() => {
     if (loading) return; // Don't redirect while loading
 
     const isProtectedRoute = PROTECTED_ROUTES.some(route => pathname?.startsWith(route));
     
     if (!user && isProtectedRoute) {
-      router.push('/login');
+      // Clear cookie immediately so server middleware does not believe session is active
+      if (typeof document !== 'undefined') {
+        document.cookie = "auth-session=; path=/; max-age=0; SameSite=Lax";
+        document.cookie = "onboarding-complete=; path=/; max-age=0; SameSite=Lax";
+      }
+      router.replace('/login');
+      return;
     }
     
     if (user && pathname === '/login') {
-      window.location.href = '/dashboard';
+      // User is verified authenticated -> sync cookie and transition to authenticated destination
+      if (typeof document !== 'undefined') {
+        document.cookie = "auth-session=true; path=/; max-age=2592000; SameSite=Lax";
+      }
+      const params = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
+      const targetUrl = params?.get('redirect') || '/dashboard';
+      router.replace(targetUrl);
     }
   }, [user, loading, pathname, router]);
 

@@ -96,14 +96,20 @@ export default function SettingsPage() {
     downloadAnchor.remove();
   };
 
-  const handleDeleteAccount = () => {
+  const handleDeleteAccount = async () => {
     if (deleteConfirmText !== "DELETE") return;
     
-    // Clear cookies & storage
-    document.cookie = "auth-session=; path=/; max-age=0";
-    document.cookie = "onboarding-complete=; path=/; max-age=0";
+    // Clear Supabase session, cookies & storage
+    try {
+      const { supabase } = await import('@/lib/supabase/client');
+      await supabase.auth.signOut();
+    } catch (e) {}
+
+    document.cookie = "auth-session=; path=/; max-age=0; SameSite=Lax";
+    document.cookie = "onboarding-complete=; path=/; max-age=0; SameSite=Lax";
     if (typeof window !== "undefined") {
       localStorage.clear();
+      sessionStorage.clear();
     }
     window.location.href = "/login";
   };

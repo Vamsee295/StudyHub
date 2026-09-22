@@ -1,15 +1,17 @@
 "use client";
 
+import Link from "next/link";
 import { FormEvent, useState, Suspense, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion, useReducedMotion } from "framer-motion";
-import { ArrowRight, Loader2 } from "lucide-react";
+import { ArrowRight, ArrowLeft, Loader2 } from "lucide-react";
 import { BrandPanel } from "@/components/auth/BrandPanel";
 import { AuthRightPanel } from "@/components/auth/AuthRightPanel";
 import { AuthHeading } from "@/components/auth/AuthHeading";
 import { TextField } from "@/components/auth/TextField";
 import { PasswordField } from "@/components/auth/PasswordField";
 import { GoogleButton, AuthDivider } from "@/components/auth/AuthShared";
+import { StudyHubLogo } from "@/components/ui/StudyHubLogo";
 import { supabase } from "@/lib/supabase/client";
 
 function AuthTabs({ active, onChange }: { active: "login" | "signup", onChange: (mode: "login" | "signup") => void }) {
@@ -92,11 +94,11 @@ function AuthForm() {
         if (data.session) {
           if (typeof document !== "undefined") {
             document.cookie = "auth-session=true; path=/; max-age=2592000; SameSite=Lax";
-            const isOnboardingComplete = document.cookie.includes("onboarding-complete=true");
-            const targetUrl = searchParams.get("redirect") || (isOnboardingComplete ? "/dashboard" : "/onboarding");
-            window.location.href = targetUrl;
-            return;
+            document.cookie = "onboarding-complete=true; path=/; max-age=31536000; SameSite=Lax";
           }
+          const targetUrl = searchParams.get("redirect") || "/dashboard";
+          router.replace(targetUrl);
+          return;
         }
       } else {
         setMessage("Creating your account...");
@@ -114,9 +116,10 @@ function AuthForm() {
         if (data.session) {
           if (typeof document !== "undefined") {
             document.cookie = "auth-session=true; path=/; max-age=2592000; SameSite=Lax";
+            document.cookie = "onboarding-complete=; path=/; max-age=0; SameSite=Lax";
           }
           setMessage("Account created! Redirecting to setup...");
-          window.location.href = "/onboarding";
+          router.replace("/onboarding");
           return;
         } else if (data.user) {
           setMessage("Account created! Please check your email to confirm your account, then sign in.");
@@ -146,6 +149,18 @@ function AuthForm() {
     <main className="w-full min-h-screen flex flex-col lg:flex-row flex-1">
       <BrandPanel />
       <AuthRightPanel>
+        {/* Mobile Header (Brand Logo & Back to Home) */}
+        <div className="lg:hidden flex items-center justify-between w-full mb-6 pb-3 border-b border-border">
+          <StudyHubLogo href="/" size="sm" />
+          <Link
+            href="/"
+            className="inline-flex items-center gap-1.5 text-xs font-medium text-ink-secondary hover:text-ink transition-colors px-2.5 py-1 rounded-md border border-border bg-white shadow-2xs"
+          >
+            <ArrowLeft size={12} className="text-accent" />
+            Home
+          </Link>
+        </div>
+
         <AuthTabs active={mode} onChange={setMode} />
         
         {mode === "login" ? (

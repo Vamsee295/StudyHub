@@ -30,7 +30,7 @@ async def get_dashboard(user: Any = Depends(get_current_user)):
                 id=user.id,
                 full_name=full_name,
                 target_role=user_meta.get("target_role", "Software Development Engineer"),
-                profile_completed=False
+                profile_completed=True
             )
             session.add(profile)
             await session.commit()

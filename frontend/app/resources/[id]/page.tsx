@@ -1,269 +1,406 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, use, useCallback } from "react";
 import Link from "next/link";
-import { notFound } from "next/navigation";
-import { ArrowLeft, Clock, Bookmark, CheckCircle2, Share2, Lightbulb, AlertTriangle, ArrowRight } from "lucide-react";
-import { resourceDetailsMap } from "@/lib/data/resourcesData";
+import { useParams, useRouter } from "next/navigation";
+import { 
+  ArrowLeft, 
+  Clock, 
+  Bookmark, 
+  CheckCircle2, 
+  Download,
+  FileText,
+  Share2,
+  Check
+} from "lucide-react";
+import { resourceService, Resource } from "@/lib/resources";
+import { resourceStorage } from "@/lib/resourceStorage";
+import { clsx } from "clsx";
 
-export default function ResourceDetailPage({ params }: { params: { id: string } }) {
+// New custom Native PDF components
+import { NativePdfReader } from "@/components/resources/NativePdfReader";
+import { PdfReaderToolbar } from "@/components/resources/PdfReaderToolbar";
+
+export default function ResourceDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const router = useRouter();
+  const resolvedParams = use(params);
+  const id = resolvedParams.id;
+
+  const [resource, setResource] = useState<Resource | null>(null);
+  const [mounted, setMounted] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
-  const [mounted, setMounted] = useState(false);
+  const [copiedLink, setCopiedLink] = useState(false);
 
-  // We unwrap params assuming it's available. In Next.js 15, params might be a promise in server components,
-  // but in standard App Router client components without async, we can read it directly for simple string matching,
-  // or use `React.use()` if it's treated as a promise. Here we just use the string.
-  const id = params.id;
-  const [content, setContent] = useState<any>(resourceDetailsMap[id] || null);
-  const [pdfUrl, setPdfUrl] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  // PDF Viewer Controls State
+  const [zoomLevel, setZoomLevel] = useState<number>(100);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [pageCount, setPageCount] = useState<number>(1);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
-  useEffect(() => {
-    async function loadResource() {
-      try {
-        const { resourcesApi } = await import('@/lib/api/resources');
-        const res = await resourcesApi.getResource(id);
-        
-        if (res.file_type === 'pdf') {
-          // Attempt to get URL, but it might fail if we are just using mocked paths.
-          // In our seeder, we used file_path="mock/dsa_handbook.pdf" which won't resolve in Supabase.
-          // We can just ignore the URL if it fails.
-          try {
-            const urlRes = await resourcesApi.getResourceUrl(id);
-            if (urlRes.url) setPdfUrl(urlRes.url);
-          } catch(e) {
-            console.warn("Could not fetch secure URL for this resource. Falling back.");
-          }
-          
-          if (!content) {
-            setContent({
-              id: res.id,
-              title: res.title,
-              topic: res.subject,
-              timeEstimate: "Read",
-              difficulty: "All Levels",
-              summary: res.description || "PDF Document",
-              keyTakeaways: [],
-              sections: [],
-              interviewTraps: [],
-              relatedResources: []
-            });
-          }
-        }
-
-        // Fetch history to see if it's saved, and update progress
-        const history = await resourcesApi.getHistory();
-        setIsBookmarked(history.saved.some(s => s.resource_id === id));
-
-        // Create or update progress
-        await resourcesApi.updateProgress(id, 1, 10); // Update to page 1, 10%
-
-      } catch (e) {
-        console.error("Failed to load backend resource:", e);
-      } finally {
-        setLoading(false);
-      }
-    }
-    
-    loadResource();
-  }, [id, content]);
+  const readerContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setMounted(true);
+    const found = resourceService.getById(id);
+    if (found) {
+      setResource(found);
+      setIsBookmarked(resourceStorage.isSaved(found.id));
+      setIsCompleted(resourceStorage.isCompleted(found.id));
+      
+      // If we have history for this resource, resume from last page
+      const recentItems = resourceStorage.getRecentResources();
+      const match = recentItems.find(r => r.id === found.id);
+      if (match && match.lastPage && match.lastPage > 1) {
+        setCurrentPage(match.lastPage);
+      }
+      
+      resourceStorage.recordView(found.id, match?.lastPage || 1);
+    }
+  }, [id]);
+
+  // Handle document loaded from PDF.js
+  const handleDocumentLoad = useCallback((numPages: number) => {
+    setPageCount(numPages);
+    if (resource && !resource.pageCount) {
+      // We could update the resource object here if we wanted to dynamically set page counts
+    }
+  }, [resource]);
+
+  // Fullscreen change listener
+  useEffect(() => {
+    function handleFullscreenChange() {
+      setIsFullscreen(Boolean(document.fullscreenElement));
+    }
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    return () => document.removeEventListener("fullscreenchange", handleFullscreenChange);
   }, []);
 
-  const toggleBookmark = async () => {
-    try {
-      const { resourcesApi } = await import('@/lib/api/resources');
-      const res = await resourcesApi.toggleSave(id);
-      setIsBookmarked(res.status === 'saved');
-    } catch (e) {
-      console.error("Failed to toggle bookmark", e);
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't trigger if user is typing in an input (e.g. page jump)
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+        return;
+      }
+
+      switch (e.key) {
+        case "ArrowRight":
+        case "ArrowDown":
+          e.preventDefault();
+          handleNextPage();
+          break;
+        case "ArrowLeft":
+        case "ArrowUp":
+          e.preventDefault();
+          handlePrevPage();
+          break;
+        case "+":
+        case "=":
+          e.preventDefault();
+          handleZoomIn();
+          break;
+        case "-":
+          e.preventDefault();
+          handleZoomOut();
+          break;
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [currentPage, pageCount, resource]);
+
+  const toggleBookmark = () => {
+    if (!resource) return;
+    const nowSaved = resourceStorage.toggleSave(resource.id);
+    setIsBookmarked(nowSaved);
+  };
+
+  const toggleCompleted = () => {
+    if (!resource) return;
+    const nowCompleted = resourceStorage.toggleCompleted(resource.id);
+    setIsCompleted(nowCompleted);
+  };
+
+  const handleShare = async () => {
+    if (typeof window !== "undefined") {
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        setCopiedLink(true);
+        setTimeout(() => setCopiedLink(false), 2000);
+      } catch (e) {
+        console.warn("Clipboard write failed", e);
+      }
     }
   };
 
-  if (!mounted || loading) return null;
+  const handleToggleFullscreen = () => {
+    if (!readerContainerRef.current) return;
+    if (!document.fullscreenElement) {
+      readerContainerRef.current.requestFullscreen().catch((err) => {
+        console.warn("Fullscreen request error", err);
+      });
+    } else {
+      document.exitFullscreen().catch((err) => {
+        console.warn("Exit fullscreen error", err);
+      });
+    }
+  };
 
-  if (!content && !pdfUrl) {
-    // If not found in our mock map and no backend resource
+  const handleZoomIn = () => setZoomLevel((prev) => Math.min(200, prev + 25));
+  const handleZoomOut = () => setZoomLevel((prev) => Math.max(50, prev - 25));
+  const handleResetZoom = () => setZoomLevel(100);
+  const handleFitWidth = () => {
+    // A little hack to trigger re-calculation: fit width logic handles zooming to fit
+    setZoomLevel(100); 
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < pageCount) {
+      const next = currentPage + 1;
+      setCurrentPage(next);
+      if (resource) resourceStorage.recordView(resource.id, next);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      const prev = currentPage - 1;
+      setCurrentPage(prev);
+      if (resource) resourceStorage.recordView(resource.id, prev);
+    }
+  };
+
+  const handlePageChange = (page: number) => {
+    if (page >= 1 && page <= pageCount) {
+      setCurrentPage(page);
+      if (resource) resourceStorage.recordView(resource.id, page);
+    }
+  };
+
+  if (!mounted) return null;
+
+  if (!resource) {
     return (
-      <div className="flex flex-col items-center justify-center py-32 text-center max-w-7xl mx-auto px-6">
-        <h1 className="text-2xl font-bold text-[var(--ink)] mb-4">Resource Detail: {id}</h1>
-        <p className="text-[var(--ink-secondary)] mb-8">This resource was not found.</p>
-        <Link href="/resources" className="text-[var(--accent)] hover:underline flex items-center gap-2">
+      <div className="flex flex-col items-center justify-center py-32 text-center max-w-2xl mx-auto px-6">
+        <div className="w-12 h-12 rounded-full bg-[var(--surface-subdued)] flex items-center justify-center mb-4">
+          <FileText className="w-6 h-6 text-[var(--ink-tertiary)]" />
+        </div>
+        <h1 className="text-2xl font-newsreader font-bold text-[var(--ink)] mb-2">Resource not found</h1>
+        <p className="text-[14px] text-[var(--ink-secondary)] mb-8">
+          The requested study material could not be located in the StudyHub catalog.
+        </p>
+        <Link 
+          href="/resources" 
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[var(--ink)] text-white text-[13px] font-semibold hover:bg-[var(--ink)]/90 transition-colors"
+        >
           <ArrowLeft className="w-4 h-4" /> Back to Resources
         </Link>
       </div>
     );
   }
 
+  const encodedFilename = encodeURIComponent(resource.filename);
+  // Using direct /api/materials/ path to fetch the PDF payload for pdfjs
+  const pdfStreamUrl = `/api/materials/${encodedFilename}`;
+  const downloadUrl = `/api/materials/${encodedFilename}?download=true`;
 
+  const relatedResources = resourceService
+    .getByCategory(resource.category)
+    .filter((r) => r.id !== resource.id)
+    .slice(0, 3);
 
   return (
-    <div className="max-w-4xl mx-auto w-[calc(100%-32px)] md:w-full pb-32">
-      {/* Navigation Breadcrumb */}
-      <nav className="flex items-center gap-2 text-[13px] text-[var(--ink-tertiary)] mb-8 font-medium">
+    <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 pb-24 font-sans">
+      
+      {/* NAVIGATION BREADCRUMB */}
+      <nav className="flex items-center gap-2 text-[13px] text-[var(--ink-tertiary)] mb-6 font-medium">
         <Link href="/resources" className="hover:text-[var(--ink)] transition-colors flex items-center gap-1.5">
           <ArrowLeft className="w-3.5 h-3.5" />
           Resources
         </Link>
         <span>/</span>
-        <span className="hover:text-[var(--ink)] transition-colors cursor-pointer">{content.topic}</span>
+        <span className="hover:text-[var(--ink)] transition-colors">{resource.category}</span>
         <span>/</span>
-        <span className="text-[var(--ink)] truncate max-w-[200px] sm:max-w-xs">{content.title}</span>
+        <span className="text-[var(--ink)] truncate max-w-[220px] sm:max-w-md">{resource.title}</span>
       </nav>
 
-      {/* Header */}
-      <header className="flex flex-col gap-6 mb-12">
-        <div className="flex items-center gap-3">
-          <span className="px-2.5 py-1 rounded text-[11px] font-medium bg-[var(--surface-subdued)] text-[var(--ink-secondary)] border border-[var(--border)]">
-            {content.topic}
-          </span>
-          <span className="text-[12px] text-[var(--ink-tertiary)] font-medium flex items-center gap-1.5">
-            <Clock className="w-3.5 h-3.5" />
-            {content.timeEstimate}
-          </span>
-          <span className="w-1 h-1 rounded-full bg-[var(--border-strong)]"></span>
-          <span className="text-[12px] text-orange-600 font-medium">
-            {content.difficulty}
-          </span>
-        </div>
+      {/* HEADER BAR */}
+      <header className="flex flex-col gap-6 mb-8 pb-6 border-b border-[var(--border)]">
+        <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
+          <div className="flex flex-col gap-3 max-w-3xl">
+            <div className="flex items-center gap-2.5 flex-wrap">
+              <span className="px-2.5 py-1 rounded text-[11px] font-semibold bg-[var(--accent-soft)] text-[var(--accent)] border border-[var(--accent-soft-border)] flex items-center gap-1.5">
+                <FileText className="w-3.5 h-3.5" />
+                PDF · {resource.category}
+              </span>
 
-        <h1 className="text-3xl md:text-4xl font-newsreader font-medium text-[var(--ink)] leading-tight tracking-tight">
-          {content.title}
-        </h1>
+              {resource.readTimeEstimate && (
+                <span className="text-[12px] text-[var(--ink-tertiary)] font-medium flex items-center gap-1.5">
+                  <Clock className="w-3.5 h-3.5" />
+                  {resource.readTimeEstimate}
+                </span>
+              )}
 
-        {/* Action Bar */}
-        <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-[var(--border)]">
-          <button 
-            onClick={toggleBookmark}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-[13px] font-medium transition-all border ${
-              isBookmarked 
-                ? "bg-[var(--accent-soft)] border-[var(--accent-soft-border)] text-[var(--accent)]" 
-                : "bg-[var(--surface)] border-[var(--border)] text-[var(--ink-secondary)] hover:border-[var(--border-strong)] hover:text-[var(--ink)] shadow-[0_1px_2px_0_rgba(0,0,0,0.02)]"
-            }`}
-          >
-            <Bookmark className={`w-4 h-4 ${isBookmarked ? "fill-current" : ""}`} />
-            {isBookmarked ? "Saved" : "Save Resource"}
-          </button>
-          
-          <button 
-            onClick={() => setIsCompleted(!isCompleted)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-[13px] font-medium transition-all border ${
-              isCompleted 
-                ? "bg-[var(--success)]/10 border-[var(--success)]/30 text-[var(--success)]" 
-                : "bg-[var(--surface)] border-[var(--border)] text-[var(--ink-secondary)] hover:border-[var(--border-strong)] hover:text-[var(--ink)] shadow-[0_1px_2px_0_rgba(0,0,0,0.02)]"
-            }`}
-          >
-            <CheckCircle2 className={`w-4 h-4 ${isCompleted ? "fill-current" : ""}`} />
-            {isCompleted ? "Completed" : "Mark as Completed"}
-          </button>
-          
-          <button className="flex items-center gap-2 p-2 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-[var(--ink-secondary)] hover:border-[var(--border-strong)] hover:text-[var(--ink)] transition-all ml-auto shadow-[0_1px_2px_0_rgba(0,0,0,0.02)]">
-            <Share2 className="w-4 h-4" />
-          </button>
+              <span className="w-1 h-1 rounded-full bg-[var(--border-strong)]"></span>
+              <span className="text-[12px] text-[var(--ink-tertiary)] font-mono">
+                {pageCount > 1 ? pageCount : resource.pageCount} Pages
+              </span>
+
+              <span className="w-1 h-1 rounded-full bg-[var(--border-strong)]"></span>
+              <span className={clsx(
+                "text-[12px] font-semibold",
+                resource.difficulty === "Advanced" ? "text-purple-600" :
+                resource.difficulty === "Intermediate" ? "text-orange-600" :
+                "text-emerald-600"
+              )}>
+                {resource.difficulty}
+              </span>
+            </div>
+
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-newsreader font-medium text-[var(--ink)] leading-tight tracking-tight">
+              {resource.title}
+            </h1>
+
+            <p className="text-[15px] text-[var(--ink-secondary)] leading-relaxed">
+              {resource.description}
+            </p>
+          </div>
+
+          {/* ACTION BUTTONS */}
+          <div className="flex flex-wrap items-center gap-2.5 shrink-0 self-start">
+            <button 
+              onClick={toggleBookmark}
+              className={clsx(
+                "flex items-center gap-2 px-3.5 py-2 rounded-xl text-[13px] font-medium transition-all border cursor-pointer",
+                isBookmarked 
+                  ? "bg-[var(--accent-soft)] border-[var(--accent-soft-border)] text-[var(--accent)]" 
+                  : "bg-[var(--surface)] border-[var(--border)] text-[var(--ink-secondary)] hover:border-[var(--border-strong)] hover:text-[var(--ink)] shadow-xs"
+              )}
+            >
+              <Bookmark className={clsx("w-4 h-4", isBookmarked && "fill-current")} />
+              {isBookmarked ? "Saved" : "Save"}
+            </button>
+            
+            <a
+              href={downloadUrl}
+              download={resource.filename}
+              className="flex items-center gap-2 px-3.5 py-2 rounded-xl text-[13px] font-medium bg-[var(--surface)] border border-[var(--border)] text-[var(--ink-secondary)] hover:border-[var(--border-strong)] hover:text-[var(--ink)] transition-all shadow-xs"
+              title="Download PDF"
+            >
+              <Download className="w-4 h-4" />
+              <span className="hidden sm:inline">Download</span>
+            </a>
+
+            <button 
+              onClick={handleShare}
+              className="flex items-center gap-2 p-2 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-[var(--ink-secondary)] hover:border-[var(--border-strong)] hover:text-[var(--ink)] transition-all shadow-xs cursor-pointer"
+              title="Share Link"
+            >
+              {copiedLink ? <Check className="w-4 h-4 text-[var(--success)]" /> : <Share2 className="w-4 h-4" />}
+            </button>
+          </div>
         </div>
       </header>
 
-      {/* Main Content Body */}
-      <article className="flex flex-col gap-10">
-        
-        {pdfUrl && (
-          <div className="w-full h-[800px] border border-[var(--border)] rounded-2xl overflow-hidden mt-4 shadow-sm bg-[var(--surface-subdued)] relative">
-            <iframe 
-              src={pdfUrl} 
-              className="absolute inset-0 w-full h-full border-0" 
-              title="PDF Viewer" 
-            />
-          </div>
+      {/* PDF READER WRAPPER */}
+      <div 
+        ref={readerContainerRef}
+        className={clsx(
+          "flex flex-col bg-[var(--surface)] border border-[var(--border)] rounded-2xl overflow-hidden shadow-lg transition-all",
+          isFullscreen ? "fixed inset-0 z-50 rounded-none border-0 h-screen w-screen" : "w-full"
         )}
-
-        {/* Summary */}
-        <div className="text-[17px] leading-relaxed text-[var(--ink-secondary)] font-newsreader">
-          {content.summary}
-        </div>
-
-        {/* Key Takeaways */}
-        <div className="bg-[var(--accent-soft)] border border-[var(--accent-soft-border)] rounded-2xl p-6">
-          <h3 className="text-[15px] font-semibold text-[var(--accent)] mb-4 flex items-center gap-2">
-            <Lightbulb className="w-4 h-4" />
-            Key Takeaways
-          </h3>
-          <ul className="flex flex-col gap-3">
-            {content.keyTakeaways.map((point: string, i: number) => (
-              <li key={i} className="flex items-start gap-3 text-[14px] text-[var(--ink)]">
-                <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] shrink-0 mt-1.5"></span>
-                <span className="leading-relaxed">{point}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* Content Sections */}
-        <div className="flex flex-col gap-12">
-          {content.sections.map((section: any, idx: number) => (
-            <section key={idx} className="flex flex-col gap-4">
-              <h2 className="text-xl font-bold text-[var(--ink)] tracking-tight">
-                {section.heading}
-              </h2>
-              <p className="text-[15px] leading-relaxed text-[var(--ink-secondary)]">
-                {section.content}
-              </p>
-              {section.codeSnippet && (
-                <div className="mt-2 rounded-xl overflow-hidden border border-[var(--border)] bg-[#1e1e1e]">
-                  <div className="flex items-center px-4 py-2 bg-[#2d2d2d] border-b border-[#3d3d3d]">
-                    <span className="text-[11px] font-mono text-[#a0a0a0] uppercase tracking-wider">{section.codeLanguage}</span>
-                  </div>
-                  <pre className="p-4 overflow-x-auto">
-                    <code className="text-[13px] font-mono leading-relaxed text-[#d4d4d4]">
-                      {section.codeSnippet}
-                    </code>
-                  </pre>
-                </div>
-              )}
-            </section>
-          ))}
-        </div>
-
-        {/* Interview Traps */}
-        <div className="bg-orange-50 border border-orange-100 rounded-2xl p-6 mt-4">
-          <h3 className="text-[15px] font-semibold text-orange-700 mb-4 flex items-center gap-2">
-            <AlertTriangle className="w-4 h-4" />
-            Common Interview Traps
-          </h3>
-          <ul className="flex flex-col gap-3">
-            {content.interviewTraps.map((trap: string, i: number) => (
-              <li key={i} className="flex items-start gap-3 text-orange-900">
-                <span className="w-1.5 h-1.5 rounded-full bg-orange-400 shrink-0 mt-1.5"></span>
-                <span className="leading-relaxed">{trap}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
+      >
+        <PdfReaderToolbar 
+          currentPage={currentPage}
+          pageCount={pageCount}
+          zoomLevel={zoomLevel}
+          isFullscreen={isFullscreen}
+          fileUrl={pdfStreamUrl}
+          onPrevPage={handlePrevPage}
+          onNextPage={handleNextPage}
+          onPageChange={handlePageChange}
+          onZoomIn={handleZoomIn}
+          onZoomOut={handleZoomOut}
+          onResetZoom={handleResetZoom}
+          onFitWidth={handleFitWidth}
+          onToggleFullscreen={handleToggleFullscreen}
+        />
         
-        {/* Next Steps */}
-        <div className="pt-10 border-t border-[var(--border)]">
-          <h3 className="text-[16px] font-semibold text-[var(--ink)] mb-4">
-            Related Resources
-          </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {content.relatedResources.map((res: any, i: number) => (
+        {/* NATIVE PDF.JS CANVAS READER */}
+        <NativePdfReader 
+          fileUrl={pdfStreamUrl}
+          currentPage={currentPage}
+          zoomLevel={zoomLevel}
+          onDocumentLoad={handleDocumentLoad}
+          className={isFullscreen ? "h-[calc(100vh-56px)]" : ""}
+        />
+      </div>
+
+      {/* COMPLETION ACTION */}
+      <div className="flex justify-center mt-8">
+        <button 
+          onClick={toggleCompleted}
+          className={clsx(
+            "flex items-center gap-2 px-6 py-3 rounded-xl text-[14px] font-semibold transition-all border shadow-sm cursor-pointer",
+            isCompleted 
+              ? "bg-[var(--success)] border-[var(--success)] text-white" 
+              : "bg-[var(--surface)] border-[var(--border-strong)] text-[var(--ink)] hover:bg-[var(--surface-subdued)]"
+          )}
+        >
+          <CheckCircle2 className={clsx("w-5 h-5", isCompleted && "fill-white text-[var(--success)]")} />
+          {isCompleted ? "Resource Completed" : "Mark as Completed"}
+        </button>
+      </div>
+
+      {/* RELATED STUDY MATERIALS */}
+      {relatedResources.length > 0 && (
+        <section className="mt-16 pt-10 border-t border-[var(--border)] flex flex-col gap-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-xl font-newsreader font-medium text-[var(--ink)]">
+                More in {resource.category}
+              </h3>
+              <p className="text-[13px] text-[var(--ink-secondary)]">
+                Complementary study guides and handwritten notes in this track.
+              </p>
+            </div>
+            <Link 
+              href={`/resources`}
+              className="text-[13px] font-semibold text-[var(--accent)] hover:text-[var(--accent-hover)] flex items-center gap-1"
+            >
+              View all <ArrowLeft className="w-3.5 h-3.5 rotate-180" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {relatedResources.map((rel) => (
               <Link 
-                key={i}
-                href={res.href}
-                className="group p-4 rounded-xl border border-[var(--border)] hover:border-[var(--accent)] hover:bg-[var(--surface-subdued)]/30 transition-all flex items-center justify-between"
+                key={rel.id}
+                href={`/resources/${rel.id}`}
+                className="group p-4 rounded-xl border border-[var(--border)] hover:border-[var(--accent)] hover:bg-[var(--surface-subdued)]/30 transition-all flex flex-col justify-between gap-3 bg-[var(--surface)]"
               >
-                <span className="text-[14px] font-medium text-[var(--ink)] group-hover:text-[var(--accent)] transition-colors">
-                  {res.title}
-                </span>
-                <ArrowRight className="w-4 h-4 text-[var(--ink-tertiary)] group-hover:text-[var(--accent)] transition-transform group-hover:translate-x-1" />
+                <div>
+                  <span className="text-[11px] font-semibold text-[var(--accent)] uppercase font-mono mb-1 block">
+                    PDF · {rel.category}
+                  </span>
+                  <h4 className="text-[14px] font-semibold text-[var(--ink)] group-hover:text-[var(--accent)] transition-colors line-clamp-2">
+                    {rel.title}
+                  </h4>
+                </div>
+                <div className="flex items-center justify-between text-[11px] text-[var(--ink-tertiary)] pt-2 border-t border-[var(--border)]/60">
+                  <span>{rel.difficulty}</span>
+                  <span className="group-hover:translate-x-1 transition-transform text-[var(--accent)] font-semibold">
+                    Read →
+                  </span>
+                </div>
               </Link>
             ))}
           </div>
-        </div>
+        </section>
+      )}
 
-      </article>
     </div>
   );
 }

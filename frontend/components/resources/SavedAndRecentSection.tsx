@@ -1,13 +1,25 @@
 import Link from "next/link";
-import { ArrowRight, Trash2, History, BookmarkMinus, ExternalLink, Terminal, Database, Code2, Layers } from "lucide-react";
-import { SavedResourceRecord, RecentlyViewedRecord } from "@/types";
-import { clsx } from "clsx";
+import { ArrowRight, Trash2, History, BookmarkMinus, FileText } from "lucide-react";
+import { Resource } from "@/lib/resources";
 
 interface SavedAndRecentSectionProps {
-  savedResources: SavedResourceRecord[];
-  recentResources: RecentlyViewedRecord[];
+  savedResources: Resource[];
+  recentResources: (Resource & { viewedAt: string; lastPage?: number })[];
   onRemoveSaved: (id: string) => void;
   onClearHistory: () => void;
+}
+
+function formatRelativeTime(dateString?: string): string {
+  if (!dateString) return "Recently";
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffSec = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+  if (diffSec < 60) return "Just now";
+  if (diffSec < 3600) return `${Math.floor(diffSec / 60)}m ago`;
+  if (diffSec < 86400) return `${Math.floor(diffSec / 3600)}h ago`;
+  if (diffSec < 604800) return `${Math.floor(diffSec / 86400)}d ago`;
+  return date.toLocaleDateString();
 }
 
 export function SavedAndRecentSection({
@@ -16,17 +28,6 @@ export function SavedAndRecentSection({
   onRemoveSaved,
   onClearHistory
 }: SavedAndRecentSectionProps) {
-  
-  const getIcon = (name: string, className = "w-4 h-4") => {
-    switch (name) {
-      case "terminal": return <Terminal className={className} />;
-      case "database": return <Database className={className} />;
-      case "code_blocks": return <Code2 className={className} />;
-      case "architecture": return <Layers className={className} />;
-      default: return <ExternalLink className={className} />;
-    }
-  };
-
   return (
     <section className="grid grid-cols-1 lg:grid-cols-12 gap-8">
       {/* SAVED RESOURCES TABLE */}
@@ -40,11 +41,11 @@ export function SavedAndRecentSection({
 
         <div className="bg-[var(--surface)] border border-[var(--border)] rounded-2xl overflow-hidden shadow-[0_1px_2px_0_rgba(0,0,0,0.02)]">
           {savedResources.length === 0 ? (
-            <div className="py-12 flex flex-col items-center justify-center text-center">
+            <div className="py-12 flex flex-col items-center justify-center text-center px-6">
               <BookmarkMinus className="w-10 h-10 text-[var(--ink-tertiary)] mb-3 opacity-50" />
               <h3 className="text-[15px] font-semibold text-[var(--ink)] mb-1">No saved resources</h3>
               <p className="text-[13px] text-[var(--ink-secondary)] max-w-xs">
-                Click the bookmark icon on any resource card to save it here for later.
+                Click the bookmark icon on any resource card to save it here for quick access.
               </p>
             </div>
           ) : (
@@ -52,9 +53,9 @@ export function SavedAndRecentSection({
               <table className="w-full text-left border-collapse min-w-[600px]">
                 <thead>
                   <tr className="bg-[var(--surface-subdued)]/50 border-b border-[var(--border)]">
-                    <th className="px-5 py-3.5 text-[11px] font-semibold tracking-wider text-[var(--ink-secondary)] uppercase w-[50%]">Resource</th>
-                    <th className="px-5 py-3.5 text-[11px] font-semibold tracking-wider text-[var(--ink-secondary)] uppercase">Topic</th>
-                    <th className="px-5 py-3.5 text-[11px] font-semibold tracking-wider text-[var(--ink-secondary)] uppercase hidden sm:table-cell">Saved</th>
+                    <th className="px-5 py-3.5 text-[11px] font-semibold tracking-wider text-[var(--ink-secondary)] uppercase w-[55%]">Resource</th>
+                    <th className="px-5 py-3.5 text-[11px] font-semibold tracking-wider text-[var(--ink-secondary)] uppercase">Category</th>
+                    <th className="px-5 py-3.5 text-[11px] font-semibold tracking-wider text-[var(--ink-secondary)] uppercase hidden sm:table-cell">Pages</th>
                     <th className="px-5 py-3.5 text-[11px] font-semibold tracking-wider text-[var(--ink-secondary)] uppercase text-right">Action</th>
                   </tr>
                 </thead>
@@ -63,37 +64,37 @@ export function SavedAndRecentSection({
                     <tr key={item.id} className="hover:bg-[var(--surface-subdued)]/30 transition-colors group">
                       <td className="px-5 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-lg bg-[var(--surface-subdued)] border border-[var(--border)] flex items-center justify-center text-[var(--ink-secondary)] shrink-0">
-                            {getIcon(item.iconName)}
+                          <div className="w-8 h-8 rounded-lg bg-[var(--accent-soft)] border border-[var(--accent-soft-border)] flex items-center justify-center text-[var(--accent)] shrink-0">
+                            <FileText className="w-4 h-4" />
                           </div>
                           <div>
-                            <Link href={item.href} className="text-[14px] font-semibold text-[var(--ink)] group-hover:text-[var(--accent)] transition-colors line-clamp-1 block">
+                            <Link href={`/resources/${item.id}`} className="text-[14px] font-semibold text-[var(--ink)] group-hover:text-[var(--accent)] transition-colors line-clamp-1 block">
                               {item.title}
                             </Link>
-                            <span className="text-[12px] text-[var(--ink-tertiary)]">{item.type}</span>
+                            <span className="text-[12px] text-[var(--ink-tertiary)]">PDF Document · {item.difficulty}</span>
                           </div>
                         </div>
                       </td>
                       <td className="px-5 py-4">
                         <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-[var(--surface-subdued)] text-[var(--ink-secondary)] border border-[var(--border)]">
-                          {item.topic}
+                          {item.category}
                         </span>
                       </td>
-                      <td className="px-5 py-4 hidden sm:table-cell text-[13px] text-[var(--ink-secondary)]">
-                        {item.savedAt}
+                      <td className="px-5 py-4 hidden sm:table-cell text-[13px] text-[var(--ink-secondary)] font-mono">
+                        {item.pageCount ? `${item.pageCount} p.` : "—"}
                       </td>
                       <td className="px-5 py-4">
                         <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                           <Link 
-                            href={item.href}
+                            href={`/resources/${item.id}`}
                             className="p-1.5 text-[var(--ink-secondary)] hover:text-[var(--accent)] hover:bg-[var(--accent-soft)] rounded transition-colors"
-                            title="Open"
+                            title="Read PDF"
                           >
                             <ArrowRight className="w-4 h-4" />
                           </Link>
                           <button 
                             onClick={() => onRemoveSaved(item.id)}
-                            className="p-1.5 text-[var(--ink-secondary)] hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                            className="p-1.5 text-[var(--ink-secondary)] hover:text-red-600 hover:bg-red-50 rounded transition-colors cursor-pointer"
                             title="Remove"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -119,7 +120,7 @@ export function SavedAndRecentSection({
           {recentResources.length > 0 && (
             <button 
               onClick={onClearHistory}
-              className="text-[12px] font-medium text-[var(--ink-tertiary)] hover:text-[var(--ink)] flex items-center gap-1 transition-colors"
+              className="text-[12px] font-medium text-[var(--ink-tertiary)] hover:text-[var(--ink)] flex items-center gap-1 transition-colors cursor-pointer"
             >
               <Trash2 className="w-3.5 h-3.5" />
               Clear
@@ -131,7 +132,7 @@ export function SavedAndRecentSection({
           {recentResources.length === 0 ? (
             <div className="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-6 text-center shadow-[0_1px_2px_0_rgba(0,0,0,0.02)]">
               <History className="w-6 h-6 text-[var(--ink-tertiary)] mx-auto mb-2 opacity-50" />
-              <p className="text-[13px] text-[var(--ink-secondary)]">No recent history.</p>
+              <p className="text-[13px] text-[var(--ink-secondary)]">No recent reading history.</p>
             </div>
           ) : (
             recentResources.map((item) => (
@@ -141,10 +142,10 @@ export function SavedAndRecentSection({
               >
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] font-mono tracking-wider font-medium text-[var(--ink-tertiary)] uppercase">
-                    {item.viewedAt}
+                    {formatRelativeTime(item.viewedAt)}
                   </span>
                   <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-[var(--surface-subdued)] text-[var(--ink-secondary)] border border-[var(--border)]">
-                    {item.topic}
+                    {item.category}
                   </span>
                 </div>
                 
@@ -154,11 +155,11 @@ export function SavedAndRecentSection({
                 
                 <div className="flex items-center justify-between mt-1">
                   <span className="text-[11px] text-[var(--ink-secondary)] flex items-center gap-1">
-                    <BookOpenIcon className="w-3 h-3" />
-                    {item.type}
+                    <FileText className="w-3 h-3 text-[var(--accent)]" />
+                    PDF Document
                   </span>
                   <Link 
-                    href={item.href}
+                    href={`/resources/${item.id}`}
                     className="text-[12px] font-semibold text-[var(--accent)] hover:text-[var(--accent-hover)] flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0"
                   >
                     Resume <ArrowRight className="w-3 h-3" />
@@ -173,22 +174,3 @@ export function SavedAndRecentSection({
   );
 }
 
-function BookOpenIcon(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
-      <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
-    </svg>
-  )
-}

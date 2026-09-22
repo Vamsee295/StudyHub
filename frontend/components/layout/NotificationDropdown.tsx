@@ -133,7 +133,7 @@ export function NotificationDropdown({
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 6, scale: 0.98 }}
           transition={{ duration: 0.16, ease: "easeOut" }}
-          className="absolute right-0 sm:right-0 -right-[60px] top-full mt-2.5 w-[360px] max-w-[calc(100vw-24px)] bg-white rounded-2xl border border-[var(--border)] shadow-xl shadow-[var(--ink)]/5 z-50 overflow-hidden font-sans"
+          className="absolute right-0 top-full mt-2.5 w-[360px] max-w-[calc(100vw-24px)] bg-white rounded-2xl border border-[var(--border)] shadow-xl shadow-[var(--ink)]/5 z-50 overflow-hidden font-sans"
         >
           {/* HEADER */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border)] bg-[var(--surface-subdued)]/50">

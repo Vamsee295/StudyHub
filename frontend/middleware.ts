@@ -56,11 +56,8 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  // 3. If authenticated user visits auth routes (/login, /signup)
-  if (isAuthRoute && isAuthenticated) {
-    // We redirect to dashboard. If they haven't onboarded, the client-side AppLayout guard will redirect them to /onboarding.
-    return NextResponse.redirect(new URL('/dashboard', request.url));
-  }
+  // 3. For auth routes (/login, /signup), allow the page to render so client-side AuthProvider can validate the real session.
+  // We do not force-redirect in middleware to prevent ping-pong loops between server cookies and client session state.
 
   // NOTE: Onboarding completion state is no longer checked in middleware because it depends on the authoritative database profile.
   // The AppLayout and OnboardingPage components will enforce strict routing based on the database response.

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { AuthProvider } from "@/components/providers/AuthProvider";
 import { ProfileProvider } from "@/components/providers/ProfileProvider";
@@ -7,6 +7,12 @@ export const metadata: Metadata = {
   title: "StudyHub — Everything you need to prepare for your tech career",
   description:
     "Structured roadmaps, technical resources, company preparation, practice and career tools for engineering students — mapped into one unified learning system.",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
 };
 
 export default function RootLayout({

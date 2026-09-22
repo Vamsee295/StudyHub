@@ -95,18 +95,39 @@ async function fetchAPI(endpoint: string, options: RequestInit) {
     headers.set('Authorization', `Bearer ${token}`);
   }
   
-  let response: Response;
+  let response!: Response;
   try {
-    console.log(`[API CLIENT] Fetching ${API_URL}${endpoint} with token: ${headers.has('Authorization') ? 'Present' : 'Missing'}`);
     response = await fetch(`${API_URL}${endpoint}`, {
       ...options,
       headers,
       cache: 'no-store', // Fix Next.js aggressive caching for API calls
     });
-    console.log(`[API CLIENT] Response from ${endpoint}: ${response.status}`);
   } catch (err: any) {
-    console.warn(`[API] Failed to reach backend at ${API_URL}${endpoint}:`, err);
-    throw new Error(err.message || 'Unable to connect to the backend server. Please verify the backend is running at http://localhost:8000');
+    let fallbackSuccess = false;
+    let fallbackUrl: string | null = null;
+    if (API_URL.includes('localhost')) {
+      fallbackUrl = API_URL.replace('localhost', '127.0.0.1');
+    } else if (API_URL.includes('127.0.0.1')) {
+      fallbackUrl = API_URL.replace('127.0.0.1', 'localhost');
+    }
+
+    if (fallbackUrl) {
+      try {
+        response = await fetch(`${fallbackUrl}${endpoint}`, {
+          ...options,
+          headers,
+          cache: 'no-store',
+        });
+        fallbackSuccess = true;
+      } catch (fallbackErr) {
+        // Both primary and fallback failed
+      }
+    }
+
+    if (!fallbackSuccess) {
+      console.warn(`[API] Failed to reach backend at ${API_URL}${endpoint}:`, err);
+      throw new Error(err.message || 'Unable to connect to the backend server. Please verify the backend is running at http://localhost:8000');
+    }
   }
 
   if (!response.ok) {
