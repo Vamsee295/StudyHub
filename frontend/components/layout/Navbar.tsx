@@ -12,7 +12,7 @@ const navLinks = [
   { href: "#companies", label: "Companies" },
   { href: "#resources", label: "Resources" },
   { href: "#templates", label: "Templates" },
-  { href: "#labs", label: "Tools" },
+  { href: "/tools", label: "Tools" },
 ];
 
 export function Navbar() {
