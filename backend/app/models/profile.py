@@ -27,6 +27,7 @@ class Profile(Base):
 
     skill_baseline = relationship("ProfileSkillBaseline", back_populates="profile", uselist=False)
     career_paths = relationship("ProfileCareerPath", back_populates="profile")
+    resume_analyses = relationship("ResumeAnalysis", back_populates="user", cascade="all, delete-orphan")
 
 
 class CareerPath(Base):

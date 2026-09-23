@@ -61,11 +61,11 @@ export const corePlacementTools: CoreToolItem[] = [
   },
   {
     id: "cp-2",
-    title: "Resume ATS Checker",
-    description: "Simulate employer Applicant Tracking Systems against your PDF.",
+    title: "Resume Analyzer",
+    description: "Compare PDF or pasted resume text with a target company and role.",
     category: "resume",
     tag: "Resume & Career",
-    codeAst: "PDF / DOCX Scan",
+    codeAst: "PDF / Text + Structured Report",
     href: "/tools/resume-analyzer",
   },
   {

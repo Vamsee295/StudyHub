@@ -160,12 +160,6 @@ export default function ResourcesPage() {
           </motion.div>
         )}
 
-        {searchQuery === "" && activeFilter === "All" && (
-          <motion.div variants={reduced ? undefined : item}>
-            <ExploreCategoriesSection onCategoryClick={handleCategoryClick} />
-          </motion.div>
-        )}
-
         <motion.div variants={reduced ? undefined : item}>
           <CuratedResourcesSection 
             resources={filteredResources} 
@@ -174,6 +168,12 @@ export default function ResourcesPage() {
             onToggleBookmark={handleToggleBookmark}
           />
         </motion.div>
+
+        {searchQuery === "" && activeFilter === "All" && (
+          <motion.div variants={reduced ? undefined : item}>
+            <ExploreCategoriesSection onCategoryClick={handleCategoryClick} />
+          </motion.div>
+        )}
 
         <motion.div variants={reduced ? undefined : item}>
           <SavedAndRecentSection 
