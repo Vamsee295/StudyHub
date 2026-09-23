@@ -97,7 +97,7 @@ function AuthForm() {
             document.cookie = "onboarding-complete=true; path=/; max-age=31536000; SameSite=Lax";
           }
           const targetUrl = searchParams.get("redirect") || "/dashboard";
-          router.replace(targetUrl);
+          window.location.href = targetUrl;
           return;
         }
       } else {
@@ -119,7 +119,7 @@ function AuthForm() {
             document.cookie = "onboarding-complete=; path=/; max-age=0; SameSite=Lax";
           }
           setMessage("Account created! Redirecting to setup...");
-          router.replace("/onboarding");
+          window.location.href = "/onboarding";
           return;
         } else if (data.user) {
           setMessage("Account created! Please check your email to confirm your account, then sign in.");

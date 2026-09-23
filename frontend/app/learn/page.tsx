@@ -14,11 +14,13 @@ import {
   Code
 } from "lucide-react";
 import { clsx } from "clsx";
-import { learnPaths } from "@/lib/data/learnData";
+import { useRouter } from "next/navigation";
+import { learnPaths, aptitudeLearningPaths } from "@/lib/data/learnData";
 import { learnService, LearningSubject } from "@/lib/services/learnService";
 
 export default function LearnPage() {
   const reduced = useReducedMotion();
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState("All subjects");
   
   const tabs = ["All subjects", "Technical", "Placement", "Core CS", "Aptitude"];
@@ -38,7 +40,28 @@ export default function LearnPage() {
       }
     }
     loadData();
+
+    // Sync tab with URL
+    const params = new URLSearchParams(window.location.search);
+    const cat = params.get('category');
+    if (cat) {
+      const formatted = cat.charAt(0).toUpperCase() + cat.slice(1);
+      if (tabs.includes(formatted)) {
+        setActiveTab(formatted);
+      }
+    }
   }, []);
+
+  const handleTabClick = (tab: string) => {
+    setActiveTab(tab);
+    if (tab === "All subjects") {
+      router.push('/learn', { scroll: false });
+    } else {
+      router.push(`/learn?category=${tab.toLowerCase()}`, { scroll: false });
+    }
+  };
+
+  const currentLearningPaths = activeTab === "Aptitude" ? aptitudeLearningPaths : learnPaths;
 
   const filteredSubjects = activeTab === "All subjects" 
     ? subjects 
@@ -79,7 +102,7 @@ export default function LearnPage() {
           {tabs.map((tab) => (
             <button
               key={tab}
-              onClick={() => setActiveTab(tab)}
+              onClick={() => handleTabClick(tab)}
               className={clsx(
                 "whitespace-nowrap px-3.5 py-1.5 rounded-full text-[13px] font-medium transition-all border",
                 activeTab === tab
@@ -144,43 +167,11 @@ export default function LearnPage() {
         </motion.section>
       )}
 
-      {/* LEARNING PATHS */}
-      <motion.section
-        initial={reduced ? undefined : { opacity: 0, y: 16 }}
-        animate={reduced ? undefined : { opacity: 1, y: 0 }}
-        transition={{ duration: 0.45, delay: 0.15 }}
-        className="flex flex-col gap-4"
-      >
-        <h2 className="text-[13px] font-bold text-[var(--ink)] uppercase tracking-wider font-sans flex items-center gap-2">
-          <TrendingUp className="w-4 h-4 text-[var(--accent)]" />
-          Learning Paths
-        </h2>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {learnPaths.map((path) => (
-            <div key={path.id} className="bg-[var(--surface)] p-5 rounded-xl border border-[var(--border)] hover:border-[var(--border-strong)] transition-all cursor-pointer flex flex-col gap-3 group shadow-sm hover:shadow">
-              <h3 className="text-[15px] font-bold text-[var(--ink)] group-hover:text-[var(--accent)] transition-colors">
-                {path.title}
-              </h3>
-              <p className="text-[13px] text-[var(--ink-secondary)]">
-                {path.description}
-              </p>
-              <div className="flex items-center gap-2 mt-auto pt-3 border-t border-[var(--border)]/40">
-                <span className="text-[11px] font-mono font-medium text-[var(--ink-tertiary)]">
-                  {path.subjects.length} Subjects
-                </span>
-                <ChevronRight className="w-4 h-4 text-[var(--ink-tertiary)] group-hover:text-[var(--accent)] transition-colors ml-auto" />
-              </div>
-            </div>
-          ))}
-        </div>
-      </motion.section>
-
       {/* SUBJECTS GRID */}
       <motion.section
         initial={reduced ? undefined : { opacity: 0, y: 16 }}
         animate={reduced ? undefined : { opacity: 1, y: 0 }}
-        transition={{ duration: 0.45, delay: 0.2 }}
+        transition={{ duration: 0.45, delay: 0.15 }}
         className="flex flex-col gap-4"
       >
         <div className="flex items-center justify-between">
@@ -237,6 +228,38 @@ export default function LearnPage() {
               No subjects found in this category.
             </div>
           )}
+        </div>
+      </motion.section>
+
+      {/* LEARNING PATHS */}
+      <motion.section
+        initial={reduced ? undefined : { opacity: 0, y: 16 }}
+        animate={reduced ? undefined : { opacity: 1, y: 0 }}
+        transition={{ duration: 0.45, delay: 0.2 }}
+        className="flex flex-col gap-4"
+      >
+        <h2 className="text-[13px] font-bold text-[var(--ink)] uppercase tracking-wider font-sans flex items-center gap-2">
+          <TrendingUp className="w-4 h-4 text-[var(--accent)]" />
+          Learning Paths
+        </h2>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {currentLearningPaths.map((path) => (
+            <div key={path.id} className="bg-[var(--surface)] p-5 rounded-xl border border-[var(--border)] hover:border-[var(--border-strong)] transition-all cursor-pointer flex flex-col gap-3 group shadow-sm hover:shadow">
+              <h3 className="text-[15px] font-bold text-[var(--ink)] group-hover:text-[var(--accent)] transition-colors">
+                {path.title}
+              </h3>
+              <p className="text-[13px] text-[var(--ink-secondary)]">
+                {path.description}
+              </p>
+              <div className="flex items-center gap-2 mt-auto pt-3 border-t border-[var(--border)]/40">
+                <span className="text-[11px] font-mono font-medium text-[var(--ink-tertiary)]">
+                  {path.subjects.length} Subjects
+                </span>
+                <ChevronRight className="w-4 h-4 text-[var(--ink-tertiary)] group-hover:text-[var(--accent)] transition-colors ml-auto" />
+              </div>
+            </div>
+          ))}
         </div>
       </motion.section>
 

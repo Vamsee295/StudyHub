@@ -374,14 +374,14 @@ export default function DashboardPage() {
             </h3>
             <div className="grid grid-cols-2 gap-3">
               {[
-                { name: "SQL Playground", icon: <Database className="w-4 h-4" /> },
-                { name: "DSA Visualizer", icon: <PlaySquare className="w-4 h-4" /> },
-                { name: "Resume Analyzer", icon: <FileText className="w-4 h-4" /> },
-                { name: "Interview Sim", icon: <Briefcase className="w-4 h-4" /> },
+                { name: "SQL Playground", icon: <Database className="w-4 h-4" />, href: "/tools/sql-playground" },
+                { name: "DSA Visualizer", icon: <PlaySquare className="w-4 h-4" />, href: "/tools/dsa-visualizer" },
+                { name: "Resume Analyzer", icon: <FileText className="w-4 h-4" />, href: "/tools/resume-analyzer" },
+                { name: "Interview Sim", icon: <Briefcase className="w-4 h-4" />, href: "/tools/interview-simulator" },
               ].map((tool) => (
                 <Link 
                   key={tool.name} 
-                  href={`/tools/${tool.name.toLowerCase().replace(" ", "-")}`} 
+                  href={tool.href} 
                   className="flex flex-col items-center justify-center gap-2 p-3 bg-[var(--surface-subdued)] border border-[var(--border)] rounded-lg hover:border-[var(--border-strong)] hover:bg-[var(--surface)] transition-all hover:-translate-y-0.5 group"
                 >
                   <div className="text-[var(--ink-tertiary)] group-hover:text-[var(--accent)] transition-colors">

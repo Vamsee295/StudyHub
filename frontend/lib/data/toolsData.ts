@@ -27,7 +27,7 @@ export const continueUsingTools: ContinueToolItem[] = [
     badge: "AST ENGINE",
     timeAgo: "2h ago",
     meta: "Java / Python AST",
-    href: "/tools/dsa-analyzer",
+    href: "/tools/dsa-visualizer",
   },
   {
     id: "ct-2",
@@ -36,7 +36,7 @@ export const continueUsingTools: ContinueToolItem[] = [
     badge: "PARSER 4.1",
     timeAgo: "Yesterday",
     meta: "Match Score: 88%",
-    href: "/tools/resume-ats",
+    href: "/tools/resume-analyzer",
   },
   {
     id: "ct-3",
@@ -57,7 +57,7 @@ export const corePlacementTools: CoreToolItem[] = [
     category: "coding",
     tag: "Coding",
     codeAst: "O(N log N) AST",
-    href: "/tools/dsa-analyzer",
+    href: "/tools/dsa-visualizer",
   },
   {
     id: "cp-2",
@@ -66,7 +66,7 @@ export const corePlacementTools: CoreToolItem[] = [
     category: "resume",
     tag: "Resume & Career",
     codeAst: "PDF / DOCX Scan",
-    href: "/tools/resume-ats",
+    href: "/tools/resume-analyzer",
   },
   {
     id: "cp-3",
@@ -142,7 +142,7 @@ export const interviewUtilities: InterviewUtilityItem[] = [
     durationOrStep: "30–45 min",
     meta: "MNC Calibrated",
     actionLabel: "Launch Simulator ↗",
-    href: "/tools/mock-simulator",
+    href: "/tools/interview-simulator",
     isPrimaryAction: true,
   },
   {
@@ -303,7 +303,7 @@ export const recentToolAudits: RecentToolAuditRecord[] = [
     statusText: "Code AST Parsed",
     statusType: "success",
     progressPercent: 100,
-    href: "/tools/dsa-analyzer",
+    href: "/tools/dsa-visualizer",
   },
   {
     id: "rta-3",
@@ -313,7 +313,7 @@ export const recentToolAudits: RecentToolAuditRecord[] = [
     statusText: "Score: 84/100 (Pass)",
     statusType: "success",
     progressPercent: 84,
-    href: "/tools/resume-ats",
+    href: "/tools/resume-analyzer",
   },
   {
     id: "rta-4",

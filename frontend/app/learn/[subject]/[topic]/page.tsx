@@ -229,7 +229,7 @@ export default function TopicPage() {
         setLoading(true);
         const [subjectData, topicData] = await Promise.all([
           learnService.getSubjectDetails(subjectSlug),
-          learnService.getTopicContent(topicSlug)
+          learnService.getTopicContent(subjectSlug, topicSlug)
         ]);
         setSubject(subjectData);
         setTopic(topicData);

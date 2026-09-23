@@ -8,7 +8,6 @@ import { ResourcesSearchFilter, SortOption } from "@/components/resources/Resour
 import { ContinueReadingSection } from "@/components/resources/ContinueReadingSection";
 import { ExploreCategoriesSection } from "@/components/resources/ExploreCategoriesSection";
 import { CuratedResourcesSection } from "@/components/resources/CuratedResourcesSection";
-import { RecommendedPathSection } from "@/components/resources/RecommendedPathSection";
 import { SavedAndRecentSection } from "@/components/resources/SavedAndRecentSection";
 
 import { resourceService, Resource } from "@/lib/resources";
@@ -175,12 +174,6 @@ export default function ResourcesPage() {
             onToggleBookmark={handleToggleBookmark}
           />
         </motion.div>
-
-        {searchQuery === "" && activeFilter === "All" && (
-          <motion.div variants={reduced ? undefined : item}>
-            <RecommendedPathSection />
-          </motion.div>
-        )}
 
         <motion.div variants={reduced ? undefined : item}>
           <SavedAndRecentSection 

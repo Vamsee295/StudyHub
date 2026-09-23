@@ -95,3 +95,31 @@ export const recentlyViewedSubjects = [
   "quantitative-aptitude",
   "system-design"
 ];
+
+export const aptitudeLearningPaths: LearnPath[] = [
+  {
+    id: "path-aptitude-01",
+    title: "Placement Aptitude Mastery",
+    description: "The complete journey to mastering all aptitude sections for campus placements.",
+    subjects: ["quantitative-aptitude", "logical-reasoning", "verbal-ability", "data-interpretation", "placement-aptitude"]
+  },
+  {
+    id: "path-aptitude-02",
+    title: "Quantitative Mastery",
+    description: "Focus entirely on mathematical concepts, arithmetic, and advanced algebra.",
+    subjects: ["quantitative-aptitude", "data-interpretation"]
+  },
+  {
+    id: "path-aptitude-03",
+    title: "Reasoning & Problem Solving",
+    description: "Build strong logical deduction skills for puzzles, patterns, and syllogisms.",
+    subjects: ["logical-reasoning"]
+  },
+  {
+    id: "path-aptitude-04",
+    title: "Verbal & Communication",
+    description: "Enhance vocabulary, grammar, and reading comprehension for written tests.",
+    subjects: ["verbal-ability"]
+  }
+];
+
