@@ -43,4 +43,4 @@ next-env.d.ts
 #Rules And Workflows
 .agents
 .docs
-
+.claude

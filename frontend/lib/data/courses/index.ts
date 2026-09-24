@@ -27,18 +27,18 @@ export const ALL_COURSES: Course[] = [
   aptitudePlacementCourse,
 ].sort((a, b) => a.displayOrder - b.displayOrder);
 
-// Ensure all IDs and slugs are globally unique to prevent DB constraint errors
-// and API routing collisions.
+// Ensure all IDs are globally unique to prevent DB constraint errors.
+// NOTE: Slugs must NOT be prefixed — they are used directly in URLs and must
+// remain stable and clean (e.g. "what-is-programming", not
+// "programming-fundamentals-what-is-programming").
 ALL_COURSES.forEach(course => {
   course.modules.forEach(mod => {
     if (!mod.id.startsWith(course.slug)) {
       mod.id = `${course.slug}-${mod.id}`;
-      mod.slug = `${course.slug}-${mod.slug}`;
     }
     mod.lessons.forEach(lesson => {
       if (!lesson.id.startsWith(course.slug)) {
         lesson.id = `${course.slug}-${lesson.id}`;
-        lesson.slug = `${course.slug}-${lesson.slug}`;
       }
     });
   });
@@ -101,3 +101,29 @@ export function getUserCourseProgress(courseSlug: string, completedLessonSlugs: 
 
   return { percentage, completedCount, total: stats.totalLessons };
 }
+
+// ---------------------------------------------------------------------------
+// DEV-ONLY: Validate that every lesson slug round-trips through getLesson().
+// This catches slug mismatches at startup rather than at click-time.
+// ---------------------------------------------------------------------------
+if (process.env.NODE_ENV === 'development') {
+  let invalid = 0;
+  ALL_COURSES.forEach(course => {
+    course.modules.forEach(mod => {
+      mod.lessons.forEach(lesson => {
+        const resolved = getLesson(course.slug, lesson.slug);
+        if (!resolved) {
+          console.error(
+            `[LearnData] SLUG MISMATCH: getLesson("${course.slug}", "${lesson.slug}") returned undefined. ` +
+            `URL /learn/${course.slug}/${lesson.slug} will 404.`
+          );
+          invalid++;
+        }
+      });
+    });
+  });
+  if (invalid === 0) {
+    console.info(`[LearnData] ✓ All lesson slugs validated OK (${ALL_COURSES.reduce((s, c) => s + c.modules.reduce((ms, m) => ms + m.lessons.length, 0), 0)} lessons across ${ALL_COURSES.length} courses)`);
+  }
+}
+

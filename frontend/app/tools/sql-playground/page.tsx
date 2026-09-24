@@ -42,6 +42,7 @@ export default function SqlPlaygroundPage() {
   const [history, setHistory]         = useState<QueryHistoryItem[]>([]);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [showExamples, setShowExamples] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   // ── Initialize DB ──────────────────────────────────────────────────────────
   useEffect(() => {
@@ -165,6 +166,14 @@ export default function SqlPlaygroundPage() {
           <div className="flex items-center gap-3 flex-wrap">
             {statusEl}
 
+            <button
+              onClick={() => setIsSidebarOpen((prev) => !prev)}
+              className="text-[12px] font-medium px-3 py-1.5 rounded-lg border border-[var(--border)] bg-white hover:bg-gray-50 text-[var(--ink)] transition-colors hidden lg:flex items-center gap-1.5"
+            >
+              <Database className="w-3.5 h-3.5" />
+              {isSidebarOpen ? "Hide Schema" : "Show Schema"}
+            </button>
+
             {/* Examples dropdown */}
             <div className="relative">
               <button
@@ -194,43 +203,48 @@ export default function SqlPlaygroundPage() {
         </div>
       </div>
 
-      {/* ─── 3-Panel IDE ────────────────────────────────────────────── */}
-      <div className="flex-1 max-w-[1600px] mx-auto w-full px-4 md:px-8 pb-8">
-        <div className="grid grid-cols-1 lg:grid-cols-[22%_1fr_25%] gap-4 h-[calc(100vh-220px)] min-h-[500px]">
-          {/* LEFT — Schema */}
-          <div className="hidden lg:flex flex-col min-h-0">
-            <SqlSchemaSidebar
-              tables={schema}
-              isLoading={schemaLoading}
-              onTableClick={handleTableClick}
-              onRefresh={refreshSchema}
-            />
-          </div>
+      {/* ─── 2-Pane IDE ────────────────────────────────────────────── */}
+      <div className="flex-1 max-w-[1600px] mx-auto w-full px-4 md:px-8 pb-8 flex flex-col min-h-0">
+        <div className="flex flex-col lg:flex-row gap-4 h-[calc(100vh-220px)] min-h-[500px]">
+          {/* LEFT — Schema (Toggleable on Desktop) */}
+          {isSidebarOpen && (
+            <div className="hidden lg:flex flex-col w-[280px] shrink-0 min-h-0">
+              <SqlSchemaSidebar
+                tables={schema}
+                isLoading={schemaLoading}
+                onTableClick={handleTableClick}
+                onRefresh={refreshSchema}
+              />
+            </div>
+          )}
 
-          {/* CENTER — Editor */}
-          <div className="flex flex-col min-h-0">
-            <SqlEditor
-              value={query}
-              onChange={setQuery}
-              onExecute={handleExecute}
-              onClear={() => setQuery("")}
-              onReset={() => setShowResetConfirm(true)}
-              isExecuting={isExecuting}
-            />
-          </div>
+          {/* MAIN — Editor (Top) & Results (Bottom) */}
+          <div className="flex flex-col flex-1 gap-4 min-h-0 min-w-0">
+            {/* TOP — Editor */}
+            <div className="flex flex-col flex-[3] min-h-0">
+              <SqlEditor
+                value={query}
+                onChange={setQuery}
+                onExecute={handleExecute}
+                onClear={() => setQuery("")}
+                onReset={() => setShowResetConfirm(true)}
+                isExecuting={isExecuting}
+              />
+            </div>
 
-          {/* RIGHT — Results */}
-          <div className="flex flex-col min-h-0">
-            <SqlResultsPanel
-              result={result}
-              history={history}
-              isLoading={isExecuting}
-              onSelectHistory={handleSelectHistory}
-            />
+            {/* BOTTOM — Results */}
+            <div className="flex flex-col flex-[2] min-h-[250px]">
+              <SqlResultsPanel
+                result={result}
+                history={history}
+                isLoading={isExecuting}
+                onSelectHistory={handleSelectHistory}
+              />
+            </div>
           </div>
         </div>
 
-        {/* Mobile: Schema (collapsed below editor on small screens) */}
+        {/* Mobile: Schema (rendered below editor on small screens) */}
         <div className="lg:hidden mt-4">
           <SqlSchemaSidebar
             tables={schema}

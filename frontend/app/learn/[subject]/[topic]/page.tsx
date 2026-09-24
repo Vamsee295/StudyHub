@@ -290,13 +290,35 @@ export default function TopicPage() {
   }
 
   if (error || !topic || !subject || !currentModule) {
+    const isNotFound = error?.toLowerCase().includes('not found') || (!topic && !error);
     return (
-      <div className="flex flex-col h-full w-full items-center justify-center bg-white p-6">
-        <div className="p-6 bg-[var(--error-soft)] text-[var(--error)] rounded-xl border border-[var(--error)]/20 max-w-md text-center shadow-sm">
-          <h3 className="font-bold mb-2 text-[16px]">Topic not found</h3>
-          <p className="text-[14px]">The topic you are looking for does not exist or an error occurred.</p>
-          <Link href={`/learn/${subjectSlug}`} className="inline-block mt-4 text-[13px] font-bold hover:underline">
-            ← Back to Subject
+      <div className="flex flex-col h-full w-full items-center justify-center bg-white p-8">
+        <div className="flex flex-col items-center gap-5 max-w-md text-center">
+          <div className="w-12 h-12 rounded-full bg-[var(--error-soft)] border border-[var(--error-soft-border)] flex items-center justify-center">
+            <AlertTriangle className="w-6 h-6 text-[var(--error)]" />
+          </div>
+          <div className="flex flex-col gap-2">
+            <h2 className="text-[20px] font-bold text-[var(--ink)]">Lesson Not Found</h2>
+            <p className="text-[14px] text-[var(--ink-secondary)] leading-relaxed">
+              This lesson doesn&apos;t exist in the course catalogue.
+            </p>
+          </div>
+          <div className="w-full bg-[#FAFAFA] border border-[var(--border)] rounded-xl p-4 text-left flex flex-col gap-2 text-[13px] font-mono">
+            <div className="flex gap-2">
+              <span className="text-[var(--ink-tertiary)] min-w-[80px]">Course:</span>
+              <span className="text-[var(--ink)] font-semibold">{subjectSlug}</span>
+            </div>
+            <div className="flex gap-2">
+              <span className="text-[var(--ink-tertiary)] min-w-[80px]">Lesson:</span>
+              <span className="text-[var(--error)] font-semibold break-all">{topicSlug}</span>
+            </div>
+          </div>
+          <Link
+            href={`/learn/${subjectSlug}`}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--accent)] text-white text-[13px] font-bold hover:bg-[var(--accent-hover)] transition-colors shadow-sm"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to Course
           </Link>
         </div>
       </div>

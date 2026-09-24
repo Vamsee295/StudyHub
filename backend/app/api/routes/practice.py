@@ -95,3 +95,44 @@ async def get_practice_ledger(user: Any = Depends(get_current_user)):
                 })
                 
         return {"ledger": ledger}
+
+class TutorMessage(BaseModel):
+    role: str
+    content: str
+
+class TutorRequest(BaseModel):
+    query: str
+    chat_history: List[TutorMessage] = []
+
+@router.post("/questions/{question_id}/tutor")
+async def ask_tutor(question_id: str, request: TutorRequest, user: Any = Depends(get_current_user)):
+    from app.ai.tutor_service import TutorService
+    from sse_starlette.sse import EventSourceResponse
+    
+    async with AsyncSessionLocal() as session:
+        # Get question
+        result = await session.execute(
+            select(PracticeQuestion).where(PracticeQuestion.id == question_id)
+        )
+        question = result.scalars().first()
+        if not question:
+            raise HTTPException(status_code=404, detail="Question not found")
+            
+        # Get user skill baseline
+        from app.models.profile import ProfileSkillBaseline
+        sb_result = await session.execute(
+            select(ProfileSkillBaseline).where(ProfileSkillBaseline.profile_id == user.id)
+        )
+        skill_baseline = sb_result.scalars().first()
+        
+    tutor_service = TutorService()
+    chat_history_dicts = [{"role": msg.role, "content": msg.content} for msg in request.chat_history]
+    
+    generator = tutor_service.get_tutor_stream(
+        question=question,
+        query=request.query,
+        user_skills=skill_baseline,
+        chat_history=chat_history_dicts
+    )
+    
+    return EventSourceResponse(generator)

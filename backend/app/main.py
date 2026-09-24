@@ -9,7 +9,7 @@ app = FastAPI(
     version="1.0.0",
 )
 
-from app.models import company, daily_plans, learning, practice, profile, resource, roadmap, templates, tools, settings as user_settings_model
+from app.models import company, daily_plans, learning, practice, profile, resource, roadmap, templates, tools, settings as user_settings_model, community
 from sqlalchemy import text
 
 def sync_table_columns(connection):
@@ -34,7 +34,7 @@ async def startup_event():
         # Sync any newly added columns in models
         await conn.run_sync(sync_table_columns)
 
-from app.api.routes import profile, dashboard, learn, ai, resources, roadmaps, practice
+from app.api.routes import profile, dashboard, learn, ai, resources, roadmaps, practice, community
 
 # Configure CORS
 origins = [
@@ -63,6 +63,7 @@ app.include_router(ai.router)
 app.include_router(resources.router)
 app.include_router(roadmaps.router)
 app.include_router(practice.router)
+app.include_router(community.router)
 
 @app.get("/")
 

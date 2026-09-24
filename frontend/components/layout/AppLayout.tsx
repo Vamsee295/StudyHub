@@ -24,6 +24,7 @@ const navLinks = [
   { name: "Resources", href: "/resources" },
   { name: "Templates", href: "/templates" },
   { name: "Tools", href: "/tools" },
+  { name: "Study With Me", href: "/study-with-me" },
 ];
 
 export function AppLayout({ children }: { children: React.ReactNode }) {

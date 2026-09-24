@@ -28,9 +28,9 @@ export function createAptitudeLesson(
         { type: 'text', title: 'Standard Method', content: method },
         { type: 'text', title: 'Example', content: example },
         { type: 'text', title: 'Shortcut / Trick', content: shortcut },
-        ...(mistakes.length > 0 ? [{ type: 'warning', title: 'Common Mistakes', items: mistakes }] : []),
+        ...(mistakes.length > 0 ? [{ type: 'warning' as const, title: 'Common Mistakes', items: mistakes }] : []),
         { type: 'takeaways', title: 'Placement Tip', items: [placementTip] },
-        { type: 'quickCheck', ...quickCheck }
+        { type: 'quickCheck' as const, title: 'Quick Check', ...quickCheck }
       ]
     }
   };

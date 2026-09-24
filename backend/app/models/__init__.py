@@ -10,6 +10,8 @@ from app.models.templates import TemplateCategory, Template, TemplateUsage
 from app.models.tools import Tool, ToolUsage
 from app.models.daily_plans import DailyPlan, DailyPlanItem
 from app.models.resume_analysis import ResumeAnalysis
+from app.models.community import LearningActivity, CommunityPost, PostLike, PostComment, UserFollow
+from app.models.ai import AIUsageLog
 
 # This file imports all the models so that Alembic can auto-discover them via Base.metadata
 

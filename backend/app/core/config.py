@@ -12,8 +12,9 @@ class Settings(BaseSettings):
     database_url: str = "sqlite+aiosqlite:///./pathward.db"
     
     # Groq LLM
+    llm_provider: str = "groq"
     groq_api_key: str = ""
-    groq_model: str = "llama3-8b-8192"
+    groq_model: str = "llama3-70b-8192"
     
     # CORS
     frontend_url: str = "http://localhost:3000"

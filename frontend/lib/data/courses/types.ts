@@ -1,18 +1,29 @@
 export interface CourseLessonContent {
-  definition: string;
-  whyItMatters: string;
-  coreConcept: string;
+  definition?: string;
+  whyItMatters?: string;
+  coreConcept?: string;
   syntax?: string;
-  codeExample?: string;
-  executionExplanation?: string;
-  realWorldUse: string;
-  commonMistakes: string;
-  interviewQuestions: {
+  javaExample?: string;
+  howItWorks?: string;
+  realWorldUse?: string;
+  commonMistakes?: string[];
+  interviewQuestions?: {
     question: string;
     answer: string;
   }[];
-  quickRevision: string;
-  practicePrompt: string;
+  quickRevision?: string;
+  practicePrompt?: string;
+  quickCheck?: {
+    question: string;
+    options: string[];
+    answer: number;
+    explanation: string;
+  };
+  sections?: Array<{
+    type: string;
+    title: string;
+    [key: string]: any;
+  }>;
 }
 
 export interface CourseLesson {
