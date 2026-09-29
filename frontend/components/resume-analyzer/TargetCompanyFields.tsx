@@ -1,5 +1,6 @@
 "use client";
 
+import { ChevronDown } from "lucide-react";
 import { CompanyType, ResumeAnalysisTarget } from "@/lib/resume-analyzer/types";
 
 interface TargetCompanyFieldsProps {
@@ -63,21 +64,28 @@ export function TargetCompanyFields({
         <label htmlFor="company-type" className="mb-1.5 block text-[12px] font-semibold text-[var(--ink-secondary)]">
           Company type
         </label>
-        <select
-          id="company-type"
-          value={target.companyType}
-          onChange={(event) => onChange({ companyType: event.target.value as typeof companyTypes[number]["value"] })}
-          disabled={disabled}
-          aria-invalid={Boolean(companyTypeError)}
-          aria-describedby={companyTypeError ? "company-type-error" : undefined}
-          className="field w-full appearance-none pr-9 text-[var(--ink)] disabled:cursor-not-allowed disabled:bg-[var(--surface-subdued)]"
-        >
-          {companyTypes.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
+        <div className="relative">
+          <select
+            id="company-type"
+            value={target.companyType}
+            onChange={(event) => onChange({ companyType: event.target.value as typeof companyTypes[number]["value"] })}
+            disabled={disabled}
+            aria-invalid={Boolean(companyTypeError)}
+            aria-describedby={companyTypeError ? "company-type-error" : undefined}
+            className="field w-full appearance-none pr-9 text-[var(--ink)] disabled:cursor-not-allowed disabled:bg-[var(--surface-subdued)]"
+          >
+            <option value="" disabled>Select company type</option>
+            {companyTypes.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+          <ChevronDown
+            size={15}
+            className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[var(--ink-tertiary)]"
+          />
+        </div>
         {companyTypeError && (
           <p id="company-type-error" className="mt-1.5 text-[12px] font-medium text-[var(--error)]">
             {companyTypeError}

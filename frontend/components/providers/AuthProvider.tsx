@@ -28,7 +28,15 @@ const PROTECTED_ROUTES = [
   '/tools',
   '/profile',
   '/settings',
-  '/onboarding'
+];
+
+const PUBLIC_ROUTES = [
+  '/',
+  '/login',
+  '/signup',
+  '/forgot-password',
+  '/reset-password',
+  '/verify-email',
 ];
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
@@ -70,7 +78,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           setSession(session);
           setUser(session?.user ?? null);
           setLoading(false);
-          
+
           if (typeof document !== 'undefined') {
             if (session) {
               document.cookie = "auth-session=true; path=/; max-age=2592000; SameSite=Lax";
@@ -88,31 +96,28 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
   }, []);
 
-  // Route protection effect with loop-breaker circuit
+  // Route protection effect - DO NOT redirect authenticated users away from /login
   useEffect(() => {
     if (loading) return; // Don't redirect while loading
 
     const isProtectedRoute = PROTECTED_ROUTES.some(route => pathname?.startsWith(route));
-    
-    if (!user && isProtectedRoute) {
-      // Clear cookie immediately so server middleware does not believe session is active
+    const isOnboardingRoute = pathname === '/onboarding';
+
+    // Unauthenticated users trying to access protected routes → redirect to login
+    if (!user && (isProtectedRoute || isOnboardingRoute)) {
       if (typeof document !== 'undefined') {
         document.cookie = "auth-session=; path=/; max-age=0; SameSite=Lax";
-        document.cookie = "onboarding-complete=; path=/; max-age=0; SameSite=Lax";
       }
-      router.replace('/login');
+
+      const loginUrl = `/login${pathname !== '/dashboard' && pathname !== '/onboarding' ? `?redirect=${encodeURIComponent(pathname)}` : ''}`;
+      router.replace(loginUrl);
       return;
     }
-    
-    if (user && pathname === '/login') {
-      // User is verified authenticated -> sync cookie and transition to authenticated destination
-      if (typeof document !== 'undefined') {
-        document.cookie = "auth-session=true; path=/; max-age=2592000; SameSite=Lax";
-      }
-      const params = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
-      const targetUrl = params?.get('redirect') || '/dashboard';
-      router.replace(targetUrl);
-    }
+
+    // REMOVED: The automatic redirect from /login to /dashboard
+    // Authenticated users CAN access /login page
+    // The login page itself will handle showing appropriate UI for authenticated users
+
   }, [user, loading, pathname, router]);
 
   return (

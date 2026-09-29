@@ -12,41 +12,39 @@ export function TrendingSidebar({ stats }: TrendingSidebarProps) {
   if (!stats) return null;
 
   return (
-    <aside className="flex flex-col gap-5">
+    <aside className="flex flex-col gap-10">
       {/* Quick stats */}
-      <div className="bg-[var(--surface)] rounded-2xl border border-[var(--border)] p-5">
-        <div className="flex items-center gap-2 mb-4">
-          <Activity className="w-4 h-4 text-[var(--accent)]" />
-          <h3 className="text-[13px] font-semibold text-[var(--ink)]">Today's Activity</h3>
-        </div>
-        <div className="grid grid-cols-2 gap-3">
-          <div className="bg-[var(--surface-subdued)] rounded-xl p-3 text-center">
-            <p className="text-[22px] font-bold text-[var(--accent)]">
+      <div className="flex flex-col">
+        <h3 className="text-[12px] uppercase tracking-[0.12em] font-semibold text-slate-500 mb-4">
+          Today's Activity
+        </h3>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <p className="text-[28px] font-semibold text-[#0f172a]">
               {stats.active_today}
             </p>
-            <p className="text-[11px] text-[var(--ink-secondary)] mt-0.5">Active learners</p>
+            <p className="text-[13px] text-slate-500 mt-1">Active learners</p>
           </div>
-          <div className="bg-[var(--surface-subdued)] rounded-xl p-3 text-center">
-            <p className="text-[22px] font-bold text-[var(--accent)]">
+          <div>
+            <p className="text-[28px] font-semibold text-[#0f172a]">
               {stats.total_posts}
             </p>
-            <p className="text-[11px] text-[var(--ink-secondary)] mt-0.5">Total posts</p>
+            <p className="text-[13px] text-slate-500 mt-1">Total posts</p>
           </div>
         </div>
       </div>
 
       {/* Trending tags */}
       {stats.trending_tags.length > 0 && (
-        <div className="bg-[var(--surface)] rounded-2xl border border-[var(--border)] p-5">
-          <div className="flex items-center gap-2 mb-4">
-            <TrendingUp className="w-4 h-4 text-[var(--accent)]" />
-            <h3 className="text-[13px] font-semibold text-[var(--ink)]">Trending Today</h3>
-          </div>
+        <div className="flex flex-col">
+          <h3 className="text-[12px] uppercase tracking-[0.12em] font-semibold text-slate-500 mb-4">
+            Trending
+          </h3>
           <div className="flex flex-wrap gap-2">
             {stats.trending_tags.map((tag) => (
               <span
                 key={tag}
-                className="text-[12px] font-medium px-2.5 py-1 rounded-full bg-[var(--accent-soft)] text-[var(--accent)] border border-[var(--accent-soft-border)]"
+                className="text-[13px] font-medium text-slate-600 hover:text-slate-900 cursor-pointer"
               >
                 #{tag}
               </span>
@@ -56,11 +54,11 @@ export function TrendingSidebar({ stats }: TrendingSidebarProps) {
       )}
 
       {/* Learning tip */}
-      <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl border border-blue-100 p-5">
-        <p className="text-[12px] font-semibold uppercase tracking-wider text-blue-500 mb-2">
+      <div className="bg-blue-50/50 rounded-[10px] p-5">
+        <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-[#2563eb] mb-2">
           Tip
         </p>
-        <p className="text-[13px] text-blue-900 leading-relaxed">
+        <p className="text-[14px] text-slate-700 leading-relaxed">
           Share what you learn daily — even small wins compound over time. The
           best placement performers are consistent, not perfect.
         </p>

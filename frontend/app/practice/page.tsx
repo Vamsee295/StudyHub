@@ -1,78 +1,37 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { motion, useReducedMotion, Variants } from "framer-motion";
+import Link from "next/link";
+import { Code2, Database, Laptop, ArrowRight, Clock, CheckCircle2 } from "lucide-react";
 import { PracticeHeader } from "@/components/practice/PracticeHeader";
-import { PracticeFilters } from "@/components/practice/PracticeFilters";
-import { QuickPracticeSection } from "@/components/practice/QuickPracticeSection";
-import { RecommendedSection } from "@/components/practice/RecommendedSection";
-import { TopicsSection } from "@/components/practice/TopicsSection";
-import { PlacementSection } from "@/components/practice/PlacementSection";
-import { RecentPracticeSection } from "@/components/practice/RecentPracticeSection";
-import { PracticeShortcutsBar } from "@/components/practice/PracticeShortcutsBar";
+import { practiceApi } from "@/lib/api/practice";
+import { PracticeAttemptLedger } from "@/types";
 
-import { practiceApi, PracticeSet, PracticeAttempt } from "@/lib/api/practice";
-import { QuickPracticeSprint, PracticeAttemptLedger } from "@/types";
-import { SearchX } from "lucide-react";
+type MappedSession = {
+  id: string;
+  title: string;
+  score: number;
+  totalQuestions: number;
+  accuracy: number;
+  durationStr: string;
+  completedDate: string;
+  track: string;
+  type: string;
+};
 
-export default function PracticePage() {
+export default function PracticeHubPage() {
   const reduced = useReducedMotion();
   const [mounted, setMounted] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  
-  // Real data state
-  const [dynamicSprints, setDynamicSprints] = useState<QuickPracticeSprint[]>([]);
-  const [dynamicLedger, setDynamicLedger] = useState<PracticeAttemptLedger[]>([]);
-  
-  // Filtering state
-  const [searchQuery, setSearchQuery] = useState("");
-  const [activeTrack, setActiveTrack] = useState("all");
+  const [recentSessions, setRecentSessions] = useState<MappedSession[]>([]);
 
   useEffect(() => {
     setMounted(true);
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      // Cmd+P or Ctrl+P to focus search (in a real app we'd have a ref to the input)
-      if ((e.metaKey || e.ctrlKey) && e.key === "p") {
-        e.preventDefault();
-        const searchInput = document.querySelector('input[placeholder*="Search questions"]') as HTMLInputElement;
-        if (searchInput) {
-          searchInput.focus();
-        }
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
-
-  useEffect(() => {
     async function loadData() {
       try {
-        const [setsRes, ledgerRes] = await Promise.all([
-          practiceApi.getPracticeSets(),
-          practiceApi.getLedger()
-        ]);
-
-        if (setsRes.sets) {
-          const sprints: QuickPracticeSprint[] = setsRes.sets.map(s => ({
-            id: s.id,
-            tag: `${s.domain.toUpperCase()} · TIMED`,
-            title: s.title,
-            questionsCount: 5, // mock count for now, since we don't have it in the set model
-            estimatedMinutes: s.estimated_minutes,
-            difficulty: s.difficulty,
-            topics: [s.domain],
-            avgTime: `${s.estimated_minutes}m`,
-            targetAccuracy: "80%",
-            engineNote: "",
-            track: s.domain
-          } as any));
-          setDynamicSprints(sprints);
-        }
-
-        if (ledgerRes.ledger) {
-          const ledger: PracticeAttemptLedger[] = ledgerRes.ledger.map(l => ({
+        const res = await practiceApi.getLedger();
+        if (res.ledger) {
+          const ledger: MappedSession[] = res.ledger.map(l => ({
             id: l.id,
             title: l.title,
             score: l.score,
@@ -83,38 +42,15 @@ export default function PracticePage() {
             track: l.domain,
             type: "Sprint"
           } as any));
-          setDynamicLedger(ledger);
+          setRecentSessions(ledger.slice(0, 5)); // Just take the 5 most recent
         }
       } catch (err) {
-        console.error("Failed to load practice data", err);
-      } finally {
-        setIsLoading(false);
+        console.error("Failed to load practice ledger", err);
       }
     }
     loadData();
   }, []);
 
-  // Filtered data logic
-  const filteredSprints = useMemo(() => {
-    return dynamicSprints.filter(s => {
-      const matchTrack = activeTrack === "all" || s.track === activeTrack;
-      const matchSearch = s.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          s.topics.some(t => t.toLowerCase().includes(searchQuery.toLowerCase()));
-      return matchTrack && matchSearch;
-    });
-  }, [activeTrack, searchQuery, dynamicSprints]);
-
-  const filteredLedger = useMemo(() => {
-    return dynamicLedger.filter(l => {
-      const matchTrack = activeTrack === "all" || l.track === activeTrack;
-      const matchSearch = l.title.toLowerCase().includes(searchQuery.toLowerCase());
-      return matchTrack && matchSearch;
-    });
-  }, [activeTrack, searchQuery, dynamicLedger]);
-
-  const hasResults = filteredSprints.length > 0 || filteredLedger.length > 0;
-
-  // Stagger variants
   const container: Variants = {
     hidden: { opacity: 0 },
     show: {
@@ -128,75 +64,131 @@ export default function PracticePage() {
     show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
   };
 
-  // Prevent hydration mismatch by returning null until mounted if using system features
   if (!mounted) return null;
 
   return (
     <div className="flex flex-col gap-10 pb-24 w-full relative">
       <PracticeHeader />
-      
-      <PracticeFilters 
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-        activeTrack={activeTrack}
-        setActiveTrack={setActiveTrack}
-      />
 
-      {hasResults ? (
-        <motion.div 
-          className="flex flex-col gap-16"
-          variants={reduced ? undefined : container}
-          initial="hidden"
-          animate="show"
-        >
-          {isLoading ? (
-            <div className="py-20 text-center text-[var(--ink-tertiary)]">Loading practice sets...</div>
-          ) : (
-            <>
-              <motion.div variants={reduced ? undefined : item}>
-                <QuickPracticeSection sprints={filteredSprints} />
-              </motion.div>
-              
-              <motion.div variants={reduced ? undefined : item}>
-                <RecommendedSection diagnostics={[]} />
-              </motion.div>
-              
-              <motion.div variants={reduced ? undefined : item}>
-                <TopicsSection banks={[]} />
-              </motion.div>
-              
-              <motion.div variants={reduced ? undefined : item}>
-                <PlacementSection simulations={[]} />
-              </motion.div>
-              
-              <motion.div variants={reduced ? undefined : item}>
-                <RecentPracticeSection ledger={filteredLedger} />
-              </motion.div>
-            </>
-          )}
-        </motion.div>
-      ) : (
-        <div className="flex flex-col items-center justify-center py-20 text-center">
-          <div className="w-16 h-16 bg-[var(--surface-subdued)] rounded-2xl flex items-center justify-center mb-4">
-            <SearchX className="w-8 h-8 text-[var(--ink-tertiary)]" />
+      <motion.div 
+        className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4"
+        variants={reduced ? undefined : container}
+        initial="hidden"
+        animate="show"
+      >
+        {/* CARD 1: CODE PLAYGROUND */}
+        <motion.div variants={reduced ? undefined : item} className="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-6 flex flex-col justify-between shadow-xs hover:border-[var(--accent)] hover:shadow-md transition-all group">
+          <div>
+            <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mb-5">
+              <Code2 className="w-6 h-6" />
+            </div>
+            <h2 className="text-xl font-bold text-[var(--ink)] tracking-tight mb-2">Code Playground</h2>
+            <p className="text-[14px] text-[var(--ink-secondary)] mb-6">
+              Practice programming algorithms and data structures with real-time execution.
+            </p>
+            <div className="flex flex-wrap gap-2 mb-8">
+              <span className="px-2.5 py-1 rounded-md bg-[var(--surface-subdued)] text-xs font-mono text-[var(--ink-secondary)]">Python</span>
+              <span className="px-2.5 py-1 rounded-md bg-[var(--surface-subdued)] text-xs font-mono text-[var(--ink-secondary)]">Java</span>
+              <span className="px-2.5 py-1 rounded-md bg-[var(--surface-subdued)] text-xs font-mono text-[var(--ink-secondary)]">C</span>
+              <span className="px-2.5 py-1 rounded-md bg-[var(--surface-subdued)] text-xs font-mono text-[var(--ink-secondary)]">C++</span>
+            </div>
           </div>
-          <h3 className="text-xl font-bold text-[var(--ink)] mb-2">No practice modules found</h3>
-          <p className="text-[var(--ink-secondary)] max-w-md mx-auto mb-6">
-            We couldn't find any practice sets matching "{searchQuery}" for the selected track.
-          </p>
-          <button 
-            onClick={() => {
-              setSearchQuery("");
-              setActiveTrack("all");
-            }}
-            className="bg-[var(--surface)] border border-[var(--border)] hover:border-[var(--ink)] text-[var(--ink)] px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-          >
-            Clear all filters
-          </button>
-        </div>
-      )}
+          <Link href="/practice/code" className="btn-primary w-full flex items-center justify-center gap-2 group-hover:bg-[var(--accent-hover)] transition-colors">
+            Open Code Playground <ArrowRight className="w-4 h-4" />
+          </Link>
+        </motion.div>
 
-      <PracticeShortcutsBar />
+        {/* CARD 2: SQL LAB */}
+        <motion.div variants={reduced ? undefined : item} className="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-6 flex flex-col justify-between shadow-xs hover:border-[var(--accent)] hover:shadow-md transition-all group">
+          <div>
+            <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center mb-5">
+              <Database className="w-6 h-6" />
+            </div>
+            <h2 className="text-xl font-bold text-[var(--ink)] tracking-tight mb-2">SQL Lab</h2>
+            <p className="text-[14px] text-[var(--ink-secondary)] mb-6">
+              Write SQL queries against interactive practice databases with live schema exploration.
+            </p>
+            <div className="flex flex-wrap gap-2 mb-8">
+              <span className="px-2.5 py-1 rounded-md bg-[var(--surface-subdued)] text-xs font-mono text-[var(--ink-secondary)]">SQL Editor</span>
+              <span className="px-2.5 py-1 rounded-md bg-[var(--surface-subdued)] text-xs font-mono text-[var(--ink-secondary)]">Schema Explorer</span>
+              <span className="px-2.5 py-1 rounded-md bg-[var(--surface-subdued)] text-xs font-mono text-[var(--ink-secondary)]">Query Results</span>
+            </div>
+          </div>
+          <Link href="/practice/sql" className="btn-primary w-full flex items-center justify-center gap-2 group-hover:bg-[var(--accent-hover)] transition-colors">
+            Open SQL Lab <ArrowRight className="w-4 h-4" />
+          </Link>
+        </motion.div>
+
+        {/* CARD 3: WEB PLAYGROUND */}
+        <motion.div variants={reduced ? undefined : item} className="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-6 flex flex-col justify-between shadow-xs hover:border-[var(--accent)] hover:shadow-md transition-all group">
+          <div>
+            <div className="w-12 h-12 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center mb-5">
+              <Laptop className="w-6 h-6" />
+            </div>
+            <h2 className="text-xl font-bold text-[var(--ink)] tracking-tight mb-2">Web Playground</h2>
+            <p className="text-[14px] text-[var(--ink-secondary)] mb-6">
+              Build and experiment with frontend web technologies in an isolated, live-preview sandbox.
+            </p>
+            <div className="flex flex-wrap gap-2 mb-8">
+              <span className="px-2.5 py-1 rounded-md bg-[var(--surface-subdued)] text-xs font-mono text-[var(--ink-secondary)]">HTML</span>
+              <span className="px-2.5 py-1 rounded-md bg-[var(--surface-subdued)] text-xs font-mono text-[var(--ink-secondary)]">CSS</span>
+              <span className="px-2.5 py-1 rounded-md bg-[var(--surface-subdued)] text-xs font-mono text-[var(--ink-secondary)]">JavaScript</span>
+              <span className="px-2.5 py-1 rounded-md bg-[var(--surface-subdued)] text-xs font-mono text-[var(--ink-secondary)]">Live Preview</span>
+            </div>
+          </div>
+          <Link href="/practice/web" className="btn-primary w-full flex items-center justify-center gap-2 group-hover:bg-[var(--accent-hover)] transition-colors">
+            Open Web Playground <ArrowRight className="w-4 h-4" />
+          </Link>
+        </motion.div>
+      </motion.div>
+
+      {/* RECENT SESSIONS */}
+      <motion.div 
+        className="mt-6"
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+      >
+        <h3 className="text-lg font-bold text-[var(--ink)] mb-4">Recent Practice Sessions</h3>
+        {recentSessions.length > 0 ? (
+          <div className="bg-[var(--surface)] border border-[var(--border)] rounded-2xl overflow-hidden shadow-xs">
+            <div className="divide-y divide-[var(--border)]">
+              {recentSessions.map((session, i) => (
+                <div key={i} className="flex items-center justify-between p-4 hover:bg-[var(--surface-subdued)] transition-colors">
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-lg bg-[var(--surface-subdued)] border border-[var(--border)] flex items-center justify-center text-[var(--ink-secondary)]">
+                      {session.track === 'dsa' ? <Code2 className="w-5 h-5" /> : 
+                       session.track === 'sql' ? <Database className="w-5 h-5" /> : 
+                       <Laptop className="w-5 h-5" />}
+                    </div>
+                    <div>
+                      <h4 className="text-[14px] font-semibold text-[var(--ink)]">{session.title}</h4>
+                      <div className="flex items-center gap-2 text-xs text-[var(--ink-tertiary)] mt-1">
+                        <span className="uppercase font-mono">{session.track}</span>
+                        <span>•</span>
+                        <span>{session.completedDate}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex flex-col items-end">
+                    <span className="text-sm font-semibold text-[var(--success)] flex items-center gap-1">
+                      <CheckCircle2 className="w-4 h-4" /> Completed
+                    </span>
+                    <span className="text-xs text-[var(--ink-tertiary)] flex items-center gap-1 mt-1">
+                      <Clock className="w-3 h-3" /> {session.durationStr}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div className="bg-[var(--surface-subdued)] border border-[var(--border)] rounded-2xl p-8 text-center">
+            <p className="text-[var(--ink-secondary)]">You haven't completed any practice sessions yet.</p>
+            <p className="text-sm text-[var(--ink-tertiary)] mt-1">Select one of the playgrounds above to get started.</p>
+          </div>
+        )}
+      </motion.div>
     </div>
   );
 }

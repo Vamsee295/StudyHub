@@ -5,6 +5,7 @@ from app.models.roadmap import Roadmap, RoadmapStage, UserRoadmapProgress, UserD
 from app.models.company import Company, CompanyRole, UserCompanyTarget
 from app.models.resource import ResourceCategory, Resource, UserResourceProgress
 from app.models.practice import PracticeSet, PracticeQuestion, UserPracticeAttempt
+from app.models.practice_lab import PracticeSession, CodeExecution, WebProject, SQLSession
 from app.models.settings import UserSettings, ActivityEvent
 from app.models.templates import TemplateCategory, Template, TemplateUsage
 from app.models.tools import Tool, ToolUsage

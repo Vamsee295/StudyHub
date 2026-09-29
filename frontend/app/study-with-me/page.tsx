@@ -140,7 +140,7 @@ export default function StudyWithMePage() {
         <ActivityFilterBar active={activeFilter} onChange={handleFilterChange} />
 
         {/* Main layout: feed + sidebar */}
-        <div className="max-w-5xl mx-auto px-4 sm:px-8 py-6 grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-8">
+        <div className="max-w-[1050px] mx-auto px-4 sm:px-8 py-6 grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-8">
           {/* Feed */}
           <ActivityFeed
             groups={groups}

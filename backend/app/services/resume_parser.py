@@ -4,6 +4,7 @@ Resume parsing service for extracting text from PDF files.
 
 from __future__ import annotations
 
+import io
 import logging
 from typing import Any
 
@@ -54,7 +55,8 @@ class ResumeParser:
             ScannedPdfError: If the PDF contains no extractable text.
         """
         try:
-            pdf_reader = pypdf.PdfReader(file_content)
+            pdf_stream = io.BytesIO(file_content) if isinstance(file_content, (bytes, bytearray)) else file_content
+            pdf_reader = pypdf.PdfReader(pdf_stream)
         except Exception as exc:
             logger.exception("Failed to read PDF")
             raise InvalidPdfError("The PDF file is invalid or corrupted.") from exc

@@ -42,24 +42,43 @@ function AuthForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const reduced = useReducedMotion();
-  
+
   const [mode, setMode] = useState<"login" | "signup">("login");
-  
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
-  
+
   const [remember, setRemember] = useState(true);
   const [errors, setErrors] = useState<{ email?: string; password?: string; name?: string; confirm?: string }>({});
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+  const [existingUser, setExistingUser] = useState<any>(null);
 
   useEffect(() => {
     if (searchParams.get("mode") === "signup") {
       setMode("signup");
     }
   }, [searchParams]);
+
+  // Check if user is already authenticated
+  useEffect(() => {
+    async function checkAuth() {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user) {
+          setExistingUser(session.user);
+        }
+      } catch (error) {
+        console.error("Error checking auth:", error);
+      } finally {
+        setIsCheckingAuth(false);
+      }
+    }
+    checkAuth();
+  }, []);
 
   const fade = (delay: number) =>
     reduced ? {} : { initial: { opacity: 0, y: 10 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.35, delay } };
@@ -68,9 +87,9 @@ function AuthForm() {
     e.preventDefault();
     setErrors({});
     setMessage("");
-    
+
     const next: typeof errors = {};
-    
+
     if (mode === "signup") {
       if (name.trim().length < 2) next.name = "Enter your full name.";
       if (password.length < 8) next.password = "Password must be at least 8 characters.";
@@ -78,9 +97,9 @@ function AuthForm() {
     } else {
       if (password.length < 6) next.password = "Password must be at least 6 characters.";
     }
-    
+
     if (!/^\S+@\S+\.\S+$/.test(email)) next.email = "Enter a valid email address.";
-    
+
     setErrors(next);
     if (Object.keys(next).length) return;
 
@@ -90,14 +109,34 @@ function AuthForm() {
         setMessage("Signing in...");
         const { error, data } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        
+
         if (data.session) {
           if (typeof document !== "undefined") {
             document.cookie = "auth-session=true; path=/; max-age=2592000; SameSite=Lax";
-            document.cookie = "onboarding-complete=true; path=/; max-age=31536000; SameSite=Lax";
           }
-          const targetUrl = searchParams.get("redirect") || "/dashboard";
-          window.location.href = targetUrl;
+
+          // Fetch profile to check onboarding status
+          try {
+            const profileRes = await fetch('/api/profile', {
+              headers: {
+                'Authorization': `Bearer ${data.session.access_token}`
+              }
+            });
+            const profileData = await profileRes.json();
+
+            // Route based on onboarding completion
+            if (profileData.profile_completed) {
+              const targetUrl = searchParams.get("redirect") || "/dashboard";
+              window.location.href = targetUrl;
+            } else {
+              window.location.href = "/onboarding";
+            }
+          } catch (profileError) {
+            console.error("Error fetching profile:", profileError);
+            // Fallback to dashboard if profile fetch fails
+            const targetUrl = searchParams.get("redirect") || "/dashboard";
+            window.location.href = targetUrl;
+          }
           return;
         }
       } else {
@@ -112,13 +151,13 @@ function AuthForm() {
           }
         });
         if (error) throw error;
-        
+
         if (data.session) {
           if (typeof document !== "undefined") {
             document.cookie = "auth-session=true; path=/; max-age=2592000; SameSite=Lax";
-            document.cookie = "onboarding-complete=; path=/; max-age=0; SameSite=Lax";
           }
           setMessage("Account created! Redirecting to setup...");
+          // New users always go to onboarding
           window.location.href = "/onboarding";
           return;
         } else if (data.user) {
@@ -143,6 +182,75 @@ function AuthForm() {
     } finally {
       setLoading(false);
     }
+  }
+
+  async function handleLogout() {
+    setLoading(true);
+    try {
+      await supabase.auth.signOut();
+      if (typeof document !== "undefined") {
+        document.cookie = "auth-session=; path=/; max-age=0; SameSite=Lax";
+      }
+      setExistingUser(null);
+      setMessage("Logged out successfully");
+    } catch (error) {
+      console.error("Logout error:", error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // If user is already authenticated, show authenticated state UI
+  if (!isCheckingAuth && existingUser) {
+    return (
+      <main className="w-full min-h-screen flex flex-col lg:flex-row flex-1">
+        <BrandPanel />
+        <AuthRightPanel>
+          <div className="lg:hidden flex items-center justify-between w-full mb-6 pb-3 border-b border-border">
+            <StudyHubLogo href="/" size="sm" />
+            <Link
+              href="/"
+              className="inline-flex items-center gap-1.5 text-xs font-medium text-ink-secondary hover:text-ink transition-colors px-2.5 py-1 rounded-md border border-border bg-white shadow-2xs"
+            >
+              <ArrowLeft size={12} className="text-accent" />
+              Home
+            </Link>
+          </div>
+
+          <div className="w-full max-w-[440px] flex flex-col items-center gap-6 text-center">
+            <div className="w-16 h-16 rounded-full bg-accent/10 flex items-center justify-center">
+              <div className="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center text-accent font-bold text-xl">
+                {existingUser.email?.[0].toUpperCase() || "U"}
+              </div>
+            </div>
+
+            <div>
+              <h2 className="text-2xl font-bold text-ink mb-2">You're already signed in</h2>
+              <p className="text-sm text-ink-secondary">
+                Signed in as <span className="font-medium text-ink">{existingUser.email}</span>
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-3 w-full">
+              <Link
+                href="/dashboard"
+                className="btn-primary auth-btn flex items-center justify-center gap-2"
+              >
+                Continue to Dashboard <ArrowRight size={15} />
+              </Link>
+
+              <button
+                onClick={handleLogout}
+                disabled={loading}
+                className="w-full px-4 py-2.5 text-sm font-medium text-ink-secondary hover:text-ink border border-border rounded-lg hover:bg-surface-subdued transition-colors"
+              >
+                {loading ? <Loader2 size={16} className="animate-spin mx-auto" /> : "Switch Account / Logout"}
+              </button>
+            </div>
+          </div>
+        </AuthRightPanel>
+      </main>
+    );
   }
 
   return (

@@ -1,42 +1,52 @@
 import { NextRequest, NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
-import { RESOURCE_CATALOG } from "@/lib/resources";
 
+/**
+ * Recursively searches materials directory for a PDF matching the given filename.
+ * Supports exact match, case-insensitive match, and trimmed comparison.
+ */
 function findPdfInMaterials(materialsDir: string, targetFilename: string): string | null {
+  if (!fs.existsSync(materialsDir)) {
+    return null;
+  }
+
   // 1. Direct check in root materials directory
   const directPath = path.join(materialsDir, targetFilename);
   if (fs.existsSync(directPath) && fs.statSync(directPath).isFile()) {
     return directPath;
   }
 
-  // 2. Scan subdirectories (DBMS, DSA, Java, Javascript, Python, SQL, etc.)
-  try {
-    const entries = fs.readdirSync(materialsDir, { withFileTypes: true });
-    for (const entry of entries) {
-      if (entry.isDirectory()) {
-        const subDir = path.join(materialsDir, entry.name);
-        const subPath = path.join(subDir, targetFilename);
-        if (fs.existsSync(subPath) && fs.statSync(subPath).isFile()) {
-          return subPath;
-        }
+  const normalizedTarget = targetFilename.toLowerCase().trim();
 
-        // Case-insensitive search in subdirectory
-        const subFiles = fs.readdirSync(subDir);
-        for (const subFile of subFiles) {
-          if (subFile.toLowerCase() === targetFilename.toLowerCase()) {
-            return path.join(subDir, subFile);
+  // 2. Recursive search
+  function searchDir(currentDir: string): string | null {
+    try {
+      const entries = fs.readdirSync(currentDir, { withFileTypes: true });
+
+      // First check files in current directory
+      for (const entry of entries) {
+        if (entry.isFile()) {
+          if (entry.name === targetFilename || entry.name.toLowerCase().trim() === normalizedTarget) {
+            return path.join(currentDir, entry.name);
           }
         }
-      } else if (entry.isFile() && entry.name.toLowerCase() === targetFilename.toLowerCase()) {
-        return path.join(materialsDir, entry.name);
       }
+
+      // Then recurse into subdirectories
+      for (const entry of entries) {
+        if (entry.isDirectory()) {
+          const match = searchDir(path.join(currentDir, entry.name));
+          if (match) return match;
+        }
+      }
+    } catch (err) {
+      console.error(`[Materials API] Error reading directory ${currentDir}:`, err);
     }
-  } catch (err) {
-    console.error("[Materials API] Error scanning materials directory:", err);
+    return null;
   }
 
-  return null;
+  return searchDir(materialsDir);
 }
 
 export async function GET(
@@ -46,11 +56,6 @@ export async function GET(
   try {
     const { filename: rawFilename } = await context.params;
     const decodedFilename = decodeURIComponent(rawFilename);
-
-    // Whitelist check against known resource catalog or valid .pdf request
-    const allowedInCatalog = RESOURCE_CATALOG.some(
-      (r) => r.filename.toLowerCase() === decodedFilename.toLowerCase()
-    );
 
     // Resolve path to frontend/materials
     const materialsDir = path.join(process.cwd(), "materials");
@@ -89,4 +94,3 @@ export async function GET(
     return new NextResponse("Internal Server Error loading material.", { status: 500 });
   }
 }
-

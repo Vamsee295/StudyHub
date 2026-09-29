@@ -63,16 +63,7 @@ export default function OnboardingPage() {
     }
   }, []);
 
-  // Strict route guard
-  useEffect(() => {
-    if (isClient && !profileLoading) {
-      const isCookieComplete = typeof document !== 'undefined' && document.cookie.includes('onboarding-complete=true');
-      if (canonicalProfile?.profileCompleted || isCookieComplete) {
-        console.log("[ROUTE GUARD] Profile already completed, redirecting to /dashboard");
-        router.replace('/dashboard');
-      }
-    }
-  }, [isClient, profileLoading, canonicalProfile?.profileCompleted, router]);
+  // Removed: Strict route guard - now handled by OnboardingGuard component
 
   if (!isClient || profileLoading) {
     return (
@@ -80,12 +71,6 @@ export default function OnboardingPage() {
         <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
       </div>
     );
-  }
-
-  // Prevent flash while redirecting
-  const isCookieComplete = typeof document !== 'undefined' && document.cookie.includes('onboarding-complete=true');
-  if (canonicalProfile?.profileCompleted || isCookieComplete) {
-    return null;
   }
 
   const handleNext = () => {
@@ -112,47 +97,34 @@ export default function OnboardingPage() {
   };
 
   const handleSkipForNow = async () => {
-    if (typeof document !== 'undefined') {
-      document.cookie = "onboarding-complete=true; path=/; max-age=31536000; SameSite=Lax";
-    }
     try {
       await onboardingService.completeOnboarding(profile as UserProfile, user?.id);
       await refreshProfile();
+      window.location.href = '/dashboard';
     } catch (e) {
-      console.warn("Skip for now background sync:", e);
+      console.error("Skip for now error:", e);
+      window.location.href = '/dashboard';
     }
-    window.location.href = '/dashboard';
   };
 
   const handleSaveAndExit = async () => {
     onboardingService.saveDraft(profile);
-    if (typeof document !== 'undefined') {
-      document.cookie = "onboarding-complete=true; path=/; max-age=31536000; SameSite=Lax";
-    }
     try {
       await onboardingService.completeOnboarding(profile as UserProfile, user?.id);
       await refreshProfile();
+      window.location.href = '/dashboard';
     } catch (e) {
-      console.warn("Save and exit background sync:", e);
+      console.error("Save and exit error:", e);
+      window.location.href = '/dashboard';
     }
-    window.location.href = '/dashboard';
   };
 
   const handleComplete = async () => {
-    if (typeof document !== 'undefined') {
-      document.cookie = "onboarding-complete=true; path=/; max-age=31536000; SameSite=Lax";
-    }
-    
     try {
       await onboardingService.completeOnboarding(profile as UserProfile, user?.id);
-    } catch (error) {
-      console.error("Failed to complete onboarding:", error);
-    }
-    
-    try {
       await refreshProfile();
     } catch (error) {
-      console.error("Failed to refresh profile:", error);
+      console.error("Failed to complete onboarding:", error);
     }
 
     try {
@@ -161,7 +133,7 @@ export default function OnboardingPage() {
     } catch (error) {
       console.error("Failed to generate AI plan:", error);
     }
-    
+
     window.location.href = '/dashboard';
   };
 

@@ -48,6 +48,13 @@ export function ResumeAnalyzerPage() {
 
   const updateTarget = (patch: Partial<ResumeAnalysisTarget>) => {
     setRequest((current) => ({ ...current, target: { ...current.target, ...patch } }));
+    setErrors((current) => {
+      const next = { ...current };
+      for (const key of Object.keys(patch)) {
+        delete next[key];
+      }
+      return next;
+    });
     setApiError(null);
   };
 

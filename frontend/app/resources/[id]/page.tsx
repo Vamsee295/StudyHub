@@ -11,7 +11,8 @@ import {
   Download,
   FileText,
   Share2,
-  Check
+  Check,
+  Layers
 } from "lucide-react";
 import { resourceService, Resource } from "@/lib/resources";
 import { resourceStorage } from "@/lib/resourceStorage";
@@ -56,6 +57,25 @@ export default function ResourceDetailPage({ params }: { params: Promise<{ id: s
       }
       
       resourceStorage.recordView(found.id, match?.lastPage || 1);
+    } else {
+      // Dynamic fallback for newly added files
+      fetch("/api/materials/catalog")
+        .then((res) => res.json())
+        .then((data) => {
+          if (data && data.success && Array.isArray(data.resources)) {
+            resourceService.setDynamicCatalog(data.resources);
+            const dynamicFound = resourceService.getById(id);
+            if (dynamicFound) {
+              setResource(dynamicFound);
+              setIsBookmarked(resourceStorage.isSaved(dynamicFound.id));
+              setIsCompleted(resourceStorage.isCompleted(dynamicFound.id));
+              resourceStorage.recordView(dynamicFound.id, 1);
+            }
+          }
+        })
+        .catch((err) => {
+          console.warn("[ResourceDetail] Failed to fetch dynamic catalog:", err);
+        });
     }
   }, [id]);
 
@@ -303,6 +323,41 @@ export default function ResourceDetailPage({ params }: { params: Promise<{ id: s
           </div>
         </div>
       </header>
+
+      {/* PACK UNIT SWITCHER BAR (if part of a pack) */}
+      {(() => {
+        const parentPack = resourceService.getAll().find(
+          (r) => r.isPack && (r.id === resource.id || r.packItems?.some((p) => p.id === resource.id || p.filename.toLowerCase() === resource.filename.toLowerCase()))
+        );
+        if (!parentPack || !parentPack.packItems) return null;
+        return (
+          <div className="mb-6 p-3 bg-[var(--surface)] border border-[var(--border)] rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+            <div className="flex items-center gap-2 text-[13px] font-semibold text-[var(--ink)]">
+              <Layers className="w-4 h-4 text-[var(--accent)]" />
+              <span>{parentPack.title}:</span>
+            </div>
+            <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0 hide-scrollbar">
+              {parentPack.packItems.map((item) => {
+                const isActive = item.id === resource.id || item.filename.toLowerCase() === resource.filename.toLowerCase();
+                return (
+                  <Link
+                    key={item.id}
+                    href={`/resources/${item.id}`}
+                    className={clsx(
+                      "px-3 py-1.5 rounded-xl text-[12px] font-semibold transition-all shrink-0 flex items-center gap-1.5",
+                      isActive
+                        ? "bg-[var(--accent)] text-white shadow-xs"
+                        : "bg-[var(--surface-subdued)] text-[var(--ink-secondary)] hover:text-[var(--ink)] hover:bg-[var(--surface-subdued)]/80 border border-transparent hover:border-[var(--border)]"
+                    )}
+                  >
+                    <span>{item.unit || item.title}</span>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })()}
 
       {/* PDF READER WRAPPER */}
       <div 

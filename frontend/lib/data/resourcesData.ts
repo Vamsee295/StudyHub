@@ -66,60 +66,70 @@ export const libraryCategories: ResourceCategoryItem[] = [
     title: "DSA & Algorithms",
     description: "Pattern recognition, complexity analysis, and optimal data structures.",
     icon: "code_blocks",
-    resourcesCount: 84,
-    guidesCount: 12,
+    resourcesCount: 8,
+    guidesCount: 4,
     colorScheme: "bg-blue-50 text-blue-700",
     filterKey: "DSA"
   },
   {
     id: "java",
     title: "Java & Modern Programming",
-    description: "Core concepts, collections, concurrency, and JVM internals.",
+    description: "Core concepts, collections, concurrency, OOP, and JVM internals.",
     icon: "terminal",
-    resourcesCount: 42,
-    guidesCount: 8,
+    resourcesCount: 10,
+    guidesCount: 4,
     colorScheme: "bg-orange-50 text-orange-700",
     filterKey: "Java"
+  },
+  {
+    id: "javascript",
+    title: "JavaScript & Modern Web",
+    description: "HTML5, CSS3, JavaScript core & advanced, and React architecture.",
+    icon: "code_blocks",
+    resourcesCount: 5,
+    guidesCount: 3,
+    colorScheme: "bg-amber-50 text-amber-700",
+    filterKey: "JavaScript"
+  },
+  {
+    id: "network-protocols",
+    title: "Network Protocols & Security",
+    description: "OSI & TCP/IP stack, routing protocols, cryptography, and network security.",
+    icon: "memory",
+    resourcesCount: 2,
+    guidesCount: 2,
+    colorScheme: "bg-purple-50 text-purple-700",
+    filterKey: "Network Protocols"
+  },
+  {
+    id: "dbms",
+    title: "DBMS & Database Systems",
+    description: "Relational database theory, storage, ACID, indexing, and recovery.",
+    icon: "database",
+    resourcesCount: 3,
+    guidesCount: 2,
+    colorScheme: "bg-indigo-50 text-indigo-700",
+    filterKey: "DBMS"
   },
   {
     id: "sql",
     title: "SQL & Query Engineering",
     description: "Complex joins, window functions, and database normalization.",
     icon: "database",
-    resourcesCount: 36,
-    guidesCount: 5,
+    resourcesCount: 3,
+    guidesCount: 2,
     colorScheme: "bg-emerald-50 text-emerald-700",
     filterKey: "SQL"
   },
   {
-    id: "core-cs",
-    title: "Core Computer Science",
-    description: "Operating systems, computer networks, and DBMS architecture.",
-    icon: "memory",
-    resourcesCount: 28,
-    guidesCount: 6,
-    colorScheme: "bg-purple-50 text-purple-700",
-    filterKey: "Core CS"
-  },
-  {
-    id: "ai-ml",
-    title: "AI & Applied ML",
-    description: "Foundational machine learning, deep learning, and NLP basics.",
-    icon: "psychology",
-    resourcesCount: 12,
-    guidesCount: 3,
-    colorScheme: "bg-pink-50 text-pink-700",
-    filterKey: "AI / ML"
-  },
-  {
-    id: "aptitude",
-    title: "Placement Aptitude & Verbal",
-    description: "Quantitative aptitude, logical reasoning, and verbal ability.",
+    id: "python",
+    title: "Python Engineering",
+    description: "Python data structures, object-oriented concepts, and fast revision notes.",
     icon: "calculate",
-    resourcesCount: 18,
-    guidesCount: 4,
-    colorScheme: "bg-amber-50 text-amber-700",
-    filterKey: "Aptitude"
+    resourcesCount: 2,
+    guidesCount: 1,
+    colorScheme: "bg-teal-50 text-teal-700",
+    filterKey: "Python"
   }
 ];
 

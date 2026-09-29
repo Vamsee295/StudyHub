@@ -2,11 +2,17 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { AuthProvider } from "@/components/providers/AuthProvider";
 import { ProfileProvider } from "@/components/providers/ProfileProvider";
+import { OnboardingGuard } from "@/components/providers/OnboardingGuard";
 
 export const metadata: Metadata = {
   title: "StudyHub — Everything you need to prepare for your tech career",
   description:
     "Structured roadmaps, technical resources, company preparation, practice and career tools for engineering students — mapped into one unified learning system.",
+  icons: {
+    icon: "/favicon.png",
+    shortcut: "/favicon.png",
+    apple: "/logo-emblem.png",
+  },
 };
 
 export const viewport: Viewport = {
@@ -31,7 +37,9 @@ export default function RootLayout({
       <body className="antialiased">
         <AuthProvider>
           <ProfileProvider>
-            {children}
+            <OnboardingGuard>
+              {children}
+            </OnboardingGuard>
           </ProfileProvider>
         </AuthProvider>
       </body>

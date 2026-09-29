@@ -34,8 +34,8 @@ function Avatar({ author }: { author?: CommunityAuthor | null }) {
     );
   }
   return (
-    <div className="w-9 h-9 rounded-full bg-[var(--accent-soft)] border border-[var(--accent-soft-border)] flex items-center justify-center shrink-0">
-      <span className="text-[12px] font-bold text-[var(--accent)]">{initials}</span>
+    <div className="w-[38px] h-[38px] rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center shrink-0">
+      <span className="text-[13px] font-bold text-[#2563eb]">{initials}</span>
     </div>
   );
 }
@@ -101,27 +101,25 @@ export function ActivityCard({
 
   return (
     <article
-      className="bg-[var(--surface)] rounded-2xl border border-[var(--border)] shadow-[0_1px_4px_rgba(0,0,0,0.04)] p-5 hover:shadow-[0_2px_12px_rgba(0,0,0,0.07)] transition-shadow"
+      className="bg-[#FFFFFF] rounded-[12px] border border-slate-200 p-[22px] transition-colors hover:border-slate-300"
       aria-label={`Post by ${post.author?.full_name || "a learner"}`}
     >
       {/* Header: Avatar + Author + Time */}
-      <div className="flex items-start justify-between gap-3 mb-3">
+      <div className="flex items-start justify-between gap-3 mb-4">
         <div className="flex items-center gap-3 min-w-0">
           <Avatar author={post.author} />
-          <div className="min-w-0">
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-[14px] font-semibold text-[var(--ink)] truncate">
-                {post.author?.full_name || "StudyHub Learner"}
-              </span>
-            </div>
+          <div className="min-w-0 flex flex-col justify-center">
+            <span className="text-[14px] font-medium text-[#0f172a] truncate leading-tight">
+              {post.author?.full_name || "StudyHub Learner"}
+            </span>
             {post.author?.university && (
-              <p className="text-[11px] text-[var(--ink-tertiary)] truncate">
+              <p className="text-[13px] text-slate-500 truncate mt-0.5 leading-tight">
                 {post.author.university}
               </p>
             )}
           </div>
         </div>
-        <span className="text-[11px] text-[var(--ink-tertiary)] shrink-0 pt-0.5">
+        <span className="text-[13px] text-slate-400 shrink-0">
           {timeAgo}
         </span>
       </div>
@@ -135,13 +133,13 @@ export function ActivityCard({
 
       {/* Activity context line */}
       {activity && (
-        <p className="text-[13px] font-medium text-[var(--ink)] mb-1">
+        <p className="text-[16px] font-[500] text-[#0f172a] mb-2">
           {activity.title}
         </p>
       )}
 
       {/* Post content */}
-      <p className="text-[14px] text-[var(--ink-secondary)] leading-relaxed mb-3 whitespace-pre-wrap break-words">
+      <p className="text-[15px] text-slate-600 leading-[1.55] mb-4 whitespace-pre-wrap break-words">
         {post.content}
       </p>
 
@@ -149,18 +147,18 @@ export function ActivityCard({
       <TagList tags={post.tags} />
 
       {/* Action Bar */}
-      <div className="flex items-center justify-between mt-4 pt-3 border-t border-[var(--border)]">
-        <div className="flex items-center gap-4">
+      <div className="flex items-center justify-between mt-5 pt-4 border-t border-slate-100">
+        <div className="flex items-center gap-6">
           {/* Like */}
           <button
             onClick={handleLike}
             disabled={!currentUserId || isLiking}
             aria-label={liked ? "Unlike this post" : "Like this post"}
             className={clsx(
-              "flex items-center gap-1.5 text-[13px] font-medium transition-all",
+              "flex items-center gap-2 text-[13px] font-medium transition-colors",
               liked
                 ? "text-red-500"
-                : "text-[var(--ink-secondary)] hover:text-red-400",
+                : "text-slate-500 hover:text-slate-800",
               !currentUserId && "opacity-50 cursor-default"
             )}
           >
@@ -174,7 +172,7 @@ export function ActivityCard({
           <button
             onClick={() => onCommentClick(post.id)}
             aria-label="View comments"
-            className="flex items-center gap-1.5 text-[13px] font-medium text-[var(--ink-secondary)] hover:text-[var(--accent)] transition-colors"
+            className="flex items-center gap-2 text-[13px] font-medium text-slate-500 hover:text-slate-800 transition-colors"
           >
             <MessageCircle className="w-4 h-4" />
             <span>{post.comment_count}</span>

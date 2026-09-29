@@ -163,26 +163,35 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     pathname.split('/').filter(Boolean).length >= 3
   );
 
+  // Check if current route is a dedicated practice workspace
+  const isPracticeWorkspace = Boolean(
+    pathname === '/practice/code' ||
+    pathname === '/practice/sql' ||
+    pathname === '/practice/web'
+  );
+
+  const isWorkspace = isLessonWorkspace || isPracticeWorkspace;
+
   return (
     <div className={clsx(
       "flex flex-col bg-[var(--canvas)] selection:bg-[var(--accent-soft)] selection:text-[var(--accent-hover)] text-[var(--ink)] font-sans relative",
-      isLessonWorkspace ? "h-screen overflow-hidden" : "min-h-screen grid-texture"
+      isWorkspace ? "h-screen overflow-hidden" : "min-h-screen grid-texture"
     )}>
       {/* TOP APP NAVIGATION BAR */}
       <header className={clsx(
         "shrink-0 z-40 w-full max-w-full bg-[var(--surface)]/90 backdrop-blur-md border-b border-[var(--border)]/80 shadow-[0_1px_2px_0_rgba(0,0,0,0.03)] box-border",
-        !isLessonWorkspace && "sticky top-0"
+        !isWorkspace && "sticky top-0"
       )}>
         <div className={clsx(
           "h-16 flex items-center justify-between gap-3 sm:gap-4 w-full min-w-0 box-border",
-          isLessonWorkspace ? "px-4 sm:px-6" : "max-w-7xl mx-auto px-4 sm:px-6"
+          isWorkspace ? "px-4 sm:px-6" : "max-w-7xl mx-auto px-4 sm:px-6"
         )}>
           {/* Brand & Primary Nav */}
           <div className="flex items-center gap-3 xl:gap-6 min-w-0">
             <StudyHubLogo href="/dashboard" size="md" showBadge={false} />
 
             {/* Nav Links */}
-            <nav className="hidden lg:flex items-center gap-0.5 xl:gap-1 text-[13px] xl:text-[13.5px]">
+            <nav className="hidden lg:flex items-center gap-0.5 xl:gap-1 text-[12.5px] xl:text-[13.5px]">
               {navLinks.map((link) => {
                 const isActive = pathname === link.href || pathname?.startsWith(link.href + "/");
                 return (
@@ -190,7 +199,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                     key={link.name}
                     href={link.href}
                     className={clsx(
-                      "px-2.5 xl:px-3 py-1.5 rounded-md transition-all flex items-center gap-1.5 whitespace-nowrap",
+                      "px-2 xl:px-2.5 py-1.5 rounded-md transition-all flex items-center gap-1.5 whitespace-nowrap",
                       isActive
                         ? "font-semibold text-[var(--accent)] bg-[var(--accent-soft)] ring-1 ring-[var(--accent-soft-border)]"
                         : "font-medium text-[var(--ink-secondary)] hover:text-[var(--ink)] hover:bg-[var(--surface-subdued)]/70"
@@ -205,9 +214,9 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           </div>
 
           {/* Right Utility Actions */}
-          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+          <div className="flex items-center gap-2.5 sm:gap-3.5 shrink-0 pl-2">
             {/* Notifications */}
-            <div className="relative shrink-0 flex">
+            <div className="relative shrink-0 flex items-center">
               <button
                 className={clsx(
                   "relative p-2 rounded-lg transition-colors shrink-0",
@@ -220,9 +229,9 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                 aria-label="Notifications"
                 aria-expanded={notificationsOpen}
               >
-                <Bell className="w-[18px] h-[18px] sm:w-[20px] sm:h-[20px]" />
+                <Bell className="w-[19px] h-[19px] sm:w-[20px] sm:h-[20px]" />
                 {unreadCount > 0 && (
-                  <span className="absolute top-1.5 right-1.5 min-w-[16px] h-[16px] px-1 rounded-full bg-[var(--error)] text-white text-[10px] font-bold flex items-center justify-center ring-2 ring-[var(--surface)] shadow-sm">
+                  <span className="absolute top-1 right-1 min-w-[16px] h-[16px] px-1 rounded-full bg-[var(--error)] text-white text-[10px] font-bold flex items-center justify-center ring-2 ring-[var(--surface)] shadow-sm">
                     {unreadCount > 99 ? '99+' : unreadCount}
                   </span>
                 )}
@@ -238,7 +247,9 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                 onNavigate={(link) => router.push(link)}
               />
             </div>
-            <div className="h-5 w-px bg-[var(--border)] hidden sm:block shrink-0"></div>
+            
+            {/* Vertical Divider with clear margins */}
+            <div className="h-5 w-[1px] bg-slate-200 dark:bg-slate-700 hidden sm:block shrink-0 mx-1"></div>
 
             {/* Profile Control with Anchored Dropdown */}
             <div className="relative shrink-0">
@@ -248,7 +259,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                 aria-expanded={profileDropdownOpen}
                 aria-haspopup="true"
                 title="Account & preferences"
-                className="flex items-center gap-2 sm:gap-2.5 pl-1 py-1 pr-2 rounded-full hover:bg-[var(--surface-subdued)]/70 transition-colors cursor-pointer border border-transparent hover:border-[var(--border)] select-none text-left focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/30 max-w-[180px] sm:max-w-[220px]"
+                className="flex items-center gap-2 sm:gap-2.5 pl-1.5 py-1 pr-2.5 rounded-full hover:bg-[var(--surface-subdued)]/70 transition-colors cursor-pointer border border-transparent hover:border-[var(--border)] select-none text-left focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/30 max-w-[180px] sm:max-w-[220px]"
               >
                 <img
                   alt={displayName}
@@ -321,7 +332,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       {/* MAIN PAGE CONTAINER */}
       <main className={clsx(
         "flex-1 w-full box-border min-w-0",
-        isLessonWorkspace 
+        isWorkspace 
           ? "h-[calc(100vh-4rem)] min-h-0 overflow-hidden p-0 m-0" 
           : "max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8"
       )}>
@@ -329,7 +340,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       </main>
 
       {/* MINIMAL FOOTER */}
-      {!isLessonWorkspace && (
+      {!isWorkspace && (
         <footer className="w-full max-w-full bg-[var(--surface)] border-t border-[var(--border)]/80 py-6 mt-16 box-border">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[var(--ink-secondary)] font-normal box-border min-w-0">
             <div className="flex items-center gap-2">

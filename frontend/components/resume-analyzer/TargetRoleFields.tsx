@@ -1,5 +1,6 @@
 "use client";
 
+import { ChevronDown } from "lucide-react";
 import { ResumeAnalysisTarget } from "@/lib/resume-analyzer/types";
 
 interface TargetRoleFieldsProps {
@@ -33,22 +34,28 @@ export function TargetRoleFields({
         <label htmlFor="target-role" className="mb-1.5 block text-[12px] font-semibold text-[var(--ink-secondary)]">
           Target role
         </label>
-        <select
-          id="target-role"
-          value={target.role}
-          onChange={(event) => onChange({ role: event.target.value })}
-          disabled={disabled}
-          aria-invalid={Boolean(error)}
-          aria-describedby={error ? "target-role-error" : undefined}
-          className="field w-full appearance-none pr-9 text-[var(--ink)] disabled:cursor-not-allowed disabled:bg-[var(--surface-subdued)]"
-        >
-          <option value="">Select a role</option>
-          {ROLE_OPTIONS.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
+        <div className="relative">
+          <select
+            id="target-role"
+            value={target.role}
+            onChange={(event) => onChange({ role: event.target.value })}
+            disabled={disabled}
+            aria-invalid={Boolean(error)}
+            aria-describedby={error ? "target-role-error" : undefined}
+            className="field w-full appearance-none pr-9 text-[var(--ink)] disabled:cursor-not-allowed disabled:bg-[var(--surface-subdued)]"
+          >
+            <option value="">Select a role</option>
+            {ROLE_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+          <ChevronDown
+            size={15}
+            className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[var(--ink-tertiary)]"
+          />
+        </div>
         {error && (
           <p id="target-role-error" className="mt-1.5 text-[12px] font-medium text-[var(--error)]">
             {error}

@@ -35,15 +35,15 @@ export function ActivityFeed({
       {groups.map((group) => (
         <section key={group.date} aria-labelledby={`date-${group.date}`}>
           {/* Date separator */}
-          <div className="flex items-center gap-3 mb-4 px-4 sm:px-0">
+          <div className="flex items-center gap-4 mb-5 px-4 sm:px-0">
             <span
               id={`date-${group.date}`}
-              className="text-[11px] font-semibold uppercase tracking-widest text-[var(--ink-tertiary)]"
+              className="text-[12px] font-semibold uppercase tracking-[0.12em] text-slate-500"
             >
               {group.label}
             </span>
-            <div className="flex-1 h-px bg-[var(--border)]" />
-            <span className="text-[11px] text-[var(--ink-tertiary)]">
+            <div className="flex-1 h-px bg-slate-200" />
+            <span className="text-[12px] text-slate-400 font-medium uppercase tracking-[0.05em]">
               {group.posts.length} post{group.posts.length !== 1 ? "s" : ""}
             </span>
           </div>

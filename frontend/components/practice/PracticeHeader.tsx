@@ -1,4 +1,4 @@
-import { Activity, Code2, Database, Brain, Cpu, Trophy, TrendingUp } from "lucide-react";
+import { Trophy, TrendingUp } from "lucide-react";
 
 export function PracticeHeader() {
   return (
@@ -10,18 +10,17 @@ export function PracticeHeader() {
           <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--accent)]"></span>
         </span>
         <span className="text-[10px] font-mono text-[var(--ink-secondary)] uppercase tracking-wider font-semibold">
-          Placement Engine // Skill Evaluation &amp; Practice Workspace
+          PLACEMENT ENGINE // PRACTICE LAB
         </span>
       </div>
 
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
           <h1 className="font-newsreader text-4xl sm:text-5xl text-[var(--ink)] tracking-tight leading-tight mb-3">
-            Practice what you've learned.
+            Turn what you've learned into working code.
           </h1>
           <p className="text-[var(--ink-secondary)] text-[15px] max-w-2xl leading-relaxed">
-            Build speed, problem-solving intuition, and interview confidence through rapid coding sprints, 
-            targeted topic drills, and placement-calibrated challenge sets.
+            Build, run, experiment, debug, and practice the skills you've learned across StudyHub.
           </p>
         </div>
 

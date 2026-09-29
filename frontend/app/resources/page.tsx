@@ -23,6 +23,7 @@ export default function ResourcesPage() {
   const [sortBy, setSortBy] = useState<SortOption>("Relevant");
 
   // Telemetry & Storage State
+  const [catalogVersion, setCatalogVersion] = useState(0);
   const [savedIds, setSavedIds] = useState<string[]>([]);
   const [completedIds, setCompletedIds] = useState<string[]>([]);
   const [recentResources, setRecentResources] = useState<(Resource & { viewedAt: string; lastPage?: number })[]>([]);
@@ -31,7 +32,7 @@ export default function ResourcesPage() {
 
   const categories = useMemo(() => {
     return resourceService.getCategoriesWithCounts();
-  }, []);
+  }, [catalogVersion]);
 
   const refreshStorageData = () => {
     const sIds = resourceStorage.getSavedIds();
@@ -50,6 +51,19 @@ export default function ResourcesPage() {
   useEffect(() => {
     setMounted(true);
     refreshStorageData();
+
+    // Dynamically sync newly added materials from filesystem API
+    fetch("/api/materials/catalog")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && data.success && Array.isArray(data.resources)) {
+          resourceService.setDynamicCatalog(data.resources);
+          setCatalogVersion((v) => v + 1);
+        }
+      })
+      .catch((err) => {
+        console.warn("[Resources] Using catalog baseline:", err);
+      });
 
     // Global keyboard shortcut for search
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -95,7 +109,7 @@ export default function ResourcesPage() {
       category: activeFilter,
       sortBy
     });
-  }, [searchQuery, activeFilter, sortBy]);
+  }, [searchQuery, activeFilter, sortBy, catalogVersion]);
 
   // Format continue reading items
   const continueReadingItems = useMemo(() => {
@@ -127,14 +141,12 @@ export default function ResourcesPage() {
     show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
   };
 
-  if (!mounted) return null;
-
   return (
     <div className="flex flex-col gap-10 md:gap-14 pb-24 relative max-w-[1440px] mx-auto w-full min-w-0">
       <ResourcesHeader 
-        savedCount={stats.saved}
-        recentCount={stats.recent}
-        completedCount={stats.completed}
+        savedCount={mounted ? stats.saved : 0}
+        recentCount={mounted ? stats.recent : 0}
+        completedCount={mounted ? stats.completed : 0}
       />
       
       <ResourcesSearchFilter 
@@ -154,7 +166,7 @@ export default function ResourcesPage() {
         whileInView="show"
         viewport={{ once: true, margin: "-50px" }}
       >
-        {searchQuery === "" && activeFilter === "All" && continueReadingItems.length > 0 && (
+        {mounted && searchQuery === "" && activeFilter === "All" && continueReadingItems.length > 0 && (
           <motion.div variants={reduced ? undefined : item}>
             <ContinueReadingSection items={continueReadingItems} />
           </motion.div>
@@ -163,8 +175,8 @@ export default function ResourcesPage() {
         <motion.div variants={reduced ? undefined : item}>
           <CuratedResourcesSection 
             resources={filteredResources} 
-            bookmarkedIds={savedIds}
-            completedIds={completedIds}
+            bookmarkedIds={mounted ? savedIds : []}
+            completedIds={mounted ? completedIds : []}
             onToggleBookmark={handleToggleBookmark}
           />
         </motion.div>
@@ -175,14 +187,16 @@ export default function ResourcesPage() {
           </motion.div>
         )}
 
-        <motion.div variants={reduced ? undefined : item}>
-          <SavedAndRecentSection 
-            savedResources={savedResources}
-            recentResources={recentResources}
-            onRemoveSaved={handleRemoveSaved}
-            onClearHistory={handleClearHistory}
-          />
-        </motion.div>
+        {mounted && searchQuery === "" && activeFilter === "All" && (
+          <motion.div variants={reduced ? undefined : item}>
+            <SavedAndRecentSection 
+              savedResources={savedResources}
+              recentResources={recentResources}
+              onRemoveSaved={handleRemoveSaved}
+              onClearHistory={handleClearHistory}
+            />
+          </motion.div>
+        )}
       </motion.div>
     </div>
   );

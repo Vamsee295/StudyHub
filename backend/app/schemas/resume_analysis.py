@@ -20,8 +20,17 @@ JobDescriptionField = Annotated[
 EvidenceList = list[str]
 
 
+def to_camel(string: str) -> str:
+    components = string.split("_")
+    return components[0] + "".join(x.title() for x in components[1:])
+
+
 class StrictModel(BaseModel):
-    model_config = ConfigDict(extra="forbid")
+    model_config = ConfigDict(
+        extra="ignore",
+        populate_by_name=True,
+        alias_generator=to_camel,
+    )
 
 
 class ResumeAnalysisTarget(StrictModel):
