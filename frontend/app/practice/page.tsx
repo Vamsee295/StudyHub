@@ -84,7 +84,7 @@ export default function PracticeHubPage() {
             </div>
             <h2 className="text-xl font-bold text-[var(--ink)] tracking-tight mb-2">Code Playground</h2>
             <p className="text-[14px] text-[var(--ink-secondary)] mb-6">
-              Practice programming algorithms and data structures with real-time execution.
+              VS Code-style multi-file environment with real execution, full file explorer, tabs, and output console.
             </p>
             <div className="flex flex-wrap gap-2 mb-8">
               <span className="px-2.5 py-1 rounded-md bg-[var(--surface-subdued)] text-xs font-mono text-[var(--ink-secondary)]">Python</span>
@@ -106,7 +106,7 @@ export default function PracticeHubPage() {
             </div>
             <h2 className="text-xl font-bold text-[var(--ink)] tracking-tight mb-2">SQL Lab</h2>
             <p className="text-[14px] text-[var(--ink-secondary)] mb-6">
-              Write SQL queries against interactive practice databases with live schema exploration.
+              Write SQL queries against interactive practice databases with live schema exploration and real execution.
             </p>
             <div className="flex flex-wrap gap-2 mb-8">
               <span className="px-2.5 py-1 rounded-md bg-[var(--surface-subdued)] text-xs font-mono text-[var(--ink-secondary)]">SQL Editor</span>
@@ -119,25 +119,24 @@ export default function PracticeHubPage() {
           </Link>
         </motion.div>
 
-        {/* CARD 3: WEB PLAYGROUND */}
+        {/* CARD 3: DSA PROBLEMS / CODING SPRINTS */}
         <motion.div variants={reduced ? undefined : item} className="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-6 flex flex-col justify-between shadow-xs hover:border-[var(--accent)] hover:shadow-md transition-all group">
           <div>
-            <div className="w-12 h-12 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center mb-5">
+            <div className="w-12 h-12 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center mb-5">
               <Laptop className="w-6 h-6" />
             </div>
-            <h2 className="text-xl font-bold text-[var(--ink)] tracking-tight mb-2">Web Playground</h2>
+            <h2 className="text-xl font-bold text-[var(--ink)] tracking-tight mb-2">Coding Sprints &amp; DSA</h2>
             <p className="text-[14px] text-[var(--ink-secondary)] mb-6">
-              Build and experiment with frontend web technologies in an isolated, live-preview sandbox.
+              Targeted timed sprints to sharpen placement algorithms, data structures recall, and coding speed.
             </p>
             <div className="flex flex-wrap gap-2 mb-8">
-              <span className="px-2.5 py-1 rounded-md bg-[var(--surface-subdued)] text-xs font-mono text-[var(--ink-secondary)]">HTML</span>
-              <span className="px-2.5 py-1 rounded-md bg-[var(--surface-subdued)] text-xs font-mono text-[var(--ink-secondary)]">CSS</span>
-              <span className="px-2.5 py-1 rounded-md bg-[var(--surface-subdued)] text-xs font-mono text-[var(--ink-secondary)]">JavaScript</span>
-              <span className="px-2.5 py-1 rounded-md bg-[var(--surface-subdued)] text-xs font-mono text-[var(--ink-secondary)]">Live Preview</span>
+              <span className="px-2.5 py-1 rounded-md bg-[var(--surface-subdued)] text-xs font-mono text-[var(--ink-secondary)]">Algorithms</span>
+              <span className="px-2.5 py-1 rounded-md bg-[var(--surface-subdued)] text-xs font-mono text-[var(--ink-secondary)]">Data Structures</span>
+              <span className="px-2.5 py-1 rounded-md bg-[var(--surface-subdued)] text-xs font-mono text-[var(--ink-secondary)]">Timed Sprints</span>
             </div>
           </div>
-          <Link href="/practice/web" className="btn-primary w-full flex items-center justify-center gap-2 group-hover:bg-[var(--accent-hover)] transition-colors">
-            Open Web Playground <ArrowRight className="w-4 h-4" />
+          <Link href="/practice/problems" className="btn-primary w-full flex items-center justify-center gap-2 group-hover:bg-[var(--accent-hover)] transition-colors">
+            Start Coding Sprint <ArrowRight className="w-4 h-4" />
           </Link>
         </motion.div>
       </motion.div>

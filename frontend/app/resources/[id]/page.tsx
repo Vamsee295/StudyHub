@@ -35,9 +35,11 @@ export default function ResourceDetailPage({ params }: { params: Promise<{ id: s
 
   // PDF Viewer Controls State
   const [zoomLevel, setZoomLevel] = useState<number>(100);
+  const [rotation, setRotation] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [pageCount, setPageCount] = useState<number>(1);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isDoodleMode, setIsDoodleMode] = useState(false);
 
   const readerContainerRef = useRef<HTMLDivElement>(null);
 
@@ -168,12 +170,13 @@ export default function ResourceDetailPage({ params }: { params: Promise<{ id: s
     }
   };
 
-  const handleZoomIn = () => setZoomLevel((prev) => Math.min(200, prev + 25));
-  const handleZoomOut = () => setZoomLevel((prev) => Math.max(50, prev - 25));
+  const handleZoomIn = () => setZoomLevel((prev) => Math.min(300, prev + 25));
+  const handleZoomOut = () => setZoomLevel((prev) => Math.max(25, prev - 25));
   const handleResetZoom = () => setZoomLevel(100);
+  const handleRotate = () => setRotation((prev) => (prev + 90) % 360);
   const handleFitWidth = () => {
-    // A little hack to trigger re-calculation: fit width logic handles zooming to fit
-    setZoomLevel(100); 
+    // Toggle between default fit and expanded width view
+    setZoomLevel((prev) => (prev === 100 ? 135 : 100)); 
   };
 
   const handleNextPage = () => {
@@ -371,6 +374,7 @@ export default function ResourceDetailPage({ params }: { params: Promise<{ id: s
           currentPage={currentPage}
           pageCount={pageCount}
           zoomLevel={zoomLevel}
+          rotation={rotation}
           isFullscreen={isFullscreen}
           fileUrl={pdfStreamUrl}
           onPrevPage={handlePrevPage}
@@ -379,8 +383,11 @@ export default function ResourceDetailPage({ params }: { params: Promise<{ id: s
           onZoomIn={handleZoomIn}
           onZoomOut={handleZoomOut}
           onResetZoom={handleResetZoom}
+          onRotate={handleRotate}
           onFitWidth={handleFitWidth}
           onToggleFullscreen={handleToggleFullscreen}
+          isDoodleMode={isDoodleMode}
+          onToggleDoodle={() => setIsDoodleMode(!isDoodleMode)}
         />
         
         {/* NATIVE PDF.JS CANVAS READER */}
@@ -388,8 +395,11 @@ export default function ResourceDetailPage({ params }: { params: Promise<{ id: s
           fileUrl={pdfStreamUrl}
           currentPage={currentPage}
           zoomLevel={zoomLevel}
+          rotation={rotation}
           onDocumentLoad={handleDocumentLoad}
           className={isFullscreen ? "h-[calc(100vh-56px)]" : ""}
+          isDoodleMode={isDoodleMode}
+          onCloseDoodle={() => setIsDoodleMode(false)}
         />
       </div>
 

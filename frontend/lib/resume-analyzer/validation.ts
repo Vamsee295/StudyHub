@@ -56,10 +56,11 @@ export function validateTarget(target: ResumeAnalysisTarget): Record<string, str
   } else if (target.customRole && target.customRole.length > MAX_ROLE_LENGTH) {
     errors.customRole = `Role must be ${MAX_ROLE_LENGTH} characters or fewer.`;
   }
-  if (
-    target.jobDescription &&
-    target.jobDescription.trim().length > MAX_JOB_DESCRIPTION_LENGTH
-  ) {
+  if (!target.jobDescription?.trim()) {
+    errors.jobDescription = "Enter a job description to enable AI semantic matching.";
+  } else if (target.jobDescription.trim().length < 50) {
+    errors.jobDescription = "Job description is too short to provide meaningful context.";
+  } else if (target.jobDescription.trim().length > MAX_JOB_DESCRIPTION_LENGTH) {
     errors.jobDescription = `Job description must be ${MAX_JOB_DESCRIPTION_LENGTH} characters or fewer.`;
   }
   return errors;

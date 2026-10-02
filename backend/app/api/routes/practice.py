@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
-from typing import Any, List
+from typing import Any, List, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
@@ -136,3 +136,30 @@ async def ask_tutor(question_id: str, request: TutorRequest, user: Any = Depends
     )
     
     return EventSourceResponse(generator)
+
+
+class CodeFileItem(BaseModel):
+    path: str
+    content: str
+
+
+class CodeExecuteRequest(BaseModel):
+    language: str
+    files: List[CodeFileItem]
+    entryFile: Optional[str] = None
+    stdin: Optional[str] = ""
+
+
+@router.post("/code/execute")
+async def execute_code(req: CodeExecuteRequest):
+    from app.services.code_execution_service import CodeExecutionService
+    service = CodeExecutionService()
+    files_list = [{"path": f.path, "content": f.content} for f in req.files]
+    result = service.execute_project(
+        language=req.language,
+        files=files_list,
+        entry_file=req.entryFile,
+        stdin=req.stdin or "",
+    )
+    return result
+

@@ -20,10 +20,225 @@ import {
 } from "lucide-react";
 import { clsx } from "clsx";
 import { learnService, SubjectDetails, TopicContent } from "@/lib/services/learnService";
+import MdxRenderer from "@/components/mdx/MdxRenderer";
 import { notificationService } from "@/lib/services/notificationService";
 import { useAuth } from "@/components/providers/AuthProvider";
 
-function SectionRenderer({ section, selectedOption, handleQuickCheck, showExplanation }: any) {
+// --- INTERACTIVE BLOCKS ---
+
+function QuickCheckBlock({ section }: { section: any }) {
+  const [selectedOption, setSelectedOption] = useState<number | null>(null);
+  const [showExplanation, setShowExplanation] = useState(false);
+
+  const handleQuickCheck = (index: number) => {
+    if (selectedOption !== null) return; // already answered
+    setSelectedOption(index);
+    setShowExplanation(true);
+  };
+
+  return (
+    <section className="bg-white border border-[var(--border)] rounded-xl overflow-hidden shadow-sm">
+      <div className="bg-[#FAFAFA] border-b border-[var(--border)] px-6 py-4 flex items-center gap-2">
+        <CheckCircle2 className="w-4 h-4 text-[var(--accent)]" />
+        <h2 className="text-[12px] font-bold text-[var(--ink)] uppercase tracking-wider">{section.title || "Quick Check"}</h2>
+      </div>
+      <div className="p-6 flex flex-col gap-4">
+        <p className="text-[15px] font-medium text-[var(--ink)]">{section.question}</p>
+        <div className="flex flex-col gap-2">
+          {section.options.map((opt: string, idx: number) => {
+            const isSelected = selectedOption === idx;
+            const isCorrect = idx === section.answer;
+            const showStatus = selectedOption !== null;
+            
+            return (
+              <button
+                key={idx}
+                onClick={() => handleQuickCheck(idx)}
+                disabled={showStatus}
+                className={clsx(
+                  "text-left px-4 py-3 rounded-lg border text-[14px] font-medium transition-all",
+                  !showStatus && "hover:border-[var(--accent)] hover:bg-[var(--accent-soft)]/30 border-[var(--border)] bg-white",
+                  showStatus && isCorrect && "bg-[var(--success-soft)] border-[var(--success-soft-border)] text-[var(--success)]",
+                  showStatus && isSelected && !isCorrect && "bg-[var(--error-soft)] border-[var(--error-soft-border)] text-[var(--error)]",
+                  showStatus && !isSelected && !isCorrect && "border-[var(--border)] bg-[#FAFAFA] opacity-50"
+                )}
+              >
+                {opt}
+              </button>
+            );
+          })}
+        </div>
+        {showExplanation && (
+          <motion.div 
+            initial={{ opacity: 0, height: 0 }} 
+            animate={{ opacity: 1, height: 'auto' }} 
+            className="mt-2 text-[14px] text-[var(--ink-secondary)] p-4 bg-[#FAFAFA] rounded-lg border border-[var(--border)]"
+          >
+            <span className="font-bold text-[var(--ink)]">Explanation:</span> {section.explanation}
+          </motion.div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+function ThinkBlock({ section }: { section: any }) {
+  const [revealed, setRevealed] = useState(false);
+  return (
+    <section className="bg-[var(--accent-soft)]/20 border border-[var(--accent-soft-border)] rounded-xl p-6">
+      <div className="flex items-start gap-3">
+        <div className="bg-white p-2 rounded-full shadow-sm shrink-0 border border-[var(--accent-soft-border)]">
+          <Lightbulb className="w-5 h-5 text-[var(--accent)]" />
+        </div>
+        <div className="flex-1">
+          <h2 className="text-[14px] font-bold text-[var(--ink)] mb-2">{section.title || "Think About It"}</h2>
+          <p className="text-[15px] text-[var(--ink-secondary)] leading-relaxed mb-4">{section.question || section.content}</p>
+          
+          {!revealed ? (
+            <button 
+              onClick={() => setRevealed(true)}
+              className="text-[13px] font-bold text-[var(--accent)] bg-white border border-[var(--accent-soft-border)] px-4 py-2 rounded-lg hover:bg-[var(--accent-soft)] transition-colors"
+            >
+              Reveal Answer
+            </button>
+          ) : (
+            <motion.div 
+              initial={{ opacity: 0, y: -5 }} 
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-white rounded-lg p-4 border border-[var(--border)] text-[14px] text-[var(--ink)] shadow-sm"
+            >
+              <div className="font-bold text-[var(--accent)] text-[12px] uppercase tracking-wider mb-2">Answer</div>
+              {section.answerReveal}
+            </motion.div>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function TryItBlock({ section }: { section: any }) {
+  const [revealed, setRevealed] = useState(false);
+  return (
+    <section className="border border-[var(--border)] rounded-xl overflow-hidden">
+      <div className="bg-[#FAFAFA] px-4 py-3 border-b border-[var(--border)] flex items-center justify-between">
+        <h2 className="text-[12px] font-bold text-[var(--ink)] uppercase tracking-wider flex items-center gap-2">
+          <Code className="w-4 h-4 text-[var(--accent)]" /> {section.title || "Try It / Predict Output"}
+        </h2>
+      </div>
+      <div className="p-4 bg-[#1E1E1E] overflow-x-auto">
+        <pre className="text-[13px] text-gray-300 font-mono">
+          <code>{section.code}</code>
+        </pre>
+      </div>
+      <div className="p-4 bg-white">
+        {!revealed ? (
+          <button 
+            onClick={() => setRevealed(true)}
+            className="w-full py-2.5 rounded-lg border border-[var(--border)] bg-[#FAFAFA] hover:bg-white text-[13px] font-bold text-[var(--ink)] transition-colors flex items-center justify-center gap-2"
+          >
+            Predict Output & Reveal
+          </button>
+        ) : (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col gap-3">
+            <div className="bg-[var(--surface-subdued)] p-3 rounded border border-[var(--border)] font-mono text-[13px] text-[var(--ink)]">
+              <span className="text-[var(--ink-tertiary)] select-none mr-2">$</span>
+              {section.expectedOutput}
+            </div>
+            {section.explanation && (
+              <p className="text-[14px] text-[var(--ink-secondary)] leading-relaxed">
+                {section.explanation}
+              </p>
+            )}
+          </motion.div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+function DryRunBlock({ section }: { section: any }) {
+  const [step, setStep] = useState(0);
+  const totalSteps = section.iterations?.length || 0;
+  
+  if (totalSteps === 0) return null;
+  const currentIteration = section.iterations[step];
+  
+  return (
+    <section className="border border-[var(--border)] rounded-xl overflow-hidden bg-white shadow-sm">
+      <div className="bg-[#FAFAFA] px-5 py-3.5 border-b border-[var(--border)] flex items-center justify-between">
+        <h2 className="text-[12px] font-bold text-[var(--ink)] uppercase tracking-wider flex items-center gap-2">
+          <Clock className="w-4 h-4 text-[var(--accent)]" /> {section.title || "Interactive Dry Run"}
+        </h2>
+        <span className="text-[12px] font-mono font-bold text-[var(--ink-secondary)] bg-[var(--surface-subdued)] px-2 py-0.5 rounded">
+          Step {step + 1} / {totalSteps}
+        </span>
+      </div>
+      
+      <div className="p-5 flex flex-col gap-5">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          {Object.entries(currentIteration.variables).map(([key, value]) => (
+            <div key={key} className="border border-[var(--border)] rounded-lg p-3 bg-[#FAFAFA] flex flex-col items-center justify-center text-center">
+              <span className="text-[11px] font-bold text-[var(--ink-tertiary)] uppercase">{key}</span>
+              <span className="text-[15px] font-mono text-[var(--ink)] mt-1">{String(value)}</span>
+            </div>
+          ))}
+        </div>
+        
+        <div className="bg-[var(--accent-soft)]/20 border border-[var(--accent-soft-border)] rounded-lg p-4 text-[14px] text-[var(--ink)]">
+          <strong>Action:</strong> {currentIteration.description}
+        </div>
+      </div>
+      
+      <div className="bg-[#FAFAFA] border-t border-[var(--border)] p-3 flex gap-2 justify-between">
+        <button 
+          onClick={() => setStep(s => Math.max(0, s - 1))}
+          disabled={step === 0}
+          className="px-4 py-2 rounded-lg text-[13px] font-bold flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[var(--border)] transition-colors"
+        >
+          <ChevronLeft className="w-4 h-4" /> Prev Step
+        </button>
+        <button 
+          onClick={() => setStep(s => Math.min(totalSteps - 1, s + 1))}
+          disabled={step === totalSteps - 1}
+          className="px-4 py-2 rounded-lg text-[13px] font-bold bg-[var(--accent)] text-white hover:bg-[var(--accent-hover)] flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        >
+          Next Step <ChevronRight className="w-4 h-4" />
+        </button>
+      </div>
+    </section>
+  );
+}
+
+function InterviewTrapsBlock({ section }: { section: any }) {
+  return (
+    <section className="bg-white border border-[var(--border)] rounded-xl overflow-hidden shadow-sm">
+      <div className="bg-[var(--error-soft)]/30 border-b border-[var(--border)] px-6 py-4 flex items-center gap-2">
+        <AlertTriangle className="w-4 h-4 text-[var(--error)]" />
+        <h2 className="text-[12px] font-bold text-[var(--ink)] uppercase tracking-wider">{section.title || "Interview Traps & Edge Cases"}</h2>
+      </div>
+      <div className="divide-y divide-[var(--border)]">
+        {section.traps?.map((trap: any, idx: number) => (
+          <div key={idx} className="p-6 flex flex-col gap-3">
+            <div className="font-bold text-[15px] text-[var(--ink)]">Q: {trap.question}</div>
+            <div className="flex flex-col gap-2">
+              <div className="text-[14px] text-[var(--error)] bg-[var(--error-soft)]/50 p-3 rounded-lg border border-[var(--error-soft-border)]">
+                <strong className="text-[12px] uppercase tracking-wider mb-1 block">The Trap:</strong>
+                {trap.trap}
+              </div>
+              <div className="text-[14px] text-[var(--success)] bg-[var(--success-soft)]/30 p-3 rounded-lg border border-[var(--success-soft-border)]">
+                <strong className="text-[12px] uppercase tracking-wider mb-1 block">The Solution:</strong>
+                {trap.solution}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function SectionRenderer({ section }: { section: any }) {
   const renderInlineCode = (text: string) => {
     if (!text) return null;
     return text.split(/`([^`]+)`/g).map((part, i) => {
@@ -35,29 +250,41 @@ function SectionRenderer({ section, selectedOption, handleQuickCheck, showExplan
   switch (section.type) {
     case 'text':
       let Icon = BookOpen;
-      if (section.title.toLowerCase().includes('why')) Icon = Lightbulb;
-      else if (section.title.toLowerCase().includes('concept')) Icon = BookOpen;
-      else if (section.title.toLowerCase().includes('how')) Icon = Code;
+      if (section.title?.toLowerCase().includes('concept')) Icon = BookOpen;
+      else if (section.title?.toLowerCase().includes('how')) Icon = Code;
       
       return (
-        <section className={section.title.toLowerCase().includes('why') ? "bg-[var(--accent-soft)]/30 border border-[var(--accent-soft-border)] rounded-xl p-6" : ""}>
-          <h2 className={clsx("text-[12px] font-bold uppercase tracking-wider mb-3 flex items-center gap-2", 
-            section.title.toLowerCase().includes('why') ? "text-[var(--accent)]" : "text-[var(--ink)]"
-          )}>
-            <Icon className={clsx("w-4 h-4", section.title.toLowerCase().includes('why') ? "" : "text-[var(--accent)]")} /> 
-            {section.title}
-          </h2>
+        <section>
+          {section.title && (
+            <h2 className="text-[12px] font-bold uppercase tracking-wider mb-3 flex items-center gap-2 text-[var(--ink)]">
+              <Icon className="w-4 h-4 text-[var(--accent)]" /> 
+              {section.title}
+            </h2>
+          )}
           <div className="prose prose-sm sm:prose-base max-w-none text-[var(--ink-secondary)] whitespace-pre-wrap leading-relaxed overflow-x-auto">
             {section.content}
           </div>
         </section>
       );
+    case 'callout':
+      return (
+        <section className="bg-[var(--accent-soft)]/30 border border-[var(--accent-soft-border)] rounded-xl p-6">
+          <h2 className="text-[12px] font-bold text-[var(--accent)] uppercase tracking-wider mb-2 flex items-center gap-2">
+            <Lightbulb className="w-4 h-4" /> {section.title || "Important"}
+          </h2>
+          <p className="text-[14px] text-[var(--ink)] leading-relaxed">
+            {section.content}
+          </p>
+        </section>
+      );
     case 'code':
       return (
         <section>
-          <h2 className="text-[12px] font-bold text-[var(--ink)] uppercase tracking-wider mb-3 flex items-center gap-2">
-            <Code className="w-4 h-4 text-[var(--accent)]" /> {section.title}
-          </h2>
+          {section.title && (
+            <h2 className="text-[12px] font-bold text-[var(--ink)] uppercase tracking-wider mb-3 flex items-center gap-2">
+              <Code className="w-4 h-4 text-[var(--accent)]" /> {section.title}
+            </h2>
+          )}
           <div className="bg-[#1E1E1E] rounded-xl p-5 overflow-x-auto shadow-inner mb-3">
             <pre className="text-[13px] text-gray-300 font-mono">
               <code>{section.code}</code>
@@ -73,11 +300,13 @@ function SectionRenderer({ section, selectedOption, handleQuickCheck, showExplan
     case 'list':
       return (
         <section className="bg-[var(--surface-subdued)]/50 border border-[var(--border)] rounded-xl p-6">
-          <h2 className="text-[12px] font-bold text-[var(--ink)] uppercase tracking-wider mb-3 flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-[var(--accent)]" /> {section.title}
-          </h2>
+          {section.title && (
+            <h2 className="text-[12px] font-bold text-[var(--ink)] uppercase tracking-wider mb-3 flex items-center gap-2">
+              <BookOpen className="w-4 h-4 text-[var(--accent)]" /> {section.title}
+            </h2>
+          )}
           <ul className="list-disc pl-5 space-y-2 text-[14px] text-[var(--ink)] leading-relaxed">
-            {section.items.map((item: string, idx: number) => (
+            {section.items?.map((item: string, idx: number) => (
               <li key={idx} dangerouslySetInnerHTML={{ __html: item.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') }} />
             ))}
           </ul>
@@ -86,23 +315,25 @@ function SectionRenderer({ section, selectedOption, handleQuickCheck, showExplan
     case 'table':
       return (
         <section>
-          <h2 className="text-[12px] font-bold text-[var(--ink)] uppercase tracking-wider mb-3 flex items-center gap-2">
-            <BookOpen className="w-4 h-4 text-[var(--accent)]" /> {section.title}
-          </h2>
+          {section.title && (
+            <h2 className="text-[12px] font-bold text-[var(--ink)] uppercase tracking-wider mb-3 flex items-center gap-2">
+              <BookOpen className="w-4 h-4 text-[var(--accent)]" /> {section.title}
+            </h2>
+          )}
           <div className="overflow-x-auto border border-[var(--border)] rounded-xl">
             <table className="w-full text-left text-[14px]">
               <thead className="bg-[#FAFAFA] border-b border-[var(--border)]">
                 <tr>
-                  {section.headers.map((h: string, i: number) => (
+                  {section.headers?.map((h: string, i: number) => (
                     <th key={i} className="px-5 py-3 font-semibold text-[var(--ink)]">{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody className="divide-y divide-[var(--border)]">
-                {section.rows.map((row: string[], i: number) => (
+                {section.rows?.map((row: string[], i: number) => (
                   <tr key={i} className="bg-white">
                     {row.map((cell: string, j: number) => (
-                      <td key={j} className="px-5 py-3 text-[var(--ink-secondary)]">{cell}</td>
+                      <td key={j} className="px-5 py-3 text-[var(--ink-secondary)]">{renderInlineCode(cell)}</td>
                     ))}
                   </tr>
                 ))}
@@ -115,10 +346,10 @@ function SectionRenderer({ section, selectedOption, handleQuickCheck, showExplan
       return (
         <section className="bg-[var(--error-soft)]/30 border border-[var(--error-soft-border)] rounded-xl p-6">
           <h2 className="text-[12px] font-bold text-[var(--error)] uppercase tracking-wider mb-3 flex items-center gap-2">
-            <AlertTriangle className="w-4 h-4" /> {section.title}
+            <AlertTriangle className="w-4 h-4" /> {section.title || "Common Mistakes"}
           </h2>
           <ul className="list-disc pl-5 space-y-2 text-[14px] text-[var(--ink)]">
-            {section.items.map((mistake: string, idx: number) => (
+            {section.items?.map((mistake: string, idx: number) => (
               <li key={idx}>{renderInlineCode(mistake)}</li>
             ))}
           </ul>
@@ -128,10 +359,10 @@ function SectionRenderer({ section, selectedOption, handleQuickCheck, showExplan
       return (
         <section className="bg-[var(--accent-soft)]/20 border border-[var(--accent-soft-border)] rounded-xl p-6">
           <h2 className="text-[12px] font-bold text-[var(--accent)] uppercase tracking-wider mb-3 flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4" /> {section.title}
+            <CheckCircle2 className="w-4 h-4" /> {section.title || "Key Takeaways"}
           </h2>
           <ul className="list-none space-y-2 text-[14.5px] font-medium text-[var(--ink)]">
-            {section.items.map((item: string, idx: number) => (
+            {section.items?.map((item: string, idx: number) => (
               <li key={idx} className="flex gap-2">
                 <span className="text-[var(--accent)] font-bold mt-0.5">•</span>
                 <span>{renderInlineCode(item)}</span>
@@ -140,53 +371,64 @@ function SectionRenderer({ section, selectedOption, handleQuickCheck, showExplan
           </ul>
         </section>
       );
-    case 'quickCheck':
+    case 'practice':
       return (
-        <section className="bg-white border border-[var(--border)] rounded-xl overflow-hidden shadow-sm">
-          <div className="bg-[#FAFAFA] border-b border-[var(--border)] px-6 py-4 flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-[var(--accent)]" />
-            <h2 className="text-[12px] font-bold text-[var(--ink)] uppercase tracking-wider">Quick Check</h2>
-          </div>
-          <div className="p-6 flex flex-col gap-4">
-            <p className="text-[15px] font-medium text-[var(--ink)]">
-              {section.question}
-            </p>
-            <div className="flex flex-col gap-2">
-              {section.options.map((opt: string, idx: number) => {
-                const isSelected = selectedOption === idx;
-                const isCorrect = idx === section.answer;
-                const showStatus = selectedOption !== null;
-                
-                return (
-                  <button
-                    key={idx}
-                    onClick={() => handleQuickCheck(idx)}
-                    disabled={showStatus}
-                    className={clsx(
-                      "text-left px-4 py-3 rounded-lg border text-[14px] font-medium transition-all",
-                      !showStatus && "hover:border-[var(--accent)] hover:bg-[var(--accent-soft)]/30 border-[var(--border)] bg-white",
-                      showStatus && isCorrect && "bg-[var(--success-soft)] border-[var(--success-soft-border)] text-[var(--success)]",
-                      showStatus && isSelected && !isCorrect && "bg-[var(--error-soft)] border-[var(--error-soft-border)] text-[var(--error)]",
-                      showStatus && !isSelected && !isCorrect && "border-[var(--border)] bg-[#FAFAFA] opacity-50"
-                    )}
-                  >
-                    {opt}
-                  </button>
-                );
-              })}
+        <section className="border-2 border-[var(--accent-soft-border)] rounded-xl overflow-hidden bg-white">
+          <div className="bg-[var(--accent-soft)] px-6 py-4 flex items-center justify-between border-b border-[var(--accent-soft-border)]">
+            <div className="flex items-center gap-2">
+              <Code className="w-5 h-5 text-[var(--accent)]" />
+              <h2 className="text-[14px] font-bold text-[var(--ink)]">{section.title || "Practice Problems"}</h2>
             </div>
-            {showExplanation && (
-              <motion.div 
-                initial={{ opacity: 0, height: 0 }} 
-                animate={{ opacity: 1, height: 'auto' }} 
-                className="mt-2 text-[14px] text-[var(--ink-secondary)] p-4 bg-[#FAFAFA] rounded-lg border border-[var(--border)]"
+          </div>
+          <div className="p-4 flex flex-col gap-2">
+            {section.problems?.map((prob: any) => (
+              <Link 
+                key={prob.id} 
+                href={`/practice/problems/${prob.id}`}
+                className="flex items-center justify-between p-3 rounded-lg hover:bg-[#FAFAFA] border border-transparent hover:border-[var(--border)] transition-all group"
               >
-                <span className="font-bold text-[var(--ink)]">Explanation:</span> {section.explanation}
-              </motion.div>
-            )}
+                <span className="font-semibold text-[14px] text-[var(--ink)] group-hover:text-[var(--accent)] transition-colors">{prob.title}</span>
+                <div className="flex items-center gap-3">
+                  <span className={clsx(
+                    "text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded",
+                    prob.difficulty === 'Easy' ? "bg-[var(--success-soft)] text-[var(--success)]" :
+                    prob.difficulty === 'Medium' ? "bg-[var(--warning-soft)] text-[var(--warning)]" :
+                    "bg-[var(--error-soft)] text-[var(--error)]"
+                  )}>
+                    {prob.difficulty}
+                  </span>
+                  <ChevronRight className="w-4 h-4 text-[var(--ink-tertiary)] group-hover:text-[var(--accent)] transition-colors" />
+                </div>
+              </Link>
+            ))}
           </div>
         </section>
       );
+    case 'prerequisites':
+      return (
+        <section className="mb-6 flex gap-2 flex-wrap items-center text-[13px] text-[var(--ink-secondary)]">
+          <span className="font-bold text-[var(--ink)]">Prerequisites:</span>
+          {section.links?.map((link: any, idx: number) => (
+            <Link 
+              key={idx} 
+              href={`/learn/${link.slug}`}
+              className="bg-[#FAFAFA] border border-[var(--border)] px-3 py-1 rounded-full hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors"
+            >
+              {link.title}
+            </Link>
+          ))}
+        </section>
+      );
+    case 'quickCheck':
+      return <QuickCheckBlock section={section} />;
+    case 'think':
+      return <ThinkBlock section={section} />;
+    case 'tryIt':
+      return <TryItBlock section={section} />;
+    case 'dryRun':
+      return <DryRunBlock section={section} />;
+    case 'interviewTraps':
+      return <InterviewTrapsBlock section={section} />;
     default:
       return null;
   }
@@ -270,13 +512,19 @@ export default function TopicPage() {
 
   const parsedContent = useMemo(() => {
     if (!topic || !topic.content) return null;
-    try {
-      if (typeof topic.content === 'string') {
-        return JSON.parse(topic.content);
-      }
+    // If content is already an object (old format), return it directly
+    if (typeof topic.content !== 'string') {
       return topic.content;
+    }
+    // Try to parse as JSON (old format)
+    try {
+      return JSON.parse(topic.content);
     } catch (e) {
-      return { concept: String(topic.content) };
+      // If not JSON, treat as MDX content
+      return {
+        isMdx: true,
+        mdxSource: topic.content
+      };
     }
   }, [topic]);
 
@@ -517,9 +765,6 @@ export default function TopicPage() {
                     <SectionRenderer 
                       key={idx} 
                       section={section} 
-                      selectedOption={selectedOption} 
-                      handleQuickCheck={handleQuickCheck} 
-                      showExplanation={showExplanation} 
                     />
                   ))
                 ) : (

@@ -165,3 +165,21 @@ async def get_dashboard(user: Any = Depends(get_current_user)):
             },
             "upcoming_target": upcoming_target
         }
+
+@router.patch("/plan/tasks/{task_id}")
+async def toggle_task_status(task_id: int, user: Any = Depends(get_current_user)):
+    from fastapi import HTTPException
+    async with AsyncSessionLocal() as session:
+        result = await session.execute(
+            select(DailyPlanItem)
+            .join(DailyPlan, DailyPlanItem.plan_id == DailyPlan.id)
+            .where(DailyPlan.user_id == user.id, DailyPlanItem.id == task_id)
+        )
+        task = result.scalars().first()
+        if not task:
+            raise HTTPException(status_code=404, detail="Task not found")
+            
+        task.status = "completed" if task.status != "completed" else "pending"
+        await session.commit()
+        
+        return {"success": True, "status": task.status}

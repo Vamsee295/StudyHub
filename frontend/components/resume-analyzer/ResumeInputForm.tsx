@@ -138,10 +138,51 @@ export function ResumeInputForm({
             target={request.target}
             companyError={errors.company}
             companyTypeError={errors.companyType}
-            jobDescriptionError={errors.jobDescription}
             disabled={submitting}
             onChange={onTargetChange}
           />
+        </div>
+      </section>
+
+      <section aria-labelledby="jd-heading" className="space-y-4 border-t border-[var(--border)] pt-6">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <h2 id="jd-heading" className="text-[16px] font-bold text-[var(--ink)]">3. Add Job Description</h2>
+            <p className="mt-1 text-[13px] leading-relaxed text-[var(--ink-secondary)]">
+              Paste the job description so the AI can extract the exact skills, keywords, and responsibilities.
+            </p>
+          </div>
+          <span className="mt-0.5 hidden rounded border border-[var(--border)] bg-[var(--surface-subdued)] px-2 py-1 text-[10.5px] font-mono text-[var(--ink-secondary)] sm:inline-flex">
+            CONTEXT
+          </span>
+        </div>
+
+        <div>
+          <textarea
+            id="job-description"
+            value={request.target.jobDescription ?? ""}
+            onChange={(event) => onTargetChange({ jobDescription: event.target.value })}
+            disabled={submitting}
+            maxLength={12_000}
+            rows={8}
+            placeholder="Paste the role description here..."
+            aria-invalid={Boolean(errors.jobDescription)}
+            aria-describedby={errors.jobDescription ? "job-description-error" : "job-description-hint"}
+            className="field min-h-[160px] resize-y w-full text-[var(--ink)] disabled:cursor-not-allowed disabled:bg-[var(--surface-subdued)]"
+          />
+          <div className="mt-1.5 flex items-center justify-between gap-3">
+            <p id="job-description-hint" className="text-[11.5px] text-[var(--ink-tertiary)]">
+              Provides context for keyword analysis and skill matching.
+            </p>
+            <span className="text-[11px] font-mono text-[var(--ink-tertiary)]">
+              {(request.target.jobDescription ?? "").length}/12,000
+            </span>
+          </div>
+          {errors.jobDescription && (
+            <p id="job-description-error" className="mt-1.5 text-[12px] font-medium text-[var(--error)]">
+              {errors.jobDescription}
+            </p>
+          )}
         </div>
       </section>
 

@@ -48,3 +48,35 @@ async def generate_personalized_roadmap(profile_data: Dict[str, Any]) -> Dict[st
         return json.loads(result)
     except json.JSONDecodeError:
         raise ValueError("Failed to parse LLM response as JSON")
+
+async def explain_code_error(code: str, error_message: str, language: str) -> str:
+    if not client:
+        raise ValueError("Groq API Key not configured")
+        
+    prompt = f"""
+    You are an expert technical tutor. A student is trying to solve a coding problem in {language}.
+    They encountered the following error:
+    ```
+    {error_message}
+    ```
+    
+    Here is their code:
+    ```
+    {code}
+    ```
+    
+    Please explain this error in a clear, concise, and beginner-friendly way.
+    Identify the exact line(s) causing the issue if possible, and provide a hint on how to fix it without writing the complete solution for them.
+    Keep your response brief (1-3 short paragraphs). Do not use JSON. Use markdown formatting.
+    """
+
+    response = client.chat.completions.create(
+        model=settings.groq_model or "llama3-70b-8192",
+        messages=[{"role": "user", "content": prompt}]
+    )
+    
+    result = response.choices[0].message.content
+    if not result:
+        return "Sorry, I could not generate an explanation at this time."
+        
+    return result

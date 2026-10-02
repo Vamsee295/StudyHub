@@ -163,11 +163,10 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     pathname.split('/').filter(Boolean).length >= 3
   );
 
-  // Check if current route is a dedicated practice workspace
   const isPracticeWorkspace = Boolean(
     pathname === '/practice/code' ||
     pathname === '/practice/sql' ||
-    pathname === '/practice/web'
+    (pathname?.startsWith('/practice/problems/') && pathname !== '/practice/problems')
   );
 
   const isWorkspace = isLessonWorkspace || isPracticeWorkspace;

@@ -39,6 +39,7 @@ async def get_subjects(user: Any = Depends(get_current_user)):
             
             total_topics = len(topic_ids)
             completed_topics = 0
+            in_prog_count = 0
             
             if total_topics > 0:
                 progress_query = await session.execute(
@@ -50,8 +51,19 @@ async def get_subjects(user: Any = Depends(get_current_user)):
                     )
                 )
                 completed_topics = len(progress_query.scalars().all())
+
+                in_prog_query = await session.execute(
+                    select(UserLearningProgress)
+                    .where(
+                        UserLearningProgress.user_id == user.id,
+                        UserLearningProgress.topic_id.in_(topic_ids),
+                        UserLearningProgress.status == "in_progress"
+                    )
+                )
+                in_prog_count = len(in_prog_query.scalars().all())
             
-            progress_percentage = (completed_topics / total_topics * 100) if total_topics > 0 else 0
+            effective_completed = completed_topics + (0.5 * in_prog_count)
+            progress_percentage = min(100, round((effective_completed / total_topics) * 100)) if total_topics > 0 else 0
             
             subject_data.append({
                 "id": subject.id,
@@ -62,10 +74,11 @@ async def get_subjects(user: Any = Depends(get_current_user)):
                 "category": subject.category,
                 "total_topics": total_topics,
                 "completed_topics": completed_topics,
-                "progress_percentage": round(progress_percentage)
+                "progress_percentage": progress_percentage
             })
             
         return subject_data
+
 
 @router.get("/subjects/{subject_slug}")
 async def get_subject_details(subject_slug: str, user: Any = Depends(get_current_user)):
@@ -162,13 +175,28 @@ async def get_topic_content(topic_id_or_slug: str, user: Any = Depends(get_curre
         topic = result.scalars().first()
         
         if not topic:
+            # Fallback: substring or endswith matching
+            res_all = await session.execute(
+                select(LearningTopic).options(selectinload(LearningTopic.module).selectinload(LearningModule.subject))
+            )
+            for t in res_all.scalars().all():
+                if (
+                    t.id.endswith(topic_id_or_slug) or 
+                    (t.slug and topic_id_or_slug.endswith(t.slug)) or 
+                    (t.slug and t.slug in topic_id_or_slug) or
+                    (t.slug and topic_id_or_slug in t.slug)
+                ):
+                    topic = t
+                    break
+        
+        if not topic:
             raise HTTPException(status_code=404, detail="Topic not found")
             
         # Get progress
         prog_query = await session.execute(
             select(UserLearningProgress).where(
                 UserLearningProgress.user_id == user.id,
-                UserLearningProgress.topic_id == topic.id
+                (UserLearningProgress.topic_id == topic.id) | (UserLearningProgress.topic_id == topic_id_or_slug)
             )
         )
         progress = prog_query.scalars().first()
@@ -217,25 +245,44 @@ async def get_topic_content(topic_id_or_slug: str, user: Any = Depends(get_curre
 async def update_topic_progress(topic_id: str, payload: TopicProgressUpdate, user: Any = Depends(get_current_user)):
     async with AsyncSessionLocal() as session:
         # Check topic exists
-        res = await session.execute(select(LearningTopic).where(LearningTopic.id == topic_id))
+        res = await session.execute(
+            select(LearningTopic).where(
+                (LearningTopic.id == topic_id) | 
+                (LearningTopic.slug == topic_id)
+            )
+        )
         topic = res.scalars().first()
+        if not topic:
+            res_all = await session.execute(select(LearningTopic))
+            for t in res_all.scalars().all():
+                if (
+                    t.id.endswith(topic_id) or 
+                    (t.slug and topic_id.endswith(t.slug)) or 
+                    (t.slug and t.slug in topic_id) or
+                    (t.slug and topic_id in t.slug)
+                ):
+                    topic = t
+                    break
+                    
         if not topic:
             raise HTTPException(status_code=404, detail="Topic not found")
             
+        target_topic_id = topic.id
+
         # Get progress record
         prog_query = await session.execute(
             select(UserLearningProgress).where(
                 UserLearningProgress.user_id == user.id,
-                UserLearningProgress.topic_id == topic_id
+                (UserLearningProgress.topic_id == target_topic_id) | (UserLearningProgress.topic_id == topic_id)
             )
         )
         progress = prog_query.scalars().first()
         
         if not progress:
             progress = UserLearningProgress(
-                id=f"{user.id}_{topic_id}",
+                id=f"{user.id}_{target_topic_id}",
                 user_id=user.id,
-                topic_id=topic_id,
+                topic_id=target_topic_id,
                 started_at=datetime.utcnow()
             )
             session.add(progress)

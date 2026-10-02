@@ -7,10 +7,12 @@ import {
   ExternalLink, 
   Maximize2, 
   Minimize2, 
+  RotateCw, 
   RotateCcw, 
   ZoomIn, 
   ZoomOut,
-  Maximize
+  Maximize,
+  Pencil
 } from "lucide-react";
 import React from "react";
 
@@ -18,6 +20,7 @@ interface PdfReaderToolbarProps {
   currentPage: number;
   pageCount: number;
   zoomLevel: number;
+  rotation?: number;
   isFullscreen: boolean;
   fileUrl: string;
   onPrevPage: () => void;
@@ -26,14 +29,18 @@ interface PdfReaderToolbarProps {
   onZoomIn: () => void;
   onZoomOut: () => void;
   onResetZoom: () => void;
+  onRotate?: () => void;
   onFitWidth: () => void;
   onToggleFullscreen: () => void;
+  isDoodleMode?: boolean;
+  onToggleDoodle?: () => void;
 }
 
 export function PdfReaderToolbar({
   currentPage,
   pageCount,
   zoomLevel,
+  rotation = 0,
   isFullscreen,
   fileUrl,
   onPrevPage,
@@ -42,8 +49,11 @@ export function PdfReaderToolbar({
   onZoomIn,
   onZoomOut,
   onResetZoom,
+  onRotate,
   onFitWidth,
-  onToggleFullscreen
+  onToggleFullscreen,
+  isDoodleMode,
+  onToggleDoodle
 }: PdfReaderToolbarProps) {
   const handlePageInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = parseInt(e.target.value);
@@ -94,20 +104,26 @@ export function PdfReaderToolbar({
       <div className="flex items-center gap-1 bg-[var(--surface)] border border-[var(--border)]/80 rounded-xl px-2 py-1 shadow-2xs">
         <button
           onClick={onZoomOut}
-          className="p-1 rounded hover:bg-[var(--surface-subdued)] text-[var(--ink-secondary)] hover:text-[var(--ink)] transition-colors cursor-pointer"
-          title="Zoom Out"
+          disabled={zoomLevel <= 25}
+          className="p-1 rounded hover:bg-[var(--surface-subdued)] disabled:opacity-40 text-[var(--ink-secondary)] hover:text-[var(--ink)] transition-colors cursor-pointer"
+          title="Zoom Out (-25%)"
         >
           <ZoomOut className="w-3.5 h-3.5" />
         </button>
         
-        <span className="font-mono text-[11px] font-semibold text-[var(--ink)] px-1.5 min-w-[42px] text-center">
+        <button
+          onClick={onResetZoom}
+          className="font-mono text-[11px] font-semibold text-[var(--ink)] hover:text-[var(--accent)] px-1.5 py-0.5 rounded hover:bg-[var(--surface-subdued)] transition-colors min-w-[42px] text-center cursor-pointer"
+          title="Reset Zoom (100%)"
+        >
           {zoomLevel}%
-        </span>
+        </button>
         
         <button
           onClick={onZoomIn}
-          className="p-1 rounded hover:bg-[var(--surface-subdued)] text-[var(--ink-secondary)] hover:text-[var(--ink)] transition-colors cursor-pointer"
-          title="Zoom In"
+          disabled={zoomLevel >= 300}
+          className="p-1 rounded hover:bg-[var(--surface-subdued)] disabled:opacity-40 text-[var(--ink-secondary)] hover:text-[var(--ink)] transition-colors cursor-pointer"
+          title="Zoom In (+25%)"
         >
           <ZoomIn className="w-3.5 h-3.5" />
         </button>
@@ -115,17 +131,17 @@ export function PdfReaderToolbar({
         <div className="w-px h-3 bg-[var(--border)] mx-1" />
         
         <button
-          onClick={onResetZoom}
-          className="p-1 rounded hover:bg-[var(--surface-subdued)] text-[var(--ink-secondary)] hover:text-[var(--ink)] transition-colors cursor-pointer hidden sm:block"
-          title="Reset Zoom (100%)"
+          onClick={onRotate || onResetZoom}
+          className="p-1 rounded hover:bg-[var(--surface-subdued)] text-[var(--ink-secondary)] hover:text-[var(--ink)] transition-colors cursor-pointer"
+          title={onRotate ? `Rotate Clockwise 90° (${rotation}°)` : "Reset Zoom"}
         >
-          <RotateCcw className="w-3.5 h-3.5" />
+          <RotateCw className="w-3.5 h-3.5" />
         </button>
         
         <button
           onClick={onFitWidth}
           className="p-1 rounded hover:bg-[var(--surface-subdued)] text-[var(--ink-secondary)] hover:text-[var(--ink)] transition-colors cursor-pointer"
-          title="Fit Width"
+          title="Fit to Width"
         >
           <Maximize className="w-3.5 h-3.5" />
         </button>
@@ -133,6 +149,22 @@ export function PdfReaderToolbar({
 
       {/* Right: External & Fullscreen */}
       <div className="flex items-center gap-2">
+        {onToggleDoodle && (
+          <button
+            onClick={onToggleDoodle}
+            className={clsx(
+              "flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[12px] font-medium transition-colors cursor-pointer",
+              isDoodleMode 
+                ? "bg-[var(--accent)] text-white" 
+                : "text-[var(--ink-secondary)] hover:text-[var(--ink)] hover:bg-[var(--surface)]"
+            )}
+            title="Doodle / Annotate (Temporary)"
+          >
+            <Pencil className="w-3.5 h-3.5" />
+            <span className="hidden md:inline">Doodle</span>
+          </button>
+        )}
+
         <a
           href={fileUrl}
           target="_blank"

@@ -40,6 +40,14 @@ export function detectLanguage(filename: string): SupportedLanguage {
     xml: "xml",
     svg: "xml",
     txt: "plaintext",
+    py: "python",
+    java: "java",
+    c: "c",
+    h: "c",
+    cpp: "cpp",
+    cc: "cpp",
+    cxx: "cpp",
+    hpp: "cpp",
   };
   return map[ext] ?? "plaintext";
 }
@@ -445,3 +453,102 @@ export async function ensureAncestorFolders(
 
   return newFolders;
 }
+
+export async function duplicateFile(
+  file: ProjectFile,
+  allFiles: ProjectFile[]
+): Promise<ProjectFile> {
+  const parent = parentPath(file.path);
+  const extIndex = file.name.lastIndexOf(".");
+  const baseName = extIndex !== -1 ? file.name.slice(0, extIndex) : file.name;
+  const ext = extIndex !== -1 ? file.name.slice(extIndex) : "";
+
+  let candidateName = `${baseName} copy${ext}`;
+  let counter = 2;
+  const existingNames = new Set(
+    allFiles
+      .filter((f) => parentPath(f.path) === parent)
+      .map((f) => f.name)
+  );
+
+  while (existingNames.has(candidateName)) {
+    candidateName = `${baseName} copy ${counter}${ext}`;
+    counter++;
+  }
+
+  const newPath = parent ? `${parent}/${candidateName}` : candidateName;
+  const newFile: ProjectFile = {
+    id: generateId(),
+    projectId: file.projectId,
+    path: normalizePath(newPath),
+    name: candidateName,
+    content: file.content,
+    language: file.language,
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
+  };
+
+  await db.saveFile(newFile);
+  return newFile;
+}
+
+export async function moveItem(
+  sourcePath: string,
+  targetFolderPath: string,
+  allFiles: ProjectFile[],
+  allFolders: ProjectFolder[]
+): Promise<{ files: ProjectFile[]; folders: ProjectFolder[] }> {
+  const normSource = normalizePath(sourcePath);
+  const normTarget = normalizePath(targetFolderPath);
+
+  const isFolder = allFolders.some((f) => f.path === normSource);
+  const base = basename(normSource);
+  const newPath = normTarget ? `${normTarget}/${base}` : base;
+
+  if (normSource === newPath) {
+    return { files: allFiles, folders: allFolders };
+  }
+
+  if (isFolder) {
+    if (normTarget === normSource || normTarget.startsWith(normSource + "/")) {
+      return { files: allFiles, folders: allFolders };
+    }
+    const updatedFoldersList: ProjectFolder[] = [];
+    for (const f of allFolders) {
+      if (f.path === normSource || f.path.startsWith(normSource + "/")) {
+        const rel = f.path.slice(normSource.length);
+        const upd = { ...f, path: newPath + rel };
+        await db.saveFolder(upd);
+        updatedFoldersList.push(upd);
+      } else {
+        updatedFoldersList.push(f);
+      }
+    }
+    const updatedFilesList: ProjectFile[] = [];
+    for (const file of allFiles) {
+      if (file.path === normSource || file.path.startsWith(normSource + "/")) {
+        const rel = file.path.slice(normSource.length);
+        const upd = { ...file, path: newPath + rel, updatedAt: Date.now() };
+        await db.saveFile(upd);
+        updatedFilesList.push(upd);
+      } else {
+        updatedFilesList.push(file);
+      }
+    }
+    return { files: updatedFilesList, folders: updatedFoldersList };
+  } else {
+    const file = allFiles.find((f) => f.path === normSource);
+    if (!file) return { files: allFiles, folders: allFolders };
+    const updatedFile: ProjectFile = {
+      ...file,
+      path: newPath,
+      updatedAt: Date.now(),
+    };
+    await db.saveFile(updatedFile);
+    return {
+      files: allFiles.map((f) => (f.id === file.id ? updatedFile : f)),
+      folders: allFolders,
+    };
+  }
+}
+

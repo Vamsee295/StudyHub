@@ -34,7 +34,7 @@ async def startup_event():
         # Sync any newly added columns in models
         await conn.run_sync(sync_table_columns)
 
-from app.api.routes import profile, dashboard, learn, ai, resources, roadmaps, practice, community, resume
+from app.api.routes import profile, dashboard, learn, ai, resources, roadmaps, practice, community, resume, execution
 
 # Configure CORS
 origins = [
@@ -65,6 +65,7 @@ app.include_router(roadmaps.router)
 app.include_router(practice.router)
 app.include_router(community.router)
 app.include_router(resume.router)
+app.include_router(execution.router)
 
 @app.get("/")
 

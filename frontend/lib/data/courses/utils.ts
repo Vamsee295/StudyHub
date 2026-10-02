@@ -6,7 +6,7 @@ export const defaultLessonContent = {
   coreConcept: "The core mechanism involves specific syntax and rules.",
   syntax: "// Example syntax\nType variable = value;",
   codeExample: "int x = 10;\nSystem.out.println(x);",
-  executionExplanation: "1. Initialization.\n2. Execution.\n3. Output.",
+  howItWorks: "1. Initialization.\n2. Execution.\n3. Output.",
   realWorldUse: "Used in enterprise software systems.",
   commonMistakes: ["Forgetting edge cases."],
   interviewQuestions: [

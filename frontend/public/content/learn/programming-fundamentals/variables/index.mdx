@@ -1,0 +1,98 @@
+---
+id: "prog-fund-variables"
+title: "Variables and Data Types"
+slug: "variables"
+module: "programming-fundamentals"
+course: "programming-fundamentals"
+duration: 20
+prerequisites: ["prog-fund-intro"]
+keywords: ["variable", "data type", "declaration", "initialization"]
+placementImportance: "high"
+---
+
+# Variables and Data Types
+
+Variables are fundamental building blocks in programming. They allow us to store, retrieve, and manipulate data in our programs.
+
+## What is a Variable?
+
+A variable is a named storage location in memory that holds a value. Think of it as a labeled box where you can put data, take it out, or replace it with new data.
+
+## Why Variables Matter
+
+Without variables, we couldn't:
+- Store user input
+- Keep track of scores in a game
+- Remember the result of a calculation
+- Create flexible programs that work with different data
+
+## How to Declare a Variable
+
+In most programming languages, you declare a variable by specifying its type and name:
+
+```python
+# Python example
+age = 25
+name = "Alice"
+height = 5.9
+```
+
+In JavaScript:
+```javascript
+let age = 25;
+let name = "Alice";
+let height = 5.9;
+```
+
+## Data Types
+
+Different kinds of data require different types. Common data types include:
+
+- **Integers** (int): Whole numbers like 42, -7, 0
+- **Floats** (float): Numbers with decimal points like 3.14, -2.5
+- **Strings** (str): Text like "Hello", "Alice"
+- **Booleans** (bool): True or False values
+- **Arrays/Lists**: Collections of values like [1, 2, 3] or ["apple", "banana"]
+
+## Common Mistakes
+
+1. **Using a variable before declaring it** - This causes a reference error
+2. **Confusing assignment (=) with equality (==)** - Assignment sets a value, equality compares
+3. **Using the wrong data type** - Trying to do math on a string, for example
+4. **Naming variables poorly** - Using names like `x` or `temp` instead of descriptive names
+
+## Best Practices
+
+- Use descriptive names: `userAge` instead of `ua`
+- Initialize variables when you declare them
+- Follow your language's naming conventions (camelCase, snake_case, etc.)
+- Keep variables scoped as narrowly as possible
+
+## Quick Check
+
+Try declaring variables for:
+1. Your age (integer)
+2. Your name (string)
+3. Whether you're a student (boolean)
+4. Your GPA (float)
+
+## Interview Questions
+
+<details>
+  <summary>What's the difference between `let` and `var` in JavaScript?</summary>
+  <p>`let` is block-scoped, `var` is function-scoped. `let` was introduced in ES6 to address scoping issues with `var`.</p>
+</details>
+
+<details>
+  <summary>Can you change the data type of a variable in Python?</summary>
+  <p>Yes, Python is dynamically typed, so you can reassign a variable to a different type:</p>
+  <pre>x = 5   # x is an integer
+x = "hello"  # x is now a string</pre>
+</details>
+
+## Key Takeaways
+
+- Variables store data that can be used and changed throughout your program
+- Choosing the right data type is important for memory efficiency and correctness
+- Good variable names make your code self-documenting
+- Always initialize your variables before using them

@@ -5,6 +5,7 @@ import * as pdfjsLib from "pdfjs-dist";
 import { PDFDocumentProxy, RenderTask } from "pdfjs-dist";
 import { clsx } from "clsx";
 import { AlertCircle, RefreshCw } from "lucide-react";
+import { AnnotationLayer } from "./AnnotationLayer";
 
 // Use Cloudflare CDN for the worker to avoid Webpack configuration issues in Next.js
 if (typeof window !== "undefined" && !pdfjsLib.GlobalWorkerOptions.workerSrc) {
@@ -15,23 +16,44 @@ interface NativePdfReaderProps {
   fileUrl: string;
   currentPage: number;
   zoomLevel: number;
+  rotation?: number;
   onDocumentLoad: (pageCount: number) => void;
   className?: string;
+  isDoodleMode?: boolean;
+  onCloseDoodle?: () => void;
 }
 
 export function NativePdfReader({
   fileUrl,
   currentPage,
   zoomLevel,
+  rotation = 0,
   onDocumentLoad,
-  className
+  className,
+  isDoodleMode,
+  onCloseDoodle
 }: NativePdfReaderProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [pdfDoc, setPdfDoc] = useState<PDFDocumentProxy | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [canvasDimensions, setCanvasDimensions] = useState<{ width: number; height: number } | null>(null);
+  const [containerWidth, setContainerWidth] = useState<number>(800);
   const renderTaskRef = useRef<RenderTask | null>(null);
+
+  // Measure container width on mount and on resize
+  useEffect(() => {
+    const updateSize = () => {
+      if (containerRef.current) {
+        setContainerWidth(containerRef.current.clientWidth);
+      }
+    };
+
+    updateSize();
+    window.addEventListener("resize", updateSize);
+    return () => window.removeEventListener("resize", updateSize);
+  }, []);
 
   // Load Document
   useEffect(() => {
@@ -84,28 +106,22 @@ export function NativePdfReader({
         // Base scale for crisp rendering on high-DPI screens
         const pixelRatio = window.devicePixelRatio || 1;
         
-        // Calculate viewport with zoom applied
-        const unscaledViewport = page.getViewport({ scale: 1.0 });
-        
-        // For responsive fitting, use the container width as base
-        // If zoom is 100%, we try to fit it into the container (with some padding)
-        const containerWidth = containerRef.current?.clientWidth || 800;
+        // Calculate viewport with rotation and zoom applied
+        const unscaledViewport = page.getViewport({ scale: 1.0, rotation: rotation });
         
         // Base scale to fit container width (minus padding)
-        // Only if the document is wider than the container
+        const effectiveContainerWidth = containerRef.current?.clientWidth || containerWidth || 800;
         let baseScale = 1.0;
-        if (unscaledViewport.width > containerWidth - 32) {
-          baseScale = (containerWidth - 32) / unscaledViewport.width;
-        } else if (unscaledViewport.width < containerWidth - 32) {
-           // Optionally scale up, but usually better to leave as is if it fits
-           baseScale = (containerWidth - 32) / unscaledViewport.width;
-           // Limit max base scale so small pages don't become massive
-           if (baseScale > 1.5) baseScale = 1.5;
+        if (unscaledViewport.width > effectiveContainerWidth - 32) {
+          baseScale = (effectiveContainerWidth - 32) / unscaledViewport.width;
+        } else if (unscaledViewport.width < effectiveContainerWidth - 32) {
+          baseScale = (effectiveContainerWidth - 32) / unscaledViewport.width;
+          if (baseScale > 1.5) baseScale = 1.5;
         }
 
         const scale = baseScale * (zoomLevel / 100);
         
-        const viewport = page.getViewport({ scale: scale * pixelRatio });
+        const viewport = page.getViewport({ scale: scale * pixelRatio, rotation: rotation });
 
         // Set actual canvas size (for internal drawing)
         canvas.height = viewport.height;
@@ -114,6 +130,11 @@ export function NativePdfReader({
         // Set CSS display size
         canvas.style.height = `${viewport.height / pixelRatio}px`;
         canvas.style.width = `${viewport.width / pixelRatio}px`;
+
+        setCanvasDimensions({
+          width: viewport.width,
+          height: viewport.height,
+        });
 
         if (renderTaskRef.current) {
           await renderTaskRef.current.cancel();
@@ -148,7 +169,7 @@ export function NativePdfReader({
         renderTaskRef.current.cancel();
       }
     };
-  }, [pdfDoc, currentPage, zoomLevel]);
+  }, [pdfDoc, currentPage, zoomLevel, rotation, containerWidth]);
 
   if (error) {
     return (
@@ -180,13 +201,24 @@ export function NativePdfReader({
           <p className="text-[14px] font-medium tracking-wide">Loading Document...</p>
         </div>
       )}
-      <canvas 
-        ref={canvasRef} 
-        className={clsx(
-          "bg-white shadow-2xl transition-opacity duration-300 rounded-sm",
-          isLoading ? "opacity-0" : "opacity-100"
+      <div className="relative inline-block">
+        <canvas 
+          ref={canvasRef} 
+          className={clsx(
+            "bg-white shadow-2xl transition-opacity duration-300 rounded-sm",
+            isLoading ? "opacity-0" : "opacity-100"
+          )}
+        />
+        {isDoodleMode && canvasDimensions && !isLoading && (
+          <AnnotationLayer
+            width={canvasDimensions.width}
+            height={canvasDimensions.height}
+            currentPage={currentPage}
+            fileUrl={fileUrl}
+            onClose={() => onCloseDoodle && onCloseDoodle()}
+          />
         )}
-      />
+      </div>
     </div>
   );
 }

@@ -117,6 +117,42 @@ export default function DashboardPage() {
     subtitle: profile?.targets?.companies?.[0] ? `Preparation calibrated for ${profile.targets.companies[0]}.` : "Track companies to personalize interview rubrics."
   };
 
+  const handleToggleTask = async (taskId: number) => {
+    try {
+      // Optimistic UI update
+      setDashboardData((prev: any) => {
+        if (!prev || !prev.today_plan || !prev.today_plan.tasks) return prev;
+        
+        const newTasks = prev.today_plan.tasks.map((t: any) => 
+          t.id === taskId ? { ...t, completed: !t.completed } : t
+        );
+        
+        const completedCount = newTasks.filter((t: any) => t.completed).length;
+        const completionRate = newTasks.length > 0 ? Math.floor((completedCount / newTasks.length) * 100) : 0;
+        
+        const newData = {
+          ...prev,
+          today_plan: {
+            ...prev.today_plan,
+            tasks: newTasks,
+            completion: completionRate
+          }
+        };
+        
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('pathward-dashboard-cache', JSON.stringify(newData));
+        }
+        return newData;
+      });
+      
+      // Update backend
+      await dashboardApi.toggleTaskStatus(taskId);
+    } catch (err) {
+      console.error("Failed to toggle task", err);
+      // We don't rollback for now to keep UI responsive, but ideally we should
+    }
+  };
+
   return (
     <div className="flex flex-col gap-8 pb-12 w-full min-w-0 box-border">
       {/* PAGE HEADER */}
@@ -305,7 +341,7 @@ export default function DashboardPage() {
             <div className="flex flex-col gap-3">
               {todayPlan.tasks && todayPlan.tasks.length > 0 ? (
                 todayPlan.tasks.map((task: any) => (
-                  <label key={task.id} className="flex items-start gap-3 cursor-pointer group">
+                  <label key={task.id} className="flex items-start gap-3 cursor-pointer group" onClick={(e) => { e.preventDefault(); handleToggleTask(task.id); }}>
                     {task.completed ? (
                       <CheckCircle2 className="w-5 h-5 text-[var(--success)] shrink-0 mt-0.5" />
                     ) : (

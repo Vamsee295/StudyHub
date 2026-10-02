@@ -28,24 +28,28 @@ export const ALL_COURSES: Course[] = [
 ].sort((a, b) => a.displayOrder - b.displayOrder);
 
 // Ensure all IDs are globally unique to prevent DB constraint errors.
-// NOTE: Slugs must NOT be prefixed — they are used directly in URLs and must
-// remain stable and clean (e.g. "what-is-programming", not
-// "programming-fundamentals-what-is-programming").
+// Also assign legacySlug and legacyId to maintain full compatibility with
+// previous database records and URLs.
 ALL_COURSES.forEach(course => {
   course.modules.forEach(mod => {
     if (!mod.id.startsWith(course.slug)) {
       mod.id = `${course.slug}-${mod.id}`;
     }
-    mod.lessons.forEach(lesson => {
+    mod.lessons.forEach((lesson, lessonIdx) => {
       if (!lesson.id.startsWith(course.slug)) {
         lesson.id = `${course.slug}-${lesson.id}`;
       }
+      // Populate legacy slug and ID patterns used by database seeders
+      // e.g. "programming-fundamentals-variables-and-data-types-lesson-1"
+      // or "programming-fundamentals-programming-basics-lesson-1"
+      lesson.legacySlug = `${course.slug}-${mod.slug}-lesson-${lessonIdx + 1}`;
+      lesson.legacyId = `${course.slug}-${mod.slug}-lesson-${lessonIdx + 1}`;
     });
   });
 });
 
 export function getCourseBySlug(slug: string): Course | undefined {
-  return ALL_COURSES.find(c => c.slug === slug);
+  return ALL_COURSES.find(c => c.slug === slug || c.id === slug);
 }
 
 export function getLesson(courseSlug: string, lessonSlug: string): CourseLesson | undefined {
@@ -53,9 +57,39 @@ export function getLesson(courseSlug: string, lessonSlug: string): CourseLesson 
   if (!course) return undefined;
 
   for (const module of course.modules) {
-    const lesson = module.lessons.find(l => l.slug === lessonSlug);
+    // 1. Direct slug, legacySlug, legacyId, or id match
+    const lesson = module.lessons.find(l => 
+      l.slug === lessonSlug || 
+      l.id === lessonSlug ||
+      l.legacySlug === lessonSlug ||
+      l.legacyId === lessonSlug
+    );
     if (lesson) return lesson;
+
+    // 2. Pattern match for legacy "-lesson-N"
+    const match = lessonSlug.match(/-lesson-(\d+)$/i);
+    if (match) {
+      const idx = parseInt(match[1], 10) - 1;
+      // If the lessonSlug contains module slug or matches module
+      if (
+        (lessonSlug.includes(module.slug) || module.slug.includes(lessonSlug.replace(/-lesson-\d+$/i, ''))) &&
+        idx >= 0 && 
+        idx < module.lessons.length
+      ) {
+        return module.lessons[idx];
+      }
+    }
   }
+
+  // 3. Fallback: check all modules in course for direct match across all lessons
+  for (const module of course.modules) {
+    const fallback = module.lessons.find(l => 
+      lessonSlug.endsWith(l.slug) || 
+      (l.legacySlug && lessonSlug.endsWith(l.legacySlug))
+    );
+    if (fallback) return fallback;
+  }
+
   return undefined;
 }
 
@@ -81,8 +115,11 @@ export function getAdjacentLessons(courseSlug: string, lessonSlug: string) {
   const course = getCourseBySlug(courseSlug);
   if (!course) return { prev: null, next: null };
 
+  const currentLesson = getLesson(courseSlug, lessonSlug);
+  if (!currentLesson) return { prev: null, next: null };
+
   const flatLessons = course.modules.flatMap(m => m.lessons);
-  const currentIndex = flatLessons.findIndex(l => l.slug === lessonSlug);
+  const currentIndex = flatLessons.findIndex(l => l.slug === currentLesson.slug || l.id === currentLesson.id);
 
   if (currentIndex === -1) return { prev: null, next: null };
 
@@ -91,6 +128,7 @@ export function getAdjacentLessons(courseSlug: string, lessonSlug: string) {
     next: currentIndex < flatLessons.length - 1 ? flatLessons[currentIndex + 1] : null
   };
 }
+
 
 export function getUserCourseProgress(courseSlug: string, completedLessonSlugs: string[] = []) {
   const stats = getCourseStats(courseSlug);

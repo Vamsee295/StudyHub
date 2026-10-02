@@ -10,283 +10,855 @@ export const methodsFunctionsLessons: Array<{
     slug: "what-is-a-method",
     title: "What is a Method?",
     content: {
-      definition: "A method is a reusable block of code that performs a specific task. Methods organize code, enable reusability, and make programs easier to understand and maintain.",
-      whyItMatters: "Methods are fundamental to structured programming. They eliminate code duplication, improve readability, and enable modular design.",
-      coreConcept: "Methods have a name, parameters (inputs), a return type (output), and a body (code). They are defined once and called multiple times. Methods encapsulate functionality.",
-      syntax: "returnType methodName(parameters) {\n    // method body\n    return value; // if not void\n}",
-      javaExample: "// Method definition\npublic static int add(int a, int b) {\n    int sum = a + b;\n    return sum;\n}\n\n// Method call\nint result = add(5, 3);\nSystem.out.println(result);  // 8\n\n// Another example\npublic static void greet(String name) {\n    System.out.println(\"Hello, \" + name + \"!\");\n}\n\ngreet(\"Alice\");  // Hello, Alice!",
-      howItWorks: "When called, execution jumps to method. Parameters receive values. Method executes its body. Return sends value back. Execution continues after the call.",
-      realWorldUse: "Calculations, validations, data transformations, user interactions, utility functions, business logic separation.",
-      commonMistakes: [
-        "Forgetting return statement in non-void methods",
-        "Not calling the method (defining but never using)",
-        "Mismatching parameter types and arguments",
-        "Returning value from void method"
-      ],
-      interviewQuestions: [
-        { question: "What are the components of a method?", answer: "Return type, method name, parameter list (type and name pairs), method body, and optionally a return statement." },
-        { question: "Why use methods instead of writing all code in main?", answer: "Methods enable code reuse, improve readability, make debugging easier, allow modular design, and separate concerns." }
-      ],
-      quickRevision: "Method = reusable code block. Has name, parameters, return type, body. Define once, call multiple times.",
-      practicePrompt: "Write a method that takes a name and prints a personalized greeting. Call it twice with different names.",
-      quickCheck: {
-        question: "What is the purpose of a method in Java?",
-        options: [
-          "To store data",
-          "To define a reusable block of code",
-          "To create objects",
-          "To import libraries"
-        ],
-        answer: 1,
-        explanation: "Methods are reusable blocks of code that perform specific tasks, enabling code organization and reuse."
-      }
+      sections: [
+        {
+          type: "text",
+          title: "Prerequisites",
+          content: "You should understand `variables`, `primitive-data-types`, `control-flow`, and the basic lifecycle of program execution."
+        },
+        {
+          type: "text",
+          title: "Mental Model",
+          content: "Think of a Method as a **Specialized Kitchen Appliance (e.g., a Digital Blender)**:\n• **Inputs (Parameters)**: You pour in raw ingredients (e.g., milk, fruit, ice).\n• **Execution (Method Body)**: You press the button. The internal motor spins, processes the ingredients, and blends them together without the caller needing to know how the gears operate.\n• **Output (Return Value)**: The appliance dispenses a finished smoothie (a computed result value) or sounds a completion beep (a `void` method)."
+        },
+        {
+          type: "callout",
+          title: "Formal Definition & Anatomy",
+          content: "A **method** is a named, self-contained sub-routine within a class that encapsulates a specific set of instructions. It takes optional input parameters, performs computations or actions, and optionally returns a single result value back to the caller."
+        },
+        {
+          type: "code",
+          title: "Method Definition, Invocation & Program Flow",
+          code: "public class MethodBasicsDemo {\n    // 1. Method Definition with Parameters and Return Value\n    public static int calculateRectangleArea(int length, int width) {\n        int area = length * width;\n        return area; // Sends result back to the caller\n    }\n\n    // 2. Void Method (Performs an action, no return value)\n    public static void displayReport(String title, int value) {\n        System.out.println(\"=== \" + title + \" ===\");\n        System.out.println(\"Calculated Value: \" + value);\n        System.out.println(\"========================\");\n    }\n\n    public static void main(String[] args) {\n        // Method Invocations (Calling the methods)\n        int room1 = calculateRectangleArea(12, 10); // 120\n        int room2 = calculateRectangleArea(15, 8);  // 120\n\n        displayReport(\"Living Room Area\", room1);\n        displayReport(\"Kitchen Area\", room2);\n    }\n}",
+          language: "java",
+          explanation: "When calculateRectangleArea(12, 10) is called, the CPU jumps from main() into calculateRectangleArea, executes its instructions, and substitutes the return value 120 back into room1."
+        },
+        {
+          type: "table",
+          title: "The 6 Core Components of a Java Method",
+          headers: ["Component", "Example Syntax", "Purpose", "Mandatory?"],
+          rows: [
+            ["Access Modifier", "`public`, `private`", "Controls which other classes can invoke this method.", "Optional (defaults to package-private)"],
+            ["Static Keyword", "`static`", "Declares that the method belongs to the Class rather than individual object instances.", "Optional (required for non-object utilities)"],
+            ["Return Type", "`int`, `String`, `void`", "Declares the data type of the result returned. Use `void` if no value is returned.", "✅ Mandatory"],
+            ["Method Name", "`calculateArea`", "Unique identifier following camelCase naming conventions.", "✅ Mandatory"],
+            ["Parameter List", "`(int a, int b)`", "Comma-separated input variables enclosed in parentheses `()`.", "✅ Mandatory (can be empty `()`)"],
+            ["Method Body", "`{ return a + b; }`", "The block of statements enclosed in curly braces `{}`.", "✅ Mandatory"]
+          ]
+        },
+        {
+          type: "tryIt",
+          title: "Try It: Calculate Simple Interest",
+          code: "class InterestCalculator {\n    public static double computeSimpleInterest(double principal, double rate, int years) {\n        return (principal * rate * years) / 100.0;\n    }\n    public static void main(String[] args) {\n        double interest = computeSimpleInterest(10000, 7.5, 3);\n        System.out.println(\"Interest: $\" + interest);\n    }\n}",
+          expectedOutput: "Interest: $2250.0",
+          explanation: "(10000 * 7.5 * 3) / 100 = 2250.0. The computed double value is returned and printed."
+        },
+        {
+          type: "dryRun",
+          title: "Call Stack Frame Lifecycle: `main()` calling `calculateArea(12, 10)`",
+          iterations: [
+            { step: 1, variables: { "Call Stack": "[main frame]", "PC": "main() line 17" }, description: "main() is currently executing on top of the JVM Call Stack." },
+            { step: 2, variables: { "Call Stack": "[main frame] -> [calculateArea frame]", "length": "12", "width": "10" }, description: "Call invoked: A new Stack Frame for calculateArea is pushed. Local parameters length=12 and width=10 are allocated." },
+            { step: 3, variables: { "area": "120", "return": "120" }, description: "area computed. return statement transfers 120 back to caller." },
+            { step: 4, variables: { "Call Stack": "[main frame]", "room1": "120" }, description: "calculateArea stack frame is popped. Execution resumes in main() with room1 initialized to 120." }
+          ]
+        },
+        {
+          type: "warning",
+          title: "Common Method Pitfalls",
+          items: [
+            "**Declaring Methods Inside Methods**: Java does NOT allow direct nested method declarations inside another method body.",
+            "**Missing Return in Non-Void Methods**: If a method declares a return type like `int`, every reachable execution path MUST terminate with a `return <int_value>;`.",
+            "**Defining but Never Calling**: Writing a method does nothing until it is explicitly invoked by an active execution thread.",
+            "**Ignoring Return Values**: Calling `calculateArea(10, 20);` without assigning or printing the result causes the return value to be discarded."
+          ]
+        },
+        {
+          type: "interviewTraps",
+          title: "Interview Traps: Method Signature vs Method Header",
+          traps: [
+            {
+              question: "What exact elements constitute a Java 'Method Signature', and does it include the return type?",
+              trap: "Thinking access modifiers and return types are part of the method signature.",
+              solution: "In Java, a **Method Signature** strictly consists of only two things:\n1. The **Method Name**\n2. The **Parameter List** (types, number, and order of parameters).\n\nModifiers, return types, and `throws` clauses belong to the **Method Header**, but are NOT part of the signature. This is why two methods differing only by return type cannot coexist in the same class."
+            }
+          ]
+        },
+        {
+          type: "quickCheck",
+          title: "Quick Check",
+          question: "Which of the following is NOT part of a Java method signature?",
+          options: [
+            "Method name",
+            "Parameter types",
+            "Return type",
+            "Parameter order"
+          ],
+          answer: 2,
+          explanation: "In Java, the method signature consists solely of the method name and parameter types/order. The return type is part of the method header, not the signature."
+        },
+        {
+          type: "takeaways",
+          title: "Key Takeaways",
+          items: [
+            "Methods encapsulate reusable, modular blocks of business logic.",
+            "Invoking a method creates a new Stack Frame on the JVM Call Stack.",
+            "Methods have a return type (`void` for no result, or a specific data type).",
+            "Method signatures consist strictly of the Method Name and Parameter Types."
+          ]
+        },
+        {
+          type: "text",
+          title: "Connection to Next Lesson",
+          content: "Next, we explore Why Use Methods?, diving into the DRY Principle, modular architecture, abstraction, and unit testing."
+        }
+      ]
     }
   },
   {
     slug: "why-use-methods",
     title: "Why Use Methods?",
     content: {
-      definition: "Methods provide code reusability, modularity, abstraction, and better organization. They follow the DRY principle (Don't Repeat Yourself) and enable easier maintenance.",
-      whyItMatters: "Well-designed methods make code easier to write, read, test, debug, and maintain. They are essential for any non-trivial program.",
-      coreConcept: "Benefits: 1) Reusability (write once, use many times), 2) Modularity (divide problem into smaller parts), 3) Abstraction (hide complexity), 4) Readability (meaningful names), 5) Maintainability (change in one place).",
-      syntax: "// Bad: Repeated code\nSystem.out.println(\"Processing...\");\n// ... code ...\nSystem.out.println(\"Processing...\");\n// ... code ...\n\n// Good: Reusable method\nvoid showProgress() {\n    System.out.println(\"Processing...\");\n}\nshowProgress();",
-      javaExample: "// Problem: Calculate area of rectangles multiple times\n// Without method (bad)\nint length1 = 5, width1 = 3;\nint area1 = length1 * width1;\nSystem.out.println(\"Area: \" + area1);\n\nint length2 = 7, width2 = 4;\nint area2 = length2 * width2;\nSystem.out.println(\"Area: \" + area2);\n\n// With method (good)\npublic static int calculateArea(int length, int width) {\n    return length * width;\n}\n\nSystem.out.println(\"Area: \" + calculateArea(5, 3));\nSystem.out.println(\"Area: \" + calculateArea(7, 4));",
-      howItWorks: "Instead of duplicating logic, define once in a method. Call with different inputs. Changes apply everywhere. Logic is tested once.",
-      realWorldUse: "Validation functions, calculations, formatting, data processing, API calls, database operations, utility functions.",
-      commonMistakes: [
-        "Methods that do too many things (should be focused)",
-        "Copying code instead of creating reusable methods",
-        "Poor method names that don't describe functionality",
-        "Not breaking down complex problems into smaller methods"
-      ],
-      interviewQuestions: [
-        { question: "What is the DRY principle?", answer: "Don't Repeat Yourself. Avoid duplicating code. Extract common logic into reusable methods." },
-        { question: "How do methods improve code maintainability?", answer: "Changes are made in one place. Testing is focused. Side effects are contained. Code is easier to understand and modify." }
-      ],
-      quickRevision: "Methods = reusability, modularity, abstraction, readability, maintainability. Follow DRY principle.",
-      practicePrompt: "Identify repeated code in your programs and extract it into a reusable method.",
-      quickCheck: {
-        question: "Which is NOT a benefit of using methods?",
-        options: [
-          "Code reusability",
-          "Better modularity",
-          "Faster execution",
-          "Easier maintenance"
-        ],
-        answer: 2,
-        explanation: "Methods may have slight overhead but the benefits (reusability, modularity, maintainability) far outweigh any minor performance differences."
-      }
+      sections: [
+        {
+          type: "text",
+          title: "Prerequisites",
+          content: "You should understand `what-is-a-method`, loops, and basic procedural logic."
+        },
+        {
+          type: "text",
+          title: "Mental Model",
+          content: "Think of software without methods as a **Monolithic Spaghetti Skyscraper** vs with methods as **Modular Interchangeable Lego Blocks**:\n• **Without Methods**: Writing 5,000 lines of code inside `main()` means if you find a bug in your email validation formula, you must hunt down and manually edit 40 duplicate copy-pasted sections, inevitably introducing inconsistencies.\n• **With Methods**: You write `isValidEmail()` once. 40 different caller classes invoke it. Fixing a bug in that single 5-line method instantly fixes the entire enterprise application."
+        },
+        {
+          type: "callout",
+          title: "The 5 Pillars of Method Design",
+          content: "1. **DRY (Don't Repeat Yourself)**: Eliminate duplicate logic across the codebase.\n2. **Abstraction**: Callers use functionality by name without needing to understand underlying complexities.\n3. **Single Responsibility (SRP)**: Each method focuses on executing one specific task reliably.\n4. **Automated Testing**: Small, isolated methods are simple to test with unit tests.\n5. **Maintainability**: Code changes and optimizations are localized to one file and method."
+        },
+        {
+          type: "code",
+          title: "Refactoring: Repetitive Monolith vs Modular Methods",
+          code: "public class WhyUseMethodsDemo {\n    // === BAD APPROACH: Monolithic Repetitive Code ===\n    public static void badProcess() {\n        // User 1\n        double salary1 = 50000; double bonus1 = 5000; double tax1 = (salary1 + bonus1) * 0.20;\n        System.out.println(\"User 1 Net: \" + (salary1 + bonus1 - tax1));\n\n        // User 2 (Duplicate formula copy-pasted!)\n        double salary2 = 80000; double bonus2 = 10000; double tax2 = (salary2 + bonus2) * 0.20;\n        System.out.println(\"User 2 Net: \" + (salary2 + bonus2 - tax2));\n    }\n\n    // === GOOD APPROACH: Modular Reusable Helper Method ===\n    public static double calculateNetIncome(double salary, double bonus, double taxRate) {\n        double totalEarnings = salary + bonus;\n        double taxDeduction = totalEarnings * taxRate;\n        return totalEarnings - taxDeduction;\n    }\n\n    public static void main(String[] args) {\n        System.out.println(\"User 1 Net: \" + calculateNetIncome(50000, 5000, 0.20));\n        System.out.println(\"User 2 Net: \" + calculateNetIncome(80000, 10000, 0.20));\n        System.out.println(\"User 3 Net: \" + calculateNetIncome(120000, 25000, 0.25));\n    }\n}",
+          language: "java",
+          explanation: "Extracting the net income calculation into calculateNetIncome() makes the code self-documenting, eliminates copy-paste bugs, and allows instant updates if tax formulas change."
+        },
+        {
+          type: "table",
+          title: "Monolithic Code vs Modular Methods",
+          headers: ["Attribute", "Monolithic Code (All in `main()`)", "Modular Code (Using Methods)"],
+          rows: [
+            ["Code Duplication", "High (copy-pasting formulas)", "Zero (DRY - single source of truth)"],
+            ["Debugging Speed", "Slow (must search across thousands of lines)", "Fast (isolated stack traces pinpoint exact method)"],
+            ["Readability", "Poor (walls of low-level variables)", "High (expressive verb method names like `validateOrder`)"],
+            ["Unit Testing", "Impossible without running full application", "Effortless (isolated unit testing of inputs & outputs)"],
+            ["Team Collaboration", "Frequent merge conflicts on monolithic files", "High (developers work on independent modular methods)"]
+          ]
+        },
+        {
+          type: "tryIt",
+          title: "Try It: Modular Greeting Formatter",
+          code: "class Formatter {\n    public static String formatGreeting(String role, String name) {\n        return \"[\" + role.toUpperCase() + \"] Welcome, \" + name.trim() + \"!\";\n    }\n    public static void main(String[] args) {\n        System.out.println(formatGreeting(\"admin\", \" Alice \"));\n        System.out.println(formatGreeting(\"guest\", \" Bob \"));\n    }\n}",
+          expectedOutput: "[ADMIN] Welcome, Alice!\n[GUEST] Welcome, Bob!",
+          explanation: "formatGreeting standardizes role casing and whitespace trimming across all user greetings."
+        },
+        {
+          type: "dryRun",
+          title: "Maintainability Trace: Updating Tax Formula from 20% to 22%",
+          iterations: [
+            { step: 1, variables: { "Monolithic System": "40 copy-pasted locations" }, description: "Developer must manually find, edit, and verify 40 separate lines. High risk of human error." },
+            { step: 2, variables: { "Modular Method": "1 single method body" }, description: "Developer changes 1 line inside calculateNetIncome()." },
+            { step: 3, variables: { "System Status": "100% synchronized" }, description: "Every caller across the application immediately reflects the updated 22% tax rate." }
+          ]
+        },
+        {
+          type: "warning",
+          title: "Common Modularization Pitfalls",
+          items: [
+            "**God Methods**: Writing massive 200-line methods that perform database access, validation, calculation, and UI printing all at once.",
+            "**Over-Abstraction**: Creating one-line methods for trivial operations that are used only once and obscure readability.",
+            "**Vague Method Names**: Naming methods `doWork()`, `handle()`, or `processData()` rather than specific verbs like `calculateDiscount()`."
+          ]
+        },
+        {
+          type: "interviewTraps",
+          title: "Interview Traps: Does Calling Methods Slow Down Java?",
+          traps: [
+            {
+              question: "Does splitting code into dozens of small methods reduce Java runtime performance compared to writing one giant loop?",
+              trap: "Believing method invocation stack frame overhead will degrade CPU performance.",
+              solution: "No. The JVM **HotSpot JIT (Just-In-Time) Compiler** identifies frequently executed 'hot' methods and performs **Method Inlining** at runtime. It replaces the method call with the method's raw bytecode instructions directly at the call site, completely eliminating stack frame allocation overhead while keeping the source code perfectly modular."
+            }
+          ]
+        },
+        {
+          type: "quickCheck",
+          title: "Quick Check",
+          question: "What software engineering principle states that logic should have a single, unambiguous representation in a codebase?",
+          options: [
+            "KISS (Keep It Simple, Stupid)",
+            "DRY (Don't Repeat Yourself)",
+            "YAGNI (You Aren't Gonna Need It)",
+            "SOLID"
+          ],
+          answer: 1,
+          explanation: "DRY (Don't Repeat Yourself) is the core principle emphasizing the reduction of code repetition by extracting shared logic into reusable methods."
+        },
+        {
+          type: "takeaways",
+          title: "Key Takeaways",
+          items: [
+            "Methods promote DRY architecture and single responsibility.",
+            "Methods provide abstraction by separating public interface contracts from internal algorithms.",
+            "JIT compiler inlining ensures modular methods run at blazing bare-metal speeds.",
+            "Always choose expressive, self-documenting method names."
+          ]
+        },
+        {
+          type: "text",
+          title: "Connection to Next Lesson",
+          content: "Next, we master Method Syntax, breaking down access modifiers, return types, parameter declarations, and method body grammar."
+        }
+      ]
     }
   },
   {
     slug: "method-syntax",
     title: "Method Syntax",
     content: {
-      definition: "Method syntax defines the structure: access modifier, static (optional), return type, method name, parameters in parentheses, and body in braces. Every part serves a purpose.",
-      whyItMatters: "Correct syntax is essential for defining methods. Understanding each component helps you design effective methods.",
-      coreConcept: "Components: 1) Access modifier (public, private, etc.), 2) static (class method) or not, 3) Return type (void, int, String, etc.), 4) Method name (camelCase), 5) Parameters (type name pairs), 6) Method body in { }.",
-      syntax: "accessModifier static returnType methodName(type1 param1, type2 param2) {\n    // method body\n    return value; // if not void\n}",
-      javaExample: "// Complete method syntax\npublic static int multiply(int a, int b) {\n    return a * b;\n}\n\n// Method without parameters\npublic static void sayHello() {\n    System.out.println(\"Hello!\");\n}\n\n// Method with no return (void)\npublic static void printSum(int a, int b) {\n    System.out.println(a + b);\n}\n\n// Method returning object\npublic static String createGreeting(String name) {\n    return \"Hello, \" + name + \"!\";\n}",
-      howItWorks: "Access modifier controls visibility. static makes it belong to class (no object needed). Return type specifies what method returns. Name identifies the method. Parameters pass data in. Body contains the logic.",
-      realWorldUse: "All Java programs use methods. main() is the starting point. Your own methods organize program logic.",
-      commonMistakes: [
-        "Forgetting return type (must always specify, even void)",
-        "Using wrong naming convention (methods should be camelCase)",
-        "Missing parentheses even when no parameters",
-        "Placing parameters inside braces instead of parentheses"
-      ],
-      interviewQuestions: [
-        { question: "What does 'void' mean as a return type?", answer: "void means the method does not return any value. It performs an action but doesn't produce a result to use." },
-        { question: "Why do we use camelCase for method names?", answer: "Java convention. Methods start with lowercase letter, each subsequent word capitalized. Examples: calculateArea, getUserName, isValid." }
-      ],
-      quickRevision: "Syntax: modifier static returnType name(params) { body }. void = no return. camelCase for names.",
-      practicePrompt: "Write a method signature for: public, static, returns double, named 'calculateAverage', takes two int parameters.",
-      quickCheck: {
-        question: "What is wrong with: int add(int a, b) { return a + b; }",
-        options: [
-          "Missing return type",
-          "Parameter b needs a type",
-          "Missing parentheses",
-          "Missing braces"
-        ],
-        answer: 1,
-        explanation: "Each parameter must have its own type. Correct: int add(int a, int b) { return a + b; }"
-      }
+      sections: [
+        {
+          type: "text",
+          title: "Prerequisites",
+          content: "You should understand `what-is-a-method`, `why-use-methods`, primitive data types, and identifier rules."
+        },
+        {
+          type: "text",
+          title: "Mental Model",
+          content: "Think of Method Syntax as an **Official Legal Contract Header**. Every keyword in the header establishes strict rules:\n• **Who can call it?** (Access Modifier: `public` vs `private`)\n• **Does it need an instance object?** (Modifier: `static` vs instance)\n• **What does it produce?** (Return Type: `int`, `String`, or `void`)\n• **What is its legal name?** (Identifier: `calculateTotal`)\n• **What inputs must the caller provide?** (Parameters: `(double subtotal, double tax)`)\n• **What happens inside?** (Body `{ ... }`)"
+        },
+        {
+          type: "callout",
+          title: "The Universal Java Method Header Pattern",
+          content: "```java\n[access_modifier] [static] <return_type> <methodName>([type1 param1, type2 param2]) {\n    // Method Body\n    return <value>; // Mandatory if return_type != void\n}\n```"
+        },
+        {
+          type: "code",
+          title: "Diverse Method Syntax Configurations",
+          code: "public class MethodSyntaxExamples {\n    // 1. Multiple parameters with return value\n    public static double calculateBMI(double weightKg, double heightM) {\n        return weightKg / (heightM * heightM);\n    }\n\n    // 2. Zero parameters with return value\n    public static String getServerTimestamp() {\n        return java.time.LocalDateTime.now().toString();\n    }\n\n    // 3. Void method with parameters (Side-effect / Output)\n    public static void logMessage(String level, String msg) {\n        System.out.println(\"[\" + level.toUpperCase() + \"] \" + msg);\n    }\n\n    // 4. Void method with zero parameters\n    public static void printDivider() {\n        System.out.println(\"----------------------------------------\");\n    }\n\n    public static void main(String[] args) {\n        printDivider();\n        logMessage(\"info\", \"Application booted successfully\");\n        double bmi = calculateBMI(70.0, 1.75);\n        System.out.println(\"BMI: \" + String.format(\"%.2f\", bmi));\n        printDivider();\n    }\n}",
+          language: "java",
+          explanation: "Notice how each method specifies its exact return type (double, String, or void) and matching parameter definitions."
+        },
+        {
+          type: "table",
+          title: "Common Java Access & Property Modifiers for Methods",
+          headers: ["Keyword", "Category", "Meaning for Methods"],
+          rows: [
+            ["`public`", "Access Modifier", "Accessible from any class in any package across the entire application."],
+            ["`private`", "Access Modifier", "Accessible ONLY within the declaring class (internal helper methods)."],
+            ["`protected`", "Access Modifier", "Accessible within the same package and by derived subclasses."],
+            ["*(default)*", "Access Modifier", "Package-private: accessible only within the declaring package."],
+            ["`static`", "Non-Access Modifier", "Belongs to the class directly; callable without instantiating an object (`ClassName.method()`)."],
+            ["`final`", "Non-Access Modifier", "Cannot be overridden by any child subclass."]
+          ]
+        },
+        {
+          type: "tryIt",
+          title: "Try It: Method Returning Maximum of Three Numbers",
+          code: "class MathUtils {\n    public static int maxOfThree(int a, int b, int c) {\n        int max = a;\n        if (b > max) max = b;\n        if (c > max) max = c;\n        return max;\n    }\n    public static void main(String[] args) {\n        System.out.println(\"Max: \" + maxOfThree(45, 89, 12));\n    }\n}",
+          expectedOutput: "Max: 89",
+          explanation: "Takes three integers, compares them sequentially, and returns the highest integer."
+        },
+        {
+          type: "dryRun",
+          title: "Compiler Syntax Validation Trace",
+          iterations: [
+            { step: 1, variables: { "Code": "int add(int a, b)" }, description: "❌ COMPILE ERROR: Parameter 'b' lacks a data type. Each parameter must be individually typed: (int a, int b)." },
+            { step: 2, variables: { "Code": "void print(); { ... }" }, description: "❌ COMPILE ERROR: Stray semicolon between parameter list and opening brace." },
+            { step: 3, variables: { "Code": "public static int square(int x) { return x * x; }" }, description: "✅ VALID: Correct modifier, return type, name, typed parameter, and matching return statement." }
+          ]
+        },
+        {
+          type: "warning",
+          title: "Common Syntax Traps",
+          items: [
+            "**Shorthand Parameter Type Omission**: Writing `(int x, y)` instead of `(int x, int y)` is a compilation error in Java.",
+            "**Accidental Semicolon on Method Header**: Writing `public static void run(); { ... }` treats the header as an abstract method declaration and breaks the body block.",
+            "**Omitting Parentheses on Zero-Parameter Methods**: Calling `printDivider;` instead of `printDivider();` fails to invoke the method."
+          ]
+        },
+        {
+          type: "interviewTraps",
+          title: "Interview Traps: Can a Method Return Multiple Values in Java?",
+          traps: [
+            {
+              question: "How can a single Java method return multiple values simultaneously?",
+              trap: "Attempting syntax like `return a, b;` or using output parameters like C# out/ref.",
+              solution: "A Java method can return strictly **only one value or reference**. To return multiple values, you must bundle them into a container object: an array (`int[]`), a standard Java Collection (`List`), a custom `class`, or modern Java 14+ `record Pair(int min, int max)`."
+            }
+          ]
+        },
+        {
+          type: "quickCheck",
+          title: "Quick Check",
+          question: "Which of the following method declarations is syntactically INVALID in Java?",
+          options: [
+            "public static void doWork() {}",
+            "int calculate(int x, y) { return x + y; }",
+            "private double getRate() { return 4.5; }",
+            "public static String[] getNames() { return new String[0]; }"
+          ],
+          answer: 1,
+          explanation: "In Java, every formal parameter must explicitly state its type. `int calculate(int x, y)` fails because parameter `y` lacks a type declaration."
+        },
+        {
+          type: "takeaways",
+          title: "Key Takeaways",
+          items: [
+            "Every parameter must explicitly declare both its data type and variable name.",
+            "Non-void methods must return a value compatible with the declared return type.",
+            "Static methods can be invoked directly from class scope (`Class.method()`).",
+            "Bundle multiple return values into classes, records, or arrays."
+          ]
+        },
+        {
+          type: "text",
+          title: "Connection to Next Lesson",
+          content: "Next, we explore Method Parameters in depth, demystifying Java's 100% Pass-by-Value mechanism for primitives and heap references."
+        }
+      ]
     }
   },
   {
     slug: "method-parameters",
     title: "Method Parameters",
     content: {
-      definition: "Parameters are variables declared in the method signature that receive values when the method is called. They allow methods to work with different data each time.",
-      whyItMatters: "Parameters make methods flexible and reusable. Different inputs produce different outputs without changing the method code.",
-      coreConcept: "Parameters are declared in method signature. Each parameter has a type and name. Arguments are the actual values passed when calling. Java uses pass-by-value (copies are passed).",
-      syntax: "returnType methodName(type1 param1, type2 param2) {\n    // use param1, param2\n}\n\n// Call with arguments\nmethodName(value1, value2);",
-      javaExample: "// Multiple parameters\npublic static int add(int a, int b) {\n    return a + b;\n}\n\nint sum = add(5, 3);  // a=5, b=3\n\n// String parameter\npublic static void greet(String name, int age) {\n    System.out.println(name + \" is \" + age + \" years old\");\n}\n\ngreet(\"Alice\", 25);  // Alice is 25 years old\n\n// Pass-by-value demonstration\npublic static void tryChange(int x) {\n    x = 100;  // Only changes local copy\n}\n\nint num = 5;\ntryChange(num);\nSystem.out.println(num);  // Still 5",
-      howItWorks: "When called, arguments are copied to parameters (pass-by-value). Method works with copies. Changes to primitive parameters don't affect original. Reference parameters still point to same object.",
-      realWorldUse: "Calculator functions, data processing, validation methods, formatting functions, any method that needs input data.",
-      commonMistakes: [
-        "Thinking parameters modify original primitive values",
-        "Mismatching parameter types and argument types",
-        "Wrong number of arguments",
-        "Confusing parameter names with variables outside method"
-      ],
-      interviewQuestions: [
-        { question: "What is the difference between parameter and argument?", answer: "Parameter is the variable in the method declaration. Argument is the actual value passed when calling the method." },
-        { question: "Does Java pass parameters by reference or by value?", answer: "Java always passes by value. Primitive values are copied. References are copied (not the object), so the reference points to the same object." }
-      ],
-      quickRevision: "Parameters = method inputs. Declared with type and name. Arguments = actual values passed. Java = pass-by-value.",
-      practicePrompt: "Write a method that takes a String and an int, then prints the String int times.",
-      quickCheck: {
-        question: "How many parameters does this method have?\nvoid process(int a, String b, double c)",
-        options: ["1", "2", "3", "4"],
-        answer: 2,
-        explanation: "Three parameters: int a, String b, double c. Each type-name pair is one parameter."
-      }
+      sections: [
+        {
+          type: "text",
+          title: "Prerequisites",
+          content: "You should understand `method-syntax`, stack frames, primitive vs reference variables, and heap memory allocation."
+        },
+        {
+          type: "text",
+          title: "Mental Model",
+          content: "Think of Java Method Parameter Passing as an **Office Photocopier (Pass-by-Value)**:\n• **Primitive Types (`int`, `double`, `boolean`)**: You write the number `50` on a notepad. You make a photocopy of the page and hand it to a coworker (the method). If your coworker scribbles over their photocopy with `999` and tears it up, your original notepad in your drawer remains strictly `50`.\n• **Reference Types (Arrays, Objects)**: Your notepad contains the street address of a warehouse (`0xHeap789`). You photocopy that address and hand it to your coworker. If your coworker drives to that warehouse address and repaints the interior walls (mutates array/object state), the changes persist in the actual warehouse. BUT if your coworker writes a new address on their photocopy, your original address note remains untouched."
+        },
+        {
+          type: "callout",
+          title: "The Immutable Java Rule: Strictly 100% Pass-by-Value",
+          content: "⚠️ **CRITICAL INTERVIEW LAW**: Java is **ALWAYS pass-by-value**. There is NO pass-by-reference in Java.\n• When passing a primitive &rarr; the exact binary bits (value) are copied.\n• When passing an object/array &rarr; the **memory address reference bits (pointer value)** are copied."
+        },
+        {
+          type: "code",
+          title: "Primitive Pass-by-Value vs Object Mutation",
+          code: "public class PassByValueDemo {\n    // 1. Primitive parameter: Local copy modified\n    public static void tryToModifyPrimitive(int x) {\n        x = 999; // Changes ONLY local parameter x\n    }\n\n    // 2. Reference parameter: Modifying object contents\n    public static void modifyArrayContent(int[] arr) {\n        arr[0] = 999; // Mutates heap array element directly!\n    }\n\n    // 3. Reference parameter: Reassigning reference variable\n    public static void tryToReassignReference(int[] arr) {\n        arr = new int[] { 500, 600, 700 }; // Reassigns local pointer ONLY\n    }\n\n    public static void main(String[] args) {\n        int num = 10;\n        tryToModifyPrimitive(num);\n        System.out.println(\"Primitive num after call: \" + num); // 10 (UNCHANGED!)\n\n        int[] numbers = { 1, 2, 3 };\n        modifyArrayContent(numbers);\n        System.out.println(\"Array[0] after content mod: \" + numbers[0]); // 999 (CHANGED!)\n\n        tryToReassignReference(numbers);\n        System.out.println(\"Array[0] after reassignment: \" + numbers[0]); // 999 (UNCHANGED!)\n    }\n}",
+          language: "java",
+          explanation: "Primitive modifications never escape the method. Array mutations modify the shared heap object. Reassigning the array pointer inside the method only changes the local copy of the reference."
+        },
+        {
+          type: "table",
+          title: "Parameter Terminology: Formal Parameters vs Actual Arguments",
+          headers: ["Concept", "Definition", "Example in Code", "Where Located"],
+          rows: [
+            ["Formal Parameter", "The variable placeholder declared in the method signature.", "`public static void greet(String name)`", "Method definition header"],
+            ["Actual Argument", "The concrete value, variable, or expression passed during invocation.", "`greet(\"Vamsee\");` or `greet(userInput);`", "Method call site"],
+            ["Varargs (`...`)", "Variable-length argument list (syntactic sugar for an array).", "`public static void sum(int... values)`", "Method definition parameter"]
+          ]
+        },
+        {
+          type: "tryIt",
+          title: "Try It: Variable-Arity (Varargs) Sum Method",
+          code: "class VarargsDemo {\n    public static int sumAll(int... numbers) {\n        int total = 0;\n        for (int n : numbers) {\n            total += n;\n        }\n        return total;\n    }\n    public static void main(String[] args) {\n        System.out.println(\"Sum 1: \" + sumAll(10, 20));\n        System.out.println(\"Sum 2: \" + sumAll(5, 15, 25, 35));\n        System.out.println(\"Sum 3: \" + sumAll()); // 0\n    }\n}",
+          expectedOutput: "Sum 1: 30\nSum 2: 80\nSum 3: 0",
+          explanation: "Varargs (int... numbers) allows callers to pass zero, two, four, or any arbitrary count of arguments packed into an array."
+        },
+        {
+          type: "dryRun",
+          title: "Stack Frame Memory Trace: `modifyArrayContent(numbers)`",
+          iterations: [
+            { step: 1, variables: { "main frame": "numbers = 0xHeap44", "Heap 0xHeap44": "[1, 2, 3]" }, description: "main() allocates array at heap address 0xHeap44." },
+            { step: 2, variables: { "modify frame": "arr = 0xHeap44 (copy of address)", "Heap 0xHeap44": "[1, 2, 3]" }, description: "Method is called. Parameter arr receives a copy of pointer 0xHeap44." },
+            { step: 3, variables: { "modify frame": "arr[0] = 999", "Heap 0xHeap44": "[999, 2, 3]" }, description: "arr[0] accesses Heap object 0xHeap44 and updates element 0 to 999." },
+            { step: 4, variables: { "main frame": "numbers = 0xHeap44", "Heap 0xHeap44": "[999, 2, 3]" }, description: "Method frame is popped. main() inspects numbers[0] and reads 999." }
+          ]
+        },
+        {
+          type: "warning",
+          title: "Common Parameter Mistakes",
+          items: [
+            "**Attempting a C-style Swap**: Trying to write `swap(a, b)` for primitives in Java is impossible because arguments are copied by value.",
+            "**Unintended Shared Mutation**: Passing a mutable array/object to a helper method that alters its contents unexpectedly (defensive copying is recommended when immutability is needed).",
+            "**Misplacing Varargs**: In a parameter list, the varargs parameter (`type... name`) MUST be the last parameter (e.g. `(String prefix, int... nums)`)."
+          ]
+        },
+        {
+          type: "interviewTraps",
+          title: "Interview Traps: The Classic Swap Method Trap",
+          traps: [
+            {
+              question: "Why does the following swap method fail to swap variables x and y in main?\n`public static void swap(Integer a, Integer b) { Integer temp = a; a = b; b = temp; }`",
+              trap: "Assuming that because Integer is an Object, it is passed by reference and will swap.",
+              solution: "Java is strictly pass-by-value. Variables `a` and `b` in `swap()` receive copies of the memory pointers pointing to the Integer objects. Inside `swap()`, reassigning `a = b` merely updates the local parameter variable `a` to point to a different address. The original caller variables `x` and `y` in `main()` still point to their original objects."
+            }
+          ]
+        },
+        {
+          type: "quickCheck",
+          title: "Quick Check",
+          question: "What is printed by:\nint x = 5;\nchange(x);\nSystem.out.println(x);\n// where: void change(int x) { x = 10; }",
+          options: [
+            "5",
+            "10",
+            "0",
+            "Compile error"
+          ],
+          answer: 0,
+          explanation: "Java passes primitives by value. The method `change` modifies its own local copy of parameter `x`, leaving the original `x` in the caller unchanged with value 5."
+        },
+        {
+          type: "takeaways",
+          title: "Key Takeaways",
+          items: [
+            "Java is strictly 100% pass-by-value for all types.",
+            "Primitive arguments cannot be modified by the called method.",
+            "Object/Array references are copied by value; mutating the underlying object state affects the shared heap instance.",
+            "Varargs `Type... name` must always be the final parameter in the method signature."
+          ]
+        },
+        {
+          type: "text",
+          title: "Connection to Next Lesson",
+          content: "Next, we examine Return Values, mastering explicit return types, early exit guards, unreachable code errors, and returning objects."
+        }
+      ]
     }
   },
   {
     slug: "return-values",
     title: "Return Values",
     content: {
-      definition: "The return statement sends a value back to the caller. The return type in the method signature declares what type of value will be returned.",
-      whyItMatters: "Return values allow methods to produce results that can be used by the calling code. This enables calculations, data retrieval, and result passing.",
-      coreConcept: "Non-void methods must return a value matching the return type. return exits the method immediately. A method can have multiple return statements (but only one executes). void methods can use return; to exit early.",
-      syntax: "returnType methodName(params) {\n    // ... code ...\n    return value;  // type must match returnType\n}",
-      javaExample: "// Return a value\npublic static int square(int n) {\n    return n * n;\n}\n\nint result = square(5);  // result = 25\n\n// Multiple return statements\npublic static int max(int a, int b) {\n    if (a > b) {\n        return a;\n    }\n    return b;\n}\n\n// Early return for validation\npublic static double divide(double a, double b) {\n    if (b == 0) {\n        System.out.println(\"Cannot divide by zero\");\n        return 0;  // Early exit\n    }\n    return a / b;\n}\n\n// Return object\npublic static String formatName(String first, String last) {\n    return first + \" \" + last;\n}",
-      howItWorks: "return statement immediately exits the method and sends the value back to the caller. The returned value can be stored, printed, or used in expressions.",
-      realWorldUse: "Calculations, data retrieval, validation results, status codes, transforming data, factory methods.",
-      commonMistakes: [
-        "Forgetting return statement in non-void method",
-        "Returning wrong type than declared",
-        "Code after return statement (unreachable)",
-        "Not storing or using the returned value"
-      ],
-      interviewQuestions: [
-        { question: "What happens when a return statement executes?", answer: "The method immediately exits and control returns to the caller. Any code after return in the method is not executed (unreachable)." },
-        { question: "Can a void method have a return statement?", answer: "Yes, but only 'return;' with no value. This is used to exit the method early based on some condition." }
-      ],
-      quickRevision: "return sends value back. Must match declared type. Method exits immediately. Non-void methods must have return.",
-      practicePrompt: "Write a method that returns the larger of two numbers. Call it and print the result.",
-      quickCheck: {
-        question: "What is wrong with this method?\nint getValue() {\n    System.out.println(\"Getting value\");\n}",
-        options: [
-          "Missing static keyword",
-          "Missing return statement",
-          "Wrong return type",
-          "No parameters"
-        ],
-        answer: 1,
-        explanation: "Non-void method must return a value. Add: return value; before the closing brace."
-      }
+      sections: [
+        {
+          type: "text",
+          title: "Prerequisites",
+          content: "You should understand `what-is-a-method`, `method-syntax`, and the JVM stack frame lifecycle."
+        },
+        {
+          type: "text",
+          title: "Mental Model",
+          content: "Think of the `return` statement as an **Emergency Exit Hatch with a Certified Delivery Package**:\n• **The Payload**: The expression next to `return` is evaluated, bundled into the return slot of the current stack frame, and delivered directly to the caller's evaluation site.\n• **The Immediate Exit**: The moment the CPU encounters `return`, the current stack frame is instantly dismantled and popped off the stack. No subsequent statements in that method will ever execute."
+        },
+        {
+          type: "callout",
+          title: "Definite Return Requirement",
+          content: "In Java, if a method declares a non-void return type (e.g. `int`, `String`), the Java compiler enforces **Definite Assignment & Definite Return**: every single reachable execution branch MUST end in a valid `return` statement or throw an exception. Leaving even one `if` path without a `return` triggers a compile-time error: *'missing return statement'*."
+        },
+        {
+          type: "code",
+          title: "Early Returns, Guard Clauses & Object Returns",
+          code: "public class ReturnValuesDemo {\n    // 1. Guard Clause Pattern (Early Exit for clean code)\n    public static double calculateDiscount(double price, int customerYears, boolean isVip) {\n        // Guard clause: Invalid input\n        if (price <= 0) {\n            return 0.0; // Early exit\n        }\n        // Guard clause: VIP status\n        if (isVip) {\n            return price * 0.25;\n        }\n        // Standard tier calculation\n        if (customerYears >= 5) {\n            return price * 0.15;\n        }\n        return price * 0.05; // Base fallback discount\n    }\n\n    // 2. Returning an Array / Object\n    public static int[] getMinMax(int[] numbers) {\n        if (numbers == null || numbers.length == 0) {\n            return new int[] { 0, 0 };\n        }\n        int min = numbers[0];\n        int max = numbers[0];\n        for (int n : numbers) {\n            if (n < min) min = n;\n            if (n > max) max = n;\n        }\n        return new int[] { min, max }; // Bundled array return\n    }\n\n    public static void main(String[] args) {\n        double discount = calculateDiscount(200.0, 6, false); // 30.0\n        System.out.println(\"Discount: $\" + discount);\n\n        int[] stats = getMinMax(new int[] { 45, 12, 89, 3, 67 });\n        System.out.println(\"Min: \" + stats[0] + \", Max: \" + stats[1]); // Min: 3, Max: 89\n    }\n}",
+          language: "java",
+          explanation: "Guard clauses eliminate deeply nested if-else ladders by returning as soon as a condition is satisfied. getMinMax bundles multiple return metrics into a single heap array."
+        },
+        {
+          type: "table",
+          title: "Return Type Compatibility & Implicit Widening Rules",
+          headers: ["Declared Return Type", "Returned Value Type", "Allowed by Compiler?", "Explanation"],
+          rows: [
+            ["`double`", "`int` (e.g. `return 5;`)", "✅ Allowed", "Implicit widening: `5` is promoted to `5.0` automatically."],
+            ["`int`", "`double` (e.g. `return 5.5;`)", "❌ Compile Error", "Narrowing conversion: requires explicit cast `(int) 5.5`."],
+            ["`Object`", "`String` (e.g. `return \"Hi\";`)", "✅ Allowed", "Upcasting: `String` is a subclass of `Object`."],
+            ["`void`", "`return 10;`", "❌ Compile Error", "Void methods cannot return any expression."],
+            ["`void`", "`return;`", "✅ Allowed", "Bare return statement safely exits the void method early."]
+          ]
+        },
+        {
+          type: "tryIt",
+          title: "Try It: Score-to-Grade Converter",
+          code: "class Grader {\n    public static char getGrade(int score) {\n        if (score >= 90) return 'A';\n        if (score >= 80) return 'B';\n        if (score >= 70) return 'C';\n        if (score >= 60) return 'D';\n        return 'F';\n    }\n    public static void main(String[] args) {\n        System.out.println(\"Grade: \" + getGrade(85));\n    }\n}",
+          expectedOutput: "Grade: B",
+          explanation: "85 >= 80 evaluates to true, so 'B' is returned immediately and execution exits."
+        },
+        {
+          type: "dryRun",
+          title: "Early Exit Guard Trace: `calculateDiscount(0.0, 10, true)`",
+          iterations: [
+            { step: 1, variables: { "price": "0.0", "customerYears": "10", "isVip": "true" }, description: "Method called with invalid price 0.0." },
+            { step: 2, variables: { "price <= 0": "true", "return": "0.0" }, description: "First guard clause matches! Method executes `return 0.0;` immediately." },
+            { step: 3, variables: { "VIP check": "Skipped", "Years check": "Skipped" }, description: "Subsequent conditions are never evaluated. Frame is popped and 0.0 is delivered." }
+          ]
+        },
+        {
+          type: "warning",
+          title: "Common Return Value Traps",
+          items: [
+            "**Unreachable Code Error**: Writing any statement immediately following an unconditional `return` statement triggers a compile-time error (*'unreachable statement'*).",
+            "**Missing Else Return**: Writing `if (x > 0) return true;` without a fallback `return false;` outside the branch causes a compile failure.",
+            "**Returning Local Array vs Mutating Caller**: If you return an internal private array reference directly, callers can mutate it, breaking encapsulation."
+          ]
+        },
+        {
+          type: "interviewTraps",
+          title: "Interview Traps: Return vs Finally Block Override",
+          traps: [
+            {
+              question: "What value is returned by `testMethod()`?\n```java\npublic static int testMethod() {\n    try {\n        return 10;\n    } finally {\n        return 20;\n    }\n}\n```",
+              trap: "Assuming 10 is returned because try returns first.",
+              solution: "It returns **20**. In Java, the `finally` block is guaranteed to execute before the method exits. If the `finally` block contains its own `return` statement, it completely supersedes and discards the return value from the `try` block (a notorious anti-pattern to avoid in production)."
+            }
+          ]
+        },
+        {
+          type: "quickCheck",
+          title: "Quick Check",
+          question: "Why does this method fail to compile?\n```java\nint test(int x) {\n    if (x > 0) return 1;\n    if (x < 0) return -1;\n}\n```",
+          options: [
+            "Missing static modifier",
+            "Parameter x cannot be checked twice",
+            "Missing return statement if x == 0",
+            "Cannot return negative numbers"
+          ],
+          answer: 2,
+          explanation: "If x is 0, neither if-condition triggers, leaving no return statement on that execution path. The compiler rejects this with a 'missing return statement' error."
+        },
+        {
+          type: "takeaways",
+          title: "Key Takeaways",
+          items: [
+            "The `return` statement halts method execution and delivers the result value to the caller.",
+            "Every reachable execution branch in a non-void method must end in a valid return or throw statement.",
+            "Use Guard Clauses to exit early and avoid deep nesting.",
+            "Returned expressions can be implicitly widened to match the declared return type."
+          ]
+        },
+        {
+          type: "text",
+          title: "Connection to Next Lesson",
+          content: "Next, we explore void Methods, understanding how procedures operate via side-effects, I/O mutations, and early exit returns."
+        }
+      ]
     }
   },
   {
     slug: "void-methods",
     title: "void Methods",
     content: {
-      definition: "void methods perform actions but do not return a value. They are used for operations like printing, modifying data, writing to files, or any task that doesn't need to produce a result.",
-      whyItMatters: "Not every method needs to return a value. void methods are appropriate for actions, output, and side-effect operations.",
-      coreConcept: "void means 'no return type'. Method performs action but doesn't produce a value. Cannot assign void method call to a variable. Can use return; to exit early (without value).",
-      syntax: "void methodName(parameters) {\n    // perform action\n    // no return statement needed (or just return;)\n}",
-      javaExample: "// void method - prints output\npublic static void printSum(int a, int b) {\n    System.out.println(\"Sum: \" + (a + b));\n}\n\nprintSum(5, 3);  // Sum: 8\n\n// void method with early exit\npublic static void printPositive(int n) {\n    if (n < 0) {\n        System.out.println(\"Negative number\");\n        return;  // Exit early\n    }\n    System.out.println(\"Positive: \" + n);\n}\n\n// Cannot do this:\n// int result = printSum(5, 3);  // ERROR!\n\n// void method that modifies array\npublic static void doubleAll(int[] arr) {\n    for (int i = 0; i < arr.length; i++) {\n        arr[i] *= 2;\n    }\n}",
-      howItWorks: "void methods execute their code and finish. No value is sent back to caller. Called for their side effects (printing, modifying, writing, etc.).",
-      realWorldUse: "Printing output, logging, modifying objects, writing to files, updating databases, user interface updates.",
-      commonMistakes: [
-        "Trying to assign void method result to variable",
-        "Returning a value from void method",
-        "Using void when a return value would be useful",
-        "Forgetting that void methods still need parentheses when called"
-      ],
-      interviewQuestions: [
-        { question: "When should you use void vs a return type?", answer: "Use void when the method performs an action and doesn't need to send back a result. Use a return type when the method calculates or retrieves a value that the caller needs." },
-        { question: "Can void methods have return statements?", answer: "Yes, but only 'return;' without a value. This exits the method early. It's optional at the end of the method." }
-      ],
-      quickRevision: "void = no return value. Used for actions/output. Cannot assign to variable. Can use return; to exit early.",
-      practicePrompt: "Write a void method that prints a countdown from n to 1.",
-      quickCheck: {
-        question: "What happens if you try: int x = printHello(); where printHello is void?",
-        options: [
-          "x gets value 0",
-          "x gets value null",
-          "Compile error",
-          "Runtime error"
-        ],
-        answer: 2,
-        explanation: "Compile error. void methods don't return a value, so you cannot assign the result to a variable."
-      }
+      sections: [
+        {
+          type: "text",
+          title: "Prerequisites",
+          content: "You should understand `return-values`, `method-syntax`, and the distinction between expressions and statements."
+        },
+        {
+          type: "text",
+          title: "Mental Model",
+          content: "Think of a `void` method as a **Factory Dispatcher / Workhorse Task**:\n• When you send a command to a physical assembly robot (e.g. `paintChassisRed()`), it performs an action in the real physical world (a side effect).\n• It does NOT hand you back a box of data. It simply completes its assigned labor, steps aside, and lets the next factory stage proceed."
+        },
+        {
+          type: "callout",
+          title: "The Purpose of void: Side Effects and Actions",
+          content: "`void` is a Java keyword indicating that a method **does not produce a result value**. Void methods are invoked strictly for their **side effects**, such as:\n1. Printing to the console (`System.out.println()`)\n2. Mutating objects or arrays in Heap memory\n3. Writing data to a file, database, or network socket\n4. Triggering UI animations or hardware events"
+        },
+        {
+          type: "code",
+          title: "void Methods in Action: Printing, Mutation & Early Exit",
+          code: "public class VoidMethodsDemo {\n    // 1. Action Method: Console output\n    public static void printBanner(String message) {\n        System.out.println(\"====================================\");\n        System.out.println(\"  NOTICE: \" + message.toUpperCase());\n        System.out.println(\"====================================\");\n    }\n\n    // 2. Early Exit in a Void Method using bare 'return;'\n    public static void processTransaction(double amount, double balance) {\n        if (amount <= 0) {\n            System.out.println(\"❌ Error: Transaction amount must be positive.\");\n            return; // Exit early! No further code runs.\n        }\n        if (amount > balance) {\n            System.out.println(\"❌ Error: Insufficient funds ($ \" + balance + \").\");\n            return; // Exit early!\n        }\n        System.out.println(\"✅ Approved: Transferred $\" + amount);\n    }\n\n    // 3. Mutation Method: Modifying array elements in-place\n    public static void squareArrayInPlace(int[] numbers) {\n        if (numbers == null) return;\n        for (int i = 0; i < numbers.length; i++) {\n            numbers[i] = numbers[i] * numbers[i]; // In-place Heap mutation\n        }\n    }\n\n    public static void main(String[] args) {\n        printBanner(\"System Maintenance\");\n        processTransaction(-50, 1000);  // Error: must be positive\n        processTransaction(250, 1000);  // Approved\n\n        int[] values = { 2, 4, 6 };\n        squareArrayInPlace(values);\n        System.out.println(\"Squared values[1]: \" + values[1]); // 16\n    }\n}",
+          language: "java",
+          explanation: "void methods perform their duties directly through console writes, validation gates, or heap object mutations. Notice how 'return;' is used without a value to terminate execution early."
+        },
+        {
+          type: "table",
+          title: "Value-Returning Methods vs void Methods",
+          headers: ["Feature", "Value-Returning Method (`int`, `String`)", "void Method (`void`)"],
+          rows: [
+            ["Assignment to Variable", "✅ `int x = calculate();`", "❌ `int x = run();` &rarr; Compile Error"],
+            ["Use in `System.out.println()`", "✅ `System.out.println(calc());`", "❌ `System.out.println(run());` &rarr; Compile Error"],
+            ["Return Statement Syntax", "`return <expression>;` (Mandatory)", "`return;` (Optional bare return for early exit)"],
+            ["Primary Purpose", "Compute and transform data without side-effects.", "Perform actions, write I/O, mutate existing objects."]
+          ]
+        },
+        {
+          type: "tryIt",
+          title: "Try It: In-Place Reverse Array via Void Method",
+          code: "class ArrayReverser {\n    public static void reverse(int[] arr) {\n        int i = 0, j = arr.length - 1;\n        while (i < j) {\n            int temp = arr[i];\n            arr[i] = arr[j];\n            arr[j] = temp;\n            i++; j--;\n        }\n    }\n    public static void main(String[] args) {\n        int[] data = { 1, 2, 3, 4, 5 };\n        reverse(data);\n        System.out.println(\"Reversed: \" + java.util.Arrays.toString(data));\n    }\n}",
+          expectedOutput: "Reversed: [5, 4, 3, 2, 1]",
+          explanation: "reverse() operates directly on the caller's array in Heap memory without returning any new object."
+        },
+        {
+          type: "dryRun",
+          title: "Early Return Trace: `processTransaction(-50, 1000)`",
+          iterations: [
+            { step: 1, variables: { "amount": "-50", "balance": "1000" }, description: "processTransaction stack frame initialized." },
+            { step: 2, variables: { "amount <= 0": "true" }, description: "Error condition met. Prints error banner to console." },
+            { step: 3, variables: { "return;": "Executed" }, description: "Bare return statement executed. Method stack frame instantly popped. Balance check and Approval logic are skipped." }
+          ]
+        },
+        {
+          type: "warning",
+          title: "Common void Method Mistakes",
+          items: [
+            "**Attempting to Return a Value**: Writing `return 0;` inside a `void` method produces a compile-time error: *'cannot return a value from method with void result type'*.",
+            "**Attempting Assignment**: `int res = printMessage();` fails to compile because `void` represents the absence of any type.",
+            "**Passing Void Call to println**: `System.out.println(doSomething());` fails if `doSomething()` is void.",
+            "**Neglecting Early Returns**: Forgetting `return;` inside validation blocks causes the method to continue executing invalid transaction logic."
+          ]
+        },
+        {
+          type: "interviewTraps",
+          title: "Interview Traps: `void` keyword vs `java.lang.Void` Class",
+          traps: [
+            {
+              question: "What is the difference between primitive `void` and `java.lang.Void` in Java?",
+              trap: "Thinking they are interchangeable or that Void can be instantiated.",
+              solution: "`void` is a primitive keyword denoting no return type. `java.lang.Void` is an uninstantiable placeholder reference class (`public final class Void`). It is used exclusively in Generic reflection and concurrency (e.g. `Callable<Void>` or `CompletableFuture<Void>`) when a generic type parameter requires an Object, where the only valid return value is `return null;`."
+            }
+          ]
+        },
+        {
+          type: "quickCheck",
+          title: "Quick Check",
+          question: "Which statement is valid inside a method declared as `public static void log()`?",
+          options: [
+            "return 0;",
+            "return \"Done\";",
+            "return;",
+            "return false;"
+          ],
+          answer: 2,
+          explanation: "In a void method, only a bare `return;` statement without any value expression is permitted."
+        },
+        {
+          type: "takeaways",
+          title: "Key Takeaways",
+          items: [
+            "`void` indicates that a method returns no value and is executed for side-effects.",
+            "Use bare `return;` to exit a void method early.",
+            "Calls to void methods cannot be assigned to variables or passed to `System.out.println()`.",
+            "Void methods are commonly used for in-place data structure mutation, file I/O, and printing."
+          ]
+        },
+        {
+          type: "text",
+          title: "Connection to Next Lesson",
+          content: "Next, we explore Method Overloading Basics, understanding how the Java compiler resolves multiple methods sharing the same name through static compile-time binding."
+        }
+      ]
     }
   },
   {
     slug: "method-overloading-basics",
     title: "Method Overloading Basics",
     content: {
-      definition: "Method overloading allows multiple methods with the same name but different parameter lists. The compiler determines which version to call based on the arguments.",
-      whyItMatters: "Overloading provides flexibility and cleaner APIs. Same operation can work with different input types or numbers of parameters.",
-      coreConcept: "Same method name, different parameter list (number, type, or order of parameters). Return type alone cannot distinguish overloaded methods. Compiler chooses the best match.",
-      syntax: "// Overloaded methods\nreturnType methodName(type1 param) { }\nreturnType methodName(type1 param1, type2 param2) { }\nreturnType methodName(type2 param) { }",
-      javaExample: "// Overloaded add methods\npublic static int add(int a, int b) {\n    return a + b;\n}\n\npublic static int add(int a, int b, int c) {\n    return a + b + c;\n}\n\npublic static double add(double a, double b) {\n    return a + b;\n}\n\n// Calls\nSystem.out.println(add(5, 3));        // int version\nSystem.out.println(add(5, 3, 2));      // 3-param version\nSystem.out.println(add(5.5, 3.2));     // double version\n\n// Overloaded print\npublic static void display(int n) {\n    System.out.println(\"Integer: \" + n);\n}\n\npublic static void display(String s) {\n    System.out.println(\"String: \" + s);\n}\n\ndisplay(42);      // Integer: 42\ndisplay(\"Hello\"); // String: Hello",
-      howItWorks: "Compiler looks at method name and parameter types (signature). Finds the best match. If no exact match, tries widening conversion. Error if ambiguous or no match.",
-      realWorldUse: "Utility methods that work with multiple types, constructors with different initializations, flexible APIs, default parameter alternatives.",
-      commonMistakes: [
-        "Thinking return type differentiates overloaded methods (it doesn't)",
-        "Creating ambiguous overloads where compiler can't decide",
-        "Overloading when different names would be clearer",
-        "Not considering autoboxing/unboxing in overload resolution"
-      ],
-      interviewQuestions: [
-        { question: "What makes two methods overloaded?", answer: "Same name but different parameter lists (different number of parameters, different types, or different order of types)." },
-        { question: "Can you overload methods by just changing the return type?", answer: "No. Return type is not part of the method signature for overloading. Parameter list must differ." }
-      ],
-      quickRevision: "Overloading = same name, different parameters. Return type doesn't count. Compiler picks best match.",
-      practicePrompt: "Create two overloaded methods named 'multiply' - one that takes two ints and one that takes three ints.",
-      quickCheck: {
-        question: "Which pair is valid method overloading?",
-        options: [
-          "int calc(int a) and void calc(int a)",
-          "int calc(int a) and int calc(double a)",
-          "int calc(int a) and int calc(int b)",
-          "void calc(int a) and void process(int a)"
-        ],
-        answer: 1,
-        explanation: "Different parameter types (int vs double) make it valid overloading. Option 1 differs only by return type (invalid). Option 2 has same signature. Option 3 has different names (not overloading)."
-      }
+      sections: [
+        {
+          type: "text",
+          title: "Prerequisites",
+          content: "You should understand `method-syntax`, `method-parameters`, primitive data types, and method signatures."
+        },
+        {
+          type: "text",
+          title: "Mental Model",
+          content: "Think of Method Overloading as a **Universal Multi-Port Fast Charger**:\n• The charger has one single brand label: `charge()`.\n• If you plug in a phone (takes `PhoneDevice`), it delivers 20W.\n• If you plug in a laptop (takes `LaptopDevice`), it delivers 100W.\n• If you plug in two headphones at once (takes `Device d1, Device d2`), it splits power 50/50.\n• The user doesn't need 4 separate charger names (`chargePhone()`, `chargeLaptop()`, `chargeTwoDevices()`). The device connected determines the power profile automatically at compile time."
+        },
+        {
+          type: "callout",
+          title: "Compile-Time Polymorphism (Static Binding)",
+          content: "**Method Overloading** occurs when two or more methods in the same class share the exact same method name but have **different parameter lists**.\n\nOverload resolution is performed strictly at **compile time** (Static Binding) by inspecting the types, count, and order of arguments passed at the call site."
+        },
+        {
+          type: "code",
+          title: "Overloading by Parameter Count, Type, and Order",
+          code: "public class OverloadingDemo {\n    // 1. Base method: 2 integers\n    public static int add(int a, int b) {\n        System.out.print(\"[int, int] -> \");\n        return a + b;\n    }\n\n    // 2. Overload by Number of Parameters (3 integers)\n    public static int add(int a, int b, int c) {\n        System.out.print(\"[int, int, int] -> \");\n        return a + b + c;\n    }\n\n    // 3. Overload by Data Type (2 doubles)\n    public static double add(double a, double b) {\n        System.out.print(\"[double, double] -> \");\n        return a + b;\n    }\n\n    // 4. Overload by Parameter Ordering\n    public static void display(String label, int value) {\n        System.out.println(label + \": \" + value);\n    }\n    public static void display(int value, String label) {\n        System.out.println(value + \" -> \" + label);\n    }\n\n    public static void main(String[] args) {\n        System.out.println(add(10, 20));       // [int, int] -> 30\n        System.out.println(add(10, 20, 30));   // [int, int, int] -> 60\n        System.out.println(add(10.5, 20.3));   // [double, double] -> 30.8\n        \n        display(\"Rank\", 1);                   // Rank: 1\n        display(1, \"Rank\");                   // 1 -> Rank\n    }\n}",
+          language: "java",
+          explanation: "The compiler binds each add() call to the precise matching method implementation based on the argument count and types."
+        },
+        {
+          type: "table",
+          title: "Valid vs Invalid Overloading Scenarios",
+          headers: ["Method Pair", "Valid Overload?", "Reason"],
+          rows: [
+            ["`int calc(int a)` and `int calc(double a)`", "✅ Valid", "Parameter data types differ (`int` vs `double`)."],
+            ["`int calc(int a, int b)` and `int calc(int a)`", "✅ Valid", "Parameter count differs (2 vs 1)."],
+            ["`void log(String s, int n)` and `void log(int n, String s)`", "✅ Valid", "Parameter order differs (`String, int` vs `int, String`)."],
+            ["`int calc(int a)` and `double calc(int a)`", "❌ INVALID", "Compile Error: Differentiating only by return type is illegal."],
+            ["`public int calc(int a)` and `private int calc(int a)`", "❌ INVALID", "Compile Error: Access modifiers do not differentiate overloads."],
+            ["`static void run(int a)` and `void run(int a)`", "❌ INVALID", "Compile Error: static modifier does not differentiate overloads."]
+          ]
+        },
+        {
+          type: "tryIt",
+          title: "Try It: Overloaded Area Calculator",
+          code: "class AreaCalculator {\n    public static double area(double radius) {\n        return Math.PI * radius * radius; // Circle\n    }\n    public static double area(double length, double width) {\n        return length * width; // Rectangle\n    }\n    public static void main(String[] args) {\n        System.out.println(\"Circle: \" + String.format(\"%.2f\", area(5.0)));\n        System.out.println(\"Rectangle: \" + String.format(\"%.2f\", area(4.0, 6.0)));\n    }\n}",
+          expectedOutput: "Circle: 78.54\nRectangle: 24.00",
+          explanation: "area(5.0) calls the 1-parameter circle method, while area(4.0, 6.0) calls the 2-parameter rectangle method."
+        },
+        {
+          type: "dryRun",
+          title: "Compiler Resolution Priority Trace: `calculate(5)`",
+          iterations: [
+            { step: 1, variables: { "Candidate 1": "calculate(int x)", "Match Level": "Exact Match (Rank 1)" }, description: "Exact primitive type match found. Direct invocation." },
+            { step: 2, variables: { "Candidate 2": "calculate(long x)", "Match Level": "Widening Conversion (Rank 2)" }, description: "Considered only if exact int match does not exist." },
+            { step: 3, variables: { "Candidate 3": "calculate(Integer x)", "Match Level": "Autoboxing (Rank 3)" }, description: "Considered only if primitive widening does not exist." },
+            { step: 4, variables: { "Candidate 4": "calculate(int... x)", "Match Level": "Varargs (Rank 4)" }, description: "Lowest priority fallback." }
+          ]
+        },
+        {
+          type: "warning",
+          title: "Common Overloading Pitfalls",
+          items: [
+            "**Attempting to Overload by Return Type Only**: The compiler relies on the method signature at the call site. Because `calc(5);` does not specify an expected return type, the compiler cannot distinguish `int calc(int)` from `void calc(int)`.",
+            "**Ambiguous Invocations**: Defining `void test(int a, double b)` and `void test(double a, int b)` causes a compile-time ambiguity error when calling `test(5, 5)`.",
+            "**Confusing Overloading with Overriding**: Overloading is multiple methods in the *same* class with *different* parameters. Overriding is redefining an *inherited* method in a *subclass* with the *identical* signature."
+          ]
+        },
+        {
+          type: "interviewTraps",
+          title: "Interview Traps: The Null Overload Ambiguity Trap",
+          traps: [
+            {
+              question: "What happens when compiling and running this code?\n```java\npublic class OverloadTrap {\n    public static void print(String s) { System.out.println(\"String\"); }\n    public static void print(Object o) { System.out.println(\"Object\"); }\n    public static void main(String[] args) {\n        print(null);\n    }\n}\n```",
+              trap: "Thinking it throws a NullPointerException or causes a compile ambiguity error.",
+              solution: "It prints **\"String\"**. When resolving `null`, the compiler chooses the **most specific type** in the inheritance hierarchy. Since `String` is a child subclass of `Object`, `String` is strictly more specific than `Object`. (Note: If another overload `print(Integer i)` were added, it would fail to compile because neither `String` nor `Integer` is a subtype of the other, causing an ambiguous method call error)."
+            }
+          ]
+        },
+        {
+          type: "quickCheck",
+          title: "Quick Check",
+          question: "Which of the following method pairs demonstrates INVALID method overloading in Java?",
+          options: [
+            "int process(int a) and int process(int a, int b)",
+            "void process(int a) and int process(double a)",
+            "int process(int a) and double process(int a)",
+            "void process(String s, int n) and void process(int n, String s)"
+          ],
+          answer: 2,
+          explanation: "`int process(int a)` and `double process(int a)` share the exact same parameter list and differ only in return type, which is strictly prohibited in Java."
+        },
+        {
+          type: "takeaways",
+          title: "Key Takeaways",
+          items: [
+            "Method overloading is compile-time polymorphism (static binding).",
+            "Overloaded methods must differ in parameter count, parameter types, or parameter order.",
+            "Return type alone cannot differentiate overloaded methods.",
+            "Compiler resolution order: Exact Match &rarr; Widening &rarr; Autoboxing &rarr; Varargs."
+          ]
+        },
+        {
+          type: "text",
+          title: "Connection to Next Lesson",
+          content: "Next, we explore Scope & Tracing, analyzing block scope, method local variables, shadowing, call stack frame lifecycles, and recursion bounds."
+        }
+      ]
     }
   },
   {
     slug: "scope-and-tracing",
     title: "Scope & Tracing",
     content: {
-      definition: "Scope defines where a variable is accessible. Method scope means variables declared inside a method exist only within that method. Tracing is following execution through method calls.",
-      whyItMatters: "Understanding scope prevents bugs related to variable access. Tracing helps debug complex method interactions.",
-      coreConcept: "Variables declared in method are local to that method. Cannot access outside. Parameters are also local variables. Each method call creates new scope. Tracing uses stack frames to track calls.",
-      syntax: "public static void method1() {\n    int x = 10;  // local to method1\n    // x accessible here\n}\n\npublic static void method2() {\n    // x not accessible here - different scope\n    int y = 20;  // local to method2\n}",
-      javaExample: "public class ScopeExample {\n    static int global = 100;  // class-level scope\n    \n    public static void method1() {\n        int local1 = 10;  // method1 scope\n        System.out.println(local1);  // OK\n        System.out.println(global);  // OK\n    }\n    \n    public static void method2() {\n        int local2 = 20;  // method2 scope\n        // local1 not accessible here - ERROR\n        System.out.println(local2);  // OK\n        System.out.println(global);  // OK\n    }\n    \n    public static void main(String[] args) {\n        int x = 5;\n        method1();\n        method2();\n        // local1, local2 not accessible here\n    }\n}\n\n// Tracing example\npublic static void methodA() {\n    System.out.println(\"A start\");\n    methodB();\n    System.out.println(\"A end\");\n}\n\npublic static void methodB() {\n    System.out.println(\"B start\");\n    System.out.println(\"B end\");\n}\n\n// Call: methodA();\n// Output: A start, B start, B end, A end",
-      howItWorks: "Each method call creates a stack frame with its local variables. When method finishes, frame is removed. Tracing follows the call stack: who called whom, in what order.",
-      realWorldUse: "Debugging, understanding program flow, preventing variable naming conflicts, managing memory efficiently.",
-      commonMistakes: [
-        "Trying to access local variables from other methods",
-        "Naming local variables same as class variables (shadowing)",
-        "Not understanding that parameters are local variables",
-        "Confusing scope with lifetime (scope is about access, lifetime is about existence)"
-      ],
-      interviewQuestions: [
-        { question: "What is the scope of a method parameter?", answer: "The entire method body. Parameters are local variables initialized with the argument values." },
-        { question: "What is shadowing?", answer: "When a local variable has the same name as a class-level variable. The local variable 'shadows' the class variable within its scope." }
-      ],
-      quickRevision: "Local variables exist only in their method. Parameters are local too. Tracing follows the call stack.",
-      practicePrompt: "Trace the output of three methods calling each other: main → methodA → methodB.",
-      quickCheck: {
-        question: "Where can you access a variable declared inside a method?",
-        options: [
-          "Anywhere in the class",
-          "Only within that method",
-          "In all methods called after it",
-          "In the main method only"
-        ],
-        answer: 1,
-        explanation: "Variables declared inside a method have local scope and can only be accessed within that method."
-      }
+      sections: [
+        {
+          type: "text",
+          title: "Prerequisites",
+          content: "You should understand `what-is-a-method`, `method-parameters`, block declarations `{ ... }`, and stack memory."
+        },
+        {
+          type: "text",
+          title: "Mental Model",
+          content: "Think of Variable Scope as **Nested Security Clearance Zones & A Call Stack Elevator**:\n• **Block Scope `{ ... }`**: Variables declared inside a secure room (e.g. inside an `if` or `for` block) can only be seen while you are physically inside that room. The moment you step outside the door `}`, those variables evaporate.\n• **Method Scope**: When an elevator ascends to the 3rd floor (`methodB()`), the 1st floor (`main()`) is frozen and invisible. The 3rd floor cannot touch the 1st floor's local variables.\n• **Class / Static Scope**: The building lobby billboard (`static` fields). Visible to all rooms on every floor at all times."
+        },
+        {
+          type: "callout",
+          title: "The 4 Levels of Scope in Java",
+          content: "1. **Block Scope**: Inside `{ ... }` (loops, if-else, local blocks). Exists from declaration to enclosing `}`.\n2. **Method Local Scope**: Parameters and variables inside a method body. Exists only during that method call.\n3. **Instance Scope (Fields)**: Non-static class variables attached to a specific Heap object instance.\n4. **Class / Static Scope**: `static` fields attached to the Class definition in Metaspace, shared across all instances."
+        },
+        {
+          type: "code",
+          title: "Scope Demonstration, Variable Shadowing & Call Stack Tracing",
+          code: "public class ScopeAndTracingDemo {\n    static int globalCounter = 100; // Class/Static Scope\n\n    public static void methodB(int val) {\n        int localB = val * 2; // Method Scope\n        System.out.println(\"--> Inside methodB: localB = \" + localB + \", global = \" + globalCounter);\n    }\n\n    public static void methodA(int count) {\n        int localA = 50;\n        System.out.println(\"-> Entering methodA: localA = \" + localA);\n\n        // Block Scope\n        if (count > 0) {\n            int blockVar = 999; // Exists ONLY inside this if-block\n            System.out.println(\"   Inside block: blockVar = \" + blockVar);\n        }\n        // blockVar is DEAD here! System.out.println(blockVar) would fail to compile.\n\n        methodB(localA);\n        System.out.println(\"<- Exiting methodA\");\n    }\n\n    public static void main(String[] args) {\n        System.out.println(\"Starting main\");\n        methodA(5);\n        System.out.println(\"Finished main\");\n    }\n}",
+          language: "java",
+          explanation: "Notice how local variables localA and localB cannot be accessed across methods, while globalCounter is accessible anywhere."
+        },
+        {
+          type: "table",
+          title: "Scope Hierarchy & Lifetimes",
+          headers: ["Scope Level", "Where Declared", "Visibility / Accessibility", "Lifetime in Memory"],
+          rows: [
+            ["Block Scope", "Inside `{}` (loops, `if`, arbitrary blocks)", "From declaration line to closing `}` of block", "While CPU is executing statements in that block"],
+            ["Method Local Scope", "Inside method body or parameter list", "Only within the declaring method body", "While method stack frame is active on Call Stack"],
+            ["Instance Field Scope", "Inside class, outside methods (non-static)", "Any instance method of that object (`this.field`)", "As long as the parent Object remains alive in Heap"],
+            ["Class / Static Scope", "Inside class with `static` keyword", "Everywhere in class (and public across app)", "From class loading until JVM shutdown"]
+          ]
+        },
+        {
+          type: "tryIt",
+          title: "Try It: Variable Shadowing Resolution",
+          code: "class ShadowDemo {\n    static int x = 10; // Class scope\n    public static void main(String[] args) {\n        int x = 50; // Shadows class variable x\n        System.out.println(\"Local x: \" + x);\n        System.out.println(\"Class x: \" + ShadowDemo.x);\n    }\n}",
+          expectedOutput: "Local x: 50\nClass x: 10",
+          explanation: "Local variable x shadows class variable x. To access the shadowed class variable, prefix with ClassName.x."
+        },
+        {
+          type: "dryRun",
+          title: "Call Stack Execution Trace: `main()` -> `methodA()` -> `methodB()`",
+          iterations: [
+            { step: 1, variables: { "Stack Top": "[main frame]", "PC": "main() line 26" }, description: "main() allocates stack frame. Prints 'Starting main'. Calls methodA(5)." },
+            { step: 2, variables: { "Stack Top": "[methodA frame]", "Stack Depth": "2", "localA": "50", "count": "5" }, description: "methodA frame pushed. Executes block scope, prints messages. Calls methodB(50)." },
+            { step: 3, variables: { "Stack Top": "[methodB frame]", "Stack Depth": "3", "localB": "100", "val": "50" }, description: "methodB frame pushed. Executes, prints output, hits end of method." },
+            { step: 4, variables: { "Stack Top": "[methodA frame]", "Stack Depth": "2" }, description: "methodB frame popped. Execution resumes in methodA after call site. Prints 'Exiting methodA'." },
+            { step: 5, variables: { "Stack Top": "[main frame]", "Stack Depth": "1" }, description: "methodA frame popped. main() resumes, prints 'Finished main'." }
+          ]
+        },
+        {
+          type: "warning",
+          title: "Common Scope & Tracing Errors",
+          items: [
+            "**Accessing Loop Variables After Loop**: Declaring `for (int i = 0; ...)` makes `i` local to the loop. Accessing `i` after the closing `}` is a compilation error.",
+            "**Variable Shadowing Confusion**: Declaring a method parameter with the same name as a class field (`int count`) hides the field unless `this.count` or `ClassName.count` is used.",
+            "**Dangling Local Variable References**: Trying to return a pointer to a stack-allocated variable (not possible in Java due to garbage-collected Heap objects, but a common mental misconception from C/C++)."
+          ]
+        },
+        {
+          type: "interviewTraps",
+          title: "Interview Traps: StackOverflowError vs OutOfMemoryError",
+          traps: [
+            {
+              question: "What is the fundamental architectural difference between a `StackOverflowError` and an `OutOfMemoryError` in the JVM?",
+              trap: "Assuming both are caused by too many object allocations in Heap memory.",
+              solution: "`StackOverflowError` occurs when the **JVM Thread Call Stack** runs out of memory frames (typically caused by infinite recursion or deeply nested method chains exceeding the `-Xss` thread stack limit). In contrast, `OutOfMemoryError` (`java.lang.OutOfMemoryError: Java heap space`) occurs when the **Heap memory** is exhausted because new objects cannot be allocated despite garbage collection cycles."
+            }
+          ]
+        },
+        {
+          type: "quickCheck",
+          title: "Quick Check",
+          question: "What is the output of the following code snippet?\n```java\nint x = 10;\n{\n    int x = 20;\n    System.out.print(x);\n}\nSystem.out.print(x);\n```",
+          options: [
+            "2010",
+            "1020",
+            "2020",
+            "Compile error (duplicate local variable x)"
+          ],
+          answer: 3,
+          explanation: "In Java, you cannot declare a local variable with the same name inside a nested block if it already exists in the enclosing method scope. The compiler rejects `int x = 20;` with 'variable x is already defined'."
+        },
+        {
+          type: "takeaways",
+          title: "Key Takeaways",
+          items: [
+            "Block scope is delimited strictly by `{ ... }`.",
+            "Method local variables exist on the thread's Call Stack and are destroyed when the method returns.",
+            "Static variables live in Metaspace and persist across all method calls.",
+            "Tracing code requires tracking the push and pop operations of JVM Stack Frames."
+          ]
+        },
+        {
+          type: "text",
+          title: "Module Completion Summary",
+          content: "🎉 **Congratulations! You have completed Module 9: Methods & Functions.** You have mastered method definitions, modular DRY principles, legal syntax and headers, 100% pass-by-value mechanics, return values, void procedures, compile-time method overloading, and multi-frame call stack scope tracing."
+        }
+      ]
     }
   }
 ];
+

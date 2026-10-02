@@ -48,9 +48,9 @@ const MonacoWorkspace = dynamic(
 );
 
 // ── Autosave debounce (ms) ─────────────────────────────────────────────────────
-const AUTOSAVE_DELAY = 800;
+const AUTOSAVE_DELAY = 600;
 
-// ── Default project ID (single-project mode for now) ──────────────────────────
+// ── Default project ID ────────────────────────────────────────────────────────
 const DEFAULT_PROJECT_ID = "studyhub-web-ide-default";
 
 export default function WebIDE() {
@@ -71,18 +71,37 @@ export default function WebIDE() {
   const [isLoading, setIsLoading] = useState(true);
   const [paletteVisible, setPaletteVisible] = useState(false);
 
+  // Open folders in explorer
+  const [openFolders, setOpenFolders] = useState<Set<string>>(new Set(["css", "js"]));
+
+  // Inline rename state
+  const [renamingId, setRenamingId] = useState<string | null>(null);
+  const [renamingType, setRenamingType] = useState<"file" | "folder" | null>(null);
+
+  // Panel sizing
+  const [sidebarWidth, setSidebarWidth] = useState(240);
+  const [previewWidth, setPreviewWidth] = useState(420);
+  const [bottomHeight, setBottomHeight] = useState(190);
+
+  // Drag resizing references
+  const isDraggingSidebar = useRef(false);
+  const isDraggingPreview = useRef(false);
+  const isDraggingBottom = useRef(false);
+
   // Modals
   const [newItemModal, setNewItemModal] = useState<{
     visible: boolean;
     mode: "file" | "folder";
     contextPath?: string;
   }>({ visible: false, mode: "file" });
+
   const [renameModal, setRenameModal] = useState<{
     visible: boolean;
     mode: "file" | "folder";
     targetId: string;
     currentName: string;
   }>({ visible: false, mode: "file", targetId: "", currentName: "" });
+
   const [deleteModal, setDeleteModal] = useState<{
     visible: boolean;
     mode: "file" | "folder";
@@ -108,9 +127,8 @@ export default function WebIDE() {
       try {
         const snapshot = await persist.loadProjectSnapshot(DEFAULT_PROJECT_ID);
 
-        if (snapshot) {
+        if (snapshot && snapshot.files.length > 0) {
           const { project: proj, files: f, folders: fo } = snapshot;
-          // Deduplicate by path & id
           const uniqueF = Array.from(new Map(f.map((item) => [item.path, item])).values());
           const uniqueFo = Array.from(new Map(fo.map((item) => [item.path, item])).values());
 
@@ -118,15 +136,19 @@ export default function WebIDE() {
           setFiles(uniqueF);
           setFolders(uniqueFo);
 
+          // Restore open folders
+          setOpenFolders(new Set(uniqueFo.map((folder) => folder.path)));
+
           // Restore open tabs
           const validTabs = proj.openFileIds
             .filter((id) => uniqueF.some((fi) => fi.id === id))
             .map((id) => ({ fileId: id, isDirty: false }));
-          setTabs(validTabs);
+          setTabs(validTabs.length > 0 ? validTabs : uniqueF.slice(0, 1).map((f) => ({ fileId: f.id, isDirty: false })));
 
-          const active = proj.activeFileId && uniqueF.some((fi) => fi.id === proj.activeFileId)
-            ? proj.activeFileId
-            : validTabs[0]?.fileId ?? null;
+          const active =
+            proj.activeFileId && uniqueF.some((fi) => fi.id === proj.activeFileId)
+              ? proj.activeFileId
+              : validTabs[0]?.fileId ?? uniqueF[0]?.id ?? null;
           setActiveFileId(active);
         } else {
           // Create new default project
@@ -153,8 +175,8 @@ export default function WebIDE() {
           setProject(proj);
           setFiles(starterFiles);
           setFolders(starterFolders);
+          setOpenFolders(new Set(starterFolders.map((f) => f.path)));
 
-          // Open index.html by default
           const indexFile = starterFiles.find((f) => f.name === "index.html");
           if (indexFile) {
             const initialTab = { fileId: indexFile.id, isDirty: false };
@@ -197,7 +219,6 @@ export default function WebIDE() {
     [project, activeFileId, tabs]
   );
 
-  // Persist state when tabs/active file changes
   useEffect(() => {
     if (!project || isLoading) return;
     persistProjectState();
@@ -221,7 +242,7 @@ export default function WebIDE() {
             const file = prev.find((f) => f.id === id);
             if (!file) return prev;
             const updated = { ...file, content: newContent, updatedAt: Date.now() };
-            persist.saveFile(updated); // non-blocking
+            persist.saveFile(updated);
             return prev.map((f) => (f.id === id ? updated : f));
           });
         }
@@ -271,7 +292,6 @@ export default function WebIDE() {
 
   // ── Run code ───────────────────────────────────────────────────────────────
   const runCode = useCallback(() => {
-    // Flush any pending in-flight changes
     const snapshotFiles = [...files];
     for (const [id, content] of pendingChanges.current.entries()) {
       const idx = snapshotFiles.findIndex((f) => f.id === id);
@@ -280,7 +300,6 @@ export default function WebIDE() {
       }
     }
 
-    // Revoke old blob URL
     if (blobUrl) URL.revokeObjectURL(blobUrl);
 
     setConsoleMessages([]);
@@ -334,29 +353,36 @@ export default function WebIDE() {
         const newFile = await vfs.createFile(project.id, path);
         setFolders((prev) => [...prev, ...newFolders]);
         setFiles((prev) => [...prev, newFile]);
+        setOpenFolders((prev) => {
+          const next = new Set(prev);
+          vfs.ancestorPaths(path).forEach((p) => next.add(p));
+          return next;
+        });
         openFile(newFile.id);
       } else {
         const folder = await vfs.createFolder(project.id, path);
         setFolders((prev) => [...prev, folder]);
+        setOpenFolders((prev) => new Set(prev).add(folder.path));
       }
     },
     [project, newItemModal.mode, folders, openFile]
   );
 
-  // ── Rename ─────────────────────────────────────────────────────────────────
-  const handleRename = useCallback(
-    async (newName: string) => {
-      setRenameModal((m) => ({ ...m, visible: false }));
-      if (!renameModal.targetId) return;
+  // ── Inline & Modal Rename ──────────────────────────────────────────────────
+  const handleRenameSubmit = useCallback(
+    async (id: string, type: "file" | "folder", newName: string) => {
+      setRenamingId(null);
+      setRenamingType(null);
+      if (!newName.trim()) return;
 
-      if (renameModal.mode === "file") {
-        const file = files.find((f) => f.id === renameModal.targetId);
-        if (!file) return;
+      if (type === "file") {
+        const file = files.find((f) => f.id === id);
+        if (!file || file.name === newName) return;
         const updated = await vfs.renameFile(file, newName, files);
         setFiles((prev) => prev.map((f) => (f.id === file.id ? updated : f)));
       } else {
-        const folder = folders.find((f) => f.id === renameModal.targetId);
-        if (!folder) return;
+        const folder = folders.find((f) => f.id === id);
+        if (!folder || folder.name === newName) return;
         const { folder: updated, files: updatedFiles, folders: updatedFolders } =
           await vfs.renameFolder(folder, newName, files, folders);
         setFolders((prev) =>
@@ -371,9 +397,43 @@ export default function WebIDE() {
             return uf ?? fi;
           })
         );
+        setOpenFolders((prev) => {
+          const next = new Set(prev);
+          if (next.has(folder.path)) {
+            next.delete(folder.path);
+            next.add(updated.path);
+          }
+          return next;
+        });
       }
     },
-    [renameModal, files, folders]
+    [files, folders]
+  );
+
+  // ── Duplicate File ─────────────────────────────────────────────────────────
+  const handleDuplicate = useCallback(
+    async (fileId: string) => {
+      const file = files.find((f) => f.id === fileId);
+      if (!file) return;
+      const newFile = await vfs.duplicateFile(file, files);
+      setFiles((prev) => [...prev, newFile]);
+      openFile(newFile.id);
+    },
+    [files, openFile]
+  );
+
+  // ── Move item (Drag & Drop) ────────────────────────────────────────────────
+  const handleMoveItem = useCallback(
+    async (sourcePath: string, targetFolderPath: string) => {
+      const { files: updatedFiles, folders: updatedFolders } =
+        await vfs.moveItem(sourcePath, targetFolderPath, files, folders);
+      setFiles(updatedFiles);
+      setFolders(updatedFolders);
+      if (targetFolderPath) {
+        setOpenFolders((prev) => new Set(prev).add(targetFolderPath));
+      }
+    },
+    [files, folders]
   );
 
   // ── Delete ─────────────────────────────────────────────────────────────────
@@ -399,10 +459,9 @@ export default function WebIDE() {
   }, [deleteModal, files, folders, closeTab]);
 
   // ── Context menu ───────────────────────────────────────────────────────────
-  const handleContextMenu = useCallback(
-    (e: React.MouseEvent, target: ContextMenuTarget) => {
-      e.preventDefault();
-      setContextMenu({ visible: true, x: e.clientX, y: e.clientY, target });
+  const handleOpenMenu = useCallback(
+    (target: ContextMenuTarget, pos: { x: number; y: number }) => {
+      setContextMenu({ visible: true, x: pos.x, y: pos.y, target });
     },
     []
   );
@@ -419,14 +478,22 @@ export default function WebIDE() {
         {
           label: "Rename",
           icon: "✏️",
-          action: () =>
-            setRenameModal({
-              visible: true,
-              mode: "file",
-              targetId: file.id,
-              currentName: file.name,
-            }),
+          action: () => {
+            setRenamingId(file.id);
+            setRenamingType("file");
+          },
         },
+        {
+          label: "Duplicate",
+          icon: "📄",
+          action: () => handleDuplicate(file.id),
+        },
+        {
+          label: "Close Tab",
+          icon: "✕",
+          action: () => closeTab(file.id),
+        },
+        { label: "---", action: () => {} },
         {
           label: "Delete",
           icon: "🗑️",
@@ -462,13 +529,10 @@ export default function WebIDE() {
         {
           label: "Rename",
           icon: "✏️",
-          action: () =>
-            setRenameModal({
-              visible: true,
-              mode: "folder",
-              targetId: folder.id,
-              currentName: folder.name,
-            }),
+          action: () => {
+            setRenamingId(folder.id);
+            setRenamingType("folder");
+          },
         },
         {
           label: "Delete",
@@ -485,7 +549,7 @@ export default function WebIDE() {
       ];
     }
 
-    // root
+    // root context menu
     return [
       {
         label: "New File",
@@ -497,8 +561,121 @@ export default function WebIDE() {
         icon: "📁",
         action: () => setNewItemModal({ visible: true, mode: "folder" }),
       },
+      { label: "---", action: () => {} },
+      {
+        label: "Expand All",
+        icon: "⊞",
+        action: () => setOpenFolders(new Set(folders.map((f) => f.path))),
+      },
+      {
+        label: "Collapse All",
+        icon: "⊟",
+        action: () => setOpenFolders(new Set()),
+      },
     ];
   };
+
+  // ── Sizing drag handlers ───────────────────────────────────────────────────
+  const startSidebarResize = (e: React.MouseEvent) => {
+    e.preventDefault();
+    isDraggingSidebar.current = true;
+    document.body.style.cursor = "col-resize";
+    document.body.style.userSelect = "none";
+  };
+
+  const startPreviewResize = (e: React.MouseEvent) => {
+    e.preventDefault();
+    isDraggingPreview.current = true;
+    document.body.style.cursor = "col-resize";
+    document.body.style.userSelect = "none";
+  };
+
+  const startBottomResize = (e: React.MouseEvent) => {
+    e.preventDefault();
+    isDraggingBottom.current = true;
+    document.body.style.cursor = "row-resize";
+    document.body.style.userSelect = "none";
+  };
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (isDraggingSidebar.current) {
+        const newWidth = Math.max(160, Math.min(450, e.clientX));
+        setSidebarWidth(newWidth);
+      } else if (isDraggingPreview.current) {
+        const newWidth = Math.max(240, Math.min(800, window.innerWidth - e.clientX));
+        setPreviewWidth(newWidth);
+      } else if (isDraggingBottom.current) {
+        const newHeight = Math.max(80, Math.min(500, window.innerHeight - e.clientY));
+        setBottomHeight(newHeight);
+      }
+    };
+
+    const handleMouseUp = () => {
+      if (
+        isDraggingSidebar.current ||
+        isDraggingPreview.current ||
+        isDraggingBottom.current
+      ) {
+        isDraggingSidebar.current = false;
+        isDraggingPreview.current = false;
+        isDraggingBottom.current = false;
+        document.body.style.cursor = "";
+        document.body.style.userSelect = "";
+      }
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, []);
+
+  // ── Keyboard shortcuts ─────────────────────────────────────────────────────
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      const ctrl = e.ctrlKey || e.metaKey;
+
+      if (ctrl && e.key === "Enter") {
+        e.preventDefault();
+        runCode();
+      } else if (ctrl && e.key === "b") {
+        e.preventDefault();
+        setExplorerVisible((v) => !v);
+      } else if (ctrl && e.key === "p" && !e.shiftKey) {
+        e.preventDefault();
+        setPaletteVisible(true);
+      } else if (ctrl && e.shiftKey && e.key === "P") {
+        e.preventDefault();
+        setPaletteVisible(true);
+      } else if (ctrl && e.key === "`") {
+        e.preventDefault();
+        setBottomVisible((v) => !v);
+      } else if (e.key === "F2") {
+        e.preventDefault();
+        if (activeFileId) {
+          setRenamingId(activeFileId);
+          setRenamingType("file");
+        }
+      } else if (e.key === "Escape") {
+        if (renamingId) {
+          setRenamingId(null);
+          setRenamingType(null);
+        }
+        if (paletteVisible) {
+          setPaletteVisible(false);
+        }
+        if (contextMenu.visible) {
+          setContextMenu((m) => ({ ...m, visible: false }));
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [runCode, paletteVisible, activeFileId, renamingId, contextMenu.visible]);
 
   // ── Command palette commands ───────────────────────────────────────────────
   const paletteCommands: PaletteCommand[] = useMemo(
@@ -508,6 +685,25 @@ export default function WebIDE() {
         label: "Run Code",
         shortcut: "Ctrl+Enter",
         action: runCode,
+      },
+      {
+        id: "rename-file",
+        label: "Rename Active File",
+        shortcut: "F2",
+        action: () => {
+          if (activeFileId) {
+            setRenamingId(activeFileId);
+            setRenamingType("file");
+          }
+        },
+      },
+      {
+        id: "duplicate-file",
+        label: "Duplicate Active File",
+        shortcut: "...",
+        action: () => {
+          if (activeFileId) handleDuplicate(activeFileId);
+        },
       },
       {
         id: "new-file",
@@ -547,42 +743,11 @@ export default function WebIDE() {
           exportProjectAsZip(project?.name ?? "project", files, folders),
       },
     ],
-    [runCode, project, files, folders]
+    [runCode, project, files, folders, activeFileId, handleDuplicate]
   );
 
-  // ── Keyboard shortcuts ─────────────────────────────────────────────────────
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      const ctrl = e.ctrlKey || e.metaKey;
-
-      if (ctrl && e.key === "Enter") {
-        e.preventDefault();
-        runCode();
-      } else if (ctrl && e.key === "b") {
-        e.preventDefault();
-        setExplorerVisible((v) => !v);
-      } else if (ctrl && e.key === "p" && !e.shiftKey) {
-        e.preventDefault();
-        setPaletteVisible(true);
-      } else if (ctrl && e.shiftKey && e.key === "P") {
-        e.preventDefault();
-        setPaletteVisible(true);
-      } else if (ctrl && e.key === "`") {
-        e.preventDefault();
-        setBottomVisible((v) => !v);
-      } else if (e.key === "Escape" && paletteVisible) {
-        setPaletteVisible(false);
-      }
-    };
-
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
-  }, [runCode, paletteVisible]);
-
-  // ── Active file info ───────────────────────────────────────────────────────
   const activeFile = files.find((f) => f.id === activeFileId) ?? null;
 
-  // ── Render ─────────────────────────────────────────────────────────────────
   if (isLoading) {
     return (
       <div className="ide-loading">
@@ -664,24 +829,54 @@ export default function WebIDE() {
       <div className="ide-body">
         {/* Explorer sidebar */}
         {explorerVisible && (
-          <aside className="ide-sidebar">
-            <Explorer
-              projectName={project?.name ?? "Project"}
-              nodes={tree}
-              activeFileId={activeFileId}
-              onSelectFile={openFile}
-              onNewFile={(p) =>
-                setNewItemModal({ visible: true, mode: "file", contextPath: p })
-              }
-              onNewFolder={(p) =>
-                setNewItemModal({ visible: true, mode: "folder", contextPath: p })
-              }
-              onContextMenu={handleContextMenu}
-              onRootContextMenu={(e) =>
-                handleContextMenu(e, { type: "root" })
-              }
+          <>
+            <aside
+              className="ide-sidebar"
+              style={{ width: sidebarWidth, minWidth: 160, maxWidth: 450 }}
+            >
+              <Explorer
+                projectName={project?.name ?? "Project"}
+                nodes={tree}
+                activeFileId={activeFileId}
+                openFolders={openFolders}
+                renamingId={renamingId}
+                renamingType={renamingType}
+                onToggleFolder={(path) =>
+                  setOpenFolders((prev) => {
+                    const next = new Set(prev);
+                    if (next.has(path)) next.delete(path);
+                    else next.add(path);
+                    return next;
+                  })
+                }
+                onExpandAll={() => setOpenFolders(new Set(folders.map((f) => f.path)))}
+                onCollapseAll={() => setOpenFolders(new Set())}
+                onSelectFile={openFile}
+                onNewFile={(p) =>
+                  setNewItemModal({ visible: true, mode: "file", contextPath: p })
+                }
+                onNewFolder={(p) =>
+                  setNewItemModal({ visible: true, mode: "folder", contextPath: p })
+                }
+                onOpenMenu={handleOpenMenu}
+                onRenameSubmit={handleRenameSubmit}
+                onRenameCancel={() => {
+                  setRenamingId(null);
+                  setRenamingType(null);
+                }}
+                onMoveItem={handleMoveItem}
+                onRootContextMenu={(e) => {
+                  e.preventDefault();
+                  handleOpenMenu({ type: "root" }, { x: e.clientX, y: e.clientY });
+                }}
+              />
+            </aside>
+            <div
+              className="ide-resizer ide-resizer-col"
+              onMouseDown={startSidebarResize}
+              title="Drag to resize sidebar"
             />
-          </aside>
+          </>
         )}
 
         {/* Editor pane */}
@@ -719,41 +914,57 @@ export default function WebIDE() {
 
           {/* Bottom panel */}
           {bottomVisible && (
-            <div className="ide-bottom-area">
+            <>
               <div
-                className="ide-bottom-resize-handle"
-                onMouseDown={() => {}}
-                title="Drag to resize"
+                className="ide-resizer ide-resizer-row"
+                onMouseDown={startBottomResize}
+                title="Drag to resize panel"
               />
-              <BottomPanel
-                activeTab={bottomTab}
-                onTabChange={setBottomTab}
-                messages={consoleMessages}
-                problems={problems}
-                onClearConsole={() => setConsoleMessages([])}
-              />
-            </div>
+              <div
+                className="ide-bottom-area"
+                style={{ height: bottomHeight, minHeight: 80, maxHeight: 500 }}
+              >
+                <BottomPanel
+                  activeTab={bottomTab}
+                  onTabChange={setBottomTab}
+                  messages={consoleMessages}
+                  problems={problems}
+                  onClearConsole={() => setConsoleMessages([])}
+                />
+              </div>
+            </>
           )}
         </div>
 
         {/* Preview pane */}
         {previewVisible && (
-          <div className="ide-preview-pane">
-            <div className="ide-preview-header">
-              <span>LIVE PREVIEW</span>
-              <button
-                className="ide-preview-run-btn"
-                onClick={runCode}
-                title="Refresh preview"
-              >
-                ↻ Refresh
-              </button>
-            </div>
-            <LivePreview
-              blobUrl={blobUrl}
-              onConsoleMessage={handleConsoleMessage}
+          <>
+            <div
+              className="ide-resizer ide-resizer-col"
+              onMouseDown={startPreviewResize}
+              title="Drag to resize preview"
             />
-          </div>
+            <div
+              className="ide-preview-pane"
+              style={{ width: previewWidth, minWidth: 240, maxWidth: 800 }}
+            >
+              <div className="ide-preview-header">
+                <span>LIVE PREVIEW</span>
+                <button
+                  className="ide-preview-run-btn"
+                  onClick={runCode}
+                  title="Refresh preview (Ctrl+Enter)"
+                >
+                  ↻ Refresh
+                </button>
+              </div>
+              <LivePreview
+                blobUrl={blobUrl}
+                onConsoleMessage={handleConsoleMessage}
+                onRefresh={runCode}
+              />
+            </div>
+          </>
         )}
       </div>
 
@@ -776,7 +987,10 @@ export default function WebIDE() {
         visible={renameModal.visible}
         mode={renameModal.mode}
         currentName={renameModal.currentName}
-        onConfirm={handleRename}
+        onConfirm={(newName) => {
+          handleRenameSubmit(renameModal.targetId, renameModal.mode, newName);
+          setRenameModal((m) => ({ ...m, visible: false }));
+        }}
         onCancel={() => setRenameModal((m) => ({ ...m, visible: false }))}
       />
 

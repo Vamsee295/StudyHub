@@ -1,4 +1,4 @@
-﻿// ============================================================
+// ============================================================
 // StudyHub Web IDE — Core Type Definitions
 // ============================================================
 
@@ -10,7 +10,22 @@ export type SupportedLanguage =
   | "json"
   | "markdown"
   | "xml"
-  | "plaintext";
+  | "plaintext"
+  | "python"
+  | "java"
+  | "c"
+  | "cpp";
+
+export type CodeLanguage = "python" | "java" | "c" | "cpp";
+
+export interface CodeExecResult {
+  status: "accepted" | "compile_error" | "runtime_error" | "timeout" | "error";
+  stdout: string;
+  stderr: string;
+  compileError: string | null;
+  executionTime: number;
+  memory: string;
+}
 
 export interface ProjectFile {
   id: string;
@@ -101,7 +116,7 @@ export interface PaletteCommand {
   action: () => void;
 }
 
-export type BottomPanelTab = "console" | "problems" | "output";
+export type BottomPanelTab = "console" | "problems" | "output" | "terminal";
 
 export type PreviewViewport = "desktop" | "tablet" | "mobile";
 

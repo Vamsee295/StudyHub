@@ -64,6 +64,32 @@ export const learnSubjects: LearnSubject[] = [
       { id: "mod-01", title: "Components & Props", description: "Building blocks of React applications.", type: "video", duration: "40m", completed: false },
       { id: "mod-02", title: "State & Lifecycle", description: "Managing data within components.", type: "reading", duration: "25m", completed: false },
     ]
+  },
+  {
+    id: "subj-05",
+    slug: "dbms",
+    title: "Database Management Systems (DBMS)",
+    description: "Master database concepts from fundamentals to advanced topics including transactions, concurrency control, indexing, and distributed systems for technical interviews.",
+    category: "Core CS",
+    progress: 0,
+    totalModules: 14,
+    completedModules: 0,
+    modules: [
+      { id: "dbms-mod-01", title: "Database Fundamentals", description: "What is a Database? File System vs DBMS, DBMS Architecture, Database Users, Schema vs Instance, Data Models, Three-Schema Architecture, Data Independence.", type: "reading", duration: "60m", completed: false },
+      { id: "dbms-mod-02", title: "Relational Model", description: "Relational Model, Tables, Rows & Columns, Tuples and Attributes, Domains, Cardinality, Degree, Relations, Relational Algebra Basics.", type: "video", duration: "45m", completed: false },
+      { id: "dbms-mod-03", title: "Keys & Constraints", description: "Super Key, Candidate Key, Primary Key, Alternate Key, Foreign Key, Composite Key, UNIQUE, NOT NULL, CHECK, DEFAULT, Referential Integrity.", type: "reading", duration: "50m", completed: false },
+      { id: "dbms-mod-04", title: "ER Model", description: "Entity, Attribute, Relationship, Entity Sets, Weak Entries, Strong Entities, Cardinality, Participation Constraints, ER Diagrams, ER to Relational Mapping.", type: "video", duration: "55m", completed: false },
+      { id: "dbms-mod-05", title: "Functional Dependencies", description: "Functional Dependency, Trivial FD, Non-Trivial FD, Closure of Attributes, Armstrong's Axioms, Candidate Key from FD, Minimal Cover.", type: "reading", duration: "50m", completed: false },
+      { id: "dbms-mod-06", title: "Normalization", description: "Database Anomalies, 1NF, 2NF, 3NF, BCNF, 4NF, 5NF, Lossless Decomposition, Dependency Preservation.", type: "video", duration: "65m", completed: false },
+      { id: "dbms-mod-07", title: "Transactions", description: "Transaction, Transaction States, ACID Properties, Atomicity, Consistency, Isolation, Durability, COMMIT, ROLLBACK, SAVEPOINT.", type: "reading", duration: "40m", completed: false },
+      { id: "dbms-mod-08", title: "Concurrency Control", description: "Concurrent Transactions, Lost Update, Dirty Read, Non-Repeatable Read, Phantom Read, Serial Schedule, Non-Serial Schedule, Conflict Serializability, View Serializability, Precedence Graph.", type: "video", duration: "60m", completed: false },
+      { id: "dbms-mod-09", title: "Locking", description: "Shared Lock, Exclusive Lock, Lock Compatibility, Two-Phase Locking, Strict 2PL, Rigorous 2PL, Deadlocks, Deadlock Prevention, Deadlock Detection.", type: "reading", duration: "50m", completed: false },
+      { id: "dbms-mod-10", title: "Isolation Levels", description: "Read Uncommitted, Read Committed, Repeatable Read, Serializable, Dirty Reads, Non-Repeatable Reads, Phantom Reads, MVCC.", type: "video", duration: "55m", completed: false },
+      { id: "dbms-mod-11", title: "Storage & Indexing", description: "Database Storage, Pages, Blocks, Records, Heap Files, Indexes, Primary Index, Secondary Index, Clustered Index, Non-Clustered Index, Dense Index, Sparse Index, B-Tree, B+ Tree, Hash Index.", type: "reading", duration: "70m", completed: false },
+      { id: "dbms-mod-12", title: "Query Processing", description: "Query Processing, Parsing, Validation, Query Optimization, Execution Plans, Full Table Scan, Index Scan, Join Algorithms, Cost-Based Optimization, EXPLAIN.", type: "video", duration: "65m", completed: false },
+      { id: "dbms-mod-13", title: "Recovery", description: "Failure Types, Crash Recovery, Write-Ahead Logging, Log Records, Checkpoints, Undo, Redo, Undo/Redo, Shadow Paging.", type: "reading", duration: "60m", completed: false },
+      { id: "dbms-mod-14", title: "Advanced DBMS", description: "Replication, Partitioning, Sharding, Distributed Databases, CAP Theorem, Consistency Models, Distributed Transactions, Two-Phase Commit.", type: "video", duration: "75m", completed: false }
+    ]
   }
 ];
 
@@ -82,6 +108,21 @@ export const learnPaths: LearnPath[] = [
   }
 ];
 
+export const aptitudeLearningPaths: LearnPath[] = [
+  {
+    id: "apt-path-01",
+    title: "General Placement Aptitude",
+    description: "Structured preparation for campus placement aptitude screening tests.",
+    subjects: ["quantitative-aptitude"]
+  },
+  {
+    id: "apt-path-02",
+    title: "Numerical Problem Solving",
+    description: "Focus on arithmetic, percentages, speed-distance-time, and data interpretation.",
+    subjects: ["quantitative-aptitude"]
+  }
+];
+
 export const continueLearningSubjects = [
   "data-structures",
   "system-design"
@@ -95,31 +136,3 @@ export const recentlyViewedSubjects = [
   "quantitative-aptitude",
   "system-design"
 ];
-
-export const aptitudeLearningPaths: LearnPath[] = [
-  {
-    id: "path-aptitude-01",
-    title: "Placement Aptitude Mastery",
-    description: "The complete journey to mastering all aptitude sections for campus placements.",
-    subjects: ["quantitative-aptitude", "logical-reasoning", "verbal-ability", "data-interpretation", "placement-aptitude"]
-  },
-  {
-    id: "path-aptitude-02",
-    title: "Quantitative Mastery",
-    description: "Focus entirely on mathematical concepts, arithmetic, and advanced algebra.",
-    subjects: ["quantitative-aptitude", "data-interpretation"]
-  },
-  {
-    id: "path-aptitude-03",
-    title: "Reasoning & Problem Solving",
-    description: "Build strong logical deduction skills for puzzles, patterns, and syllogisms.",
-    subjects: ["logical-reasoning"]
-  },
-  {
-    id: "path-aptitude-04",
-    title: "Verbal & Communication",
-    description: "Enhance vocabulary, grammar, and reading comprehension for written tests.",
-    subjects: ["verbal-ability"]
-  }
-];
-
