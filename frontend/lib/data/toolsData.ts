@@ -8,18 +8,17 @@ import {
   RecentToolAuditRecord,
 } from "@/types";
 
-export const toolsCategories: { id: ToolCategory; label: string; count: number }[] = [
-  { id: "all", label: "All Tools", count: 12 },
-  { id: "coding", label: "Coding", count: 2 },
-  { id: "interview", label: "Interview", count: 4 },
-  { id: "resume", label: "Resume & Career", count: 2 },
-  { id: "aptitude", label: "Aptitude", count: 1 },
-  { id: "sql", label: "SQL", count: 1 },
-  { id: "placement", label: "Placement", count: 2 },
-  { id: "productivity", label: "Productivity", count: 0 },
-];
+// Only tools with a page under app/tools are listed. Add a route here when its page ships.
+const BUILT_TOOLS = new Set([
+  "/tools/dsa-visualizer",
+  "/tools/interview-simulator",
+  "/tools/resume-analyzer",
+  "/tools/sql-playground",
+]);
+const built = <T extends { href?: string }>(items: T[]) => items.filter((i) => !i.href || BUILT_TOOLS.has(i.href));
 
-export const continueUsingTools: ContinueToolItem[] = [
+
+export const continueUsingTools: ContinueToolItem[] = built([
   {
     id: "ct-1",
     title: "DSA Complexity Analyzer",
@@ -47,9 +46,9 @@ export const continueUsingTools: ContinueToolItem[] = [
     meta: "Speed: 52s/problem",
     href: "/tools/aptitude-timer",
   },
-];
+]);
 
-export const corePlacementTools: CoreToolItem[] = [
+export const corePlacementTools: CoreToolItem[] = built([
   {
     id: "cp-1",
     title: "DSA Complexity Analyzer",
@@ -131,9 +130,9 @@ export const corePlacementTools: CoreToolItem[] = [
     codeAst: "Diagnostic Score 72%",
     href: "/tools/readiness-calculator",
   },
-];
+]);
 
-export const interviewUtilities: InterviewUtilityItem[] = [
+export const interviewUtilities: InterviewUtilityItem[] = built([
   {
     id: "iu-1",
     title: "Mock Interview Simulator",
@@ -195,9 +194,9 @@ export const interviewUtilities: InterviewUtilityItem[] = [
     actionLabel: "Open Notes 📄",
     href: "/tools/interview-notes",
   },
-];
+]);
 
-export const calculatorsTrackers: CalculatorTrackerItem[] = [
+export const calculatorsTrackers: CalculatorTrackerItem[] = built([
   {
     id: "ct-1",
     title: "CGPA → %",
@@ -252,9 +251,9 @@ export const calculatorsTrackers: CalculatorTrackerItem[] = [
     actionLabel: "View Log →",
     href: "/tools/mock-ledger",
   },
-];
+]);
 
-export const recommendedTools: RecommendedToolItem[] = [
+export const recommendedTools: RecommendedToolItem[] = built([
   {
     id: "rt-1",
     title: "SQL Practice Generator",
@@ -282,9 +281,9 @@ export const recommendedTools: RecommendedToolItem[] = [
     meta: "Core CS",
     href: "/tools/java-revision",
   },
-];
+]);
 
-export const recentToolAudits: RecentToolAuditRecord[] = [
+export const recentToolAudits: RecentToolAuditRecord[] = built([
   {
     id: "rta-1",
     toolName: "SQL Playground",
@@ -335,4 +334,22 @@ export const recentToolAudits: RecentToolAuditRecord[] = [
     progressPercent: 100,
     href: "/tools/cgpa-calculator",
   },
-];
+]);
+
+export const toolsCategories: { id: ToolCategory; label: string; count: number }[] = (
+  [
+    { id: "all", label: "All Tools" },
+    { id: "coding", label: "Coding" },
+    { id: "interview", label: "Interview" },
+    { id: "resume", label: "Resume & Career" },
+    { id: "aptitude", label: "Aptitude" },
+    { id: "sql", label: "SQL" },
+    { id: "placement", label: "Placement" },
+    { id: "productivity", label: "Productivity" },
+  ] as { id: ToolCategory; label: string }[]
+)
+  .map((c) => ({
+    ...c,
+    count: c.id === "all" ? corePlacementTools.length : corePlacementTools.filter((t) => t.category === c.id).length,
+  }))
+  .filter((c) => c.id === "all" || c.count > 0);

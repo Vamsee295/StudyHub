@@ -22,51 +22,26 @@ from app.services.resume_parser import ResumeParser, ResumeParserError
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/resume", tags=["resume"])
+MAX_UPLOAD_BYTES = 5 * 1024 * 1024  # 5 MB resume PDF
 security_optional = HTTPBearer(auto_error=False)
 
 
 async def get_effective_user_id(credentials: Optional[HTTPAuthorizationCredentials] = Depends(security_optional)) -> str:
-    """
-    Get authenticated user ID from Supabase bearer token.
-    Falls back gracefully to a verified active profile in development mode.
-    """
-    if credentials:
-        try:
-            user = get_current_user(credentials)
-            user_id = getattr(user, "id", None) or (user.get("id") if isinstance(user, dict) else None)
-            if user_id:
-                # Ensure profile exists in DB
-                async with AsyncSessionLocal() as session:
-                    res = await session.execute(select(Profile).where(Profile.id == user_id))
-                    profile = res.scalars().first()
-                    if not profile:
-                        profile = Profile(
-                            id=user_id,
-                            full_name=getattr(user, "user_metadata", {}).get("full_name", "Student Learner"),
-                            profile_completed=True,
-                        )
-                        session.add(profile)
-                        await session.commit()
-                return str(user_id)
-        except Exception as e:
-            logger.warning("Bearer token verification failed in resume route: %s", e)
-
-    # Fallback to existing profile in DB for local development
+    """Authenticated user ID from the Supabase bearer token; ensures a profile row exists."""
+    if not credentials:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated")
+    user = get_current_user(credentials)          # raises 401 on an invalid token
+    user_id = str(user.id)
     async with AsyncSessionLocal() as session:
-        res = await session.execute(select(Profile).limit(1))
-        profile = res.scalars().first()
-        if profile:
-            return profile.id
-
-        # Auto-create fallback dev profile
-        dev_profile = Profile(
-            id="dev-student-user",
-            full_name="Student Learner",
-            profile_completed=True,
-        )
-        session.add(dev_profile)
-        await session.commit()
-        return dev_profile.id
+        res = await session.execute(select(Profile).where(Profile.id == user_id))
+        if not res.scalars().first():
+            session.add(Profile(
+                id=user_id,
+                full_name=(getattr(user, "user_metadata", None) or {}).get("full_name", "Student Learner"),
+                profile_completed=True,
+            ))
+            await session.commit()
+    return user_id
 
 
 @router.post("/analyses", response_model=CreateAnalysisResponse)
@@ -102,7 +77,12 @@ async def create_analysis(
                 detail="Resume PDF file is required when source is 'pdf'.",
             )
         try:
-            content_bytes = await file.read()
+            content_bytes = await file.read(MAX_UPLOAD_BYTES + 1)
+            if len(content_bytes) > MAX_UPLOAD_BYTES:
+                raise HTTPException(
+                    status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+                    detail="Resume PDF must be 5 MB or smaller.",
+                )
             if not content_bytes:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
@@ -111,6 +91,8 @@ async def create_analysis(
             parsed_result = parser.parse_pdf(content_bytes)
             actual_filename = file.filename or actual_filename
             actual_mime = file.content_type or actual_mime
+        except HTTPException:
+            raise
         except ResumeParserError as exc:
             raise HTTPException(
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
@@ -170,12 +152,12 @@ async def create_analysis(
 
 
 @router.get("/analyses/{analysis_id}", response_model=GetAnalysisResponse)
-async def get_analysis(analysis_id: str):
+async def get_analysis(analysis_id: str, user_id: str = Depends(get_effective_user_id)):
     """
     Retrieve an analysis summary and report if completed.
     """
     service = ResumeAnalysisService()
-    analysis = await service.get_analysis(analysis_id)
+    analysis = await service.get_analysis(analysis_id, user_id)
     if not analysis:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -196,12 +178,12 @@ async def get_analysis(analysis_id: str):
 
 
 @router.post("/analyses/{analysis_id}/process")
-async def process_analysis_stream(analysis_id: str):
+async def process_analysis_stream(analysis_id: str, user_id: str = Depends(get_effective_user_id)):
     """
     Stream live progress and report via Server-Sent Events (SSE).
     """
     service = ResumeAnalysisService()
-    analysis = await service.get_analysis(analysis_id)
+    analysis = await service.get_analysis(analysis_id, user_id)
     if not analysis:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -209,7 +191,7 @@ async def process_analysis_stream(analysis_id: str):
         )
 
     return StreamingResponse(
-        service.process_analysis_stream(analysis_id),
+        service.process_analysis_stream(analysis_id, user_id),
         media_type="text/event-stream",
         headers={
             "Cache-Control": "no-cache",
