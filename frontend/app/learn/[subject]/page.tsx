@@ -130,6 +130,67 @@ export default function SubjectPage() {
         </div>
       </motion.section>
 
+      {/* ROADMAP: generated from the course's own modules and the learner's progress */}
+      {(() => {
+        const allTopics = subject.modules.flatMap((m) => m.topics.map((t) => ({ ...t, moduleTitle: m.title })));
+        const next = allTopics.find((t) => t.status === "in_progress") ?? allTopics.find((t) => t.status !== "completed");
+        return (
+          <section className="flex flex-col gap-4" aria-label="Course roadmap">
+            <h2 className="text-[13px] font-bold text-[var(--ink)] uppercase tracking-wider font-sans">Your Roadmap</h2>
+            {next ? (
+              <Link
+                href={`/learn/${subject.slug}/${next.slug}`}
+                className="flex items-center justify-between gap-4 p-4 rounded-xl border border-[var(--accent)]/40 bg-[var(--surface)] hover:border-[var(--accent)] transition-colors"
+              >
+                <div className="flex flex-col gap-1 min-w-0">
+                  <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-[var(--accent)]">
+                    {next.status === "in_progress" ? "Continue where you left off" : "Next on your path"}
+                  </span>
+                  <span className="text-[15px] font-bold text-[var(--ink)] truncate">{next.title}</span>
+                  <span className="text-[12px] text-[var(--ink-secondary)] truncate">{next.moduleTitle}</span>
+                </div>
+                <ChevronRight className="w-5 h-5 text-[var(--accent)] shrink-0" />
+              </Link>
+            ) : (
+              <div className="p-4 rounded-xl border border-[var(--border)] bg-[var(--success-soft)] text-[var(--success)] text-[14px] font-medium">
+                You've completed every topic in this course.
+              </div>
+            )}
+            <ol className="flex flex-col gap-2">
+              {subject.modules.map((m, i) => {
+                const done = m.topics.filter((t) => t.status === "completed").length;
+                const total = m.topics.length;
+                const pct = total ? Math.round((done / total) * 100) : 0;
+                const current = next ? m.topics.some((t) => t.id === next.id) : false;
+                return (
+                  <li key={m.id} className="flex items-center gap-3">
+                    <span
+                      className={clsx(
+                        "w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-mono font-bold shrink-0",
+                        total > 0 && done === total
+                          ? "bg-[var(--success-soft)] text-[var(--success)]"
+                          : current
+                            ? "bg-[var(--accent)] text-white"
+                            : "bg-[var(--surface-subdued)] text-[var(--ink-secondary)]"
+                      )}
+                    >
+                      {total > 0 && done === total ? <CheckCircle2 className="w-4 h-4" /> : i + 1}
+                    </span>
+                    <span className={clsx("text-[13px] w-40 sm:w-56 truncate", current ? "font-bold text-[var(--ink)]" : "text-[var(--ink-secondary)]")}>
+                      {m.title}
+                    </span>
+                    <div className="flex-1 h-1.5 rounded-full bg-[var(--border-strong)]/30 overflow-hidden">
+                      <div className="h-full rounded-full bg-[var(--accent)]" style={{ width: `${pct}%` }} />
+                    </div>
+                    <span className="text-[11px] font-mono text-[var(--ink-tertiary)] w-12 text-right">{done}/{total}</span>
+                  </li>
+                );
+              })}
+            </ol>
+          </section>
+        );
+      })()}
+
       {/* MODULES LIST */}
       <motion.section
         initial={reduced ? undefined : { opacity: 0, y: 16 }}
