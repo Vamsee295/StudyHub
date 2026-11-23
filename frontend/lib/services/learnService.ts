@@ -66,7 +66,7 @@ interface StoredTopicProgress {
   updatedAt: string;
 }
 
-function getStoredProgress(): Record<string, StoredTopicProgress> {
+export function getStoredProgress(): Record<string, StoredTopicProgress> {
   if (typeof window === 'undefined') return {};
   try {
     const raw = localStorage.getItem(STORAGE_KEY);

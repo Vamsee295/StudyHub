@@ -11,7 +11,8 @@ import {
   TrendingUp,
   Clock,
   Briefcase,
-  Code
+  Code,
+  Share2,
 } from "lucide-react";
 import { clsx } from "clsx";
 import { useRouter } from "next/navigation";
@@ -95,6 +96,9 @@ export default function LearnPage() {
           <p className="text-[var(--ink-secondary)] text-[15px] mt-1.5 max-w-2xl font-normal leading-relaxed">
             Build the technical foundation you need for your placement journey.
           </p>
+          <Link href="/learn/map" className="inline-flex items-center gap-1.5 mt-3 px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--surface)] text-[13px] font-medium text-[var(--ink)] hover:border-[var(--accent)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]">
+            <Share2 aria-hidden="true" className="w-4 h-4 text-[var(--accent)]" /> Concept map: see how every topic connects
+          </Link>
         </div>
 
         {/* Sub-navigation Tabs */}
