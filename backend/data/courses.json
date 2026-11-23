@@ -40948,6 +40948,1253 @@
     ]
   },
   {
+    "id": "course-system-design",
+    "slug": "system-design",
+    "title": "System Design",
+    "description": "Design scalable systems the way interviewers expect: requirements and estimates, load balancing, caching, databases and sharding, queues, rate limiting, reliability, and step-by-step designs of real products.",
+    "category": "Placement",
+    "icon": "Network",
+    "displayOrder": 7.5,
+    "modules": [
+      {
+        "id": "system-design-sd-mod-1",
+        "slug": "sd-foundations",
+        "title": "Foundations",
+        "description": "The interview framework, scalability vocabulary, estimation and the availability/consistency trade-off.",
+        "difficulty": "Intermediate",
+        "estimatedMinutes": 85,
+        "lessons": [
+          {
+            "id": "system-design-interview-framework",
+            "slug": "system-design-interview-framework",
+            "title": "How to Approach a System Design Interview",
+            "description": "A repeatable four-step framework: requirements, estimates, high-level design, deep dives.",
+            "estimatedMinutes": 20,
+            "content": {
+              "theory": "A system design interview asks you to design a large system, such as a URL shortener or a chat app, in about 45 minutes. There's no single right answer. The interviewer grades how you structure an open problem, make trade-offs and communicate. This lesson gives you a four-step framework, explains what to say at each step, and lists the mistakes that sink most candidates.\n\n## What interviewers are grading\n\nInterviewers usually score four areas:\n\n- **Problem scoping**: do you ask questions before designing, or rush into boxes and arrows?\n- **Technical design**: are the components sensible, and do they fit the requirements?\n- **Trade-off reasoning**: can you explain why you chose one option over another, and what it costs?\n- **Communication**: can the interviewer follow your thinking, and do you respond well to hints?\n\nA design that's 80% complete but clearly reasoned beats a complete design with no justification.\n\n## Step 1: clarify requirements (about 5 minutes)\n\nSplit requirements into two kinds:\n\n- **Functional requirements**: what the system does. For a URL shortener: create a short link, redirect to the long URL, optionally set an expiry or custom alias\n- **Non-functional requirements**: how well it does it. Scale, latency, availability, consistency and durability targets\n\nAsk questions that change the design:\n\n- How many users, and how many requests per second?\n- What is the read-to-write ratio?\n- Which matters more when they conflict: availability or consistency?\n- What latency is acceptable?\n- Do we need analytics, authentication or multiple regions?\n\nWrite the agreed requirements down where the interviewer can see them, and explicitly park features you won't cover. Scoping well signals seniority.\n\n## Step 2: estimate the scale (about 5 minutes)\n\nQuick estimates tell you whether one server is enough or you need hundreds. Estimate:\n\n- **Traffic**: requests per second, average and peak\n- **Storage**: data per item × items per day × retention period\n- **Bandwidth**: request size × requests per second\n\nFor example, 100 million new short links per month is about 40 writes per second on average. With a 100:1 read ratio, that's about 4,000 reads per second, perhaps 10,000 at peak. Round aggressively; the goal is the order of magnitude, not precision. The next lesson covers estimation in depth.\n\n## Step 3: high-level design (about 10–15 minutes)\n\nDraw the main components and the path of a request through them. A typical starting point:\n\n~~~text\nClient -> DNS -> CDN / Load balancer -> Stateless app servers -> Cache -> Database\n                                                    \\-> Message queue -> Workers\n~~~\n\nThen define the core pieces:\n\n- **API**: the main endpoints, such as `POST /urls` and `GET /{code}`\n- **Data model**: the main tables or collections and their keys\n- **Data flow**: what happens step by step for the most important read and write\n\nStart small and make it work end to end before optimizing. A single database is a fine first draft; you'll scale it in the next step.\n\n## Step 4: deep dives and bottlenecks (about 15–20 minutes)\n\nNow improve the parts that break under the estimated load:\n\n- Where is the bottleneck? Usually the database, so add caching, replicas or sharding\n- What happens when a component fails? Add redundancy and explain failover\n- How do you handle hot keys, such as one viral link?\n- What are the consistency implications of caches and replicas?\n\nInterviewers often steer this part. Follow their lead, and for each change, state the trade-off: \"Adding a cache cuts read latency and database load, but cached data can be stale for up to the TTL.\"\n\n## Wrapping up\n\nIn the final few minutes, summarize the design, name its weak points and suggest what you'd do next with more time: monitoring, analytics, multi-region deployment. Admitting limitations shows judgement.\n\n## Common mistakes\n\n- **Designing before asking questions**: you may solve the wrong problem\n- **Jumping to buzzwords**: \"use Kafka and microservices\" without explaining why\n- **Going silent**: the interviewer can't credit reasoning they can't hear\n- **Over-engineering**: designing for a billion users when the requirements say ten thousand\n- **Ignoring trade-offs**: every choice costs something; say what\n\n## How interviewers test this\n\nEvery system design round follows this shape, so the framework itself is being tested. Scope first, estimate, sketch an end-to-end design, then deepen where load or failures demand it, stating each trade-off out loud.",
+              "sources": [
+                {
+                  "title": "donnemartin/system-design-primer",
+                  "url": "https://github.com/donnemartin/system-design-primer",
+                  "license": "CC BY 4.0"
+                },
+                {
+                  "title": "binhnguyennus/awesome-scalability",
+                  "url": "https://github.com/binhnguyennus/awesome-scalability",
+                  "license": "MIT"
+                }
+              ],
+              "sections": [
+                {
+                  "type": "quickCheck",
+                  "question": "What should you do first in a system design interview?",
+                  "options": [
+                    "Clarify functional and non-functional requirements",
+                    "Draw the database schema",
+                    "Pick a message queue",
+                    "Estimate cost in dollars"
+                  ],
+                  "answer": 0,
+                  "explanation": "Requirements decide every later choice; designing first risks solving the wrong problem."
+                },
+                {
+                  "type": "interviewTraps",
+                  "title": "Interview traps",
+                  "traps": [
+                    {
+                      "question": "Design a news feed.",
+                      "trap": "Drawing microservices and Kafka in the first minute.",
+                      "solution": "Ask about scale, read/write ratio and freshness requirements first, then design."
+                    },
+                    {
+                      "question": "Your design handles 10 users; the requirement is 10 million.",
+                      "trap": "Never estimating load, so bottlenecks stay hidden.",
+                      "solution": "Do quick traffic and storage estimates to know where scaling is needed."
+                    }
+                  ]
+                },
+                {
+                  "type": "takeaways",
+                  "title": "Key takeaways",
+                  "items": [
+                    "Use four steps: requirements, estimates, high-level design, deep dives.",
+                    "Separate functional requirements (what) from non-functional ones (scale, latency, availability).",
+                    "Start with a small end-to-end design, then fix bottlenecks.",
+                    "State the trade-off of every decision out loud."
+                  ]
+                }
+              ]
+            },
+            "legacySlug": "system-design-sd-foundations-lesson-1",
+            "legacyId": "system-design-sd-foundations-lesson-1"
+          },
+          {
+            "id": "system-design-scalability-performance-latency",
+            "slug": "scalability-performance-latency",
+            "title": "Scalability, Performance, Latency and Throughput",
+            "description": "Vertical vs horizontal scaling, stateless services, and the vocabulary of system performance.",
+            "estimatedMinutes": 20,
+            "content": {
+              "theory": "Scalability is a system's ability to handle more load by adding resources. It's different from performance: a system can be fast for one user and collapse under a thousand. This lesson defines the core vocabulary, compares vertical and horizontal scaling, explains why stateless services are the foundation of horizontal scaling, and introduces the latency numbers every engineer should know.\n\n## Performance versus scalability\n\n- A **performance problem** means the system is slow for a single user\n- A **scalability problem** means the system is fast for one user but slows down under load\n\nFixing performance means making each request cheaper: better algorithms, indexes, caching. Fixing scalability means making the system able to use more resources effectively as load grows.\n\n## Latency versus throughput\n\n- **Latency** is the time to complete one operation, such as 50 ms for an API call\n- **Throughput** is the number of operations completed per unit of time, such as 10,000 requests per second\n\nThey're related but distinct. Batching increases throughput but can raise latency, because items wait for the batch to fill. A good design aims for maximal throughput with acceptable latency.\n\n## Measure percentiles, not averages\n\nAverages hide pain. If 99 requests take 10 ms and one takes 5 seconds, the average is about 60 ms, which looks fine. Track percentiles:\n\n- **p50**: the median experience\n- **p99**: the slowest 1% of requests\n\nTail latency matters more than it seems. A page that makes 100 backend calls will hit at least one p99-slow call on most loads. Teams usually set targets on p99 or p99.9.\n\n## Vertical scaling\n\n**Vertical scaling** (scaling up) means moving to a bigger machine: more CPU cores, more RAM, faster disks.\n\n| Pros | Cons |\n|---|---|\n| No code changes | Hard ceiling: the largest machine available |\n| Straightforward to operate | Cost rises steeply at the high end |\n| No distributed-systems complexity | Single point of failure |\n\nVertical scaling is often the right first move, especially for databases. A single modern server with dozens of cores and hundreds of gigabytes of RAM handles far more than many people expect.\n\n## Horizontal scaling\n\n**Horizontal scaling** (scaling out) means adding more machines and spreading load across them.\n\n| Pros | Cons |\n|---|---|\n| Near-unlimited capacity | Needs load balancing |\n| Commodity hardware is cheap | Data and state must be shared or partitioned |\n| Redundancy: one machine failing isn't fatal | Distributed systems problems: consistency, partial failures |\n\nLarge systems scale horizontally, but it only works if the application is designed for it.\n\n## Stateless services\n\nA server is **stateless** if it keeps no client-specific data between requests. Any server can handle any request, so a load balancer can send traffic anywhere, and servers can be added or removed freely.\n\nState still exists: sessions, carts, uploaded files. Move it out of the app servers into shared stores:\n\n- sessions in a distributed cache such as Redis, or in signed tokens such as JWTs\n- files in object storage such as Amazon S3\n- persistent data in databases\n\nStateful servers, where a user must return to the same machine (sticky sessions), are harder to scale and lose data when a machine dies.\n\n## Latency numbers to know\n\nRough orders of magnitude guide design decisions:\n\n| Operation | Approximate time |\n|---|---|\n| L1 cache reference | 1 ns |\n| Main memory reference | 100 ns |\n| Read 1 MB sequentially from memory | 3 µs |\n| SSD random read | 16 µs to 100 µs |\n| Round trip within a data centre | 500 µs |\n| Read 1 MB sequentially from SSD | about 50 µs to 1 ms |\n| Disk seek (spinning disk) | 2 to 10 ms |\n| Round trip India to US | 150 to 250 ms |\n\nTwo lessons follow: memory is about 1,000 times faster than a network round trip, which is why caches matter, and cross-continent round trips dominate user-facing latency, which is why CDNs and regional deployments matter.\n\n## Where systems usually break first\n\nAs load grows, bottlenecks tend to appear in order: the database (too many queries or writes), then shared caches, then network bandwidth, then single coordinating components such as a primary database or a leader node. Scaling is the process of finding the next bottleneck and removing it.\n\n## How interviewers test this\n\nExpect \"Vertical vs horizontal scaling?\", \"Why make services stateless?\" and \"Latency vs throughput?\" Define each term precisely, use percentiles when discussing latency, and explain that stateless app tiers plus scaled data tiers are how most large systems grow.",
+              "sources": [
+                {
+                  "title": "donnemartin/system-design-primer",
+                  "url": "https://github.com/donnemartin/system-design-primer",
+                  "license": "CC BY 4.0"
+                },
+                {
+                  "title": "Latency numbers every programmer should know",
+                  "url": "https://gist.github.com/jboner/2841832"
+                },
+                {
+                  "title": "Google, Site Reliability Engineering (free online)",
+                  "url": "https://sre.google/sre-book/table-of-contents/"
+                }
+              ],
+              "sections": [
+                {
+                  "type": "quickCheck",
+                  "question": "Why do horizontally scaled web tiers keep app servers stateless?",
+                  "options": [
+                    "So any server can handle any request and servers can be added or removed freely",
+                    "Because stateless servers use less CPU",
+                    "Because databases require it",
+                    "To avoid using a load balancer"
+                  ],
+                  "answer": 0,
+                  "explanation": "Without per-server state, the load balancer can route anywhere and a failed server loses nothing."
+                },
+                {
+                  "type": "interviewTraps",
+                  "title": "Interview traps",
+                  "traps": [
+                    {
+                      "question": "Our average latency is 60 ms, so users are happy.",
+                      "trap": "Averages hide slow outliers.",
+                      "solution": "Report p50, p95 and p99; tail latency affects many page loads."
+                    },
+                    {
+                      "question": "Add more app servers to fix a slow site.",
+                      "trap": "The bottleneck is often the database, not the app tier.",
+                      "solution": "Measure first; add caching, replicas or sharding for the data tier."
+                    }
+                  ]
+                },
+                {
+                  "type": "takeaways",
+                  "title": "Key takeaways",
+                  "items": [
+                    "Performance is speed for one user; scalability is staying fast as load grows.",
+                    "Track p99 latency, not averages.",
+                    "Scale vertically first where it's enough; scale horizontally for capacity and redundancy.",
+                    "Move sessions, files and data out of app servers to make them stateless."
+                  ]
+                }
+              ]
+            },
+            "legacySlug": "system-design-sd-foundations-lesson-2",
+            "legacyId": "system-design-sd-foundations-lesson-2"
+          },
+          {
+            "id": "system-design-back-of-the-envelope-estimation",
+            "slug": "back-of-the-envelope-estimation",
+            "title": "Back-of-the-Envelope Estimation",
+            "description": "Estimate traffic, storage, bandwidth and server counts quickly with powers of ten.",
+            "estimatedMinutes": 20,
+            "content": {
+              "theory": "Back-of-the-envelope estimation means calculating rough numbers for traffic, storage and bandwidth in a minute or two, so you know which parts of a design need scaling. Interviewers use it to check that your design matches the requirements. This lesson covers the numbers to memorize, a step-by-step method, a full worked example and the common mistakes.\n\n## Why estimate\n\nWithout numbers, you can't tell whether a design is too weak or wildly over-built. Estimates answer questions like:\n\n- Can one database handle the write rate, or do we need sharding?\n- Does the dataset fit in memory, so we can cache all of it?\n- How many app servers do we need at peak?\n- Will storage cost matter over five years?\n\nPrecision doesn't matter. Being within a factor of two or three is good enough to make the right decision.\n\n## Numbers to memorize\n\n| Quantity | Value |\n|---|---|\n| Seconds in a day | 86,400, round to 100,000 (10⁵) |\n| Seconds in a month | about 2.5 million (2.5 × 10⁶) |\n| 1 million requests per day | about 12 requests per second |\n| 1 KB, 1 MB, 1 GB, 1 TB, 1 PB | 10³, 10⁶, 10⁹, 10¹², 10¹⁵ bytes |\n| A character in ASCII text | 1 byte |\n| A typical photo | 200 KB to 2 MB |\n\nA useful shortcut: requests per day divided by 100,000 gives requests per second, slightly overestimated, which is safe.\n\n## Rough capacities\n\nThese vary widely with hardware and workload, so treat them as starting points to state as assumptions:\n\n| Component | Rough capacity |\n|---|---|\n| Web/app server (lightweight API) | 1,000 to 10,000 requests per second |\n| Relational database, indexed point queries | thousands to tens of thousands of queries per second |\n| Redis on one node | 100,000+ operations per second |\n| Kafka partition | tens of MB per second |\n\n## The method\n\n1. **Users and actions**: daily active users (DAU) and actions per user per day\n2. **Requests per second**: total daily actions ÷ 10⁵, then multiply by 2 to 3 for peak\n3. **Read/write split**: apply the read-to-write ratio\n4. **Storage**: size per item × new items per day × days of retention\n5. **Bandwidth**: request or response size × requests per second\n6. **Servers**: peak RPS ÷ capacity per server, plus headroom\n\n## Worked example: a photo-sharing app\n\nAssume 10 million DAU, each viewing 50 photos and uploading 0.2 photos per day.\n\n**Reads**: 10⁷ × 50 = 5 × 10⁸ views per day. Divided by 10⁵ seconds: 5,000 reads per second on average, about 15,000 at peak.\n\n**Writes**: 10⁷ × 0.2 = 2 × 10⁶ uploads per day, about 20 per second on average.\n\n**Storage**: at 1 MB per photo (after compression, plus thumbnails), 2 × 10⁶ MB = 2 TB per day. Over a year: about 730 TB, so roughly 1 PB per year. That rules out a single database for images; photos go to object storage, with only metadata in the database.\n\n**Metadata**: if each photo's metadata row is 500 bytes, 2 × 10⁶ rows per day is 1 GB per day, a few hundred GB per year. That fits comfortably in a sharded or even a single large database.\n\n**Bandwidth**: 15,000 peak views per second × 200 KB average thumbnail is about 3 GB per second. That's far too much to serve from app servers, so a CDN is essential.\n\n**App servers**: at 2,000 requests per second each, 15,000 ÷ 2,000 ≈ 8 servers, so plan for 10 to 15 with headroom and redundancy.\n\nEvery number shaped the design: object storage for photos, a CDN for bandwidth, a modest metadata database and a small app fleet.\n\n## Common mistakes\n\n- **Mixing units**: bits versus bytes in bandwidth (network speeds are usually quoted in bits per second), or MB versus GB\n- **Forgetting peaks**: traffic is never flat; size for 2 to 3 times the average, or more for spiky events like sales\n- **Forgetting replication**: three replicas triple storage\n- **False precision**: writing 5,787.04 requests per second wastes time and signals the wrong focus\n- **Silent assumptions**: say every assumption out loud so the interviewer can correct it\n\n## How interviewers test this\n\nExpect to estimate QPS, storage and bandwidth for the system you're designing, then use the numbers to justify decisions. Round to powers of ten, state assumptions, separate reads from writes, and connect each result to a design choice such as caching, a CDN or sharding.",
+              "sources": [
+                {
+                  "title": "donnemartin/system-design-primer",
+                  "url": "https://github.com/donnemartin/system-design-primer",
+                  "license": "CC BY 4.0"
+                },
+                {
+                  "title": "Latency numbers every programmer should know",
+                  "url": "https://gist.github.com/jboner/2841832"
+                }
+              ],
+              "sections": [
+                {
+                  "type": "quickCheck",
+                  "question": "Roughly how many requests per second is 100 million requests per day?",
+                  "options": [
+                    "About 1,000",
+                    "About 100",
+                    "About 10,000",
+                    "About 100,000"
+                  ],
+                  "answer": 0,
+                  "explanation": "10⁸ ÷ 10⁵ seconds ≈ 1,000 per second (more precisely about 1,160)."
+                },
+                {
+                  "type": "interviewTraps",
+                  "title": "Interview traps",
+                  "traps": [
+                    {
+                      "question": "Bandwidth is 3 GB/s, so a 10 Gbps link is fine.",
+                      "trap": "Confusing bytes and bits: 3 GB/s is 24 Gbps.",
+                      "solution": "Network speeds are in bits; multiply bytes by 8."
+                    },
+                    {
+                      "question": "We need 5,787 servers.",
+                      "trap": "False precision.",
+                      "solution": "Round to orders of magnitude and add headroom."
+                    }
+                  ]
+                },
+                {
+                  "type": "takeaways",
+                  "title": "Key takeaways",
+                  "items": [
+                    "Round a day to 10⁵ seconds; 1 million per day ≈ 12 per second.",
+                    "Separate reads and writes, and size for 2–3× the average at peak.",
+                    "Estimate storage as item size × items per day × retention, then add replication.",
+                    "Tie every estimate to a design decision."
+                  ]
+                }
+              ]
+            },
+            "legacySlug": "system-design-sd-foundations-lesson-3",
+            "legacyId": "system-design-sd-foundations-lesson-3"
+          },
+          {
+            "id": "system-design-availability-and-consistency",
+            "slug": "availability-and-consistency",
+            "title": "Availability, Consistency and the CAP Theorem",
+            "description": "Nines of availability, failover and replication, CAP, and strong vs eventual consistency.",
+            "estimatedMinutes": 25,
+            "content": {
+              "theory": "Distributed systems must decide what happens when machines or networks fail. Two properties trade off against each other: availability (the system keeps responding) and consistency (every read sees the latest write). This lesson explains how availability is measured in nines, the patterns that achieve it, the CAP theorem, and the consistency models you'll choose between in every design.\n\n## Measuring availability\n\nAvailability is the fraction of time a system is usable, often expressed as \"nines\":\n\n| Availability | Downtime per year | Downtime per month |\n|---|---|---|\n| 99% (two nines) | 3.65 days | 7.3 hours |\n| 99.9% (three nines) | 8.8 hours | 43.8 minutes |\n| 99.99% (four nines) | 52.6 minutes | 4.4 minutes |\n| 99.999% (five nines) | 5.3 minutes | 26 seconds |\n\nEach extra nine costs far more engineering effort. Choose a target the business needs, written as a **service level objective** (SLO), rather than chasing maximum nines.\n\n## Availability in sequence and in parallel\n\nWhen a request passes through components **in sequence**, availabilities multiply: two components at 99.9% give 99.9% × 99.9% ≈ 99.8%. More dependencies means lower availability.\n\nWhen components run **in parallel** as redundant copies, the system fails only if all copies fail: two 99.9% copies give 1 − (0.001)² = 99.9999%. Redundancy is how reliable systems are built from unreliable parts.\n\n## Availability patterns\n\nTwo main patterns provide redundancy:\n\n- **Active-passive failover**: one node serves traffic while a standby monitors it with heartbeats. If the active node fails, the passive one takes over its IP address or role. Straightforward, but the standby sits idle, and failover takes seconds to minutes\n- **Active-active**: all nodes serve traffic, and a load balancer spreads requests. Better resource use and no failover delay, but harder when nodes hold data that must stay consistent\n\nReplication, covered in the database lessons, applies the same ideas to data: a primary with replicas, or multiple primaries.\n\n## The CAP theorem\n\nIn a distributed data store, the CAP theorem says that when a **network partition** happens, separating some nodes from others, the system must choose:\n\n- **Consistency (C)**: every read returns the most recent write, or an error\n- **Availability (A)**: every request receives a non-error response, possibly with stale data\n\nPartition tolerance isn't optional, because real networks do partition. So the practical choice is between **CP** and **AP** behaviour during partitions:\n\n- **CP systems** refuse or delay some requests to avoid serving stale or conflicting data. Suitable for bank balances and inventory counts. Examples: systems using consensus such as ZooKeeper and etcd, and HBase\n- **AP systems** keep answering, accepting that replicas may temporarily disagree. Suitable for social feeds, shopping carts and view counters. Examples: Cassandra and DynamoDB in their default configurations\n\nWhen there's no partition, a system can offer both. The PACELC extension adds that even without partitions, systems trade **latency** against consistency: waiting for replicas to confirm makes writes slower.\n\n## Consistency models\n\nBetween \"always perfectly consistent\" and \"anything goes\" lie several models:\n\n| Model | Guarantee | Example use |\n|---|---|---|\n| Strong consistency (linearizability) | Reads always see the latest write | Account balances, locks, unique usernames |\n| Read-your-writes | A user sees their own updates immediately | Profile edits, posting a comment |\n| Monotonic reads | A user never sees data go backwards in time | Timelines, message lists |\n| Eventual consistency | Replicas converge if updates stop | Like counts, DNS, search indexes |\n\nWeak consistency, where a read may never see a write, appears in systems like live video and VoIP, where missing data is dropped.\n\n## Choosing per feature\n\nA single product often mixes models. In an e-commerce site:\n\n- the payment and order record needs strong consistency\n- the product catalogue and reviews can be eventually consistent\n- the shopping cart favours availability: accepting an add-to-cart during a partition is better than an error\n\nStating which parts of your design need which guarantee, and why, is one of the strongest signals in a design interview.\n\n## How interviewers test this\n\nExpect \"Explain the CAP theorem\", \"Would you choose consistency or availability for X?\" and \"What's eventual consistency?\" Say that partitions force the choice, map each feature of the system to CP or AP with a business reason, and mention availability maths for sequential and redundant components.",
+              "sources": [
+                {
+                  "title": "donnemartin/system-design-primer",
+                  "url": "https://github.com/donnemartin/system-design-primer",
+                  "license": "CC BY 4.0"
+                },
+                {
+                  "title": "Google, Site Reliability Engineering (free online)",
+                  "url": "https://sre.google/sre-book/table-of-contents/"
+                },
+                {
+                  "title": "Amazon Builders' Library",
+                  "url": "https://aws.amazon.com/builders-library/"
+                }
+              ],
+              "sections": [
+                {
+                  "type": "quickCheck",
+                  "question": "During a network partition, an AP system will do what?",
+                  "options": [
+                    "Keep serving requests, possibly with stale data",
+                    "Reject all requests",
+                    "Guarantee linearizable reads",
+                    "Shut down the minority side only and stay consistent"
+                  ],
+                  "answer": 0,
+                  "explanation": "AP systems choose availability; replicas reconcile after the partition heals."
+                },
+                {
+                  "type": "interviewTraps",
+                  "title": "Interview traps",
+                  "traps": [
+                    {
+                      "question": "Which two of C, A and P does your system pick?",
+                      "trap": "Treating partition tolerance as optional.",
+                      "solution": "Partitions happen; the real choice is CP or AP behaviour during them."
+                    },
+                    {
+                      "question": "Make everything strongly consistent to be safe.",
+                      "trap": "Strong consistency everywhere costs latency and availability.",
+                      "solution": "Use strong consistency only where correctness demands it."
+                    }
+                  ]
+                },
+                {
+                  "type": "takeaways",
+                  "title": "Key takeaways",
+                  "items": [
+                    "Each extra nine of availability costs much more; set an SLO the business needs.",
+                    "Sequential dependencies multiply availability down; redundancy multiplies failure probability down.",
+                    "Partitions force a choice between consistency and availability.",
+                    "Pick a consistency model per feature: strong for money, eventual for counters."
+                  ]
+                }
+              ]
+            },
+            "legacySlug": "system-design-sd-foundations-lesson-4",
+            "legacyId": "system-design-sd-foundations-lesson-4"
+          }
+        ]
+      },
+      {
+        "id": "system-design-sd-mod-2",
+        "slug": "sd-networking",
+        "title": "Networking Building Blocks",
+        "description": "DNS, CDNs, load balancers, reverse proxies and API design.",
+        "difficulty": "Intermediate",
+        "estimatedMinutes": 60,
+        "lessons": [
+          {
+            "id": "system-design-dns-and-cdn",
+            "slug": "dns-and-cdn",
+            "title": "DNS and Content Delivery Networks",
+            "description": "How DNS routes users, and how CDNs cut latency and offload traffic with edge caching.",
+            "estimatedMinutes": 20,
+            "content": {
+              "theory": "Before a request reaches your servers, it passes through DNS, which turns a hostname into an address, and often a content delivery network (CDN), which serves content from a location near the user. Both are critical to latency and availability at scale. This lesson explains how DNS can route traffic, how CDNs work, push versus pull CDNs, caching rules and the trade-offs of each.\n\n## DNS as a traffic router\n\nDNS maps names like `api.example.com` to IP addresses, with answers cached at many levels for their time to live (TTL). Beyond plain lookups, managed DNS services such as Route 53 and Cloudflare DNS can route intelligently:\n\n- **Weighted round robin**: split traffic across servers or regions by percentage, useful for gradual rollouts\n- **Latency-based routing**: send users to the region with the lowest measured latency\n- **Geolocation routing**: send users to a region based on their location, for data-residency rules or language\n- **Health-checked failover**: stop returning addresses of unhealthy endpoints\n\nDNS routing is coarse. Because resolvers and browsers cache answers for the TTL, changes take effect gradually, and some clients ignore TTLs. That's why DNS usually picks a region, while load balancers handle fine-grained routing inside it.\n\n## Why CDNs exist\n\nA user in Chennai fetching an image from a server in Virginia pays roughly 200 ms per round trip, several times over for the TCP and TLS handshakes. A CDN keeps copies of content at **edge servers**, called points of presence, in hundreds of cities. The user connects to a nearby edge, a few milliseconds away, and gets the cached content.\n\nCDNs provide:\n\n- **Lower latency**: content travels a short distance\n- **Offloading**: the origin serves a small fraction of requests; a 95% cache hit ratio cuts origin traffic twenty-fold\n- **Resilience**: edges absorb traffic spikes and many DDoS attacks\n- **Faster connections**: TLS terminates near the user, and the CDN keeps warm connections to the origin\n\n## What to put on a CDN\n\nStatic assets are the classic case: images, video segments, JavaScript, CSS, fonts and downloadable files. Modern CDNs also cache API responses that are the same for many users, such as a product catalogue, and run code at the edge for personalization or authentication checks.\n\nResponses that differ per user, such as account pages, generally aren't cached at the edge, or are cached only with careful cache keys.\n\n## Pull CDNs\n\nWith a **pull CDN**, the edge fetches content from the origin the first time a user requests it, caches it, and serves later requests from the cache until it expires.\n\n- Setup is minimal: point the CDN at your origin\n- The first request in each region is slow (a cache miss)\n- Good for sites with many assets and unpredictable access patterns\n\n## Push CDNs\n\nWith a **push CDN**, you upload content to the CDN ahead of time, and you're responsible for updating it.\n\n- No first-request miss\n- You control exactly what's stored and when\n- More operational work; suits large files that change rarely, such as software downloads or video libraries\n\n## Cache control and invalidation\n\nThe origin controls caching with HTTP headers:\n\n- `Cache-Control: public, max-age=31536000, immutable` for versioned assets that never change\n- `Cache-Control: no-store` for sensitive, per-user responses\n- `ETag` and `Last-Modified` for revalidation without downloading the full body\n\nInvalidating cached content is hard, so the standard trick is **cache busting**: put a version or content hash in the file name, such as `app.3f9a1c.js`. A new deployment references a new URL, and old copies expire on their own. CDNs also offer purge APIs for emergencies.\n\n## Anycast\n\nMany CDNs and DNS providers use **anycast**: the same IP address is announced from many locations, and internet routing (BGP) delivers each user's packets to the nearest one. Anycast gives automatic failover, since a failed location stops announcing the address and traffic shifts elsewhere, and it spreads DDoS traffic across the whole network instead of one site.\n\n## Trade-offs\n\nCDNs cost money per gigabyte delivered, and stale content can surface if TTLs are long and invalidation is forgotten. Debugging becomes harder, since requests may never reach your logs. For dynamic, per-user content, the benefit is smaller.\n\n## How interviewers test this\n\nExpect \"How would you serve images or video to users worldwide?\" and \"Push or pull CDN?\" Put static and media content behind a CDN, explain cache hit ratio and offloading, use hashed file names for invalidation, and mention DNS-based latency or geo routing for multi-region systems.",
+              "sources": [
+                {
+                  "title": "donnemartin/system-design-primer",
+                  "url": "https://github.com/donnemartin/system-design-primer",
+                  "license": "CC BY 4.0"
+                },
+                {
+                  "title": "Cloudflare Learning Center",
+                  "url": "https://www.cloudflare.com/learning/"
+                },
+                {
+                  "title": "Ilya Grigorik, High Performance Browser Networking (free online)",
+                  "url": "https://hpbn.co/"
+                }
+              ],
+              "sections": [
+                {
+                  "type": "quickCheck",
+                  "question": "What is the main downside of a pull CDN?",
+                  "options": [
+                    "The first request for an object in each region is a cache miss served from the origin",
+                    "You must upload every file manually",
+                    "It can't cache images",
+                    "It disables HTTPS"
+                  ],
+                  "answer": 0,
+                  "explanation": "Pull CDNs populate lazily; push CDNs avoid the first miss at the cost of managing uploads."
+                },
+                {
+                  "type": "interviewTraps",
+                  "title": "Interview traps",
+                  "traps": [
+                    {
+                      "question": "Serve 3 GB/s of images from the app servers.",
+                      "trap": "Ignoring bandwidth and global latency.",
+                      "solution": "Store media in object storage and serve it through a CDN."
+                    },
+                    {
+                      "question": "Fail over regions instantly by changing DNS.",
+                      "trap": "Cached DNS answers keep old addresses until TTLs expire.",
+                      "solution": "Use short TTLs, health checks, and load-balancer-level failover."
+                    }
+                  ]
+                },
+                {
+                  "type": "takeaways",
+                  "title": "Key takeaways",
+                  "items": [
+                    "DNS can route by weight, latency, geography and health, but changes are delayed by caching.",
+                    "CDNs serve content from edges near users, cutting latency and origin load.",
+                    "Pull CDNs fill on demand; push CDNs are pre-loaded.",
+                    "Version file names to make cache invalidation trivial."
+                  ]
+                }
+              ]
+            },
+            "legacySlug": "system-design-sd-networking-lesson-1",
+            "legacyId": "system-design-sd-networking-lesson-1"
+          },
+          {
+            "id": "system-design-load-balancers-and-reverse-proxies",
+            "slug": "load-balancers-and-reverse-proxies",
+            "title": "Load Balancers and Reverse Proxies",
+            "description": "Distribute traffic across servers, L4 vs L7, algorithms, health checks and session handling.",
+            "estimatedMinutes": 20,
+            "content": {
+              "theory": "A load balancer spreads incoming requests across a pool of servers, so no single server is overwhelmed and failed servers are taken out of rotation. A reverse proxy sits in front of servers to handle shared concerns such as TLS and caching. They're the front door of almost every scalable system. This lesson covers layer 4 versus layer 7 balancing, balancing algorithms, health checks, sticky sessions and redundancy.\n\n## What a load balancer does\n\nA load balancer:\n\n- **distributes requests** across healthy servers\n- **removes failed servers** using health checks, so users don't hit dead machines\n- **enables horizontal scaling**: add servers to the pool without clients noticing\n- **provides a single entry point**, often handling TLS termination\n\nPopular options include NGINX, HAProxy, Envoy and cloud load balancers such as AWS ALB/NLB and Google Cloud Load Balancing.\n\n## Layer 4 versus layer 7\n\n| | Layer 4 (transport) | Layer 7 (application) |\n|---|---|---|\n| Sees | IP addresses and ports | Full HTTP: path, headers, cookies |\n| Routing | By connection | By request content |\n| Speed | Fastest, minimal processing | More CPU per request |\n| Features | Plain TCP/UDP forwarding | Path routing, header rewrites, auth, caching |\n| Example | AWS NLB | AWS ALB, NGINX |\n\nLayer 7 balancers can send `/api/*` to API servers and `/images/*` to media servers, or route by user or region. Layer 4 balancers suit raw throughput and non-HTTP protocols.\n\n## Balancing algorithms\n\n| Algorithm | How it works | Best when |\n|---|---|---|\n| Round robin | Each server in turn | Servers and requests are similar |\n| Weighted round robin | Proportional to server capacity | Mixed server sizes |\n| Least connections | Server with fewest active connections | Request durations vary widely |\n| Least response time | Fastest recent responses | Latency-sensitive workloads |\n| IP hash / consistent hash | Hash of client or key picks the server | Requests must reach the same server, for example a cache shard |\n\nRound robin is a fine default. Least connections helps when some requests, such as report generation, take far longer than others.\n\n## Health checks\n\nThe balancer periodically probes each server, for example `GET /health` every few seconds. A server failing several checks in a row is removed; passing again brings it back. A good health endpoint checks the server's own ability to serve, not every downstream dependency. If it checked the database and the database blipped, every server would be marked unhealthy at once, turning a small problem into a full outage.\n\n## Sticky sessions\n\n**Sticky sessions** (session affinity) send a user's requests to the same server, usually via a cookie. They make stateful servers work, but they unbalance load, and when that server dies, its users lose their sessions. The better approach is stateless servers with sessions stored in a shared cache or signed tokens. Use stickiness only when unavoidable, such as for WebSocket connections that live on one server.\n\n## Avoiding a single point of failure\n\nA single load balancer is itself a single point of failure. Production setups run balancers in pairs (active-passive with a floating IP, or active-active), or use managed cloud balancers that are redundant internally. DNS can also spread traffic across multiple balancer addresses.\n\n## Reverse proxies\n\nA **reverse proxy** accepts client requests on behalf of backend servers. Unlike a forward proxy, which acts for clients, it acts for servers. Even with one backend, a reverse proxy adds value:\n\n- **TLS termination**: decrypt once at the edge, offloading backends\n- **Compression and caching** of responses\n- **Security**: hide backend addresses, filter malicious requests, enforce rate limits\n- **Static file serving** directly from the proxy\n\nLoad balancers are reverse proxies that also distribute traffic. In practice, NGINX or Envoy often does both jobs.\n\n## API gateways\n\nAn **API gateway** is a reverse proxy specialized for APIs: authentication, rate limiting, request routing to microservices, request transformation and usage metrics. In microservice architectures, it's the single front door that clients talk to.\n\n## How interviewers test this\n\nExpect \"How do you distribute traffic across servers?\", \"L4 vs L7?\" and \"What happens when a server dies?\" Place a redundant load balancer in front of stateless servers, choose an algorithm with a reason, describe health checks, and explain why sticky sessions are a last resort.",
+              "sources": [
+                {
+                  "title": "donnemartin/system-design-primer",
+                  "url": "https://github.com/donnemartin/system-design-primer",
+                  "license": "CC BY 4.0"
+                },
+                {
+                  "title": "Amazon Builders' Library",
+                  "url": "https://aws.amazon.com/builders-library/"
+                },
+                {
+                  "title": "Cloudflare Learning Center",
+                  "url": "https://www.cloudflare.com/learning/"
+                }
+              ],
+              "sections": [
+                {
+                  "type": "quickCheck",
+                  "question": "Which load balancer can route /api/* and /images/* to different server pools?",
+                  "options": [
+                    "A layer 7 load balancer",
+                    "A layer 4 load balancer only",
+                    "DNS round robin",
+                    "A network switch"
+                  ],
+                  "answer": 0,
+                  "explanation": "Only an application-layer balancer sees the HTTP path."
+                },
+                {
+                  "type": "interviewTraps",
+                  "title": "Interview traps",
+                  "traps": [
+                    {
+                      "question": "Our health check pings the database.",
+                      "trap": "A database blip marks every server unhealthy at once.",
+                      "solution": "Check local health; handle dependency failures with graceful degradation."
+                    },
+                    {
+                      "question": "One load balancer in front of 50 servers.",
+                      "trap": "The balancer becomes a single point of failure.",
+                      "solution": "Run balancers redundantly or use a managed, redundant service."
+                    }
+                  ]
+                },
+                {
+                  "type": "takeaways",
+                  "title": "Key takeaways",
+                  "items": [
+                    "Load balancers spread traffic, remove unhealthy servers and enable horizontal scaling.",
+                    "L4 balancers are fast and protocol-agnostic; L7 balancers route by HTTP content.",
+                    "Health checks should test the server itself, not every dependency.",
+                    "Prefer stateless servers over sticky sessions, and make the balancer redundant."
+                  ]
+                }
+              ]
+            },
+            "legacySlug": "system-design-sd-networking-lesson-2",
+            "legacyId": "system-design-sd-networking-lesson-2"
+          },
+          {
+            "id": "system-design-api-design",
+            "slug": "api-design",
+            "title": "API Design: REST, gRPC, GraphQL and Idempotency",
+            "description": "Choose an API style, design resources, paginate, version, and make retries safe.",
+            "estimatedMinutes": 20,
+            "content": {
+              "theory": "APIs are the contracts between clients and services, and between services themselves. A well-designed API is predictable, efficient and safe to retry; a poor one leaks internals and breaks clients on every change. This lesson compares REST, gRPC and GraphQL, then covers resource design, pagination, versioning and idempotency, the details that come up in every design interview.\n\n## REST\n\nREST models the system as **resources** identified by URLs and manipulated with HTTP methods:\n\n~~~http\nGET    /users/42/orders?status=paid&limit=20\nPOST   /orders\nGET    /orders/9001\nPATCH  /orders/9001\nDELETE /orders/9001\n~~~\n\nStrengths: it uses HTTP's existing features, including caching, status codes and tooling, and it's understood everywhere. Weaknesses: clients may need several calls to assemble a screen (under-fetching) or receive fields they don't need (over-fetching), and there's no enforced schema unless you add OpenAPI.\n\n## gRPC\n\ngRPC uses Protocol Buffers to define services and messages in a schema, generates client and server code, and runs over HTTP/2.\n\n- **Fast and compact**: binary encoding and multiplexed connections\n- **Strongly typed contracts**: breaking changes are caught at compile time\n- **Streaming**: client, server and bidirectional streams\n- **Downsides**: not natively callable from browsers without a proxy, and harder to debug by hand\n\ngRPC is common for internal service-to-service communication where latency and contracts matter.\n\n## GraphQL\n\nGraphQL exposes a typed schema and lets clients request exactly the fields they need in one query:\n\n~~~graphql\nquery { user(id: 42) { name orders(last: 5) { id total } } }\n~~~\n\nIt suits apps with many screens needing different data shapes, such as mobile clients on slow networks. The costs: HTTP caching is harder, since most requests are POSTs to one endpoint, and naive resolvers cause the **N+1 query problem**, where fetching 20 orders triggers 20 separate database queries. Batching tools such as DataLoader fix this. Expensive queries need depth and cost limits.\n\n## Comparing the styles\n\n| | REST | gRPC | GraphQL |\n|---|---|---|---|\n| Best for | Public APIs, CRUD | Internal microservices | Flexible client-driven data needs |\n| Format | JSON (usually) | Protocol Buffers | JSON |\n| Caching | Native HTTP caching | Custom | Harder |\n| Contract | Optional (OpenAPI) | Required schema | Required schema |\n\n## Resource design\n\nGood REST design uses nouns for resources (`/orders`, not `/createOrder`), plural collections, nested paths for clear ownership (`/users/42/orders`), and correct status codes: 201 for creation, 400 for invalid input, 404 for missing resources, 409 for conflicts, 429 for rate limits.\n\n## Pagination\n\nNever return unbounded lists. Two approaches:\n\n- **Offset pagination**: `?offset=40&limit=20`. Familiar and supports jumping to page N, but slow for deep pages, and items shift when data changes\n- **Cursor pagination**: `?after=eyJpZCI6OTAwMX0&limit=20`, where the cursor encodes the last item's sort key. Stable and fast at any depth, ideal for feeds and infinite scroll\n\nReturn the next cursor in the response so clients don't build it themselves.\n\n## Versioning\n\nAPIs evolve. Additive changes, such as new optional fields, are safe. Breaking changes, such as removing or renaming fields, need a new version: `/v2/orders` in the path or a version header. Keep old versions running until clients migrate, and tell clients to ignore unknown fields.\n\n## Errors and consistency of responses\n\nReturn errors in one consistent shape, such as `{\"error\": {\"code\": \"INSUFFICIENT_FUNDS\", \"message\": \"...\"}}`, with a machine-readable code clients can branch on and a message humans can read. Don't leak stack traces or internal hostnames. For long-running operations, return 202 Accepted with a status URL the client can poll, instead of holding the connection open.\n\n## Idempotency\n\nNetworks fail mid-request, and clients retry. If a client sends \"charge ₹500\" and the response is lost, a retry might charge twice. An operation is **idempotent** if repeating it has the same effect as doing it once.\n\nGET, PUT and DELETE are idempotent by definition; POST isn't. To make POSTs safe, clients send an **idempotency key**, a unique ID per logical operation:\n\n~~~http\nPOST /payments\nIdempotency-Key: 6f1c2b7e-0d1a-4b8e-9f2a-3c5d7e9a1b2c\n~~~\n\nThe server stores the key with the result. A repeated key returns the stored result instead of charging again. Payment APIs such as Stripe use this pattern.\n\n## How interviewers test this\n\nExpect to define the API for the system you design, plus \"REST vs gRPC vs GraphQL?\", \"How do you paginate a feed?\" and \"How do you make payments safe to retry?\" Sketch the core endpoints early, choose cursor pagination for feeds, and use idempotency keys for non-idempotent writes.",
+              "sources": [
+                {
+                  "title": "donnemartin/system-design-primer",
+                  "url": "https://github.com/donnemartin/system-design-primer",
+                  "license": "CC BY 4.0"
+                },
+                {
+                  "title": "Amazon Builders' Library",
+                  "url": "https://aws.amazon.com/builders-library/"
+                }
+              ],
+              "sections": [
+                {
+                  "type": "quickCheck",
+                  "question": "How do payment APIs make a retried POST safe?",
+                  "options": [
+                    "The client sends an idempotency key, and the server returns the stored result for repeats",
+                    "They use GET instead",
+                    "They disable retries",
+                    "They rely on HTTPS"
+                  ],
+                  "answer": 0,
+                  "explanation": "The key identifies the logical operation, so a duplicate request doesn't execute twice."
+                },
+                {
+                  "type": "interviewTraps",
+                  "title": "Interview traps",
+                  "traps": [
+                    {
+                      "question": "Paginate a busy feed with OFFSET.",
+                      "trap": "Deep offsets are slow and items shift between pages.",
+                      "solution": "Use cursor (keyset) pagination."
+                    },
+                    {
+                      "question": "GraphQL query fetching orders and their items is slow.",
+                      "trap": "N+1 database queries from naive resolvers.",
+                      "solution": "Batch lookups with a DataLoader-style layer."
+                    }
+                  ]
+                },
+                {
+                  "type": "takeaways",
+                  "title": "Key takeaways",
+                  "items": [
+                    "REST suits public CRUD APIs; gRPC suits fast typed internal calls; GraphQL suits flexible client data needs.",
+                    "Use cursor pagination for feeds and large lists.",
+                    "Make additive changes freely; version breaking changes.",
+                    "Use idempotency keys so retries of non-idempotent writes are safe."
+                  ]
+                }
+              ]
+            },
+            "legacySlug": "system-design-sd-networking-lesson-3",
+            "legacyId": "system-design-sd-networking-lesson-3"
+          }
+        ]
+      },
+      {
+        "id": "system-design-sd-mod-3",
+        "slug": "sd-data",
+        "title": "Data Storage and Caching",
+        "description": "Replication and sharding, choosing a data store, caching strategies and consistent hashing.",
+        "difficulty": "Advanced",
+        "estimatedMinutes": 90,
+        "lessons": [
+          {
+            "id": "system-design-database-replication-and-sharding",
+            "slug": "database-replication-and-sharding",
+            "title": "Database Replication, Partitioning and Sharding",
+            "description": "Scale reads with replicas and writes with sharding, and handle the problems each creates.",
+            "estimatedMinutes": 25,
+            "content": {
+              "theory": "The database is usually the first component to buckle under growth, because app servers scale out easily and data doesn't. Two techniques scale it: replication copies data to more machines to handle more reads and survive failures, and sharding splits data across machines to handle more writes and storage. This lesson explains both, their variants, and the problems they introduce.\n\n## Leader-follower replication\n\nIn **leader-follower** (primary-replica) replication, one node, the leader, accepts all writes and streams changes to followers, which serve reads.\n\n~~~text\n          writes                 replication log\nClient  ------->  Leader  ------------------------>  Followers\nClient  <----------------------- reads ---------------  Followers\n~~~\n\nBenefits: read capacity grows with each follower, followers can live in other regions for local reads, and a follower can be promoted if the leader fails.\n\n## Synchronous versus asynchronous replication\n\n- **Synchronous**: the leader waits for followers to confirm before acknowledging a write. No data loss on failover, but writes are slower, and a slow follower stalls writes\n- **Asynchronous**: the leader acknowledges immediately and replicates in the background. Fast writes, but a leader crash can lose the most recent writes, and followers lag behind\n\nMost systems use asynchronous replication, sometimes with one synchronous follower (semi-synchronous) to guarantee at least one up-to-date copy.\n\n## Replication lag\n\nWith asynchronous followers, a read may hit a replica that hasn't received the latest write. A user updates their profile, refreshes, and sees the old version. Mitigations:\n\n- **Read-your-writes**: route a user's reads to the leader for a short time after they write, or read the user's own data from the leader\n- **Monotonic reads**: pin each user to one replica so they never see data go backwards\n- **Lag-aware routing**: avoid replicas that report lag above a threshold\n\n## Multi-leader and leaderless replication\n\n**Multi-leader** replication accepts writes at several leaders, often one per region, and syncs them. Writes are fast everywhere, but concurrent writes to the same record conflict and need resolution, such as last-write-wins or merging.\n\n**Leaderless** replication, used by Dynamo-style stores such as Cassandra, sends each write to several replicas. With N replicas, a write succeeds after W confirmations and a read queries R replicas. If W + R > N, read and write sets overlap, so reads see the latest acknowledged write. Tuning W and R trades latency against consistency per query.\n\n## Partitioning and sharding\n\nReplication copies all data everywhere, so it doesn't help once writes or total data outgrow one machine. **Sharding** (horizontal partitioning) splits rows across machines, each holding a subset:\n\n- **Range-based**: users A–M on shard 1, N–Z on shard 2. Range queries are efficient, but some ranges get hot\n- **Hash-based**: shard = hash(user_id) mod N. Even spread, but range queries hit every shard, and changing N moves most keys; consistent hashing, covered later, fixes the last problem\n- **Directory-based**: a lookup service maps each key to its shard. Flexible, but the directory must itself be scaled and highly available\n\n**Vertical partitioning** is different: it splits tables or columns by feature, such as moving the users table and the orders table to different databases. It's a quick first step but has a limit, since each feature's table can still outgrow one machine.\n\n## Choosing a shard key\n\nThe shard key decides everything. A good key:\n\n- spreads load evenly, so no shard is hot\n- keeps data that's queried together on the same shard\n- rarely needs to change\n\nFor a chat app, sharding messages by conversation ID keeps each conversation on one shard. Sharding by timestamp sends all new writes to one shard, creating a hotspot.\n\n## Problems sharding introduces\n\n- **Cross-shard queries**: joins and aggregations across shards need application-level fan-out or a separate analytics store\n- **Cross-shard transactions**: atomic updates spanning shards need two-phase commit or sagas, both complex\n- **Hot keys**: a celebrity's account can overload its shard; split hot keys or cache them\n- **Resharding**: adding shards means moving data while serving traffic\n\nBecause of these costs, shard only when needed: first add indexes, caching, read replicas and a bigger machine. Many companies run a single well-tuned primary much longer than they expect.\n\n## How interviewers test this\n\nExpect \"How would you scale the database?\" Walk the ladder: indexes and caching, read replicas for read load, vertical partitioning, then sharding with a justified shard key. Mention replication lag and read-your-writes, and name the cross-shard costs.",
+              "sources": [
+                {
+                  "title": "donnemartin/system-design-primer",
+                  "url": "https://github.com/donnemartin/system-design-primer",
+                  "license": "CC BY 4.0"
+                },
+                {
+                  "title": "DeCandia et al., Dynamo: Amazon's Highly Available Key-value Store (2007)",
+                  "url": "https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf"
+                },
+                {
+                  "title": "binhnguyennus/awesome-scalability",
+                  "url": "https://github.com/binhnguyennus/awesome-scalability",
+                  "license": "MIT"
+                }
+              ],
+              "sections": [
+                {
+                  "type": "quickCheck",
+                  "question": "Read replicas mainly help with which load?",
+                  "options": [
+                    "Read-heavy load",
+                    "Write-heavy load",
+                    "Storage beyond one machine",
+                    "Cross-shard joins"
+                  ],
+                  "answer": 0,
+                  "explanation": "All writes still go to the leader; sharding is needed to scale writes and storage."
+                },
+                {
+                  "type": "interviewTraps",
+                  "title": "Interview traps",
+                  "traps": [
+                    {
+                      "question": "Shard messages by created_at.",
+                      "trap": "All new writes hit one shard.",
+                      "solution": "Shard by a high-cardinality key such as conversation_id."
+                    },
+                    {
+                      "question": "A user updates their profile and sees the old one.",
+                      "trap": "Reading from a lagging replica.",
+                      "solution": "Serve read-your-writes from the leader after a user's write."
+                    }
+                  ]
+                },
+                {
+                  "type": "takeaways",
+                  "title": "Key takeaways",
+                  "items": [
+                    "Replication scales reads and adds failover; sharding scales writes and storage.",
+                    "Asynchronous replication is fast but can lose recent writes and causes lag.",
+                    "Pick a shard key that spreads load and keeps related data together.",
+                    "Shard last: indexes, caching, replicas and bigger machines come first."
+                  ]
+                }
+              ]
+            },
+            "legacySlug": "system-design-sd-data-lesson-1",
+            "legacyId": "system-design-sd-data-lesson-1"
+          },
+          {
+            "id": "system-design-sql-vs-nosql-choosing-storage",
+            "slug": "sql-vs-nosql-choosing-storage",
+            "title": "SQL vs NoSQL: Choosing the Right Data Store",
+            "description": "Relational databases, key-value, document, wide-column, graph and object storage, and how to pick.",
+            "estimatedMinutes": 20,
+            "content": {
+              "theory": "Choosing a data store is one of the most consequential design decisions, because it shapes queries, scaling and consistency for years. No database is best at everything. This lesson compares relational databases with the main NoSQL families, adds object storage and search engines, and gives a decision approach you can explain in an interview.\n\n## Relational databases\n\nRelational databases such as PostgreSQL and MySQL store data in tables with schemas, support joins and SQL, and provide ACID transactions.\n\nChoose them when:\n\n- data is structured and relationships matter, such as users, orders and payments\n- you need transactions across multiple rows or tables\n- queries are varied and not all known in advance\n\nTheir scaling limit is writes on a single primary, which replicas don't fix. With good indexing and hardware, a single primary handles a large share of real-world workloads, and sharding or distributed SQL systems such as CockroachDB, Spanner or Vitess extend it further.\n\n## Key-value stores\n\nKey-value stores such as Redis, Memcached and DynamoDB map a key to an opaque value with O(1) lookups.\n\n- Extremely fast, and straightforward to partition across nodes\n- Queries only by key; no rich filtering or joins\n- Uses: caches, sessions, rate-limit counters, feature flags, shopping carts\n\n## Document stores\n\nDocument stores such as MongoDB and Couchbase store JSON-like documents, each potentially with different fields.\n\n- Flexible schema, and nested data stays together, so one read fetches a whole entity\n- Weaker join support; relationships across documents are handled in the application\n- Uses: product catalogues with varied attributes, content management, user profiles\n\n## Wide-column stores\n\nWide-column stores such as Cassandra, HBase and Bigtable organize data by row key into column families, designed for huge write volumes across many machines.\n\n- Linear write scaling, tunable consistency, multi-region replication\n- You design tables around queries; ad-hoc queries are hard\n- Uses: time series, event logs, messaging history, IoT data\n\n## Graph databases\n\nGraph databases such as Neo4j store nodes and edges directly, making multi-hop relationship queries fast.\n\n- Uses: social graphs (\"friends of friends\"), recommendations, fraud rings, knowledge graphs\n- Less suited to bulk aggregation or plain key lookups\n\n## Object storage and search\n\nTwo other stores appear in almost every design:\n\n- **Object storage** such as Amazon S3 or Google Cloud Storage holds large binary files: images, videos, backups. It's cheap, durable and effectively unlimited, accessed by key over HTTP. Store the file there and keep only its URL and metadata in the database\n- **Search engines** such as Elasticsearch and OpenSearch build inverted indexes for full-text search, ranking and faceted filters. They're usually fed from the primary database, not used as the source of truth\n\n## Comparison\n\n| Store | Data model | Strength | Weakness |\n|---|---|---|---|\n| Relational | Tables, schema | Transactions, joins, flexible queries | Write scaling beyond one primary |\n| Key-value | Key → value | Speed, straightforward scaling | Query only by key |\n| Document | JSON documents | Flexible schema, nested reads | Cross-document joins |\n| Wide-column | Rows and column families | Massive writes, multi-region | Query-driven modelling |\n| Graph | Nodes and edges | Relationship traversal | Aggregations |\n| Object storage | Files by key | Cheap, durable bulk storage | Not a query engine |\n\n## Polyglot persistence\n\nReal systems combine stores, each for what it does best. An e-commerce platform might use PostgreSQL for orders and payments, Redis for sessions and caching, Elasticsearch for product search, S3 for product images, and a wide-column store for clickstream events. The cost is operational: more systems to run, monitor and keep in sync, usually via change data capture or event streams.\n\n## A decision approach\n\nAsk these questions in order:\n\n1. Do we need multi-row transactions or complex relational queries? If yes, start relational\n2. What are the main access patterns? Key lookups suggest key-value; whole-entity reads suggest documents\n3. What's the write volume and scale? Massive write rates across regions suggest wide-column\n4. Are relationships the core of the queries? Consider a graph database\n5. Are there large files or full-text search needs? Add object storage or a search engine\n\n\"Use NoSQL because it scales\" isn't a reason on its own. State the access pattern and requirement that drives the choice.\n\n## How interviewers test this\n\nExpect \"SQL or NoSQL for this system, and why?\" Tie the choice to transactions, access patterns and write volume, store media in object storage, and mention polyglot persistence with its operational cost.",
+              "sources": [
+                {
+                  "title": "donnemartin/system-design-primer",
+                  "url": "https://github.com/donnemartin/system-design-primer",
+                  "license": "CC BY 4.0"
+                },
+                {
+                  "title": "binhnguyennus/awesome-scalability",
+                  "url": "https://github.com/binhnguyennus/awesome-scalability",
+                  "license": "MIT"
+                },
+                {
+                  "title": "DeCandia et al., Dynamo: Amazon's Highly Available Key-value Store (2007)",
+                  "url": "https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf"
+                }
+              ],
+              "sections": [
+                {
+                  "type": "quickCheck",
+                  "question": "Where should a video-sharing app store the video files themselves?",
+                  "options": [
+                    "Object storage such as S3, with metadata in a database",
+                    "In a relational table as BLOBs",
+                    "In Redis",
+                    "In the search index"
+                  ],
+                  "answer": 0,
+                  "explanation": "Object storage is cheap, durable and built for large files; the database keeps URLs and metadata."
+                },
+                {
+                  "type": "interviewTraps",
+                  "title": "Interview traps",
+                  "traps": [
+                    {
+                      "question": "Use MongoDB because NoSQL scales.",
+                      "trap": "No link to requirements or access patterns.",
+                      "solution": "Explain transactions, query shapes and write volume, then choose."
+                    },
+                    {
+                      "question": "Store user-uploaded images in the database.",
+                      "trap": "Bloats the database and its backups.",
+                      "solution": "Put files in object storage and store references."
+                    }
+                  ]
+                },
+                {
+                  "type": "takeaways",
+                  "title": "Key takeaways",
+                  "items": [
+                    "Relational databases suit transactions and varied queries.",
+                    "Key-value stores suit fast lookups by key; documents suit whole-entity reads.",
+                    "Wide-column stores suit massive write volumes; graphs suit relationship queries.",
+                    "Combine stores per need, and justify each with an access pattern."
+                  ]
+                }
+              ]
+            },
+            "legacySlug": "system-design-sd-data-lesson-2",
+            "legacyId": "system-design-sd-data-lesson-2"
+          },
+          {
+            "id": "system-design-caching",
+            "slug": "caching",
+            "title": "Caching Strategies and Pitfalls",
+            "description": "Where to cache, cache-aside vs write-through vs write-back, eviction, invalidation and stampedes.",
+            "estimatedMinutes": 25,
+            "content": {
+              "theory": "Caching keeps frequently used data in fast storage, usually memory, so most requests avoid slow work such as database queries or remote calls. A good cache can cut latency from tens of milliseconds to under one and reduce database load by an order of magnitude. Caching also introduces its hardest problems: stale data and invalidation. This lesson covers cache layers, update strategies, eviction, invalidation and the failure modes interviewers ask about.\n\n## Where caches live\n\nCaching happens at every layer:\n\n- **Client**: browser caches and mobile app storage\n- **CDN**: static and shareable content at the edge\n- **Web server / reverse proxy**: cached HTTP responses\n- **Application**: an in-process cache in each server, or a distributed cache such as Redis or Memcached shared by all servers\n- **Database**: buffer pools and query caches inside the database itself\n\nIn-process caches are fastest but each server has its own copy, so data can differ between servers. A distributed cache is shared and consistent across servers, at the cost of a network hop.\n\n## What to cache\n\nGood candidates are read often, change rarely and are expensive to compute: user profiles, product details, rendered page fragments, computed feeds, session data. Data accessed with a skewed distribution benefits most: if 20% of items get 80% of reads, caching that 20% captures most of the benefit.\n\n## Cache-aside (lazy loading)\n\nThe application manages the cache directly:\n\n1. Look up the key in the cache\n2. On a hit, return it\n3. On a miss, read from the database, store the result in the cache with a TTL, and return it\n\n~~~text\nvalue = cache.get(key)\nif value is null:\n    value = db.query(key)\n    cache.set(key, value, ttl=300)\nreturn value\n~~~\n\nOnly requested data is cached, and a cache failure degrades performance without breaking correctness. Downsides: each miss costs three trips, and data can be stale until the TTL expires or the key is invalidated. Cache-aside is the most common strategy.\n\n## Write-through\n\nEvery write goes to the cache and the database together, so the cache is always current. Reads are fast and fresh, but writes are slower, and the cache fills with data that may never be read. It's often combined with cache-aside for reads.\n\n## Write-back (write-behind)\n\nWrites go to the cache only, and the cache flushes them to the database asynchronously, often in batches. Writes are fast, but if the cache node fails before flushing, data is lost. It suits high-volume, loss-tolerant data such as view counters, not orders or payments.\n\n## Refresh-ahead\n\nThe cache refreshes popular entries before they expire, so users rarely see a miss. It works well when access patterns are predictable, and wastes work when predictions are wrong.\n\n## Eviction policies\n\nMemory is limited, so caches evict entries when full:\n\n| Policy | Evicts | Notes |\n|---|---|---|\n| LRU (least recently used) | The entry unused for longest | The most common default |\n| LFU (least frequently used) | The entry used least often | Better for stable popularity |\n| FIFO | The oldest entry | Rarely ideal |\n| TTL expiry | Entries past their time to live | Bounds staleness |\n\nRedis supports several of these as configurable policies.\n\n## Invalidation\n\nWhen the underlying data changes, cached copies become stale. Strategies:\n\n- **TTL**: accept staleness up to a bound, such as 5 minutes. Simplest, and often good enough\n- **Delete on write**: when data changes, delete the cache key so the next read reloads it. Deleting is safer than updating the cache, because two concurrent updates can write cache values in the wrong order\n- **Event-driven invalidation**: publish change events, often from the database's change log, and have cache consumers react\n\nEven with delete-on-write, races exist: a reader can load old data from the database moments before a writer deletes the key, then write the stale value back into the cache. Short TTLs bound the damage.\n\n## Failure modes\n\n- **Cache stampede** (thundering herd): a hot key expires and thousands of requests miss at once, all hitting the database. Fixes: a lock so only one request rebuilds the value, serving stale data while refreshing, or adding random jitter to TTLs\n- **Cache penetration**: requests for keys that don't exist always miss and hit the database, sometimes as an attack. Fix: cache \"not found\" results briefly, or use a Bloom filter\n- **Hot keys**: one key gets so much traffic that its cache node saturates. Fix: replicate the key across nodes or keep a local in-process copy\n- **Cold start**: after a restart, an empty cache sends all traffic to the database. Fix: warm the cache before taking traffic\n\n## How interviewers test this\n\nExpect \"Where would you add caching?\", \"Cache-aside vs write-through?\" and \"How do you keep the cache consistent?\" Place caches at the right layers, default to cache-aside with TTLs and delete-on-write, and explain stampede protection for hot keys.",
+              "sources": [
+                {
+                  "title": "donnemartin/system-design-primer",
+                  "url": "https://github.com/donnemartin/system-design-primer",
+                  "license": "CC BY 4.0"
+                },
+                {
+                  "title": "Amazon Builders' Library",
+                  "url": "https://aws.amazon.com/builders-library/"
+                },
+                {
+                  "title": "binhnguyennus/awesome-scalability",
+                  "url": "https://github.com/binhnguyennus/awesome-scalability",
+                  "license": "MIT"
+                }
+              ],
+              "sections": [
+                {
+                  "type": "quickCheck",
+                  "question": "A popular key expires and thousands of requests hit the database at once. What is this called?",
+                  "options": [
+                    "A cache stampede (thundering herd)",
+                    "Cache penetration",
+                    "Write-back loss",
+                    "Replication lag"
+                  ],
+                  "answer": 0,
+                  "explanation": "Fix it with a rebuild lock, stale-while-revalidate or TTL jitter."
+                },
+                {
+                  "type": "interviewTraps",
+                  "title": "Interview traps",
+                  "traps": [
+                    {
+                      "question": "Update the cached value on every write.",
+                      "trap": "Concurrent writes can leave the cache with the older value.",
+                      "solution": "Delete the key and let the next read repopulate it."
+                    },
+                    {
+                      "question": "Use write-back caching for payments.",
+                      "trap": "A cache node failure loses unflushed writes.",
+                      "solution": "Use write-back only for loss-tolerant data such as counters."
+                    }
+                  ]
+                },
+                {
+                  "type": "takeaways",
+                  "title": "Key takeaways",
+                  "items": [
+                    "Cache data that is read often, changes rarely and is expensive to produce.",
+                    "Cache-aside is the default; write-through keeps caches fresh; write-back is fast but can lose data.",
+                    "Delete cache keys on writes and bound staleness with TTLs.",
+                    "Protect hot keys from stampedes, penetration and node saturation."
+                  ]
+                }
+              ]
+            },
+            "legacySlug": "system-design-sd-data-lesson-3",
+            "legacyId": "system-design-sd-data-lesson-3"
+          },
+          {
+            "id": "system-design-consistent-hashing",
+            "slug": "consistent-hashing",
+            "title": "Consistent Hashing",
+            "description": "Distribute keys across nodes so adding or removing a node moves only a small fraction of data.",
+            "estimatedMinutes": 20,
+            "content": {
+              "theory": "When data or requests are spread across N servers, the obvious approach, server = hash(key) mod N, breaks badly when N changes: almost every key moves to a different server. Consistent hashing fixes this, so adding or removing a node moves only about 1/N of the keys. It underpins distributed caches, Dynamo-style databases, and load balancers that need affinity. This lesson explains the problem, the hash ring, virtual nodes and where it's used.\n\n## The problem with mod N\n\nSuppose 4 cache servers and keys placed with hash(key) mod 4. Adding a fifth server changes the formula to mod 5, and a key's server changes unless hash(key) mod 4 happens to equal hash(key) mod 5. Roughly 80% of keys move.\n\nFor a cache, that means a sudden flood of misses that can overload the database. For a database, it means moving most of the data. Either way, scaling becomes dangerous.\n\n## The hash ring\n\nConsistent hashing maps both servers and keys onto the same circular space, for example 0 to 2³² − 1, arranged as a ring:\n\n1. Hash each server's ID to a position on the ring\n2. Hash each key to a position on the ring\n3. Assign each key to the first server found moving clockwise from its position\n\n~~~text\n          S1\n     k3 /    \\ k1\n       S3      S2\n          \\  /\n           k2\n~~~\n\nWhen a server joins, it takes over only the keys between its position and the previous server's position. When a server leaves, only its keys move to the next server clockwise. On average, adding or removing one of N servers moves about 1/N of the keys.\n\n## Lookup implementation\n\nKeep server positions in a sorted structure, such as a sorted array or a balanced tree (Java's TreeMap). To find a key's server, hash the key and find the smallest position greater than or equal to it, wrapping around to the start of the ring if necessary. With a sorted array and binary search, lookups cost O(log N).\n\n## The imbalance problem\n\nWith few servers, random positions divide the ring unevenly: one server might own 40% of the ring while another owns 10%. Uneven ownership means uneven load. And when a server fails, all its keys land on a single neighbour, which may be overwhelmed.\n\n## Virtual nodes\n\nThe fix is **virtual nodes**: place each physical server at many positions on the ring, for example 100 to 200, by hashing \"S1-0\", \"S1-1\" and so on. Each server then owns many small arcs scattered around the ring.\n\nBenefits:\n\n- **Even distribution**: many small arcs average out, so each server's share approaches 1/N\n- **Smooth rebalancing**: when a server leaves, its many arcs spread across many other servers instead of one neighbour\n- **Heterogeneous capacity**: a server with twice the capacity gets twice as many virtual nodes\n\nThe cost is a larger lookup table, which is negligible in practice.\n\n## Replication on the ring\n\nDynamo-style databases store each key on the first R distinct physical servers clockwise from its position. Losing one server leaves R − 1 copies, and the ring tells every node where copies live without a central directory.\n\n## Where consistent hashing is used\n\n- **Distributed caches**: client libraries for Memcached and Redis clusters use it so adding a cache node invalidates only a fraction of keys\n- **Databases**: Amazon Dynamo, Cassandra and Riak place and replicate data with it\n- **Load balancing with affinity**: routing a user or session to the same backend while tolerating backend changes\n- **CDNs and content routing**: mapping objects to cache servers within a location\n\nRedis Cluster uses a related approach, fixed hash slots: 16,384 slots assigned to nodes, moved slot by slot during resharding.\n\n## Alternatives\n\n**Rendezvous hashing** (highest random weight) computes a score for each key-server pair and picks the highest, giving similar minimal movement without a ring. **Jump consistent hash** maps keys to numbered buckets with almost no memory. Both are worth naming to show breadth.\n\n## How interviewers test this\n\nExpect \"How would you distribute data across cache nodes?\" and \"What happens when a node is added?\" Explain why mod N moves most keys, describe the ring with clockwise assignment, add virtual nodes for balance, and give real systems that use it.",
+              "sources": [
+                {
+                  "title": "donnemartin/system-design-primer",
+                  "url": "https://github.com/donnemartin/system-design-primer",
+                  "license": "CC BY 4.0"
+                },
+                {
+                  "title": "DeCandia et al., Dynamo: Amazon's Highly Available Key-value Store (2007)",
+                  "url": "https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf"
+                }
+              ],
+              "sections": [
+                {
+                  "type": "quickCheck",
+                  "question": "With consistent hashing and N servers, roughly what fraction of keys move when one server is added?",
+                  "options": [
+                    "About 1/N",
+                    "About half",
+                    "Almost all",
+                    "None"
+                  ],
+                  "answer": 0,
+                  "explanation": "Only keys in the new server's arc move; mod N hashing moves most keys."
+                },
+                {
+                  "type": "interviewTraps",
+                  "title": "Interview traps",
+                  "traps": [
+                    {
+                      "question": "Add a cache node with mod N hashing during peak traffic.",
+                      "trap": "Most keys remap and the database is flooded with misses.",
+                      "solution": "Use consistent hashing so only about 1/N of keys move."
+                    },
+                    {
+                      "question": "Three servers on a ring with one position each.",
+                      "trap": "Uneven arcs give uneven load.",
+                      "solution": "Use many virtual nodes per server."
+                    }
+                  ]
+                },
+                {
+                  "type": "takeaways",
+                  "title": "Key takeaways",
+                  "items": [
+                    "hash(key) mod N moves most keys when N changes.",
+                    "Consistent hashing places keys and servers on a ring; keys go to the next server clockwise.",
+                    "Virtual nodes even out load and spread a failed server's keys.",
+                    "Used by Dynamo, Cassandra and distributed cache clients."
+                  ]
+                }
+              ]
+            },
+            "legacySlug": "system-design-sd-data-lesson-4",
+            "legacyId": "system-design-sd-data-lesson-4"
+          }
+        ]
+      },
+      {
+        "id": "system-design-sd-mod-4",
+        "slug": "sd-async-reliability",
+        "title": "Async Processing and Reliability",
+        "description": "Message queues and streams, rate limiting, and patterns that contain failures.",
+        "difficulty": "Advanced",
+        "estimatedMinutes": 70,
+        "lessons": [
+          {
+            "id": "system-design-message-queues-and-event-streaming",
+            "slug": "message-queues-and-event-streaming",
+            "title": "Message Queues and Event Streaming",
+            "description": "Decouple services with queues and logs: delivery guarantees, ordering, backpressure and Kafka vs RabbitMQ.",
+            "estimatedMinutes": 25,
+            "content": {
+              "theory": "Not every task should happen while a user waits. Sending email, resizing images, updating search indexes and fanning out notifications can run in the background. Message queues and event streams make that possible: producers publish messages, and consumers process them at their own pace. This lesson explains why asynchronous processing helps, queues versus logs, delivery guarantees, ordering and backpressure.\n\n## Why go asynchronous\n\nAsynchronous messaging gives three benefits:\n\n- **Lower latency**: the request returns as soon as the work is queued. Uploading a video returns in milliseconds while transcoding happens later\n- **Decoupling**: producers don't need to know who consumes their messages, and either side can be deployed, scaled or fail independently\n- **Load levelling**: a traffic spike fills the queue instead of overwhelming downstream services, which drain it at a steady rate\n\nThe cost is complexity: eventual consistency, duplicate messages, monitoring queue depth and debugging flows that cross services.\n\n## Queues versus logs\n\nTwo main models exist:\n\n| | Message queue | Event log (stream) |\n|---|---|---|\n| Examples | RabbitMQ, Amazon SQS | Apache Kafka, Amazon Kinesis, Redpanda |\n| After consumption | Message is removed | Message stays for the retention period |\n| Consumers | Compete for messages | Each consumer group reads independently at its own offset |\n| Replay | Not possible | Rewind offsets to reprocess history |\n| Typical use | Task distribution to workers | Event streaming, multiple subscribers, analytics |\n\nIn a queue, each message goes to one worker, which suits jobs like \"send this email\". In a log, many independent consumers, such as search indexing, analytics and notifications, can each read every event.\n\n## Delivery guarantees\n\nMessages can be lost or duplicated when producers, brokers or consumers fail. Systems offer three levels:\n\n- **At most once**: messages may be lost but never duplicated. Acceptable for metrics where occasional loss doesn't matter\n- **At least once**: messages are never lost but may be delivered more than once. The common default\n- **Exactly once**: each message's effect happens once. Achievable within some systems, such as Kafka transactions between topics, but end to end it usually means at-least-once delivery plus idempotent processing\n\nWith at-least-once delivery, consumers must be **idempotent**: processing the same message twice must have the same effect as once. Techniques include storing processed message IDs and skipping repeats, or using upserts keyed by a unique ID.\n\n## Acknowledgements and dead letters\n\nA consumer acknowledges a message only after processing succeeds. If it crashes first, the message becomes visible again for another consumer. Messages that fail repeatedly, perhaps because they're malformed, move to a **dead-letter queue** after a few attempts, so they don't block the queue forever and can be inspected later.\n\n## Ordering\n\nGlobal ordering across a large system is expensive. Kafka guarantees order only within a **partition**, so choosing the partition key decides what's ordered: partitioning by user ID keeps each user's events in order while allowing parallel processing across users. SQS standard queues don't guarantee order; FIFO queues do, with lower throughput.\n\n## Backpressure\n\nIf consumers fall behind, queues grow without limit. Monitor **queue depth** and consumer lag, and respond by:\n\n- autoscaling consumers based on lag\n- rate limiting producers when queues exceed a threshold\n- shedding or deferring low-priority work\n\nA growing queue is an early warning that a downstream service is struggling.\n\n## Choosing between them\n\nPick a work queue such as SQS or RabbitMQ when each task needs exactly one worker and nobody needs history. Pick a log such as Kafka when several systems react to the same events, when you need to replay events after a bug fix, or when throughput reaches hundreds of thousands of messages per second. Managed services reduce operational effort for both.\n\n## Common patterns\n\n- **Work queue**: background jobs distributed across workers\n- **Publish-subscribe**: one event, many interested consumers\n- **Fan-out**: one message becomes many, such as a post delivered to thousands of followers' feeds\n- **Event sourcing**: store every change as an event, and rebuild state by replaying the log\n- **Outbox pattern**: write the event to an outbox table in the same database transaction as the data change, then publish it, so data and events never disagree\n\n## How interviewers test this\n\nExpect \"Which parts would you make asynchronous?\", \"Kafka vs RabbitMQ?\" and \"How do you avoid processing a message twice?\" Move slow, non-blocking work behind a queue, choose a queue or a log by consumer pattern, assume at-least-once delivery with idempotent consumers, and partition by key for ordering.",
+              "sources": [
+                {
+                  "title": "donnemartin/system-design-primer",
+                  "url": "https://github.com/donnemartin/system-design-primer",
+                  "license": "CC BY 4.0"
+                },
+                {
+                  "title": "Amazon Builders' Library",
+                  "url": "https://aws.amazon.com/builders-library/"
+                },
+                {
+                  "title": "binhnguyennus/awesome-scalability",
+                  "url": "https://github.com/binhnguyennus/awesome-scalability",
+                  "license": "MIT"
+                }
+              ],
+              "sections": [
+                {
+                  "type": "quickCheck",
+                  "question": "With at-least-once delivery, what must consumers be?",
+                  "options": [
+                    "Idempotent, so duplicates have no extra effect",
+                    "Single-threaded",
+                    "Stateless with no database",
+                    "Faster than producers always"
+                  ],
+                  "answer": 0,
+                  "explanation": "Retries after failures can deliver a message twice."
+                },
+                {
+                  "type": "interviewTraps",
+                  "title": "Interview traps",
+                  "traps": [
+                    {
+                      "question": "Kafka guarantees ordering, so all events are in order.",
+                      "trap": "Order holds only within a partition.",
+                      "solution": "Partition by the key whose events must stay ordered."
+                    },
+                    {
+                      "question": "Send the email inside the signup request.",
+                      "trap": "Slow third-party calls add latency and failures to the request.",
+                      "solution": "Queue the email and process it asynchronously."
+                    }
+                  ]
+                },
+                {
+                  "type": "takeaways",
+                  "title": "Key takeaways",
+                  "items": [
+                    "Queues cut latency, decouple services and absorb spikes.",
+                    "Queues hand each message to one worker; logs let many consumer groups replay events.",
+                    "Assume at-least-once delivery and make consumers idempotent.",
+                    "Kafka orders messages within a partition, so choose the partition key carefully."
+                  ]
+                }
+              ]
+            },
+            "legacySlug": "system-design-sd-async-reliability-lesson-1",
+            "legacyId": "system-design-sd-async-reliability-lesson-1"
+          },
+          {
+            "id": "system-design-rate-limiting",
+            "slug": "rate-limiting",
+            "title": "Rate Limiting",
+            "description": "Protect services with token bucket, leaky bucket and window algorithms, locally and across a cluster.",
+            "estimatedMinutes": 20,
+            "content": {
+              "theory": "Rate limiting caps how many requests a client can make in a period. It protects services from abuse and overload, keeps costs predictable, and ensures one heavy user can't degrade everyone else. \"Design a rate limiter\" is also a classic interview question in its own right. This lesson explains the main algorithms, how to enforce limits across many servers, and how to communicate limits to clients.\n\n## Why rate limit\n\n- **Prevent abuse**: credential stuffing, scraping and denial-of-service attempts\n- **Protect capacity**: keep one client's burst from exhausting shared resources\n- **Fairness and cost control**: enforce plan quotas and cap spending on expensive downstream APIs\n\nLimits can apply per user, per API key, per IP address, per endpoint, or globally.\n\n## Token bucket\n\nA bucket holds up to B tokens and refills at R tokens per second. Each request takes one token; if the bucket is empty, the request is rejected.\n\n- Allows bursts up to B, then a steady rate of R\n- Memory-light: store the token count and last refill time per client\n- Used widely, including by AWS and Stripe\n\nRefill lazily on each request: compute tokens added since the last request, cap at B, then decide.\n\n## Leaky bucket\n\nRequests enter a queue that drains at a fixed rate. If the queue is full, new requests are dropped. It smooths traffic into a steady outflow, which suits protecting a downstream system that can't handle bursts, but bursts of legitimate traffic wait or get dropped.\n\n## Fixed window counter\n\nCount requests per client per fixed window, such as each calendar minute, and reject once the count exceeds the limit.\n\n- Cheap: one counter per client per window, for example an atomic increment in Redis with an expiry\n- Edge problem: a client can send the full limit at 12:00:59 and again at 12:01:00, doubling the allowed rate around the boundary\n\n## Sliding window log\n\nStore a timestamp for every request and count those within the last window. It's exact but uses memory proportional to the request rate, which is expensive at high volumes.\n\n## Sliding window counter\n\nA hybrid: keep counts for the current and previous fixed windows, and weight the previous count by how much of it overlaps the sliding window:\n\n~~~text\nestimate = current_count + previous_count × (1 − elapsed_fraction_of_current_window)\n~~~\n\nIt's nearly as accurate as the log, with the memory cost of fixed windows. It's a strong default for APIs.\n\n## Comparing algorithms\n\n| Algorithm | Bursts | Memory | Accuracy |\n|---|---|---|---|\n| Token bucket | Allowed up to bucket size | Low | Good |\n| Leaky bucket | Smoothed out | Low (queue) | Good |\n| Fixed window | Double burst at edges | Lowest | Approximate |\n| Sliding log | Precise | High | Exact |\n| Sliding window counter | Mostly precise | Low | Close to exact |\n\n## Distributed rate limiting\n\nWith many API servers, per-server counters let a client exceed the limit by spreading requests across servers. Options:\n\n- **Centralized store**: keep counters in Redis and update them atomically with INCR plus EXPIRE, or with a Lua script that checks and updates in one step to avoid race conditions\n- **Sticky routing**: route each client to one limiter instance by consistent hashing\n- **Local limits with sync**: each server enforces a share of the limit and periodically syncs, trading accuracy for speed\n\nThe centralized Redis approach is the usual interview answer. Mention that the limiter adds a network hop and that if Redis is unavailable you must decide whether to **fail open** (allow requests, preserving availability) or **fail closed** (reject them, preserving protection).\n\n## Where to enforce limits\n\nLimits usually live at the edge, in an API gateway or reverse proxy, so rejected traffic never reaches application servers. Finer, business-specific limits, such as five password attempts per account per hour, live in the application.\n\n## Telling clients\n\nReturn **429 Too Many Requests** with a `Retry-After` header, and expose limit headers such as `X-RateLimit-Limit`, `X-RateLimit-Remaining` and `X-RateLimit-Reset`. Well-behaved clients back off with exponential delays and jitter instead of retrying immediately.\n\n## How interviewers test this\n\nExpect \"Design a rate limiter\" or \"How would you stop one client overloading the API?\" Choose token bucket or sliding window counter with reasons, store counters in Redis with atomic operations, enforce at the gateway, return 429 with Retry-After, and state the fail-open versus fail-closed decision.",
+              "sources": [
+                {
+                  "title": "donnemartin/system-design-primer",
+                  "url": "https://github.com/donnemartin/system-design-primer",
+                  "license": "CC BY 4.0"
+                },
+                {
+                  "title": "Amazon Builders' Library",
+                  "url": "https://aws.amazon.com/builders-library/"
+                }
+              ],
+              "sections": [
+                {
+                  "type": "quickCheck",
+                  "question": "Which rate-limiting algorithm allows short bursts up to a fixed size while enforcing an average rate?",
+                  "options": [
+                    "Token bucket",
+                    "Leaky bucket",
+                    "Fixed window counter",
+                    "Sliding window log"
+                  ],
+                  "answer": 0,
+                  "explanation": "A full bucket permits a burst; refills enforce the long-term rate."
+                },
+                {
+                  "type": "interviewTraps",
+                  "title": "Interview traps",
+                  "traps": [
+                    {
+                      "question": "Each API server keeps its own counter.",
+                      "trap": "Clients exceed the limit by spreading requests across servers.",
+                      "solution": "Use a shared store such as Redis with atomic updates."
+                    },
+                    {
+                      "question": "Read the counter, then write count + 1.",
+                      "trap": "Concurrent requests race past the limit.",
+                      "solution": "Use INCR or a Lua script that checks and updates atomically."
+                    }
+                  ]
+                },
+                {
+                  "type": "takeaways",
+                  "title": "Key takeaways",
+                  "items": [
+                    "Token bucket allows bursts; leaky bucket smooths traffic.",
+                    "Fixed windows are cheap but allow double bursts at boundaries; sliding window counters fix this cheaply.",
+                    "Use atomic Redis operations for limits across many servers.",
+                    "Return 429 with Retry-After, and decide fail-open vs fail-closed."
+                  ]
+                }
+              ]
+            },
+            "legacySlug": "system-design-sd-async-reliability-lesson-2",
+            "legacyId": "system-design-sd-async-reliability-lesson-2"
+          },
+          {
+            "id": "system-design-reliability-patterns",
+            "slug": "reliability-patterns",
+            "title": "Reliability Patterns: Timeouts, Retries, Circuit Breakers and Observability",
+            "description": "Keep partial failures contained with timeouts, backoff, circuit breakers, bulkheads, and SLO-driven monitoring.",
+            "estimatedMinutes": 25,
+            "content": {
+              "theory": "In a distributed system, something is always failing: a server, a network link, a dependency. Reliability doesn't come from preventing failures; it comes from containing them so one slow component doesn't take down everything. This lesson covers timeouts, retries with backoff and jitter, circuit breakers, bulkheads, graceful degradation, and the monitoring practices, SLIs and SLOs, that tell you when users are affected.\n\n## Cascading failures\n\nImagine service A calls service B, and B becomes slow. A's threads wait on B, A runs out of threads, and now A is slow for its own callers. Failures spread upstream like this, called a **cascading failure**. Most reliability patterns exist to break this chain.\n\n## Timeouts\n\nEvery network call needs a timeout. Without one, a hung dependency holds resources forever. Choose timeouts from the dependency's measured latency, such as a little above its p99, and make sure the total of nested timeouts fits within the user-facing deadline. Passing a deadline along with each request lets downstream services stop work that no longer matters.\n\n## Retries with exponential backoff and jitter\n\nMany failures are transient, so retrying helps. But naive retries make outages worse: if every client retries immediately, a struggling service receives several times its normal load. Retry safely:\n\n- retry only **idempotent** operations, or use idempotency keys\n- use **exponential backoff**: wait 100 ms, then 200, 400, 800 and so on\n- add **jitter**, randomizing each wait, so clients don't retry in synchronized waves\n- cap the number of attempts, and use a **retry budget**, such as retries limited to 10% of requests\n\n## Circuit breakers\n\nA circuit breaker wraps calls to a dependency and tracks failures:\n\n| State | Behaviour |\n|---|---|\n| Closed | Calls pass through; failures are counted |\n| Open | After too many failures, calls fail immediately without contacting the dependency |\n| Half-open | After a cool-down, a few trial calls go through; success closes the circuit, failure reopens it |\n\nFailing fast saves resources, gives the struggling dependency time to recover, and lets the caller use a fallback immediately. Libraries such as Resilience4j implement this pattern.\n\n## Bulkheads\n\nShips have watertight compartments so one breach doesn't sink the ship. In software, **bulkheads** isolate resources: separate thread pools or connection pools per dependency, so a slow payment service can exhaust only its own pool, not the threads serving product pages.\n\n## Graceful degradation and load shedding\n\nWhen parts fail, serve a reduced experience rather than an error: show cached recommendations, hide the reviews widget, or queue an order for later confirmation. Under overload, **load shedding** rejects low-priority requests early, such as analytics beacons, to keep critical ones, such as checkout, working.\n\n## Redundancy and failover\n\nRun every critical component with redundancy across failure domains: multiple instances, multiple availability zones, and for the highest availability, multiple regions. Test failover regularly; untested failover often fails when it's needed. Chaos engineering, deliberately injecting failures as Netflix's Chaos Monkey does, builds confidence that recovery works.\n\n## SLIs, SLOs and error budgets\n\nMonitoring must answer one question: are users affected?\n\n- A **service level indicator** (SLI) measures user experience, such as the fraction of requests that succeed in under 300 ms\n- A **service level objective** (SLO) sets a target for it, such as 99.9% over 30 days\n- The **error budget** is the allowed shortfall: 0.1% of requests, about 43 minutes of full downtime per month\n\nWhen the budget is healthy, teams ship features faster; when it's spent, they prioritize reliability work. Google's SRE book popularized this approach.\n\n## Observability\n\nThree signals help you understand a running system:\n\n- **Metrics**: numeric time series, such as request rate, error rate and latency percentiles. The RED method (rate, errors, duration) suits services; the USE method (utilization, saturation, errors) suits resources\n- **Logs**: detailed records of events, structured as JSON with request IDs so they can be searched\n- **Traces**: the path of one request across services, showing where time is spent, collected with tools such as OpenTelemetry\n\nAlert on symptoms users feel, such as SLO burn rate, rather than on every CPU spike.\n\n## How interviewers test this\n\nExpect \"What happens if this service goes down?\" and \"How do you prevent cascading failures?\" Add timeouts everywhere, retries with backoff and jitter for idempotent calls, circuit breakers and bulkheads around dependencies, graceful degradation, and SLO-based monitoring with metrics, logs and traces.",
+              "sources": [
+                {
+                  "title": "Google, Site Reliability Engineering (free online)",
+                  "url": "https://sre.google/sre-book/table-of-contents/"
+                },
+                {
+                  "title": "Amazon Builders' Library",
+                  "url": "https://aws.amazon.com/builders-library/"
+                },
+                {
+                  "title": "donnemartin/system-design-primer",
+                  "url": "https://github.com/donnemartin/system-design-primer",
+                  "license": "CC BY 4.0"
+                }
+              ],
+              "sections": [
+                {
+                  "type": "quickCheck",
+                  "question": "Why add jitter to retry delays?",
+                  "options": [
+                    "So clients don't retry in synchronized waves that overload the service",
+                    "To make retries faster",
+                    "To guarantee exactly-once delivery",
+                    "To skip the timeout"
+                  ],
+                  "answer": 0,
+                  "explanation": "Randomized delays spread retries out over time."
+                },
+                {
+                  "type": "interviewTraps",
+                  "title": "Interview traps",
+                  "traps": [
+                    {
+                      "question": "Retry failed calls immediately, five times.",
+                      "trap": "Synchronized retries multiply load on a struggling service.",
+                      "solution": "Use exponential backoff with jitter and a retry budget."
+                    },
+                    {
+                      "question": "Our health dashboard shows CPU, so we know users are fine.",
+                      "trap": "Resource metrics don't show user experience.",
+                      "solution": "Measure SLIs such as success rate and p99 latency against SLOs."
+                    }
+                  ]
+                },
+                {
+                  "type": "takeaways",
+                  "title": "Key takeaways",
+                  "items": [
+                    "Every remote call needs a timeout that fits the overall deadline.",
+                    "Retry only idempotent operations, with exponential backoff, jitter and a cap.",
+                    "Circuit breakers fail fast; bulkheads isolate resources per dependency.",
+                    "Define SLIs and SLOs, use error budgets, and alert on user-facing symptoms."
+                  ]
+                }
+              ]
+            },
+            "legacySlug": "system-design-sd-async-reliability-lesson-3",
+            "legacyId": "system-design-sd-async-reliability-lesson-3"
+          }
+        ]
+      },
+      {
+        "id": "system-design-sd-mod-5",
+        "slug": "sd-walkthroughs",
+        "title": "Design Walkthroughs",
+        "description": "Complete designs of a URL shortener, news feed, chat system and notification system.",
+        "difficulty": "Advanced",
+        "estimatedMinutes": 120,
+        "lessons": [
+          {
+            "id": "system-design-design-url-shortener",
+            "slug": "design-url-shortener",
+            "title": "Design a URL Shortener",
+            "description": "A full walkthrough: requirements, estimates, ID generation, storage, caching and analytics.",
+            "estimatedMinutes": 30,
+            "content": {
+              "theory": "A URL shortener turns a long link into a short one, such as `sho.rt/aZ3kQ9b`, and redirects visitors to the original. It's the most common warm-up design problem because it touches every core idea: estimation, ID generation, read-heavy scaling and caching. This walkthrough follows the four-step framework from requirements to deep dives.\n\n## Step 1: requirements\n\n**Functional:**\n\n- Create a short URL for a long URL, optionally with a custom alias and expiry\n- Redirect a short URL to its long URL\n- Optional: click analytics per link\n\n**Non-functional:**\n\n- Heavily read-dominated: assume a 100:1 read-to-write ratio\n- Redirects must be fast, under about 50 ms at p99 excluding the user's network\n- Highly available: a broken redirect breaks every page that links to it\n- Short codes shouldn't be guessable in sequence, to avoid enumeration\n\n## Step 2: estimates\n\nAssume 100 million new URLs per month.\n\n- **Writes**: 10⁸ ÷ (2.5 × 10⁶ seconds) ≈ 40 per second\n- **Reads**: 100 × 40 = 4,000 per second on average, perhaps 10,000 at peak\n- **Storage**: each record (code, long URL up to about 2 KB, owner, timestamps) averages around 500 bytes. Over 5 years: 100M × 12 × 5 = 6 billion URLs × 500 bytes = 3 TB\n\n**Code length**: with 62 characters (a–z, A–Z, 0–9), 7 characters give 62⁷ ≈ 3.5 trillion combinations, far more than 6 billion. Seven characters is enough.\n\n## Step 3: high-level design\n\n**API:**\n\n~~~http\nPOST /api/urls        { \"longUrl\": \"...\", \"alias\": \"optional\", \"expiresAt\": \"optional\" }\n-> 201 { \"shortUrl\": \"https://sho.rt/aZ3kQ9b\" }\n\nGET /{code}\n-> 301 or 302 redirect with Location: <longUrl>\n~~~\n\n**Components:**\n\n~~~text\nClient -> Load balancer -> Stateless app servers -> Redis cache -> Database\n                                         \\-> Analytics events -> Queue -> Analytics store\n~~~\n\n**Data model**: a table `urls(code PRIMARY KEY, long_url, user_id, created_at, expires_at)`. Lookups are always by code, a perfect key-value access pattern, so a key-value or wide-column store such as DynamoDB or Cassandra fits well. A relational database with code as the primary key also works at this scale.\n\n## Step 4: deep dive on ID generation\n\nThe central question is how to generate unique short codes. Three approaches:\n\n**1. Hash the long URL**, for example MD5 or SHA-256, and take the first 7 Base62 characters. The same URL always produces the same code, which deduplicates. But truncated hashes collide, so you must check the database and retry with a salt on collision, which adds a read to every write.\n\n**2. Counter plus Base62 encoding.** A unique 64-bit number per URL, Base62-encoded, gives a short code with no collisions. The counter must be unique across servers:\n\n- a single database sequence becomes a bottleneck and single point of failure\n- **range allocation** fixes this: each app server reserves a block of IDs, such as 1,000,000 at a time, from a coordinator such as ZooKeeper or a database row, then hands them out locally. A crashed server wastes the rest of its block, which is acceptable\n- a **Snowflake-style** ID combines timestamp, machine ID and sequence bits, generated locally with no coordination\n\nSequential IDs produce guessable codes. Shuffle them by encrypting or permuting the number before encoding, so consecutive IDs don't map to consecutive codes.\n\n**3. Pre-generated keys.** A key generation service creates random unique codes ahead of time and stores them in a pool; servers take batches. No collision checks on the hot path, at the cost of another service.\n\nRange allocation with a permutation step is a strong interview answer: no collisions, no coordination per request, and non-sequential codes.\n\n**Custom aliases** go through a uniqueness check; conflicts return 409 Conflict.\n\n## Deep dive: fast redirects\n\nReads dominate, so cache aggressively. Put code → long URL in Redis with cache-aside. Link popularity is highly skewed, so even a modest cache holds the hot set and serves most redirects. With a 90%+ hit ratio, the database sees a few hundred reads per second. A CDN or edge cache can serve redirects for the hottest links too.\n\n**301 or 302?** A 301 (permanent) lets browsers cache the redirect, cutting load, but later clicks never reach your servers, so analytics miss them. A 302 (temporary) sends every click through you. Choose 302 if analytics matter, 301 if they don't.\n\n## Deep dive: analytics and expiry\n\nDon't write analytics synchronously in the redirect path. Publish a click event (code, timestamp, country, referrer) to a queue or log such as Kafka, and let consumers aggregate counts into an analytics store. The redirect stays fast even if analytics lag.\n\nFor expiry, check `expires_at` on read and return 410 Gone for expired links; a background job purges expired rows later. Cache TTLs must not outlive a link's expiry.\n\n## Scaling and reliability\n\n- App servers are stateless behind a redundant load balancer\n- Shard the URL table by hash of the code if one database isn't enough\n- Replicate the database and cache across availability zones\n- Rate limit link creation per user or IP to stop spam and abuse, and check long URLs against malware lists\n\n## How interviewers test this\n\nExpect the full design with special attention to ID generation, cache strategy and 301 versus 302. Show the estimate that justifies 7 Base62 characters, compare hashing with counters, and keep analytics off the critical path.",
+              "sources": [
+                {
+                  "title": "donnemartin/system-design-primer",
+                  "url": "https://github.com/donnemartin/system-design-primer",
+                  "license": "CC BY 4.0"
+                },
+                {
+                  "title": "binhnguyennus/awesome-scalability",
+                  "url": "https://github.com/binhnguyennus/awesome-scalability",
+                  "license": "MIT"
+                }
+              ],
+              "sections": [
+                {
+                  "type": "quickCheck",
+                  "question": "Why might a URL shortener return 302 instead of 301?",
+                  "options": [
+                    "So every click reaches the server and can be counted for analytics",
+                    "302 is faster",
+                    "301 is not allowed for redirects",
+                    "302 enables HTTPS"
+                  ],
+                  "answer": 0,
+                  "explanation": "Browsers cache 301s, so repeat clicks bypass the server."
+                },
+                {
+                  "type": "interviewTraps",
+                  "title": "Interview traps",
+                  "traps": [
+                    {
+                      "question": "Use one auto-increment column for all IDs.",
+                      "trap": "A single sequence is a bottleneck and produces guessable codes.",
+                      "solution": "Allocate ID ranges per server and permute before encoding."
+                    },
+                    {
+                      "question": "Truncate an MD5 hash to 7 characters and you're done.",
+                      "trap": "Truncated hashes collide.",
+                      "solution": "Check for collisions and retry, or use a counter-based scheme."
+                    }
+                  ]
+                },
+                {
+                  "type": "takeaways",
+                  "title": "Key takeaways",
+                  "items": [
+                    "7 Base62 characters give about 3.5 trillion codes.",
+                    "Range-allocated counters with Base62 avoid collisions and per-request coordination; permute IDs to avoid guessable codes.",
+                    "Cache code-to-URL mappings; popularity is highly skewed.",
+                    "Keep analytics asynchronous through a queue."
+                  ]
+                }
+              ]
+            },
+            "legacySlug": "system-design-sd-walkthroughs-lesson-1",
+            "legacyId": "system-design-sd-walkthroughs-lesson-1"
+          },
+          {
+            "id": "system-design-design-news-feed",
+            "slug": "design-news-feed",
+            "title": "Design a News Feed",
+            "description": "Fan-out on write vs read, the celebrity problem, feed storage, ranking and pagination.",
+            "estimatedMinutes": 30,
+            "content": {
+              "theory": "A news feed shows each user recent posts from people they follow, like the home timelines of Twitter, Instagram or LinkedIn. The central challenge is fan-out: one post must appear in the feeds of every follower, and some users have millions. This walkthrough covers requirements, the fan-out-on-write versus fan-out-on-read decision, the hybrid approach used in practice, storage, ranking and pagination.\n\n## Step 1: requirements\n\n**Functional:**\n\n- Users publish posts (text, images)\n- Users follow other users\n- Users see a feed of posts from people they follow, newest or ranked first, with infinite scroll\n\n**Non-functional:**\n\n- Feed loads in under about 200 ms\n- High availability; slightly stale feeds are acceptable (eventual consistency)\n- Read-heavy: feeds are viewed far more often than posts are created\n\n## Step 2: estimates\n\nAssume 300 million daily active users, each opening the feed 10 times and posting 0.5 times per day, with an average of 200 followed accounts.\n\n- **Feed reads**: 3 × 10⁹ per day ≈ 30,000 per second, perhaps 100,000 at peak\n- **Posts**: 1.5 × 10⁸ per day ≈ 1,500 per second\n- **Fan-out writes**, if every post is copied to every follower's feed: 1,500 × average followers (say 200) = 300,000 feed insertions per second\n\nThat last number drives the design.\n\n## Step 3: high-level design\n\n~~~text\nPost service -> Posts DB (+ media in object storage)\n            \\-> Fan-out service -> Feed cache (per-user lists in Redis)\nFeed service <- reads feed cache, hydrates post details from post cache\nSocial graph service: who follows whom\n~~~\n\nAPIs: `POST /posts`, `POST /users/{id}/follow`, `GET /feed?cursor=...`.\n\n## Fan-out on write (push)\n\nWhen a user posts, the fan-out service looks up their followers and inserts the post ID into each follower's precomputed feed list, typically a Redis list or sorted set capped at a few hundred entries.\n\n- **Pros**: feed reads are instant, since the feed is already assembled\n- **Cons**: writes are expensive, and a user with 50 million followers triggers 50 million inserts, delaying delivery and wasting work for inactive followers\n\n## Fan-out on read (pull)\n\nThe feed is built when requested: fetch the list of followed accounts, get each one's recent posts, merge and sort.\n\n- **Pros**: posting is cheap; no wasted work for inactive users\n- **Cons**: reads are slow and expensive, since a user following 500 accounts needs 500 lookups and a merge on every feed load\n\n## The hybrid approach\n\nProduction systems combine both:\n\n- **Ordinary users** (most accounts): fan out on write to their followers' feed caches\n- **Celebrities** (accounts above a follower threshold, such as 100,000): don't fan out. At read time, the feed service merges the precomputed feed with recent posts from the celebrities the user follows\n- **Inactive users**: skip pushing to users who haven't logged in recently; build their feed on demand when they return\n\nThis bounds write amplification while keeping reads fast. Twitter publicly described a design along these lines.\n\n## Storage\n\n- **Posts**: a sharded store keyed by post ID, with media in object storage behind a CDN. Post IDs from a Snowflake-style generator are roughly time-ordered, which helps sorting\n- **Social graph**: follower and following lists, sharded by user ID, often in a wide-column or graph store\n- **Feed cache**: per-user lists of post IDs only, not full posts, to keep memory small. The feed service **hydrates** IDs into full posts using a post cache, so edits and deletions appear everywhere\n\n## Ranking\n\nA chronological feed sorts by time. Ranked feeds score candidates by predicted engagement: author affinity, recency, post type and interaction counts. A common pipeline gathers a few hundred candidates from the feed cache and celebrity posts, scores them with a model, and returns the top results. Ranking adds latency, so scores are often precomputed or cached.\n\n## Pagination\n\nUse **cursor-based pagination** with the last seen post ID or timestamp: `GET /feed?cursor=1724400000123&limit=20`. Offset pagination breaks in a feed, because new posts shift every page and cause duplicates.\n\n## Other details\n\n- **New follows**: backfill a few recent posts from the followed account into the follower's feed\n- **Deletes**: remove post IDs lazily; hydration skips deleted posts\n- **Fan-out queue**: run fan-out through a message queue so posting returns immediately and workers scale independently\n\n## How interviewers test this\n\nExpect \"fan-out on write or read?\" and \"how do you handle celebrities?\" Quantify write amplification, propose the hybrid model, store post IDs in per-user feed caches, hydrate posts at read time, and paginate with cursors.",
+              "sources": [
+                {
+                  "title": "donnemartin/system-design-primer",
+                  "url": "https://github.com/donnemartin/system-design-primer",
+                  "license": "CC BY 4.0"
+                },
+                {
+                  "title": "binhnguyennus/awesome-scalability",
+                  "url": "https://github.com/binhnguyennus/awesome-scalability",
+                  "license": "MIT"
+                },
+                {
+                  "title": "Amazon Builders' Library",
+                  "url": "https://aws.amazon.com/builders-library/"
+                }
+              ],
+              "sections": [
+                {
+                  "type": "quickCheck",
+                  "question": "How do hybrid feed designs handle accounts with millions of followers?",
+                  "options": [
+                    "They skip fan-out for them and merge their posts at read time",
+                    "They fan out to every follower synchronously",
+                    "They block celebrity posts",
+                    "They store feeds only in SQL joins"
+                  ],
+                  "answer": 0,
+                  "explanation": "Pulling celebrity posts at read time avoids millions of writes per post."
+                },
+                {
+                  "type": "interviewTraps",
+                  "title": "Interview traps",
+                  "traps": [
+                    {
+                      "question": "Fan out every post to every follower.",
+                      "trap": "A celebrity post triggers tens of millions of writes.",
+                      "solution": "Exclude high-follower accounts from fan-out and merge them on read."
+                    },
+                    {
+                      "question": "Store full post objects in each follower's feed list.",
+                      "trap": "Huge memory use, and edits must update millions of copies.",
+                      "solution": "Store IDs and hydrate from a post cache."
+                    }
+                  ]
+                },
+                {
+                  "type": "takeaways",
+                  "title": "Key takeaways",
+                  "items": [
+                    "Fan-out on write makes reads fast but amplifies writes; fan-out on read does the opposite.",
+                    "Use a hybrid: push for ordinary users, pull for celebrities, lazy builds for inactive users.",
+                    "Store post IDs in feed caches and hydrate full posts at read time.",
+                    "Paginate feeds with cursors, not offsets."
+                  ]
+                }
+              ]
+            },
+            "legacySlug": "system-design-sd-walkthroughs-lesson-2",
+            "legacyId": "system-design-sd-walkthroughs-lesson-2"
+          },
+          {
+            "id": "system-design-design-chat-system",
+            "slug": "design-chat-system",
+            "title": "Design a Chat System",
+            "description": "Real-time messaging with WebSockets, message routing, storage, ordering, presence and offline delivery.",
+            "estimatedMinutes": 30,
+            "content": {
+              "theory": "A chat system such as WhatsApp, Slack or Messenger delivers messages between users in near real time, keeps history, shows who's online, and delivers messages to users who were offline. The challenges are maintaining millions of persistent connections, routing each message to the right server, and storing a huge, write-heavy message history. This walkthrough covers requirements, connections, routing, storage, ordering, presence and group chat.\n\n## Step 1: requirements\n\n**Functional:**\n\n- One-to-one and small group chats (say up to a few hundred members)\n- Message history, synced across a user's devices\n- Online presence and last seen\n- Delivery and read receipts\n- Push notifications for offline users\n\n**Non-functional:**\n\n- Low delivery latency, under a few hundred milliseconds\n- No lost messages; delivery at least once with deduplication\n- Per-conversation ordering\n- High availability at massive scale\n\n## Step 2: estimates\n\nAssume 500 million daily active users sending 40 messages each per day.\n\n- **Messages**: 2 × 10¹⁰ per day ≈ 200,000 per second on average, perhaps 1 million at peak\n- **Storage**: at about 200 bytes per message, 2 × 10¹⁰ × 200 = 4 TB per day, roughly 1.5 PB per year before replication\n- **Connections**: perhaps 100 million concurrent connections at peak. If one server holds about 100,000 to a few hundred thousand idle connections, that's hundreds to a thousand chat servers\n\nThe write volume and connection count shape the design.\n\n## Step 3: connections\n\nHTTP is request-response, so the server can't push messages. Options:\n\n- **Polling**: the client asks every few seconds. Wasteful and slow\n- **Long polling**: the server holds the request until a message arrives. Better, but connections constantly reconnect\n- **WebSockets**: one persistent, full-duplex connection per device. The standard choice for chat\n\nClients connect through a load balancer to a fleet of **chat servers** that hold WebSocket connections. Chat servers are stateful in one sense: each knows which users are connected to it. Everything else, such as history and user data, lives in shared stores.\n\n## Step 4: routing a message\n\nWhen Asha sends a message to Ravi:\n\n1. Asha's device sends the message over its WebSocket to chat server A, with a client-generated message ID for deduplication\n2. Server A assigns a sequence number for the conversation, persists the message, and acknowledges to Asha (one tick)\n3. Server A looks up which server holds Ravi's connection, in a **session registry** such as Redis mapping user ID to server ID\n4. If Ravi is online on server B, A forwards the message to B, often through a message bus or direct RPC, and B pushes it down Ravi's WebSocket\n5. Ravi's device acknowledges receipt (two ticks); a read event later updates the read receipt\n6. If Ravi is offline, the message waits in storage, and a push notification goes through APNs or FCM\n\n~~~text\nAsha -> Chat server A -> Message store\n                     \\-> Session registry: Ravi -> server B\n                     \\-> Chat server B -> Ravi    (or push notification if offline)\n~~~\n\n## Storage\n\nChat history is write-heavy, append-only and read by conversation, usually the most recent messages. A wide-column store such as Cassandra or HBase fits well: partition by conversation ID and cluster by message sequence or timestamp, so loading recent messages is one sequential read. Facebook Messenger used HBase, and Discord moved from Cassandra to ScyllaDB for this workload.\n\nStore media in object storage behind a CDN, sending only the URL in the message.\n\n## Ordering\n\nClocks across devices disagree, so client timestamps can't order messages reliably. Assign a monotonically increasing **sequence number per conversation** on the server when the message is persisted. Clients display messages by sequence number and detect gaps, requesting missing messages after reconnecting. Global ordering across all conversations isn't needed.\n\n## Offline sync and multiple devices\n\nEach device remembers the last sequence number it has seen per conversation. On reconnect, it asks for everything newer. This handles offline periods, multiple devices and flaky networks with one mechanism. Deduplicate by client message ID, since retries after a lost acknowledgement resend the same message.\n\n## Presence\n\nPresence uses heartbeats: connected clients send a heartbeat every few seconds; if heartbeats stop for, say, 30 seconds, the user is marked offline and last seen is updated. Broadcasting every status change to every contact is expensive for users with many contacts, so systems often fetch presence only for conversations currently on screen.\n\n## Group chat\n\nFor small groups, the server fans out each message to all members' connections, looking up each member's server in the registry. Message storage stays per conversation, so history is stored once. Huge channels, as in Slack or Discord, fan out differently, with clients pulling recent messages rather than receiving individual pushes for every member.\n\n## End-to-end encryption\n\nApps such as WhatsApp and Signal encrypt messages on the sender's device so servers can't read them, using the Signal protocol. The server then routes and stores ciphertext only, which limits server-side features such as search.\n\n## How interviewers test this\n\nExpect connection handling (WebSockets), message routing across servers, storage choice, ordering, and offline delivery. Use a session registry, per-conversation sequence numbers, a wide-column message store, client message IDs for deduplication, and push notifications for offline users.",
+              "sources": [
+                {
+                  "title": "donnemartin/system-design-primer",
+                  "url": "https://github.com/donnemartin/system-design-primer",
+                  "license": "CC BY 4.0"
+                },
+                {
+                  "title": "Ilya Grigorik, High Performance Browser Networking (free online)",
+                  "url": "https://hpbn.co/"
+                },
+                {
+                  "title": "binhnguyennus/awesome-scalability",
+                  "url": "https://github.com/binhnguyennus/awesome-scalability",
+                  "license": "MIT"
+                }
+              ],
+              "sections": [
+                {
+                  "type": "quickCheck",
+                  "question": "How should a chat system order messages within a conversation?",
+                  "options": [
+                    "With a server-assigned sequence number per conversation",
+                    "By each sender's device clock",
+                    "Alphabetically",
+                    "By message size"
+                  ],
+                  "answer": 0,
+                  "explanation": "Device clocks drift; a per-conversation sequence gives a consistent order and detects gaps."
+                },
+                {
+                  "type": "interviewTraps",
+                  "title": "Interview traps",
+                  "traps": [
+                    {
+                      "question": "Order messages by the sender's timestamp.",
+                      "trap": "Device clocks disagree, so order breaks.",
+                      "solution": "Assign server-side sequence numbers per conversation."
+                    },
+                    {
+                      "question": "Have clients poll for new messages every second.",
+                      "trap": "Huge wasted load and higher latency.",
+                      "solution": "Use persistent WebSocket connections."
+                    }
+                  ]
+                },
+                {
+                  "type": "takeaways",
+                  "title": "Key takeaways",
+                  "items": [
+                    "Use WebSockets for real-time delivery and a session registry to find each user's server.",
+                    "Store messages in a wide-column store partitioned by conversation.",
+                    "Order with per-conversation sequence numbers; sync devices by last-seen sequence.",
+                    "Deduplicate by client message ID and notify offline users via push."
+                  ]
+                }
+              ]
+            },
+            "legacySlug": "system-design-sd-walkthroughs-lesson-3",
+            "legacyId": "system-design-sd-walkthroughs-lesson-3"
+          },
+          {
+            "id": "system-design-design-notification-system",
+            "slug": "design-notification-system",
+            "title": "Design a Notification System",
+            "description": "Send push, SMS and email reliably at scale: queues, templates, preferences, retries and deduplication.",
+            "estimatedMinutes": 30,
+            "content": {
+              "theory": "A notification system delivers messages to users across channels: mobile push, SMS, email and in-app alerts. Almost every product needs one: order updates, login alerts, reminders, marketing campaigns. The challenges are integrating unreliable third-party providers, respecting user preferences, avoiding duplicates and absorbing huge bursts. This walkthrough covers requirements, architecture, delivery pipeline, reliability and rate limiting.\n\n## Step 1: requirements\n\n**Functional:**\n\n- Send notifications through push (iOS and Android), SMS and email, plus in-app\n- Triggered by other services (transactional) or scheduled campaigns (bulk)\n- Respect user preferences and opt-outs per channel and category\n- Templates with personalization, such as \"Hi Asha, your order has shipped\"\n\n**Non-functional:**\n\n- Transactional notifications, such as one-time passwords, delivered within seconds\n- No lost notifications, and avoid duplicates\n- Handle bursts, such as a campaign to 50 million users\n- Track delivery status\n\n## Step 2: estimates\n\nAssume 10 million push, 1 million SMS and 5 million emails per day for transactional traffic, with campaigns that occasionally target tens of millions at once. The average rate is low, around 200 per second, but campaigns create bursts far above that. Third-party providers have their own rate limits and costs, especially SMS.\n\nThe design must absorb bursts without slowing time-sensitive messages.\n\n## Step 3: high-level architecture\n\n~~~text\nServices / Scheduler -> Notification API -> Validation, preferences, templating\n                                              -> Priority queues per channel\n                                                   -> Channel workers -> Providers (APNs, FCM, SMS gateway, email service)\n                                              -> Notification log (status, dedup)\n~~~\n\n**Components:**\n\n- **Notification API**: accepts requests like `{ userId, type: \"order_shipped\", data: {...}, idempotencyKey }`\n- **Preference and contact store**: per-user opt-outs, quiet hours, device tokens, phone numbers and emails\n- **Template service**: renders localized content per channel\n- **Queues**: separate queues per channel and priority, so a huge email campaign can't delay one-time passwords\n- **Channel workers**: pull from queues, call providers, record results\n- **Notification log**: stores each notification's status for deduplication, retries and analytics\n\n## Step 4: the delivery pipeline\n\n1. A service calls the API with an event and an idempotency key\n2. The API validates the request, loads preferences, and drops channels the user has disabled or that fall in quiet hours\n3. It renders templates and enqueues one job per channel onto the right priority queue\n4. It returns 202 Accepted immediately; delivery is asynchronous\n5. Workers dequeue jobs, call the provider, and update the log: sent, delivered, failed\n\nSeparating acceptance from delivery lets the API stay fast during bursts while workers drain queues at the rate providers allow.\n\n## Reliability\n\n**Retries**: provider calls fail transiently. Workers retry with exponential backoff and jitter, up to a limit, then move the job to a dead-letter queue for inspection. Some failures are permanent, such as an invalid device token, which should be removed from the user's record rather than retried.\n\n**At-least-once delivery and deduplication**: queues may redeliver a job after a worker crash. Before sending, workers check the notification log for the idempotency key or job ID and skip if already sent. Duplicate SMS messages cost money and annoy users, so this check matters.\n\n**Provider failover**: for critical channels like SMS, integrate two providers and switch when one degrades.\n\n**Persistence**: write each notification to the log before enqueueing, using the outbox pattern, so a crash between the two steps doesn't lose it.\n\n## Rate limiting and user experience\n\n- **Provider limits**: throttle workers to each provider's allowed rate\n- **Per-user limits**: cap how many notifications one user gets per hour, and batch low-priority ones into a digest\n- **Priorities**: one-time passwords and security alerts jump ahead of marketing\n- **Quiet hours and time zones**: schedule campaigns in each user's local time\n\n## Tracking and analytics\n\nRecord sent, delivered, opened and clicked events. Providers report delivery through callbacks or webhooks; emails use tracking pixels and link redirects. These events feed dashboards and help prune unengaged users from campaigns.\n\n## Security and compliance\n\nStore contact details securely, honour unsubscribe links (required for marketing email in many jurisdictions), and never include sensitive data such as full card numbers in notification content.\n\n## How interviewers test this\n\nExpect the pipeline design, plus \"How do you avoid duplicate notifications?\" and \"How do you stop a campaign from delaying OTPs?\" Use per-channel priority queues, asynchronous workers, preference checks before enqueueing, retries with backoff and dead-letter queues, and idempotency checks against a notification log.",
+              "sources": [
+                {
+                  "title": "donnemartin/system-design-primer",
+                  "url": "https://github.com/donnemartin/system-design-primer",
+                  "license": "CC BY 4.0"
+                },
+                {
+                  "title": "Amazon Builders' Library",
+                  "url": "https://aws.amazon.com/builders-library/"
+                }
+              ],
+              "sections": [
+                {
+                  "type": "quickCheck",
+                  "question": "How do you stop a 50-million-email campaign from delaying one-time-password SMS messages?",
+                  "options": [
+                    "Separate queues per channel and priority, with OTPs on a high-priority queue",
+                    "Send everything through one queue",
+                    "Send OTPs by email instead",
+                    "Disable campaigns"
+                  ],
+                  "answer": 0,
+                  "explanation": "Isolating queues keeps bulk traffic from blocking time-critical messages."
+                },
+                {
+                  "type": "interviewTraps",
+                  "title": "Interview traps",
+                  "traps": [
+                    {
+                      "question": "Call the SMS provider directly inside the API request.",
+                      "trap": "Provider latency and outages hit the caller, and bursts overwhelm the provider.",
+                      "solution": "Queue the job and let rate-limited workers deliver it."
+                    },
+                    {
+                      "question": "A worker crashed after sending; the job is redelivered.",
+                      "trap": "The user receives the SMS twice.",
+                      "solution": "Check the notification log by idempotency key before sending."
+                    }
+                  ]
+                },
+                {
+                  "type": "takeaways",
+                  "title": "Key takeaways",
+                  "items": [
+                    "Accept requests quickly and deliver asynchronously through queues.",
+                    "Use separate queues per channel and priority.",
+                    "Retry transient provider failures with backoff; dead-letter persistent failures.",
+                    "Deduplicate with idempotency keys and a notification log; respect preferences and quiet hours."
+                  ]
+                }
+              ]
+            },
+            "legacySlug": "system-design-sd-walkthroughs-lesson-4",
+            "legacyId": "system-design-sd-walkthroughs-lesson-4"
+          }
+        ]
+      }
+    ]
+  },
+  {
     "id": "course-quant-aptitude",
     "slug": "quantitative-aptitude",
     "title": "Quantitative Aptitude",

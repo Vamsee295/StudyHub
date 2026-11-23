@@ -11,6 +11,7 @@ import { aptitudeLogicalCourse } from './aptitude-logical';
 import { aptitudeVerbalCourse } from './aptitude-verbal';
 import { aptitudeDataCourse } from './aptitude-data';
 import { aptitudePlacementCourse } from './aptitude-placement';
+import { systemDesignCourse } from './system-design';
 
 export const ALL_COURSES: Course[] = [
   programmingFundamentalsCourse,
@@ -25,6 +26,7 @@ export const ALL_COURSES: Course[] = [
   aptitudeVerbalCourse,
   aptitudeDataCourse,
   aptitudePlacementCourse,
+  systemDesignCourse,
 ].sort((a, b) => a.displayOrder - b.displayOrder);
 
 // Ensure all IDs are globally unique to prevent DB constraint errors.

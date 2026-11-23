@@ -7,6 +7,7 @@ import { dsaQuestions } from "./dsa";
 import { sqlQuestions } from "./sql";
 import { oopQuestions } from "./oop";
 import { pfQuestions } from "./programming-fundamentals";
+import { systemDesignQuestions } from "./system-design";
 import { quantQuestions, logicalQuestions, verbalQuestions, diQuestions, placementAptitudeQuestions } from "./aptitude";
 
 /** q: question, o: four options, a: index of the correct option, e: explanation */
@@ -26,4 +27,5 @@ export const EXTRA_QUESTIONS: Record<string, LessonQuestions> = {
   "verbal-ability": verbalQuestions,
   "data-interpretation": diQuestions,
   "placement-aptitude": placementAptitudeQuestions,
+  "system-design": systemDesignQuestions,
 };
