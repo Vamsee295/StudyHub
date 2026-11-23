@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { DailyCard } from "@/components/learn/DailyCard";
 import { motion, useReducedMotion } from "framer-motion";
 import { 
   PlayCircle, 
@@ -99,6 +100,7 @@ export default function LearnPage() {
           <Link href="/learn/map" className="inline-flex items-center gap-1.5 mt-3 px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--surface)] text-[13px] font-medium text-[var(--ink)] hover:border-[var(--accent)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]">
             <Share2 aria-hidden="true" className="w-4 h-4 text-[var(--accent)]" /> Concept map: see how every topic connects
           </Link>
+          <div className="mt-3 max-w-2xl"><DailyCard /></div>
         </div>
 
         {/* Sub-navigation Tabs */}

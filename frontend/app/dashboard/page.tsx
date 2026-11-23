@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { DailyCard } from "@/components/learn/DailyCard";
 import { motion, useReducedMotion } from "framer-motion";
 import { 
   CheckCircle2, 
@@ -190,6 +191,8 @@ export default function DashboardPage() {
           </div>
         </div>
       </motion.section>
+
+      <DailyCard />
 
       {/* MAIN DASHBOARD GRID */}
       <div className="w-full min-w-0 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start box-border">
