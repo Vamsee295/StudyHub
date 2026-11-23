@@ -15,7 +15,7 @@ def get_ai_provider() -> BaseAIProvider:
     if _provider_instance is not None:
         return _provider_instance
         
-    provider_name = settings.LLM_PROVIDER.lower()
+    provider_name = settings.llm_provider.lower()
     
     if provider_name == "groq":
         _provider_instance = GroqProvider()

@@ -1,4 +1,5 @@
 import { ExecutionRequest, ExecutionResult } from "./executionTypes";
+import { getAuthToken } from "@/lib/api/client";
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 export const executeCode = async (request: ExecutionRequest, isSubmit: boolean = false): Promise<ExecutionResult> => {
@@ -8,6 +9,7 @@ export const executeCode = async (request: ExecutionRequest, isSubmit: boolean =
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${await getAuthToken()}`,
     },
     body: JSON.stringify(request),
   });
@@ -24,6 +26,7 @@ export const explainError = async (code: string, errorMessage: string, language:
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${await getAuthToken()}`,
     },
     body: JSON.stringify({ code, error_message: errorMessage, language }),
   });

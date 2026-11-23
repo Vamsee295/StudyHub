@@ -39,4 +39,5 @@ class UserPracticeAttempt(Base):
     score = Column(Integer, default=0)
     total_questions = Column(Integer, default=0)
     duration_seconds = Column(Integer, default=0)
+    answers = Column(JSON)  # {question_id: {choice, text, self_solved, is_correct, graded_by}}
     completed_at = Column(DateTime, default=datetime.utcnow)

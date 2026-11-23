@@ -22,6 +22,7 @@ import React, {
 } from "react";
 import Link from "next/link";
 import { Play, RotateCcw, ChevronLeft, FileCode2 } from "lucide-react";
+import { getAuthToken } from "@/lib/api/client";
 
 import Explorer from "./Explorer/Explorer";
 import ContextMenu from "./Explorer/ContextMenu";
@@ -222,7 +223,7 @@ async function runCodeOnBackend(
 
   const res = await fetch(`${BACKEND_URL}/api/practice/code/execute`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${await getAuthToken()}` },
     body: JSON.stringify(payload),
   });
 

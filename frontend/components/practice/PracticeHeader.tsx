@@ -1,6 +1,12 @@
 import { Trophy, TrendingUp } from "lucide-react";
 
-export function PracticeHeader() {
+type PracticeHeaderProps = {
+  streakDays: number;
+  solved: number;
+  totalProblems: number;
+};
+
+export function PracticeHeader({ streakDays, solved, totalProblems }: PracticeHeaderProps) {
   return (
     <section className="flex flex-col gap-6">
       {/* Eyebrow */}
@@ -30,14 +36,14 @@ export function PracticeHeader() {
             <Trophy className="w-4 h-4 text-[var(--warning)]" />
             <div className="flex flex-col">
               <span className="text-[10px] text-[var(--ink-secondary)] uppercase font-semibold tracking-wider">Sprint Streak</span>
-              <span className="text-[13px] font-semibold text-[var(--ink)]">7 Days Active</span>
+              <span className="text-[13px] font-semibold text-[var(--ink)]">{streakDays === 0 ? "Not started" : `${streakDays} Day${streakDays === 1 ? "" : "s"} Active`}</span>
             </div>
           </div>
           <div className="flex items-center gap-2 bg-[var(--surface-subdued)] border border-[var(--border)] px-3 py-1.5 rounded-lg">
             <TrendingUp className="w-4 h-4 text-[var(--success)]" />
             <div className="flex flex-col">
               <span className="text-[10px] text-[var(--ink-secondary)] uppercase font-semibold tracking-wider">Problems Solved</span>
-              <span className="text-[13px] font-semibold text-[var(--ink)]">142 / 850</span>
+              <span className="text-[13px] font-semibold text-[var(--ink)]">{solved} / {totalProblems}</span>
             </div>
           </div>
         </div>

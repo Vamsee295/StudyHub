@@ -1,5 +1,6 @@
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from app.core.config import settings
 from app.core.supabase import get_supabase_client
 from supabase import Client
 import time
@@ -11,6 +12,13 @@ security = HTTPBearer()
 # In-memory cache: token -> (user_object, expire_timestamp)
 _TOKEN_CACHE: Dict[str, Tuple[Any, float]] = {}
 CACHE_TTL = 300  # Cache verified users for 5 minutes
+
+# Supabase publishes its asymmetric signing keys here; PyJWKClient fetches lazily and caches them
+_jwks_client = (
+    jwt.PyJWKClient(f"{settings.supabase_url.rstrip('/')}/auth/v1/.well-known/jwks.json")
+    if settings.supabase_url
+    else None
+)
 
 class UserStub:
     def __init__(self, uid: str, email: str, user_metadata: dict):
@@ -31,8 +39,8 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(securit
             _TOKEN_CACHE.pop(token, None)
 
     # 2. Check Supabase cloud API
-    supabase: Client = get_supabase_client()
     try:
+        supabase: Client = get_supabase_client()
         user_response = supabase.auth.get_user(token)
         if user_response and user_response.user:
             user = user_response.user
@@ -41,20 +49,23 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(securit
     except Exception:
         pass
 
-    # 3. Fast fallback: verify unexpired JWT token locally to prevent network lag
+    # 3. Fallback when Supabase is unreachable: verify signature, expiry and audience locally
     try:
-        payload = jwt.decode(token, options={"verify_signature": False})
-        exp = payload.get("exp", 0)
-        if exp > now:
-            user_id = payload.get("sub")
-            if user_id:
-                user = UserStub(
-                    uid=user_id,
-                    email=payload.get("email", ""),
-                    user_metadata=payload.get("user_metadata", {})
-                )
-                _TOKEN_CACHE[token] = (user, exp)
-                return user
+        signing_key = _jwks_client.get_signing_key_from_jwt(token)
+        payload = jwt.decode(
+            token,
+            signing_key.key,
+            algorithms=["ES256", "RS256"],
+            audience="authenticated",
+            options={"require": ["exp", "sub"]},
+        )
+        user = UserStub(
+            uid=payload["sub"],
+            email=payload.get("email", ""),
+            user_metadata=payload.get("user_metadata", {})
+        )
+        _TOKEN_CACHE[token] = (user, payload["exp"])
+        return user
     except Exception:
         pass
 

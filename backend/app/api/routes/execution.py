@@ -15,7 +15,8 @@ class ExplainErrorRequest(BaseModel):
 
 router = APIRouter(
     prefix="/api/execution",
-    tags=["Execution"]
+    tags=["Execution"],
+    dependencies=[Depends(get_current_user)],
 )
 
 
@@ -32,12 +33,12 @@ def route_execution(request: ExecutionRequest) -> ExecutionResult:
 
 
 @router.post("/run", response_model=ExecutionResult)
-async def run_code(request: ExecutionRequest):
+def run_code(request: ExecutionRequest):
     return route_execution(request)
 
 
 @router.post("/submit", response_model=ExecutionResult)
-async def submit_code(request: ExecutionRequest):
+def submit_code(request: ExecutionRequest):
     # Append hidden tests for submission
     hidden_tests = get_hidden_tests(request.problemId)
     for ht in hidden_tests:

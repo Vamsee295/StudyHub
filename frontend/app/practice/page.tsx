@@ -5,8 +5,25 @@ import { motion, useReducedMotion, Variants } from "framer-motion";
 import Link from "next/link";
 import { Code2, Database, Laptop, ArrowRight, Clock, CheckCircle2 } from "lucide-react";
 import { PracticeHeader } from "@/components/practice/PracticeHeader";
-import { practiceApi } from "@/lib/api/practice";
-import { PracticeAttemptLedger } from "@/types";
+import { practiceApi, PracticeSet } from "@/lib/api/practice";
+import { problemStorage } from "@/lib/problems/problemStorage";
+import { problems } from "@/lib/problems/problemRegistry";
+
+// Backend timestamps are naive UTC
+const parseUtc = (s: string) => new Date(/[zZ]|[+-]\d\d:?\d\d$/.test(s) ? s : `${s}Z`);
+
+// Consecutive days with a completed sprint, ending today (or yesterday, so the streak survives until today is over)
+function streakFrom(dates: Date[]) {
+  const days = new Set(dates.map((d) => d.toDateString()));
+  const cursor = new Date();
+  if (!days.has(cursor.toDateString())) cursor.setDate(cursor.getDate() - 1);
+  let n = 0;
+  while (days.has(cursor.toDateString())) {
+    n++;
+    cursor.setDate(cursor.getDate() - 1);
+  }
+  return n;
+}
 
 type MappedSession = {
   id: string;
@@ -24,13 +41,22 @@ export default function PracticeHubPage() {
   const reduced = useReducedMotion();
   const [mounted, setMounted] = useState(false);
   const [recentSessions, setRecentSessions] = useState<MappedSession[]>([]);
+  const [sprints, setSprints] = useState<PracticeSet[]>([]);
+  const [streakDays, setStreakDays] = useState(0);
+  const [solved, setSolved] = useState(0);
 
   useEffect(() => {
     setMounted(true);
+    setSolved(Object.values(problemStorage.getAllStatuses()).filter((s) => s === "solved").length);
+    practiceApi
+      .getPracticeSets()
+      .then((res) => setSprints(res.sets ?? []))
+      .catch((err) => console.error("Failed to load practice sets", err));
     async function loadData() {
       try {
         const res = await practiceApi.getLedger();
         if (res.ledger) {
+          setStreakDays(streakFrom(res.ledger.map((l) => parseUtc(l.completed_at))));
           const ledger: MappedSession[] = res.ledger.map(l => ({
             id: l.id,
             title: l.title,
@@ -38,10 +64,10 @@ export default function PracticeHubPage() {
             totalQuestions: l.total_questions,
             accuracy: l.total_questions > 0 ? Math.round((l.score / l.total_questions) * 100) : 0,
             durationStr: `${Math.round(l.duration_seconds / 60)}m ${l.duration_seconds % 60}s`,
-            completedDate: new Date(l.completed_at).toLocaleDateString(),
+            completedDate: parseUtc(l.completed_at).toLocaleDateString(),
             track: l.domain,
             type: "Sprint"
-          } as any));
+          }));
           setRecentSessions(ledger.slice(0, 5)); // Just take the 5 most recent
         }
       } catch (err) {
@@ -68,7 +94,7 @@ export default function PracticeHubPage() {
 
   return (
     <div className="flex flex-col gap-10 pb-24 w-full relative">
-      <PracticeHeader />
+      <PracticeHeader streakDays={streakDays} solved={solved} totalProblems={Object.keys(problems).length} />
 
       <motion.div 
         className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4"
@@ -141,6 +167,30 @@ export default function PracticeHubPage() {
         </motion.div>
       </motion.div>
 
+      {/* TIMED SPRINTS */}
+      {sprints.length > 0 && (
+        <section className="mt-6">
+          <h3 className="text-lg font-bold text-[var(--ink)] mb-4">Timed Sprints</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {sprints.map((s) => (
+              <Link
+                key={s.id}
+                href={`/practice/session/${s.id}`}
+                className="bg-[var(--surface)] border border-[var(--border)] rounded-xl p-4 flex flex-col gap-2 hover:border-[var(--accent)] transition-colors"
+              >
+                <span className="text-[11px] font-mono uppercase tracking-wider text-[var(--ink-tertiary)]">
+                  {s.domain} · {s.difficulty}
+                </span>
+                <span className="text-[14px] font-semibold text-[var(--ink)]">{s.title}</span>
+                <span className="text-xs text-[var(--ink-secondary)] flex items-center gap-1">
+                  <Clock className="w-3 h-3" /> {s.estimated_minutes} min
+                </span>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
       {/* RECENT SESSIONS */}
       <motion.div 
         className="mt-6"
@@ -152,8 +202,8 @@ export default function PracticeHubPage() {
         {recentSessions.length > 0 ? (
           <div className="bg-[var(--surface)] border border-[var(--border)] rounded-2xl overflow-hidden shadow-xs">
             <div className="divide-y divide-[var(--border)]">
-              {recentSessions.map((session, i) => (
-                <div key={i} className="flex items-center justify-between p-4 hover:bg-[var(--surface-subdued)] transition-colors">
+              {recentSessions.map((session) => (
+                <Link key={session.id} href={`/practice/review/${session.id}`} className="flex items-center justify-between p-4 hover:bg-[var(--surface-subdued)] transition-colors">
                   <div className="flex items-center gap-4">
                     <div className="w-10 h-10 rounded-lg bg-[var(--surface-subdued)] border border-[var(--border)] flex items-center justify-center text-[var(--ink-secondary)]">
                       {session.track === 'dsa' ? <Code2 className="w-5 h-5" /> : 
@@ -171,13 +221,13 @@ export default function PracticeHubPage() {
                   </div>
                   <div className="flex flex-col items-end">
                     <span className="text-sm font-semibold text-[var(--success)] flex items-center gap-1">
-                      <CheckCircle2 className="w-4 h-4" /> Completed
+                      <CheckCircle2 className="w-4 h-4" /> {session.score} / {session.totalQuestions}
                     </span>
                     <span className="text-xs text-[var(--ink-tertiary)] flex items-center gap-1 mt-1">
                       <Clock className="w-3 h-3" /> {session.durationStr}
                     </span>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </div>

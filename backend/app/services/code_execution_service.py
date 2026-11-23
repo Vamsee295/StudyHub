@@ -154,6 +154,7 @@ class CodeExecutionService:
             }
         except subprocess.TimeoutExpired:
             proc.kill()
+            proc.communicate()  # reap so Windows releases the temp dir
             return {
                 "status": "timeout",
                 "stdout": "",
@@ -236,6 +237,7 @@ class CodeExecutionService:
             }
         except subprocess.TimeoutExpired:
             run_proc.kill()
+            run_proc.communicate()  # reap so Windows releases the temp dir
             return {
                 "status": "timeout",
                 "stdout": "",
@@ -312,6 +314,7 @@ class CodeExecutionService:
             }
         except subprocess.TimeoutExpired:
             run_proc.kill()
+            run_proc.communicate()  # reap so Windows releases the temp dir
             return {
                 "status": "timeout",
                 "stdout": "",
@@ -388,6 +391,7 @@ class CodeExecutionService:
             }
         except subprocess.TimeoutExpired:
             run_proc.kill()
+            run_proc.communicate()  # reap so Windows releases the temp dir
             return {
                 "status": "timeout",
                 "stdout": "",

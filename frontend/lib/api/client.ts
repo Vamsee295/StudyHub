@@ -9,7 +9,7 @@ export function invalidateTokenCache() {
   _cachedTokenTime = 0;
 }
 
-async function getAuthToken(): Promise<string | null> {
+export async function getAuthToken(): Promise<string | null> {
   if (typeof window === 'undefined') return null;
   
   const now = Date.now();

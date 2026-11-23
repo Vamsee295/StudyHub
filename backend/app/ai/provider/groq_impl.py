@@ -15,10 +15,10 @@ class GroqProvider(BaseAIProvider):
     """Implementation of the AI provider using Groq's API."""
 
     def __init__(self):
-        if not settings.GROQ_API_KEY:
+        if not settings.groq_api_key:
             raise ValueError("GROQ_API_KEY must be set to use GroqProvider")
         
-        self.client = AsyncGroq(api_key=settings.GROQ_API_KEY)
+        self.client = AsyncGroq(api_key=settings.groq_api_key)
 
     @property
     def provider_name(self) -> str:
@@ -26,7 +26,7 @@ class GroqProvider(BaseAIProvider):
 
     @property
     def default_model(self) -> str:
-        return settings.GROQ_MODEL or "llama3-70b-8192"
+        return settings.groq_model or "llama3-70b-8192"
 
     async def generate(
         self,
