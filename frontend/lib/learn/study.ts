@@ -1,6 +1,7 @@
 // Question bank, revision data and spaced-repetition review queue for a subject.
 // Built from each lesson's quickCheck / takeaways / interviewTraps sections.
 import { getCourseBySlug } from "@/lib/data/courses/index";
+import { EXTRA_QUESTIONS } from "@/lib/data/question-bank/index";
 
 export interface BankQuestion {
   id: string;            // `${lessonSlug}#${index}` — stable across sessions
@@ -36,6 +37,15 @@ export function questionBank(subjectSlug: string): BankQuestion[] {
           question: s.question, options: s.options, answer, explanation: s.explanation ?? "",
         });
       });
+      (EXTRA_QUESTIONS[subjectSlug]?.[l.slug] ?? []).forEach((x, i) => {
+        const id = `${l.slug}#x${i}`;
+        // Shuffle options with a seed from the id: answer positions are spread evenly but stay stable per question.
+        const order = shuffle([0, 1, 2, 3].slice(0, x.o.length), seededRandom(id));
+        out.push({
+          id, moduleSlug: m.slug, moduleTitle: m.title, lessonSlug: l.slug, lessonTitle: l.title,
+          question: x.q, options: order.map((k) => x.o[k]), answer: order.indexOf(x.a), explanation: x.e,
+        });
+      });
     }
   }
   return out;
@@ -57,6 +67,18 @@ export function revisionData(subjectSlug: string): RevisionModule[] {
       };
     }),
   }));
+}
+
+// Small deterministic PRNG (FNV-1a hash seed + mulberry32) for stable per-question shuffles.
+export function seededRandom(seed: string): () => number {
+  let h = 2166136261;
+  for (let i = 0; i < seed.length; i++) h = Math.imul(h ^ seed.charCodeAt(i), 16777619);
+  return () => {
+    h = (h + 0x6d2b79f5) | 0;
+    let t = Math.imul(h ^ (h >>> 15), 1 | h);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
 }
 
 export function shuffle<T>(arr: T[], rand: () => number = Math.random): T[] {
