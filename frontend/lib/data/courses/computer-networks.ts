@@ -1,7 +1,13 @@
 import { Course, CourseLesson, CourseModule } from './types';
+import { withTheory } from './utils';
+import { cnFoundationsTheory } from './cn-theory-foundations';
+import { cnNetworkTheory } from './cn-theory-network';
+import { cnUpperTheory } from './cn-theory-upper';
 import { networkBasicsLessons, osiModelLessons, dataLinkLessons } from './cn-content-foundations';
 import { networkLayerLessons, subnettingLessons } from './cn-content-network';
 import { transportLayerLessons, applicationLayerLessons, networkSecurityLessons } from './cn-content-upper';
+
+const cnTheory = { ...cnFoundationsTheory, ...cnNetworkTheory, ...cnUpperTheory };
 
 const minutes = (lessons: CourseLesson[]) => lessons.reduce((sum, l) => sum + l.estimatedMinutes, 0);
 
@@ -13,7 +19,8 @@ function cnModule(
   difficulty: CourseModule["difficulty"],
   lessons: CourseLesson[]
 ): CourseModule {
-  return { id, slug, title, description, difficulty, estimatedMinutes: minutes(lessons), lessons };
+  const withNotes = withTheory(lessons, cnTheory);
+  return { id, slug, title, description, difficulty, estimatedMinutes: minutes(withNotes), lessons: withNotes };
 }
 
 export const computerNetworksCourse: Course = {

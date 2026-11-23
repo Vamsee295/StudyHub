@@ -1,4 +1,10 @@
 import { Course, CourseLesson } from './types';
+import { withTheory } from './utils';
+import { sqlBasicsTheory } from './sql-theory-basics';
+import { sqlQueryingTheory } from './sql-theory-querying';
+import { sqlJoinsTheory } from './sql-theory-joins';
+import { sqlAdvancedTheory } from './sql-theory-advanced';
+import { sqlPlacementTheory } from './sql-theory-placement';
 import { sqlBasicsLessons } from './sql-content-basics';
 import { sqlCrudLessons } from './sql-content-crud';
 import { filteringLessons, sqlFunctionLessons, groupingLessons } from './sql-content-querying';
@@ -19,7 +25,7 @@ function extractLessonDescription(content: any): string {
   return '';
 }
 
-export const sqlCourse: Course = {
+const rawSqlCourse: Course = {
   id: "course-sql",
   slug: "sql",
   title: "SQL & Relational Databases",
@@ -788,4 +794,11 @@ export const sqlCourse: Course = {
       lessons: placementSqlLessons
     }
   ]
+};
+
+const sqlTheory = { ...sqlBasicsTheory, ...sqlQueryingTheory, ...sqlJoinsTheory, ...sqlAdvancedTheory, ...sqlPlacementTheory };
+
+export const sqlCourse: Course = {
+  ...rawSqlCourse,
+  modules: rawSqlCourse.modules.map((m) => ({ ...m, lessons: withTheory(m.lessons, sqlTheory) })),
 };

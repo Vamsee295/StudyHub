@@ -1,10 +1,15 @@
 import { Course } from './types';
+import { withTheory } from './utils';
+import { dsaBasicsTheory } from './dsa-theory-basics';
+import { dsaLinearTheory } from './dsa-theory-linear';
+import { dsaNonlinearTheory } from './dsa-theory-nonlinear';
+import { dsaParadigmsTheory } from './dsa-theory-paradigms';
 import { dsaFundamentalsLessons, arrayLessons } from './dsa-content-basics';
 import { stringLessons, linkedListLessons, stackLessons, queueLessons } from './dsa-content-linear';
 import { hashingLessons, treeLessons, heapLessons, graphLessons } from './dsa-content-nonlinear';
 import { recursionBacktrackingLessons, dynamicProgrammingLessons } from './dsa-content-paradigms';
 
-export const dsaCourse: Course = {
+const rawDsaCourse: Course = {
   id: "course-dsa",
   slug: "dsa",
   title: "Data Structures & Algorithms",
@@ -350,4 +355,11 @@ export const dsaCourse: Course = {
       lessons: dynamicProgrammingLessons
     }
   ]
+};
+
+const dsaTheory = { ...dsaBasicsTheory, ...dsaLinearTheory, ...dsaNonlinearTheory, ...dsaParadigmsTheory };
+
+export const dsaCourse: Course = {
+  ...rawDsaCourse,
+  modules: rawDsaCourse.modules.map((m) => ({ ...m, lessons: withTheory(m.lessons, dsaTheory) })),
 };
