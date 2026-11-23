@@ -1,7 +1,11 @@
-import { Course } from './types';
-import { generateLessons } from './utils';
+import { Course, CourseLesson } from './types';
 import { sqlBasicsLessons } from './sql-content-basics';
 import { sqlCrudLessons } from './sql-content-crud';
+import { filteringLessons, sqlFunctionLessons, groupingLessons } from './sql-content-querying';
+import { subqueryLessons, databaseDesignLessons } from './sql-content-subqueries-design';
+import { advancedSqlLessons, placementSqlLessons } from './sql-content-advanced';
+
+const minutes = (lessons: CourseLesson[]) => lessons.reduce((sum, l) => sum + l.estimatedMinutes, 0);
 
 function extractLessonDescription(content: any): string {
   if (content?.definition) return content.definition;
@@ -19,7 +23,7 @@ export const sqlCourse: Course = {
   id: "course-sql",
   slug: "sql",
   title: "SQL & Relational Databases",
-  description: "From basic queries to complex joins and subqueries. Learn the standard language for relational database management systems.",
+  description: "From your first SELECT to window functions and the most-asked placement queries. Every example runs in the built-in SQL Lab against its preloaded employees and departments tables.",
   category: "Technical",
   icon: "Database",
   displayOrder: 3,
@@ -62,8 +66,8 @@ export const sqlCourse: Course = {
       title: "Filtering",
       description: "Filter data efficiently using WHERE, LIKE, IN, and BETWEEN.",
       difficulty: "Beginner",
-      estimatedMinutes: 120,
-      lessons: generateLessons("filtering", 8)
+      estimatedMinutes: minutes(filteringLessons),
+      lessons: filteringLessons
     },
     {
       id: "sql-mod-4",
@@ -71,8 +75,8 @@ export const sqlCourse: Course = {
       title: "SQL Functions",
       description: "Transform data with built-in string, math, and date functions.",
       difficulty: "Intermediate",
-      estimatedMinutes: 120,
-      lessons: generateLessons("sql-functions", 8)
+      estimatedMinutes: minutes(sqlFunctionLessons),
+      lessons: sqlFunctionLessons
     },
     {
       id: "sql-mod-5",
@@ -80,8 +84,8 @@ export const sqlCourse: Course = {
       title: "Grouping",
       description: "Aggregate data using GROUP BY and HAVING clauses.",
       difficulty: "Intermediate",
-      estimatedMinutes: 45,
-      lessons: generateLessons("grouping", 3)
+      estimatedMinutes: minutes(groupingLessons),
+      lessons: groupingLessons
     },
     {
       id: "sql-mod-6",
@@ -753,8 +757,8 @@ export const sqlCourse: Course = {
       title: "Subqueries",
       description: "Write nested queries to solve complex data retrieval problems.",
       difficulty: "Advanced",
-      estimatedMinutes: 60,
-      lessons: generateLessons("subqueries", 4)
+      estimatedMinutes: minutes(subqueryLessons),
+      lessons: subqueryLessons
     },
     {
       id: "sql-mod-8",
@@ -762,8 +766,8 @@ export const sqlCourse: Course = {
       title: "Database Design",
       description: "Understand normalization, primary keys, and foreign keys.",
       difficulty: "Advanced",
-      estimatedMinutes: 105,
-      lessons: generateLessons("database-design", 7)
+      estimatedMinutes: minutes(databaseDesignLessons),
+      lessons: databaseDesignLessons
     },
     {
       id: "sql-mod-9",
@@ -771,8 +775,8 @@ export const sqlCourse: Course = {
       title: "Advanced SQL",
       description: "Learn Window Functions, CTEs, and advanced analytical queries.",
       difficulty: "Advanced",
-      estimatedMinutes: 105,
-      lessons: generateLessons("advanced-sql", 7)
+      estimatedMinutes: minutes(advancedSqlLessons),
+      lessons: advancedSqlLessons
     },
     {
       id: "sql-mod-10",
@@ -780,8 +784,8 @@ export const sqlCourse: Course = {
       title: "Placement SQL",
       description: "Practice the most frequently asked SQL interview queries.",
       difficulty: "Advanced",
-      estimatedMinutes: 135,
-      lessons: generateLessons("placement-sql", 9)
+      estimatedMinutes: minutes(placementSqlLessons),
+      lessons: placementSqlLessons
     }
   ]
 };

@@ -1,95 +1,68 @@
-import { Course } from './types';
-import { generateLessons } from './utils';
+import { Course, CourseLesson, CourseModule } from './types';
+import { withTheory } from './utils';
+import { dbmsFoundationsTheory } from './dbms-theory-foundations';
+import { dbmsDesignTheory } from './dbms-theory-design';
+import { dbmsTransactionsTheory } from './dbms-theory-transactions';
+import { dbmsStorageTheory } from './dbms-theory-storage';
+import { dbmsArchitectureLessons, erModelingLessons, relationalModelLessons } from './dbms-content-foundations';
+import { relationalAlgebraLessons, normalizationLessons } from './dbms-content-design';
+import { transactionLessons, concurrencyControlLessons, recoveryLessons } from './dbms-content-transactions';
+import { indexingLessons, nosqlScalingLessons } from './dbms-content-storage';
+
+const dbmsTheory = { ...dbmsFoundationsTheory, ...dbmsDesignTheory, ...dbmsTransactionsTheory, ...dbmsStorageTheory };
+
+const minutes = (lessons: CourseLesson[]) => lessons.reduce((sum, l) => sum + l.estimatedMinutes, 0);
+
+function dbmsModule(
+  id: string,
+  slug: string,
+  title: string,
+  description: string,
+  difficulty: CourseModule["difficulty"],
+  lessons: CourseLesson[]
+): CourseModule {
+  const withNotes = withTheory(lessons, dbmsTheory);
+  return { id, slug, title, description, difficulty, estimatedMinutes: minutes(withNotes), lessons: withNotes };
+}
 
 export const dbmsCourse: Course = {
   id: "course-dbms",
   slug: "dbms",
   title: "DBMS Internals",
-  description: "Go beyond SQL to understand how databases actually work under the hood. Covers ACID, transactions, and indexing.",
+  description: "How databases really work: ER design, keys, relational algebra, normalization, transactions and ACID, concurrency control, recovery, indexing with B+ trees, and how databases scale. Aligned with the GATE CS syllabus and placement interview questions.",
   category: "Core CS",
   icon: "Server",
   displayOrder: 5,
   modules: [
-    {
-      id: "dbms-mod-1",
-      slug: "dbms-architecture",
-      title: "DBMS Architecture",
-      description: "Understanding 1-tier, 2-tier, and 3-tier architectures and database schemas.",
-      difficulty: "Beginner",
-      estimatedMinutes: 60,
-      lessons: generateLessons("dbms-architecture", 4)
-    },
-    {
-      id: "dbms-mod-2",
-      slug: "er-modeling",
-      title: "ER Modeling",
-      description: "Entity-Relationship diagrams, entities, attributes, and cardinality.",
-      difficulty: "Beginner",
-      estimatedMinutes: 75,
-      lessons: generateLessons("er-modeling", 5)
-    },
-    {
-      id: "dbms-mod-3",
-      slug: "relational-model",
-      title: "Relational Model",
-      description: "Relational constraints, keys (Primary, Foreign, Candidate, Super), and schemas.",
-      difficulty: "Intermediate",
-      estimatedMinutes: 60,
-      lessons: generateLessons("relational-model", 4)
-    },
-    {
-      id: "dbms-mod-4",
-      slug: "relational-algebra",
-      title: "Relational Algebra",
-      description: "Selection, projection, Cartesian product, and set operations.",
-      difficulty: "Intermediate",
-      estimatedMinutes: 60,
-      lessons: generateLessons("relational-algebra", 4)
-    },
-    {
-      id: "dbms-mod-5",
-      slug: "normalization",
-      title: "Normalization",
-      description: "Anomalies, Functional Dependencies, 1NF, 2NF, 3NF, and BCNF.",
-      difficulty: "Intermediate",
-      estimatedMinutes: 75,
-      lessons: generateLessons("normalization", 5)
-    },
-    {
-      id: "dbms-mod-6",
-      slug: "transactions",
-      title: "Transactions & ACID",
-      description: "Understanding Atomicity, Consistency, Isolation, and Durability.",
-      difficulty: "Advanced",
-      estimatedMinutes: 60,
-      lessons: generateLessons("transactions", 4)
-    },
-    {
-      id: "dbms-mod-7",
-      slug: "concurrency-control",
-      title: "Concurrency Control",
-      description: "Schedules, serializability, locks, and 2-Phase Locking (2PL).",
-      difficulty: "Advanced",
-      estimatedMinutes: 60,
-      lessons: generateLessons("concurrency-control", 4)
-    },
-    {
-      id: "dbms-mod-8",
-      slug: "recovery",
-      title: "Recovery Systems",
-      description: "Write-Ahead Logging (WAL), undo/redo logs, and checkpoints.",
-      difficulty: "Advanced",
-      estimatedMinutes: 60,
-      lessons: generateLessons("recovery", 4)
-    },
-    {
-      id: "dbms-mod-9",
-      slug: "indexing",
-      title: "Indexing & B+ Trees",
-      description: "How databases retrieve data quickly using Hash indices and B+ Trees.",
-      difficulty: "Advanced",
-      estimatedMinutes: 60,
-      lessons: generateLessons("indexing", 4)
-    }
+    dbmsModule("dbms-mod-1", "dbms-architecture", "DBMS Architecture",
+      "Why a DBMS beats plain files, tier architectures, the three-schema architecture, data independence, and data models.",
+      "Beginner", dbmsArchitectureLessons),
+    dbmsModule("dbms-mod-2", "er-modeling", "ER Modeling",
+      "Entities, attribute types, relationships, cardinality and participation, weak entities, EER, and mapping ER diagrams to tables.",
+      "Beginner", erModelingLessons),
+    dbmsModule("dbms-mod-3", "relational-model", "Relational Model",
+      "Relations and domains, every type of key, and integrity constraints with referential actions.",
+      "Beginner", relationalModelLessons),
+    dbmsModule("dbms-mod-4", "relational-algebra", "Relational Algebra & Calculus",
+      "Selection, projection, set operations, joins, division, and tuple / domain relational calculus.",
+      "Intermediate", relationalAlgebraLessons),
+    dbmsModule("dbms-mod-5", "normalization", "Normalization",
+      "Anomalies, functional dependencies, closures and candidate keys, 1NF to BCNF, 4NF, lossless join and dependency preservation.",
+      "Intermediate", normalizationLessons),
+    dbmsModule("dbms-mod-6", "transactions", "Transactions & ACID",
+      "Transaction states, the ACID properties, read phenomena and SQL isolation levels.",
+      "Intermediate", transactionLessons),
+    dbmsModule("dbms-mod-7", "concurrency-control", "Concurrency Control",
+      "Serializability, recoverable schedules, locking and 2PL, deadlocks, timestamp ordering and MVCC.",
+      "Advanced", concurrencyControlLessons),
+    dbmsModule("dbms-mod-8", "recovery", "Recovery Systems",
+      "Failure types, write-ahead logging, undo/redo recovery, checkpoints and ARIES.",
+      "Advanced", recoveryLessons),
+    dbmsModule("dbms-mod-9", "indexing", "Indexing & B+ Trees",
+      "File organization, primary / clustered / secondary indexes, B and B+ trees, hashing, and index design.",
+      "Advanced", indexingLessons),
+    dbmsModule("dbms-mod-10", "nosql-and-scaling", "NoSQL, CAP & Scaling",
+      "SQL vs NoSQL, the CAP theorem and BASE, replication, partitioning and sharding.",
+      "Advanced", nosqlScalingLessons),
   ]
 };

@@ -19,8 +19,11 @@ import {
   Check
 } from "lucide-react";
 import { clsx } from "clsx";
+import { getProblem } from "@/lib/problems/problemRegistry";
+import { getCourseBySlug } from "@/lib/data/courses";
 import { learnService, SubjectDetails, TopicContent } from "@/lib/services/learnService";
 import MdxRenderer from "@/components/mdx/MdxRenderer";
+import { TheoryNotes, LessonSources } from "@/components/learn/TheoryNotes";
 import { notificationService } from "@/lib/services/notificationService";
 import { useAuth } from "@/components/providers/AuthProvider";
 
@@ -47,7 +50,7 @@ function QuickCheckBlock({ section }: { section: any }) {
         <div className="flex flex-col gap-2">
           {section.options.map((opt: string, idx: number) => {
             const isSelected = selectedOption === idx;
-            const isCorrect = idx === section.answer;
+            const isCorrect = idx === (section.answer ?? section.correctIndex); // older lessons use correctIndex
             const showStatus = selectedOption !== null;
             
             return (
@@ -159,10 +162,12 @@ function TryItBlock({ section }: { section: any }) {
 
 function DryRunBlock({ section }: { section: any }) {
   const [step, setStep] = useState(0);
-  const totalSteps = section.iterations?.length || 0;
+  // Older lessons use steps: [{ step, explanation }] instead of iterations
+  const iterations = section.iterations ?? section.steps?.map((s: any) => ({ step: s.step, variables: {}, description: s.explanation })) ?? [];
+  const totalSteps = iterations.length;
   
   if (totalSteps === 0) return null;
-  const currentIteration = section.iterations[step];
+  const currentIteration = iterations[step];
   
   return (
     <section className="border border-[var(--border)] rounded-xl overflow-hidden bg-white shadow-sm">
@@ -176,8 +181,11 @@ function DryRunBlock({ section }: { section: any }) {
       </div>
       
       <div className="p-5 flex flex-col gap-5">
+        {section.code && (
+          <pre className="bg-[#1E1E1E] rounded-lg p-4 overflow-x-auto text-[13px] text-gray-300 font-mono"><code>{section.code}</code></pre>
+        )}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {Object.entries(currentIteration.variables).map(([key, value]) => (
+          {Object.entries(currentIteration.variables ?? {}).map(([key, value]) => (
             <div key={key} className="border border-[var(--border)] rounded-lg p-3 bg-[#FAFAFA] flex flex-col items-center justify-center text-center">
               <span className="text-[11px] font-bold text-[var(--ink-tertiary)] uppercase">{key}</span>
               <span className="text-[15px] font-mono text-[var(--ink)] mt-1">{String(value)}</span>
@@ -185,9 +193,11 @@ function DryRunBlock({ section }: { section: any }) {
           ))}
         </div>
         
-        <div className="bg-[var(--accent-soft)]/20 border border-[var(--accent-soft-border)] rounded-lg p-4 text-[14px] text-[var(--ink)]">
-          <strong>Action:</strong> {currentIteration.description}
-        </div>
+        {currentIteration.description && (
+          <div className="bg-[var(--accent-soft)]/20 border border-[var(--accent-soft-border)] rounded-lg p-4 text-[14px] text-[var(--ink)]">
+            <strong>Action:</strong> {currentIteration.description}
+          </div>
+        )}
       </div>
       
       <div className="bg-[#FAFAFA] border-t border-[var(--border)] p-3 flex gap-2 justify-between">
@@ -238,7 +248,16 @@ function InterviewTrapsBlock({ section }: { section: any }) {
   );
 }
 
-function SectionRenderer({ section }: { section: any }) {
+// Prerequisite slugs may name a course, a module of the current course, or a lesson
+function prerequisiteHref(slug: string, subjectSlug: string): string {
+  if (getCourseBySlug(slug)) return `/learn/${slug}`;
+  const course = getCourseBySlug(subjectSlug);
+  const module = course?.modules.find((m) => m.slug === slug);
+  if (module?.lessons[0]) return `/learn/${subjectSlug}/${module.lessons[0].slug}`;
+  return `/learn/${subjectSlug}/${slug}`;
+}
+
+function SectionRenderer({ section, subjectSlug }: { section: any; subjectSlug: string }) {
   const renderInlineCode = (text: string) => {
     if (!text) return null;
     return text.split(/`([^`]+)`/g).map((part, i) => {
@@ -348,6 +367,7 @@ function SectionRenderer({ section }: { section: any }) {
           <h2 className="text-[12px] font-bold text-[var(--error)] uppercase tracking-wider mb-3 flex items-center gap-2">
             <AlertTriangle className="w-4 h-4" /> {section.title || "Common Mistakes"}
           </h2>
+          {section.content && <p className="text-[14px] text-[var(--ink)] leading-relaxed">{renderInlineCode(section.content)}</p>}
           <ul className="list-disc pl-5 space-y-2 text-[14px] text-[var(--ink)]">
             {section.items?.map((mistake: string, idx: number) => (
               <li key={idx}>{renderInlineCode(mistake)}</li>
@@ -381,10 +401,13 @@ function SectionRenderer({ section }: { section: any }) {
             </div>
           </div>
           <div className="p-4 flex flex-col gap-2">
-            {section.problems?.map((prob: any) => (
-              <Link 
+            {section.problems?.map((prob: any) => {
+              // Problems missing from the registry render as plain exercises instead of dead links
+              const Row: any = getProblem(prob.id) ? Link : "div";
+              return (
+              <Row 
                 key={prob.id} 
-                href={`/practice/problems/${prob.id}`}
+                {...(Row === Link ? { href: `/practice/problems/${prob.id}` } : {})}
                 className="flex items-center justify-between p-3 rounded-lg hover:bg-[#FAFAFA] border border-transparent hover:border-[var(--border)] transition-all group"
               >
                 <span className="font-semibold text-[14px] text-[var(--ink)] group-hover:text-[var(--accent)] transition-colors">{prob.title}</span>
@@ -397,10 +420,11 @@ function SectionRenderer({ section }: { section: any }) {
                   )}>
                     {prob.difficulty}
                   </span>
-                  <ChevronRight className="w-4 h-4 text-[var(--ink-tertiary)] group-hover:text-[var(--accent)] transition-colors" />
+                  {Row === Link && <ChevronRight className="w-4 h-4 text-[var(--ink-tertiary)] group-hover:text-[var(--accent)] transition-colors" />}
                 </div>
-              </Link>
-            ))}
+              </Row>
+              );
+            })}
           </div>
         </section>
       );
@@ -411,7 +435,7 @@ function SectionRenderer({ section }: { section: any }) {
           {section.links?.map((link: any, idx: number) => (
             <Link 
               key={idx} 
-              href={`/learn/${link.slug}`}
+              href={prerequisiteHref(link.slug, subjectSlug)}
               className="bg-[#FAFAFA] border border-[var(--border)] px-3 py-1 rounded-full hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors"
             >
               {link.title}
@@ -759,12 +783,14 @@ export default function TopicPage() {
             {/* DYNAMIC CONTENT RENDERING */}
             {parsedContent ? (
               <div className="flex flex-col gap-10">
-                
+                {parsedContent.theory && <TheoryNotes markdown={parsedContent.theory} />}
+
                 {parsedContent.sections ? (
                   parsedContent.sections.map((section: any, idx: number) => (
                     <SectionRenderer 
                       key={idx} 
                       section={section} 
+                      subjectSlug={subjectSlug}
                     />
                   ))
                 ) : (
@@ -878,6 +904,7 @@ export default function TopicPage() {
                   </>
                 )}
 
+                {parsedContent.sources?.length > 0 && <LessonSources sources={parsedContent.sources} />}
               </div>
             ) : (
               <div className="text-[var(--ink-secondary)]">No content available.</div>

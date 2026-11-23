@@ -1,5 +1,8 @@
 import { Course } from './types';
-import { generateLessons } from './utils';
+import { dsaFundamentalsLessons, arrayLessons } from './dsa-content-basics';
+import { stringLessons, linkedListLessons, stackLessons, queueLessons } from './dsa-content-linear';
+import { hashingLessons, treeLessons, heapLessons, graphLessons } from './dsa-content-nonlinear';
+import { recursionBacktrackingLessons, dynamicProgrammingLessons } from './dsa-content-paradigms';
 
 export const dsaCourse: Course = {
   id: "course-dsa",
@@ -16,8 +19,8 @@ export const dsaCourse: Course = {
       title: "DSA Fundamentals",
       description: "Big-O notation, time and space complexity, and algorithmic thinking.",
       difficulty: "Beginner",
-      estimatedMinutes: 105,
-      lessons: generateLessons("dsa-fundamentals", 7)
+      estimatedMinutes: dsaFundamentalsLessons.reduce((sum, l) => sum + l.estimatedMinutes, 0),
+      lessons: dsaFundamentalsLessons
     },
     {
       id: "dsa-mod-2",
@@ -25,7 +28,7 @@ export const dsaCourse: Course = {
       title: "Arrays",
       description: "1D/2D arrays, sliding window, and two-pointer techniques.",
       difficulty: "Intermediate",
-      estimatedMinutes: 90,
+      estimatedMinutes: 155,
       lessons: [
         {
           id: "two-sum-lesson",
@@ -253,142 +256,7 @@ export const dsaCourse: Course = {
             ]
           }
         },
-        // Keep the other 5 lessons as generated content for now
-        {
-          id: "arrays-lesson-2",
-          slug: "arrays-lesson-2",
-          title: "1D and 2D Array Fundamentals",
-          description: "Learn how to work with single-dimensional and multi-dimensional arrays in Java.",
-          estimatedMinutes: 15,
-          content: {
-            definition: "Arrays are fixed-size data structures that store elements of the same type in contiguous memory locations.",
-            whyItMatters: "Arrays are fundamental building blocks used in virtually every programming task.",
-            coreConcept: "Arrays provide O(1) access to elements by index but have fixed size upon creation.",
-            syntax: "int[] arr = new int[5];\nint[][] matrix = new int[3][3];",
-            javaExample: "int[] numbers = {1, 2, 3, 4, 5};\nint[][] grid = {\n    {1, 2, 3},\n    {4, 5, 6},\n    {7, 8, 9}\n};",
-            howItWorks: "Array elements are stored in contiguous memory, allowing direct index-based access.",
-            realWorldUse: "Used everywhere: storing pixel data, game boards, scientific computations, etc.",
-            commonMistakes: [
-                "Accessing arrays out of bounds",
-                "Confusing length with last valid index",
-                "Assuming arrays can be resized like ArrayLists"
-            ],
-            interviewQuestions: [
-                { question: "What's the difference between an array and an ArrayList?", answer: "Arrays have fixed size; ArrayLists can grow dynamically." },
-                { question: "How do you declare a 2D array in Java?", answer: "type[][] variableName = new type[rows][cols];" }
-            ],
-            quickRevision: "Remember: zero-based indexing, fixed size, O(1) access, O(n) search",
-            practicePrompt: "Create and manipulate various 1D and 2D arrays, practicing common operations like traversal, searching, and basic algorithms."
-          }
-        },
-        {
-          id: "arrays-lesson-3",
-          slug: "arrays-lesson-3",
-          title: "Array Traversal and Search Algorithms",
-          description: "Learn efficient ways to traverse arrays and search for elements.",
-          estimatedMinutes: 15,
-          content: {
-            definition: "Array traversal means visiting each element in a specific order; search means finding elements that meet certain criteria.",
-            whyItMatters: "Efficient traversal and search are essential for processing array data effectively.",
-            coreConcept: "Linear traversal is O(n); binary search on sorted arrays is O(log n); various patterns exist for 2D arrays.",
-            syntax: "for (int i = 0; i < arr.length; i++) {\n    // process arr[i]\n}\n\nint index = Arrays.binarySearch(sortedArray, key);",
-            javaExample: "// Find maximum value\nint max = arr[0];\nfor (int i = 1; i < arr.length; i++) {\n    if (arr[i] > max) {\n        max = arr[i];\n    }\n}\n\n// Binary search example\nArrays.sort(arr);\nint index = Arrays.binarySearch(arr, 42);",
-            howItWorks: "Linear traversal visits each element once; binary search repeatedly divides the search space in half.",
-            realWorldUse: "Used in data processing, analytics, game development, scientific computing, etc.",
-            commonMistakes: [
-                "Using linear search on large sorted arrays when binary search would be faster",
-                "Forgetting to sort array before binary search",
-                "Off-by-one errors in loop conditions"
-            ],
-            interviewQuestions: [
-                { question: "When would you use binary search instead of linear search?", answer: "When the array is sorted and you need to find elements efficiently." },
-                { question: "What is the time complexity of binary search on a sorted array?", answer: "O(log n)" }
-            ],
-            quickRevision: "Linear: O(n), Sorted + Binary: O(log n), Always validate bounds before accessing.",
-            practicePrompt: "Implement various search algorithms (linear, binary) and traversal patterns (row-major, column-major, zigzag) on 1D and 2D arrays."
-          }
-        },
-        {
-          id: "arrays-lesson-4",
-          slug: "arrays-lesson-4",
-          title: "Array Manipulation: Insertion, Deletion, and Shifting",
-          description: "Learn how to modify arrays despite their fixed-size nature.",
-          estimatedMinutes: 15,
-          content: {
-            definition: "Although arrays are fixed-size, we can simulate insertion/deletion by shifting elements and managing logical size.",
-            whyItMatters: "Understanding array manipulation is crucial for implementing dynamic data structures and solving algorithmic problems.",
-            coreConcept: "To insert/delete in arrays: shift elements to make space/close gaps, then update logical size tracking.",
-            syntax: "// Insert at index i: shift right from i to end\n// Delete at index i: shift left from i+1 to end\n// Both operations are O(n) in worst case",
-            javaExample: "public static void insertAt(int[] arr, int value, int index, int size) {\n    // Shift elements right to make space\n    for (int i = size - 1; i >= index; i--) {\n        arr[i + 1] = arr[i];\n    }\n    arr[index] = value;\n    // size increases by 1\n}\n\npublic static void deleteAt(int[] arr, int index, int size) {\n    // Shift elements left to fill gap\n    for (int i = index + 1; i < size; i++) {\n        arr[i - 1] = arr[i];\n    }\n    // size decreases by 1\n}",
-            howItWorks: "Insertion requires shifting elements rightward; deletion requires shifting leftward. Both involve O(n) element moves.",
-            realWorldUse: "Used in implementing dynamic arrays, stacks, queues, and various algorithms that need array-like behavior.",
-            commonMistakes: [
-                "Forgetting to check array bounds before shifting",
-                "Not updating logical size tracking after insertion/deletion",
-                "Confusing physical array size with logical element count"
-            ],
-            interviewQuestions: [
-                { question: "What is the time complexity of inserting an element at the beginning of an array?", answer: "O(n) - all elements must be shifted right." },
-                { question: "How can we achieve O(1) amortized time for array insertions?", answer: "By using dynamic arrays that double in size when full." }
-            ],
-            quickRevision: "Insertion/deletion in arrays require O(n) shifting; track logical vs physical size separately.",
-            practicePrompt: "Implement array-based stacks and queues, practicing insertion/deletion at various positions with proper bounds checking."
-          }
-        },
-        {
-          id: "arrays-lesson-5",
-          slug: "arrays-lesson-5",
-          title: "Sorting Algorithms on Arrays",
-          description: "Learn how to implement and analyze various sorting algorithms for arrays.",
-          estimatedMinutes: 15,
-          content: {
-            definition: "Sorting algorithms arrange array elements in a specific order (ascending/descending) using comparison-based or non-comparison-based techniques.",
-            whyItMatters: "Sorting is one of the most fundamental operations in computer science with widespread applications.",
-            coreConcept: "Different algorithms offer various time/space tradeoffs: O(n²) simple sorts, O(n log n) efficient sorts, O(n) special cases.",
-            syntax: "Arrays.sort(arr); // Dual-pivot quicksort for primitives, merge sort for objects\n// Or implement your own: bubble, selection, insertion, merge, quick, heap sort",
-            javaExample: "// Bubble sort implementation\nboolean swapped;\nfor (int i = 0; i < arr.length - 1; i++) {\n    swapped = false;\n    for (int j = 0; j < arr.length - i - 1; j++) {\n        if (arr[j] > arr[j + 1]) {\n            int temp = arr[j];\n            arr[j] = arr[j + 1];\n            arr[j + 1] = temp;\n            swapped = true;\n        }\n    }\n    if (!swapped) break; // Early termination if already sorted\n}",
-            howItWorks: "Sorting algorithms work by repeatedly comparing and swapping elements until the array is ordered.",
-            realWorldUse: "Used in databases, search engines, recommendation systems, scientific computing, etc.",
-            commonMistakes: [
-                "Choosing inefficient algorithms for large datasets",
-                "Not considering stability when required",
-                "Forgetting that Arrays.sort() uses different algorithms for primitives vs objects"
-            ],
-            interviewQuestions: [
-                { question: "What's the difference between stable and unstable sorting algorithms?", answer: "Stable sorts preserve the relative order of equal elements." },
-                { question: "When would you choose insertion sort over quicksort?", answer: "For small arrays or nearly sorted data where insertion sort's O(n²) has low constant factors." }
-            ],
-            quickRevision: "Know the time/space complexity of common sorts and when to use each.",
-            practicePrompt: "Implement and compare various sorting algorithms, measuring their performance on different input types and sizes."
-          }
-        },
-        {
-          id: "arrays-lesson-6",
-          slug: "arrays-lesson-6",
-          title: "Advanced Array Techniques: Prefix Sums and More",
-          description: "Learn powerful array preprocessing techniques for efficient querying.",
-          estimatedMinutes: 15,
-          content: {
-            definition: "Advanced techniques like prefix sums, sliding window, and difference arrays enable efficient solutions to complex array problems.",
-            whyItMatters: "These techniques transform seemingly O(n²) or O(n³) problems into O(n) or O(n log n) solutions.",
-            coreConcept: "Prefix sum array stores cumulative sums: prefix[i] = arr[0] + arr[1] + ... + arr[i]. Enables O(1) range sum queries.",
-            syntax: "// Prefix sum construction\nint[] prefix = new int[arr.length];\nprefix[0] = arr[0];\nfor (int i = 1; i < arr.length; i++) {\n    prefix[i] = prefix[i-1] + arr[i];\n}\n\n// Range sum query: sum from i to j inclusive\nint sum = prefix[j] - (i > 0 ? prefix[i-1] : 0);",
-            javaExample: "// Find if there's a subarray with sum equal to target\nint[] prefix = new int[nums.length + 1];\nfor (int i = 0; i < nums.length; i++) {\n    prefix[i + 1] = prefix[i] + nums[i];\n}\n\nSet<Integer> seen = new HashSet<>();\nfor (int i = 0; i <= nums.length; i++) {\n    int complement = prefix[i] - target;\n    if (seen.contains(complement)) {\n        return true; // Found subarray with sum = target\n    }\n    seen.add(prefix[i]);\n}\nreturn false;",
-            howItWorks: "Prefix sums enable O(1) range queries by trading O(n) preprocessing time and space.",
-            realWorldUse: "Used in competitive programming, financial analytics, bioinformatics, and algorithmic problem solving.",
-            commonMistakes: [
-                "Forgetting to handle edge cases in prefix sum calculations (like i=0)",
-                "Not considering space complexity tradeoffs",
-                "Applying techniques to problems where they don't actually help"
-            ],
-            interviewQuestions: [
-                { question: "How does prefix sum enable O(1) range sum queries?", answer: "By storing cumulative sums, range sum[i..j] = prefix[j] - prefix[i-1]." },
-                { question: "What's the difference between prefix sum and difference array techniques?", answer: "Prefix sum helps with range queries; difference array helps with range updates." }
-            ],
-            quickRevision: "Prefix sum: preprocessing for fast range queries; enables O(1) sum queries after O(n) preprocessing.",
-            practicePrompt: "Implement prefix sum, sliding window, and difference array techniques to solve various array problems efficiently."
-          }
-        }
+        ...arrayLessons
       ]
     },
     {
@@ -397,8 +265,8 @@ export const dsaCourse: Course = {
       title: "Strings",
       description: "String manipulation, pattern matching, and anagrams.",
       difficulty: "Intermediate",
-      estimatedMinutes: 75,
-      lessons: generateLessons("strings", 5)
+      estimatedMinutes: stringLessons.reduce((sum, l) => sum + l.estimatedMinutes, 0),
+      lessons: stringLessons
     },
     {
       id: "dsa-mod-4",
@@ -406,8 +274,8 @@ export const dsaCourse: Course = {
       title: "Linked List",
       description: "Singly, doubly, and circular linked lists implementations and problems.",
       difficulty: "Intermediate",
-      estimatedMinutes: 75,
-      lessons: generateLessons("linked-list", 5)
+      estimatedMinutes: linkedListLessons.reduce((sum, l) => sum + l.estimatedMinutes, 0),
+      lessons: linkedListLessons
     },
     {
       id: "dsa-mod-5",
@@ -415,8 +283,8 @@ export const dsaCourse: Course = {
       title: "Stack",
       description: "LIFO principle, valid parentheses, and monotonic stacks.",
       difficulty: "Intermediate",
-      estimatedMinutes: 60,
-      lessons: generateLessons("stack", 4)
+      estimatedMinutes: stackLessons.reduce((sum, l) => sum + l.estimatedMinutes, 0),
+      lessons: stackLessons
     },
     {
       id: "dsa-mod-6",
@@ -424,8 +292,8 @@ export const dsaCourse: Course = {
       title: "Queue",
       description: "FIFO principle, standard queues, and circular queues.",
       difficulty: "Intermediate",
-      estimatedMinutes: 60,
-      lessons: generateLessons("queue", 4)
+      estimatedMinutes: queueLessons.reduce((sum, l) => sum + l.estimatedMinutes, 0),
+      lessons: queueLessons
     },
     {
       id: "dsa-mod-7",
@@ -433,8 +301,8 @@ export const dsaCourse: Course = {
       title: "Hashing",
       description: "Hash maps, hash sets, and solving problems in O(1) time.",
       difficulty: "Intermediate",
-      estimatedMinutes: 60,
-      lessons: generateLessons("hashing", 4)
+      estimatedMinutes: hashingLessons.reduce((sum, l) => sum + l.estimatedMinutes, 0),
+      lessons: hashingLessons
     },
     {
       id: "dsa-mod-8",
@@ -442,8 +310,8 @@ export const dsaCourse: Course = {
       title: "Trees",
       description: "Binary Trees, BSTs, traversals (inorder, preorder, postorder), and views.",
       difficulty: "Advanced",
-      estimatedMinutes: 90,
-      lessons: generateLessons("trees", 6)
+      estimatedMinutes: treeLessons.reduce((sum, l) => sum + l.estimatedMinutes, 0),
+      lessons: treeLessons
     },
     {
       id: "dsa-mod-9",
@@ -451,8 +319,8 @@ export const dsaCourse: Course = {
       title: "Heaps / Priority Queues",
       description: "Min-heap, max-heap, and the Top-K pattern.",
       difficulty: "Advanced",
-      estimatedMinutes: 60,
-      lessons: generateLessons("heaps", 4)
+      estimatedMinutes: heapLessons.reduce((sum, l) => sum + l.estimatedMinutes, 0),
+      lessons: heapLessons
     },
     {
       id: "dsa-mod-10",
@@ -460,8 +328,8 @@ export const dsaCourse: Course = {
       title: "Graphs",
       description: "BFS, DFS, topological sort, and shortest path algorithms.",
       difficulty: "Advanced",
-      estimatedMinutes: 105,
-      lessons: generateLessons("graphs", 7)
+      estimatedMinutes: graphLessons.reduce((sum, l) => sum + l.estimatedMinutes, 0),
+      lessons: graphLessons
     },
     {
       id: "dsa-mod-11",
@@ -469,8 +337,8 @@ export const dsaCourse: Course = {
       title: "Recursion & Backtracking",
       description: "Solving problems by breaking them down into smaller subproblems.",
       difficulty: "Advanced",
-      estimatedMinutes: 90,
-      lessons: generateLessons("recursion-and-backtracking", 6)
+      estimatedMinutes: recursionBacktrackingLessons.reduce((sum, l) => sum + l.estimatedMinutes, 0),
+      lessons: recursionBacktrackingLessons
     },
     {
       id: "dsa-mod-12",
@@ -478,8 +346,8 @@ export const dsaCourse: Course = {
       title: "Dynamic Programming",
       description: "Memoization, tabulation, knapsack, and LCS patterns.",
       difficulty: "Advanced",
-      estimatedMinutes: 105,
-      lessons: generateLessons("dynamic-programming", 7)
+      estimatedMinutes: dynamicProgrammingLessons.reduce((sum, l) => sum + l.estimatedMinutes, 0),
+      lessons: dynamicProgrammingLessons
     }
   ]
 };

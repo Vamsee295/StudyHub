@@ -1,4 +1,4 @@
-import { CourseLesson } from './types';
+import { CourseLesson, CourseLessonContent } from './types';
 
 export const defaultLessonContent = {
   definition: "This is a foundational concept.",
@@ -26,4 +26,11 @@ export function generateLessons(moduleSlug: string, count: number): CourseLesson
     estimatedMinutes: 15,
     content: defaultLessonContent
   }));
+}
+
+export type LessonTheory = Pick<CourseLessonContent, 'theory' | 'sources'>;
+
+// Attach long-form theory (keyed by lesson slug) to a module's lessons
+export function withTheory(lessons: CourseLesson[], theory: Record<string, LessonTheory>): CourseLesson[] {
+  return lessons.map((l) => (theory[l.slug] ? { ...l, content: { ...l.content, ...theory[l.slug] } } : l));
 }

@@ -37,6 +37,11 @@ export interface CourseLessonContent {
     explanation: string;
   };
   
+  // Long-form markdown explanation shown before the sections (see components/learn/TheoryNotes)
+  theory?: string;
+  // Attribution and further reading for this lesson
+  sources?: Array<{ title: string; url: string; license?: string }>;
+
   // The new structured content sections
   sections?: Array<{
     type: SectionType;

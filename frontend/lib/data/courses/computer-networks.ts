@@ -1,86 +1,53 @@
-import { Course } from './types';
-import { generateLessons } from './utils';
+import { Course, CourseLesson, CourseModule } from './types';
+import { networkBasicsLessons, osiModelLessons, dataLinkLessons } from './cn-content-foundations';
+import { networkLayerLessons, subnettingLessons } from './cn-content-network';
+import { transportLayerLessons, applicationLayerLessons, networkSecurityLessons } from './cn-content-upper';
+
+const minutes = (lessons: CourseLesson[]) => lessons.reduce((sum, l) => sum + l.estimatedMinutes, 0);
+
+function cnModule(
+  id: string,
+  slug: string,
+  title: string,
+  description: string,
+  difficulty: CourseModule["difficulty"],
+  lessons: CourseLesson[]
+): CourseModule {
+  return { id, slug, title, description, difficulty, estimatedMinutes: minutes(lessons), lessons };
+}
 
 export const computerNetworksCourse: Course = {
   id: "course-cn",
   slug: "computer-networks",
   title: "Computer Networks",
-  description: "Understand the OSI model, TCP/IP, and how the internet works.",
+  description: "How the internet works, layer by layer: OSI and TCP/IP, error detection and sliding windows, IP addressing and subnetting, routing, TCP congestion control, DNS and HTTP, and network security. Aligned with the GATE CS syllabus and placement interviews.",
   category: "Core CS",
   icon: "Globe",
   displayOrder: 7,
   modules: [
-    {
-      id: "cn-mod-1",
-      slug: "network-basics",
-      title: "Network Basics",
-      description: "LAN, WAN, Topologies, and transmission media.",
-      difficulty: "Beginner",
-      estimatedMinutes: 60,
-      lessons: generateLessons("network-basics", 4)
-    },
-    {
-      id: "cn-mod-2",
-      slug: "osi-model",
-      title: "OSI & TCP/IP Models",
-      description: "Deep dive into the 7 layers of OSI and the TCP/IP stack.",
-      difficulty: "Intermediate",
-      estimatedMinutes: 90,
-      lessons: generateLessons("osi-model", 6)
-    },
-    {
-      id: "cn-mod-3",
-      slug: "physical-data-link",
-      title: "Physical & Data Link Layers",
-      description: "MAC addresses, framing, error detection, and switching.",
-      difficulty: "Intermediate",
-      estimatedMinutes: 75,
-      lessons: generateLessons("physical-data-link", 5)
-    },
-    {
-      id: "cn-mod-4",
-      slug: "network-layer",
-      title: "Network Layer",
-      description: "IPv4 vs IPv6, IP addressing, and routing algorithms.",
-      difficulty: "Advanced",
-      estimatedMinutes: 90,
-      lessons: generateLessons("network-layer", 6)
-    },
-    {
-      id: "cn-mod-5",
-      slug: "subnetting",
-      title: "Subnetting",
-      description: "Classful vs Classless addressing, CIDR, and subnet masks.",
-      difficulty: "Advanced",
-      estimatedMinutes: 75,
-      lessons: generateLessons("subnetting", 5)
-    },
-    {
-      id: "cn-mod-6",
-      slug: "transport-layer",
-      title: "Transport Layer",
-      description: "TCP vs UDP, 3-way handshake, flow control, and congestion control.",
-      difficulty: "Advanced",
-      estimatedMinutes: 90,
-      lessons: generateLessons("transport-layer", 6)
-    },
-    {
-      id: "cn-mod-7",
-      slug: "application-layer",
-      title: "Application Layer",
-      description: "HTTP/HTTPS, DNS, FTP, SMTP, and WebSockets.",
-      difficulty: "Intermediate",
-      estimatedMinutes: 75,
-      lessons: generateLessons("application-layer", 5)
-    },
-    {
-      id: "cn-mod-8",
-      slug: "network-security",
-      title: "Network Security",
-      description: "Cryptography, TLS/SSL, firewalls, and common attacks.",
-      difficulty: "Intermediate",
-      estimatedMinutes: 75,
-      lessons: generateLessons("network-security", 5)
-    }
+    cnModule("cn-mod-1", "network-basics", "Network Basics",
+      "Network types and devices, topologies, transmission media, switching, and delay numericals.",
+      "Beginner", networkBasicsLessons),
+    cnModule("cn-mod-2", "osi-model", "OSI & TCP/IP Models",
+      "The seven OSI layers, the TCP/IP stack, encapsulation, and collision vs broadcast domains.",
+      "Beginner", osiModelLessons),
+    cnModule("cn-mod-3", "physical-data-link", "Physical & Data Link Layers",
+      "Framing, parity / checksum / CRC, sliding-window flow control, ALOHA and CSMA, Ethernet switching and VLANs.",
+      "Intermediate", dataLinkLessons),
+    cnModule("cn-mod-4", "network-layer", "Network Layer",
+      "IPv4 addressing and fragmentation, ARP / DHCP / ICMP / NAT, routing algorithms, and IPv6.",
+      "Intermediate", networkLayerLessons),
+    cnModule("cn-mod-5", "subnetting", "Subnetting",
+      "Subnet masks and CIDR, subnetting and VLSM, supernetting and longest prefix match.",
+      "Advanced", subnettingLessons),
+    cnModule("cn-mod-6", "transport-layer", "Transport Layer",
+      "TCP vs UDP and ports, the three-way handshake and teardown, flow control and congestion control.",
+      "Advanced", transportLayerLessons),
+    cnModule("cn-mod-7", "application-layer", "Application Layer",
+      "DNS, HTTP and its versions, email / FTP / WebSockets, and what happens when you type a URL.",
+      "Intermediate", applicationLayerLessons),
+    cnModule("cn-mod-8", "network-security", "Network Security",
+      "Symmetric and public-key cryptography, TLS and certificates, firewalls, VPNs and common attacks.",
+      "Intermediate", networkSecurityLessons),
   ]
 };

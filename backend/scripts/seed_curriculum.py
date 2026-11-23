@@ -9,7 +9,9 @@ from app.core.database import AsyncSessionLocal
 from app.models.learning import LearningSubject, LearningModule, LearningTopic
 from sqlalchemy.future import select
 
-async def seed_curriculum():
+async def seed_curriculum(sync: bool = False):
+    """Full reseed wipes all curriculum rows AND every user's learning progress.
+    sync=True upserts subjects/modules/topics instead and leaves progress untouched."""
     data_file = os.path.join(os.path.dirname(__file__), "..", "data", "courses.json")
     with open(data_file, 'r', encoding='utf-8') as f:
         courses = json.load(f)
@@ -19,7 +21,7 @@ async def seed_curriculum():
         
         # Check if already seeded to prevent duplication
         res = await session.execute(select(LearningSubject).limit(1))
-        if res.scalars().first():
+        if not sync and res.scalars().first():
             print("Curriculum already exists. Clearing old data...")
             from sqlalchemy import delete
             from app.models.learning import UserLearningProgress
@@ -30,6 +32,12 @@ async def seed_curriculum():
             await session.execute(delete(LearningSubject))
             await session.commit()
             print("Old data cleared.")
+
+        async def save(row):
+            if sync:
+                await session.merge(row)
+            else:
+                session.add(row)
 
         # Insert subjects, modules, topics
         for s_idx, s_data in enumerate(courses):
@@ -42,7 +50,7 @@ async def seed_curriculum():
                 category=s_data.get("category", "General"),
                 display_order=s_idx + 1
             )
-            session.add(subject)
+            await save(subject)
             
             for m_idx, m_data in enumerate(s_data.get("modules", [])):
                 module = LearningModule(
@@ -55,7 +63,7 @@ async def seed_curriculum():
                     estimated_minutes=m_data.get("estimatedMinutes", 0),
                     display_order=m_idx + 1
                 )
-                session.add(module)
+                await save(module)
                 
                 for t_idx, t_data in enumerate(m_data.get("lessons", [])):
                     topic = LearningTopic(
@@ -68,7 +76,7 @@ async def seed_curriculum():
                         estimated_minutes=t_data.get("estimatedMinutes", 0),
                         display_order=t_idx + 1
                     )
-                    session.add(topic)
+                    await save(topic)
                     
         try:
             await session.commit()
@@ -78,4 +86,4 @@ async def seed_curriculum():
             print(f"Failed to seed curriculum: {e}")
 
 if __name__ == "__main__":
-    asyncio.run(seed_curriculum())
+    asyncio.run(seed_curriculum(sync="--sync" in sys.argv))
