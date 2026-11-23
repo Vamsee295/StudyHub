@@ -13,6 +13,7 @@ const navLinks = [
   { href: "#resources", label: "Resources" },
   { href: "#templates", label: "Templates" },
   { href: "/tools", label: "Tools" },
+  { href: "/labs", label: "Labs" },
 ];
 
 export function Navbar() {

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import React, { createContext, useContext, useEffect, useState, useCallback, useRef } from 'react';
 import { UserProfile } from '@/types';
 import { useAuth } from './AuthProvider';
 import { profileApi } from '@/lib/api/profile';
@@ -25,19 +25,23 @@ export const ProfileProvider = ({ children }: { children: React.ReactNode }) => 
   const [savedProfile, setSavedProfile] = useState<UserProfile>(BLANK_USER_PROFILE);
   const [draftProfile, setDraftProfile] = useState<UserProfile>(BLANK_USER_PROFILE);
   const [isLoading, setIsLoading] = useState(true);
+  // Which user's profile is already on screen. Background refreshes for the same user must not
+  // flip isLoading, because AppLayout replaces the whole page with a spinner while loading.
+  const loadedFor = useRef<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const loadProfile = useCallback(async () => {
     if (authLoading) return;
     
     if (!user) {
+      loadedFor.current = null;
       setSavedProfile(BLANK_USER_PROFILE);
       setDraftProfile(BLANK_USER_PROFILE);
       setIsLoading(false);
       return;
     }
 
-    setIsLoading(true);
+    if (loadedFor.current !== user.id) setIsLoading(true);
     setError(null);
 
     // 1. First hydrate from local cache if present to prevent redirect flicker
@@ -108,6 +112,7 @@ export const ProfileProvider = ({ children }: { children: React.ReactNode }) => 
 
       setSavedProfile(finalProfile);
       setDraftProfile(finalProfile);
+      loadedFor.current = user.id;
 
       // Persist to local cache
       if (typeof window !== 'undefined') {
@@ -143,7 +148,8 @@ export const ProfileProvider = ({ children }: { children: React.ReactNode }) => 
     } finally {
       setIsLoading(false);
     }
-  }, [user, authLoading]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id, user?.email, authLoading]);
 
   useEffect(() => {
     loadProfile();

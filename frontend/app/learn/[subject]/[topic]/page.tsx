@@ -24,6 +24,7 @@ import { getCourseBySlug } from "@/lib/data/courses";
 import { learnService, SubjectDetails, TopicContent } from "@/lib/services/learnService";
 import MdxRenderer from "@/components/mdx/MdxRenderer";
 import { TheoryNotes, LessonSources } from "@/components/learn/TheoryNotes";
+import { labForLesson } from "@/lib/labs/catalog";
 import { notificationService } from "@/lib/services/notificationService";
 import { useAuth } from "@/components/providers/AuthProvider";
 
@@ -784,6 +785,16 @@ export default function TopicPage() {
             {parsedContent ? (
               <div className="flex flex-col gap-10">
                 {parsedContent.theory && <TheoryNotes markdown={parsedContent.theory} />}
+                {labForLesson(subjectSlug, topicSlug).map((lab) => (
+                  <Link key={lab.slug} href={`/labs/${lab.slug}`}
+                    className="flex items-center justify-between gap-4 p-4 rounded-xl border border-[var(--accent)]/40 bg-[var(--accent-soft)]/20 hover:border-[var(--accent)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]">
+                    <span className="flex flex-col gap-0.5">
+                      <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-[var(--accent)]">Try it in the lab</span>
+                      <span className="text-[14px] font-semibold text-[var(--ink)]">{lab.title}</span>
+                    </span>
+                    <ChevronRight aria-hidden="true" className="w-5 h-5 text-[var(--accent)] shrink-0" />
+                  </Link>
+                ))}
 
                 {parsedContent.sections ? (
                   parsedContent.sections.map((section: any, idx: number) => (

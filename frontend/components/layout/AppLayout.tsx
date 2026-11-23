@@ -24,6 +24,7 @@ const navLinks = [
   { name: "Resources", href: "/resources" },
   { name: "Templates", href: "/templates" },
   { name: "Tools", href: "/tools" },
+  { name: "Labs", href: "/labs" },
   { name: "Study With Me", href: "/study-with-me" },
 ];
 

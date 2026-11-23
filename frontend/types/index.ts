@@ -42,11 +42,6 @@ export interface PracticeCategory {
   progress: number;
 }
 
-export interface Lab {
-  name: string;
-  description: string;
-  icon: string;
-}
 
 export interface Concept {
   key: string;
