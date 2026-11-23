@@ -73,4 +73,28 @@ export const systemDesignQuestions: LessonQuestions = {
     { q: "What should happen to a push notification for an invalid device token?", o: ["Remove the token instead of retrying", "Retry forever", "Send it by email automatically", "Ignore and keep the token"], a: 0, e: "Permanent failures shouldn't be retried; clean up bad tokens." },
     { q: "Why does the notification API return 202 Accepted?", o: ["Delivery happens asynchronously after the request is queued", "The notification was already delivered", "The request was rejected", "It's required by APNs"], a: 0, e: "Separating acceptance from delivery keeps the API fast during bursts." },
   ],
+  "design-ride-sharing": [
+    { q: "Roughly how many location writes per second do 1 million online drivers create, updating every 4 seconds?", o: ["250,000", "25,000", "4 million", "1 million"], a: 0, e: "1,000,000 ÷ 4 = 250,000 updates per second, which is why locations live in memory." },
+    { q: "Why rank nearby drivers by ETA instead of straight-line distance?", o: ["Roads, rivers and one-way streets make straight-line distance misleading", "ETA is cheaper to compute", "Distance can't be computed from coordinates", "Riders prefer farther drivers"], a: 0, e: "A driver 500 m away across a river may take far longer than one 2 km away on the same road." },
+  ],
+  "design-video-streaming": [
+    { q: "What do HLS and DASH manifests describe?", o: ["The available renditions and their segment files", "The video's comments", "The CDN's server list", "The transcoding cost"], a: 0, e: "Players read the manifest to choose which quality to fetch for each segment." },
+    { q: "Why split videos into segments before transcoding?", o: ["Segments transcode in parallel and failed pieces retry individually", "Segments are required by object storage", "It removes the need for a CDN", "It reduces video quality"], a: 0, e: "Parallelism cuts processing time from hours to minutes for long videos." },
+  ],
+  "design-web-crawler": [
+    { q: "Which structure checks whether billions of URLs were already seen, using little memory?", o: ["A Bloom filter", "A sorted array", "A linked list", "A relational table scan"], a: 0, e: "Bloom filters trade a small false-positive rate for very compact membership tests." },
+    { q: "Which technique detects near-duplicate pages served at different URLs?", o: ["SimHash or MinHash fingerprints", "Comparing URL lengths", "Checking robots.txt", "DNS caching"], a: 0, e: "Similar documents produce similar fingerprints even when they differ slightly." },
+  ],
+  "design-typeahead": [
+    { q: "How does client debouncing help a typeahead service?", o: ["It waits briefly after the last keystroke, cutting the number of requests", "It caches results on the server", "It sorts suggestions", "It filters offensive queries"], a: 0, e: "Fast typists trigger far fewer requests when the client waits 100 to 200 ms." },
+    { q: "How do typeahead servers pick up newly built tries safely?", o: ["Load a versioned snapshot and swap it in atomically", "Edit the live trie in place on every search", "Restart all servers at once", "Query the logs directly"], a: 0, e: "Atomic swaps avoid serving a half-built structure." },
+  ],
+  "design-payment-system": [
+    { q: "In a double-entry ledger, what must every transaction's entries sum to?", o: ["Zero", "The transaction amount", "The account balance", "One"], a: 0, e: "Each debit has a matching credit, so balances can always be verified." },
+    { q: "What does daily reconciliation compare?", o: ["Internal payment records against PSP settlement reports", "Server logs against CDN logs", "Prices against competitors", "Cache contents against the database"], a: 0, e: "Mismatches reveal lost webhooks, bugs and fraud." },
+  ],
+  "design-file-storage": [
+    { q: "Why use content-defined chunking instead of fixed-size chunks?", o: ["Inserting bytes near the start doesn't shift every later chunk boundary", "It makes chunks smaller", "It encrypts chunks", "It avoids hashing"], a: 0, e: "Stable boundaries mean only nearby chunks change after an edit." },
+    { q: "Two devices edit the same file offline. What do most sync services do?", o: ["Keep both versions, saving one as a conflicted copy", "Silently keep the first edit", "Merge the bytes automatically", "Delete the file"], a: 0, e: "Arbitrary file formats can't be merged safely, so the user decides." },
+  ],
 };

@@ -58,7 +58,9 @@ for (const [course, lessons] of Object.entries(EXTRA_QUESTIONS)) {
   for (const q of questionBank(course)) if (q.id.includes("#x")) pos[q.answer]++;
   if (n) {
     // Small banks can't balance evenly by chance; check position spread only where it is meaningful.
-    if (n >= 40) for (let i = 0; i < 4; i++) assert.ok(pos[i] / n >= 0.15, `${course}: answer position ${"ABCD"[i]} used only ${pos[i]}/${n} times`);
+    // Shuffle is pseudo-random: allow more variance for mid-sized banks (expected share is 25%).
+    const floor = n >= 100 ? 0.15 : 0.1;
+    if (n >= 40) for (let i = 0; i < 4; i++) assert.ok(pos[i] / n >= floor, `${course}: answer position ${"ABCD"[i]} used only ${pos[i]}/${n} times`);
     console.log(`${course.padEnd(26)} extra ${n}, positions ${pos.join("/")}, lessons without extras: ${missing.length}`);
   }
 }

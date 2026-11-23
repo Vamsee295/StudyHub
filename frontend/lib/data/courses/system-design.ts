@@ -2,6 +2,7 @@ import { Course, CourseLesson, CourseModule } from './types';
 import { sdFoundationLessons, sdNetworkingLessons } from './system-design-lessons-foundations';
 import { sdDataLessons, sdAsyncLessons } from './system-design-lessons-data';
 import { sdWalkthroughLessons } from './system-design-lessons-walkthroughs';
+import { sdMoreWalkthroughLessons, sdFinalWalkthroughLessons } from './system-design-lessons-walkthroughs-2';
 
 const minutes = (lessons: CourseLesson[]) => lessons.reduce((sum, l) => sum + l.estimatedMinutes, 0);
 
@@ -33,5 +34,8 @@ export const systemDesignCourse: Course = {
     sdModule("sd-mod-5", "sd-walkthroughs", "Design Walkthroughs",
       "Complete designs of a URL shortener, news feed, chat system and notification system.",
       "Advanced", sdWalkthroughLessons),
+    sdModule("sd-mod-6", "sd-more-walkthroughs", "More Design Walkthroughs",
+      "Ride-sharing, video streaming, a web crawler, search autocomplete, payments and file sync.",
+      "Advanced", [...sdMoreWalkthroughLessons, ...sdFinalWalkthroughLessons]),
   ],
 };
