@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { clsx } from "clsx";
 import { learnService, SubjectDetails } from "@/lib/services/learnService";
+import { dueItems, getReviewItems } from "@/lib/learn/study";
 
 export default function SubjectPage() {
   const params = useParams();
@@ -43,6 +44,9 @@ export default function SubjectPage() {
     }
     loadData();
   }, [subjectSlug]);
+
+  const [dueCount, setDueCount] = useState(0);
+  useEffect(() => setDueCount(dueItems(getReviewItems(subjectSlug)).length), [subjectSlug]);
 
   if (loading) {
     return (
@@ -137,6 +141,18 @@ export default function SubjectPage() {
         return (
           <section className="flex flex-col gap-4" aria-label="Course roadmap">
             <h2 className="text-[13px] font-bold text-[var(--ink)] uppercase tracking-wider font-sans">Your Roadmap</h2>
+            <div className="flex flex-wrap gap-2">
+              {[
+                { href: `/learn/${subject.slug}/test`, label: "Take Mock Test" },
+                { href: `/learn/${subject.slug}/revise`, label: "Revision Sheet" },
+                { href: `/learn/${subject.slug}/review`, label: dueCount > 0 ? `Review (${dueCount} due)` : "Review Queue" },
+              ].map((a) => (
+                <Link key={a.href} href={a.href}
+                  className="px-3.5 py-2 rounded-lg border border-[var(--border)] bg-[var(--surface)] text-[13px] font-medium text-[var(--ink)] hover:border-[var(--accent)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]">
+                  {a.label}
+                </Link>
+              ))}
+            </div>
             {next ? (
               <Link
                 href={`/learn/${subject.slug}/${next.slug}`}

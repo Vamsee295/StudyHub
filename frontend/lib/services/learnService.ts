@@ -288,7 +288,7 @@ export const learnService = {
 
     // Query backend for this topic's latest status
     try {
-      const targetQuery = legId || legSlug || lId || lSlug;
+      const targetQuery = lId || lSlug; // current ids; legacy topics were pruned from the DB
       const bRes: any = await apiClient.get(`/learn/topics/${encodeURIComponent(targetQuery)}`);
       if (bRes) {
         if (bRes.status === 'completed') {
@@ -407,7 +407,7 @@ export const learnService = {
 
     // Query backend for this topic's latest status
     try {
-      const targetQuery = legId || legSlug || lId || lSlug;
+      const targetQuery = lId || lSlug; // current ids; legacy topics were pruned from the DB
       // Note: In a real implementation, we would make an API call here
       // For now, we'll rely on local storage
     } catch {
@@ -454,18 +454,15 @@ export const learnService = {
     setStoredProgress(topicId, progressData);
 
     // Also look up if there is an associated legacyId/cleanSlug for this topic
-    let legacyTargetId: string | null = null;
-    let cleanSlugTarget: string | null = null;
+    let currentId: string | null = null;
 
     for (const c of ALL_COURSES) {
       for (const m of c.modules) {
         for (const l of m.lessons) {
           if (l.id === topicId || l.slug === topicId || (l as any).legacyId === topicId || (l as any).legacySlug === topicId) {
-            legacyTargetId = (l as any).legacyId || null;
-            cleanSlugTarget = l.slug || null;
+            currentId = l.id;
             setStoredProgress(l.id, progressData);
             setStoredProgress(l.slug, progressData);
-            if (legacyTargetId) setStoredProgress(legacyTargetId, progressData);
             break;
           }
         }
@@ -477,10 +474,7 @@ export const learnService = {
     if (notes !== undefined) payload.notes = notes;
 
     try {
-      await apiClient.post(`/learn/topics/${encodeURIComponent(legacyTargetId || topicId)}/progress`, payload);
-      if (legacyTargetId && legacyTargetId !== topicId) {
-        apiClient.post(`/learn/topics/${encodeURIComponent(topicId)}/progress`, payload).catch(() => {});
-      }
+      await apiClient.post(`/learn/topics/${encodeURIComponent(currentId || topicId)}/progress`, payload);
     } catch (e) {
       console.warn('[LearnService] Backend progress sync failed, preserved in local storage', e);
     }
