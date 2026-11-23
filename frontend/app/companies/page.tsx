@@ -8,6 +8,7 @@ import { CompanyWorkspace } from "@/components/companies/CompanyWorkspace";
 import { CompanyDirectory } from "@/components/companies/CompanyDirectory";
 import { RecommendedCompanies } from "@/components/companies/RecommendedCompanies";
 import { RecentlyExploredTable } from "@/components/companies/RecentlyExploredTable";
+import { AskedInSection } from "@/components/companies/AskedInSection";
 
 import { 
   targetCompanies, 
@@ -129,6 +130,8 @@ export default function CompaniesPage() {
         activeSegment={activeSegment}
         setActiveSegment={setActiveSegment}
       />
+
+      {searchQuery === "" && <AskedInSection />}
 
       <motion.div 
         className="flex flex-col gap-10 md:gap-14"

@@ -7,12 +7,14 @@ import { clsx } from "clsx";
 
 import { problems as registryProblems } from "@/lib/problems/problemRegistry";
 import { problemStorage, ProblemStatus } from "@/lib/problems/problemStorage";
+import { ASKED_IN_CAVEAT, COMPANY_PROFILES } from "@/lib/data/askedIn";
 
 export default function ProblemBankPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<"all" | "solved" | "attempted" | "unsolved">("all");
   const [activeDifficulty, setActiveDifficulty] = useState<"all" | "easy" | "medium" | "hard">("all");
   const [statuses, setStatuses] = useState<Record<string, ProblemStatus>>({});
+  const [activeCompany, setActiveCompany] = useState<string>("all");
 
   useEffect(() => {
     // Load persisted problem statuses from storage
@@ -48,8 +50,8 @@ export default function ProblemBankPage() {
           difficulty: p.difficulty,
           status,
           topics: p.topics,
-          companies: p.companies || ["Amazon", "Google", "Microsoft"],
-          acceptance: p.acceptance || "48.2%",
+          companies: p.companies || [],
+          acceptance: p.acceptance || "—",
         };
       })
       .sort((a, b) => a.number - b.number);
@@ -78,6 +80,9 @@ export default function ProblemBankPage() {
         return false;
       }
 
+      // Company filter
+      if (activeCompany !== "all" && !prob.companies.includes(activeCompany)) return false;
+
       // Search query filter
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase().trim();
@@ -92,7 +97,7 @@ export default function ProblemBankPage() {
 
       return true;
     });
-  }, [allProblems, activeTab, activeDifficulty, searchQuery]);
+  }, [allProblems, activeTab, activeDifficulty, searchQuery, activeCompany]);
 
   return (
     <div className="flex flex-col gap-6 pb-24 w-full">
@@ -211,22 +216,21 @@ export default function ProblemBankPage() {
             </button>
           </div>
 
-          {/* Topics & Companies summary row */}
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pt-4 border-t border-[var(--border)]">
-            <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
-              <span className="text-xs font-semibold text-[var(--ink-tertiary)] uppercase tracking-wider mr-2 shrink-0">Topics:</span>
-              <button className="px-3 py-1 rounded-full text-xs font-medium bg-[var(--ink)] text-white whitespace-nowrap">All Topics</button>
-              <button className="px-3 py-1 rounded-full text-xs font-medium bg-[var(--surface-subdued)] text-[var(--ink-secondary)] hover:text-[var(--ink)] whitespace-nowrap transition-colors">Arrays <span className="font-mono opacity-70">142</span></button>
-              <button className="px-3 py-1 rounded-full text-xs font-medium bg-[var(--surface-subdued)] text-[var(--ink-secondary)] hover:text-[var(--ink)] whitespace-nowrap transition-colors">Strings <span className="font-mono opacity-70">98</span></button>
-              <button className="px-3 py-1 rounded-full text-xs font-medium bg-[var(--surface-subdued)] text-[var(--ink-secondary)] hover:text-[var(--ink)] whitespace-nowrap transition-colors">Hash Maps <span className="font-mono opacity-70">76</span></button>
-              <button className="px-3 py-1 rounded-full text-xs font-medium bg-[var(--surface-subdued)] text-[var(--ink-secondary)] hover:text-[var(--ink)] whitespace-nowrap transition-colors">Linked Lists <span className="font-mono opacity-70">64</span></button>
+          {/* Company filter: tags derived from researched module coverage (lib/data/askedIn.ts) */}
+          <div className="flex flex-col gap-2 pt-4 border-t border-[var(--border)]">
+            <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none" role="group" aria-label="Filter by company">
+              <span className="text-xs font-semibold text-[var(--ink-tertiary)] uppercase tracking-wider mr-2 shrink-0">Reported at:</span>
+              {[{ name: "all", label: "All companies", count: totalCount }, ...COMPANY_PROFILES.map((c) => ({ name: c.name, label: c.name, count: allProblems.filter((p) => p.companies.includes(c.name)).length })).filter((c) => c.count > 0)].map((c) => (
+                <button key={c.name} type="button" aria-pressed={activeCompany === c.name} onClick={() => setActiveCompany(c.name)}
+                  className={clsx("px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]",
+                    activeCompany === c.name ? "bg-[var(--ink)] text-white" : "bg-[var(--surface-subdued)] text-[var(--ink-secondary)] hover:text-[var(--ink)]")}>
+                  {c.label} <span className="font-mono opacity-70">{c.count}</span>
+                </button>
+              ))}
             </div>
-            
-            <div className="flex items-center gap-3 shrink-0 self-end lg:self-auto bg-[var(--surface-subdued)] px-3 py-1.5 rounded-lg border border-[var(--border)]">
-              <span className="text-xs font-semibold text-[var(--ink-tertiary)] uppercase tracking-wider">Curricula:</span>
-              <span className="text-xs font-mono font-medium text-[var(--ink)] hover:text-[var(--accent)] cursor-pointer transition-colors">Blind 75</span>
-              <span className="text-xs font-mono font-medium text-[var(--ink)] hover:text-[var(--accent)] cursor-pointer transition-colors">NeetCode 150</span>
-            </div>
+            <p className="text-[11px] text-[var(--ink-tertiary)]">
+              Company tags show which companies are reported to test a problem&apos;s topic, not this exact question. {ASKED_IN_CAVEAT} <Link href="/companies#asked-in" className="underline hover:text-[var(--accent)]">See sources</Link>.
+            </p>
           </div>
 
         </div>
@@ -257,7 +261,7 @@ export default function ProblemBankPage() {
                 <th className="py-3 px-5 text-xs font-semibold text-[var(--ink-secondary)] uppercase tracking-wider">Problem Name &amp; ID</th>
                 <th className="py-3 px-5 text-xs font-semibold text-[var(--ink-secondary)] uppercase tracking-wider w-28">Difficulty</th>
                 <th className="py-3 px-5 text-xs font-semibold text-[var(--ink-secondary)] uppercase tracking-wider hidden md:table-cell">Topics</th>
-                <th className="py-3 px-5 text-xs font-semibold text-[var(--ink-secondary)] uppercase tracking-wider hidden lg:table-cell">Company Tags</th>
+                <th className="py-3 px-5 text-xs font-semibold text-[var(--ink-secondary)] uppercase tracking-wider hidden lg:table-cell">Reported at</th>
                 <th className="py-3 px-5 text-xs font-semibold text-[var(--ink-secondary)] uppercase tracking-wider w-28 text-right hidden sm:table-cell">Acceptance</th>
                 <th className="py-3 px-5 text-xs font-semibold text-[var(--ink-secondary)] uppercase tracking-wider w-32 text-right">Action</th>
               </tr>
@@ -330,7 +334,7 @@ export default function ProblemBankPage() {
                     <td className="py-4 px-5 hidden lg:table-cell">
                       <div className="flex flex-wrap gap-1.5">
                         {prob.companies.map((c) => (
-                          <span key={c} className="px-2 py-0.5 rounded text-[11px] font-medium bg-slate-100 text-slate-600">
+                          <span key={c} title={ASKED_IN_CAVEAT} className="px-2 py-0.5 rounded text-[11px] font-medium bg-[var(--surface-subdued)] text-[var(--ink-secondary)] border border-[var(--border)]">
                             {c}
                           </span>
                         ))}

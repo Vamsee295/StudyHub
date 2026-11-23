@@ -25,6 +25,7 @@ import { learnService, SubjectDetails, TopicContent } from "@/lib/services/learn
 import MdxRenderer from "@/components/mdx/MdxRenderer";
 import { TheoryNotes, LessonSources } from "@/components/learn/TheoryNotes";
 import { labForLesson } from "@/lib/labs/catalog";
+import { AskedInChips } from "@/components/learn/AskedIn";
 import { notificationService } from "@/lib/services/notificationService";
 import { useAuth } from "@/components/providers/AuthProvider";
 
@@ -784,6 +785,7 @@ export default function TopicPage() {
             {/* DYNAMIC CONTENT RENDERING */}
             {parsedContent ? (
               <div className="flex flex-col gap-10">
+                {currentModule && <AskedInChips course={subjectSlug} module={currentModule.slug} />}
                 {parsedContent.theory && <TheoryNotes markdown={parsedContent.theory} />}
                 {labForLesson(subjectSlug, topicSlug).map((lab) => (
                   <Link key={lab.slug} href={`/labs/${lab.slug}`}

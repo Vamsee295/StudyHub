@@ -1,5 +1,6 @@
 "use client";
 
+import { ASKED_IN_CAVEAT } from "@/lib/data/askedIn";
 import { useState, useRef, useCallback, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -508,10 +509,11 @@ export default function ProblemWorkspace() {
               {problem.companies && problem.companies.length > 0 && (
                 <div className="flex items-center gap-2 text-[var(--ink-secondary)] text-xs font-medium flex-wrap">
                   <Building className="w-4 h-4 shrink-0" />
-                  <span>Targeted in:</span>
+                  <span title={ASKED_IN_CAVEAT}>Topic reported in interviews at:</span>
                   {problem.companies.map((comp) => (
                     <span
                       key={comp}
+                      title={ASKED_IN_CAVEAT}
                       className="px-1.5 py-0.5 rounded bg-[var(--surface-subdued)] font-mono text-[var(--ink)] border border-[var(--border)]"
                     >
                       {comp}

@@ -19,6 +19,7 @@ import {
 import { clsx } from "clsx";
 import { learnService, SubjectDetails } from "@/lib/services/learnService";
 import { dueItems, getReviewItems } from "@/lib/learn/study";
+import { AskedInChips } from "@/components/learn/AskedIn";
 
 export default function SubjectPage() {
   const params = useParams();
@@ -254,6 +255,7 @@ export default function SubjectPage() {
                       <p className="text-[13px] text-[var(--ink-secondary)]">
                         {module.description}
                       </p>
+                      <div className="mt-1.5"><AskedInChips course={subject.slug} module={module.slug} /></div>
                     </div>
                   </div>
                   

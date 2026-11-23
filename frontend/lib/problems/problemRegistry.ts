@@ -1,5 +1,6 @@
 import { FunctionSignature, TestCase } from "../execution/executionTypes";
 import { dsaCatalog } from "../data/dsaCatalog";
+import { companiesForProblem } from "../data/askedIn";
 
 export interface ProblemDefinition {
   id: string;
@@ -53,7 +54,6 @@ export const problems: Record<string, ProblemDefinition> = {
     title: "Two Sum",
     difficulty: "Easy",
     topics: ["Arrays", "Hash Map"],
-    companies: ["Amazon", "Google", "Meta", "Apple", "Microsoft"],
     acceptance: "52.8%",
     description: [
       "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.",
@@ -115,7 +115,6 @@ export const problems: Record<string, ProblemDefinition> = {
     title: "Add Two Numbers",
     difficulty: "Medium",
     topics: ["Linked List", "Math", "Recursion"],
-    companies: ["Amazon", "Microsoft", "Meta", "Google"],
     acceptance: "41.2%",
     description: [
       "You are given two non-empty linked lists representing two non-negative integers. The digits are stored in reverse order, and each of their nodes contains a single digit.",
@@ -171,7 +170,6 @@ export const problems: Record<string, ProblemDefinition> = {
     title: "Longest Substring Without Repeating Characters",
     difficulty: "Medium",
     topics: ["Sliding Window", "Hash Table", "String"],
-    companies: ["Amazon", "Google", "Bloomberg", "Apple", "Microsoft"],
     acceptance: "34.5%",
     description: [
       "Given a string s, find the length of the longest substring without repeating characters."
@@ -226,7 +224,6 @@ export const problems: Record<string, ProblemDefinition> = {
     title: "Median of Two Sorted Arrays",
     difficulty: "Hard",
     topics: ["Binary Search", "Divide & Conquer", "Arrays"],
-    companies: ["Google", "Microsoft", "Amazon", "Goldman Sachs"],
     acceptance: "38.1%",
     description: [
       "Given two sorted arrays nums1 and nums2 of size m and n respectively, return the median of the two sorted arrays.",
@@ -284,7 +281,6 @@ export const problems: Record<string, ProblemDefinition> = {
     title: "3Sum",
     difficulty: "Medium",
     topics: ["Arrays", "Two Pointers", "Sorting"],
-    companies: ["Amazon", "Apple", "Meta", "Google"],
     acceptance: "33.4%",
     description: [
       "Given an integer array nums, return all the triplets [nums[i], nums[j], nums[k]] such that i != j, i != k, and j != k, and nums[i] + nums[j] + nums[k] == 0.",
@@ -335,7 +331,6 @@ export const problems: Record<string, ProblemDefinition> = {
     title: "Valid Parentheses",
     difficulty: "Easy",
     topics: ["Stack", "String"],
-    companies: ["Amazon", "Microsoft", "TCS", "Google", "Meta"],
     acceptance: "40.8%",
     description: [
       "Given a string s containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid.",
@@ -391,7 +386,6 @@ export const problems: Record<string, ProblemDefinition> = {
     title: "Merge Two Sorted Lists",
     difficulty: "Easy",
     topics: ["Linked List", "Recursion"],
-    companies: ["Amazon", "Google", "Microsoft", "Apple"],
     acceptance: "63.2%",
     description: [
       "You are given the heads of two sorted linked lists list1 and list2.",
@@ -447,7 +441,6 @@ export const problems: Record<string, ProblemDefinition> = {
     title: "Remove Duplicates from Sorted Array",
     difficulty: "Easy",
     topics: ["Arrays", "Two Pointers"],
-    companies: ["Amazon", "Microsoft", "Google"],
     acceptance: "54.2%",
     description: [
       "Given an integer array nums sorted in non-decreasing order, remove the duplicates in-place such that each unique element appears only once. The relative order of the elements should be kept the same. Then return the number of unique elements in nums.",
@@ -499,7 +492,6 @@ export const problems: Record<string, ProblemDefinition> = {
     title: "Search in Rotated Sorted Array",
     difficulty: "Medium",
     topics: ["Arrays", "Binary Search"],
-    companies: ["Amazon", "Google", "Microsoft"],
     acceptance: "39.8%",
     description: [
       "There is an integer array nums sorted in ascending order (with distinct values).",
@@ -562,7 +554,6 @@ export const problems: Record<string, ProblemDefinition> = {
     title: "Maximum Subarray",
     difficulty: "Medium",
     topics: ["Arrays", "Divide and Conquer", "Dynamic Programming"],
-    companies: ["Amazon", "Google", "Apple", "Microsoft"],
     acceptance: "50.4%",
     description: [
       "Given an integer array nums, find the subarray with the largest sum, and return its sum."
@@ -612,7 +603,6 @@ export const problems: Record<string, ProblemDefinition> = {
     title: "Best Time to Buy and Sell Stock",
     difficulty: "Easy",
     topics: ["Arrays", "Dynamic Programming"],
-    companies: ["Amazon", "Google", "Meta", "Goldman Sachs"],
     acceptance: "54.1%",
     description: [
       "You are given an array prices where prices[i] is the price of a given stock on the ith day.",
@@ -664,7 +654,6 @@ export const problems: Record<string, ProblemDefinition> = {
     title: "Binary Search",
     difficulty: "Easy",
     topics: ["Arrays", "Binary Search"],
-    companies: ["Amazon", "Apple", "Google", "Microsoft"],
     acceptance: "56.8%",
     description: [
       "Given an array of integers nums which is sorted in ascending order, and an integer target, write a function to search target in nums. If target exists, then return its index. Otherwise, return -1.",
@@ -715,6 +704,9 @@ export const problems: Record<string, ProblemDefinition> = {
   }
 };
 
+// "Reported in interviews at" tags come from module-level research in lib/data/askedIn.ts.
+for (const p of Object.values(problems)) p.companies = companiesForProblem(p.topics);
+
 export const getProblem = (id: string): ProblemDefinition | null => {
   if (problems[id]) {
     return problems[id];
@@ -747,8 +739,7 @@ export const getProblem = (id: string): ProblemDefinition | null => {
     title: catalogItem.title,
     difficulty: diffCap,
     topics: catalogItem.tags || [catalogItem.primaryTopic],
-    companies: ["Amazon", "Google", "Microsoft"],
-    acceptance: "48.2%",
+    companies: companiesForProblem(catalogItem.tags || [catalogItem.primaryTopic]),
     description: [
       catalogItem.whyThisProblem,
       `Solve the ${catalogItem.title} problem using optimal ${catalogItem.primaryTopic} algorithms.`
