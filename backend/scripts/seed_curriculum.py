@@ -78,6 +78,23 @@ async def seed_curriculum(sync: bool = False):
                     )
                     await save(topic)
                     
+        if sync:
+            # Prune rows that no longer exist in courses.json (old placeholder lessons), plus
+            # progress on those rows only. Progress on current lessons is untouched.
+            from sqlalchemy import delete
+            from app.models.learning import UserLearningProgress
+            topic_ids = {l["id"] for c in courses for m in c.get("modules", []) for l in m.get("lessons", [])}
+            module_ids = {m["id"] for c in courses for m in c.get("modules", [])}
+            subject_ids = {c["id"] for c in courses}
+            await session.flush()
+            stale = (await session.execute(select(LearningTopic.id).where(LearningTopic.id.not_in(topic_ids)))).scalars().all()
+            if stale:
+                await session.execute(delete(UserLearningProgress).where(UserLearningProgress.topic_id.in_(stale)))
+                await session.execute(delete(LearningTopic).where(LearningTopic.id.in_(stale)))
+            await session.execute(delete(LearningModule).where(LearningModule.id.not_in(module_ids)))
+            await session.execute(delete(LearningSubject).where(LearningSubject.id.not_in(subject_ids)))
+            print(f"Pruned {len(stale)} stale topics.")
+
         try:
             await session.commit()
             print("Curriculum seeded successfully!")

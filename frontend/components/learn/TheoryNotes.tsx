@@ -14,7 +14,7 @@ function inline(text: string): ReactNode[] {
     if (m.index > last) out.push(text.slice(last, m.index));
     const tok = m[0];
     if (tok.startsWith("`")) {
-      out.push(<code key={m.index} className="bg-[var(--surface-subdued)] px-1.5 py-0.5 rounded text-[13px] font-mono text-[var(--ink)]">{tok.slice(1, -1)}</code>);
+      out.push(<code key={m.index} className="bg-[var(--surface-subdued)] px-1.5 py-0.5 rounded text-[13px] font-mono text-[var(--ink)] break-words">{tok.slice(1, -1)}</code>);
     } else if (tok.startsWith("**")) {
       out.push(<strong key={m.index} className="font-semibold text-[var(--ink)]">{tok.slice(2, -2)}</strong>);
     } else {
@@ -49,7 +49,7 @@ function blocks(md: string): ReactNode[] {
       while (i < lines.length && !lines[i].startsWith(fence)) code.push(lines[i++]);
       i++;
       out.push(
-        <pre key={key} className="bg-[#1E1E1E] rounded-xl p-5 overflow-x-auto text-[13px] text-gray-300 font-mono leading-relaxed"><code>{code.join("\n")}</code></pre>
+        <pre key={key} tabIndex={0} className="bg-[#1E1E1E] rounded-xl p-5 overflow-x-auto text-[13px] text-gray-300 font-mono leading-relaxed"><code>{code.join("\n")}</code></pre>
       );
       continue;
     }
@@ -66,14 +66,14 @@ function blocks(md: string): ReactNode[] {
       while (i < lines.length && lines[i].startsWith("|")) rows.push(lines[i++]);
       const [head, , ...body] = rows;                 // second row is the |---| separator
       out.push(
-        <div key={key} className="overflow-x-auto border border-[var(--border)] rounded-xl">
+        <div key={key} tabIndex={0} className="overflow-x-auto border border-[var(--border)] rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]">
           <table className="w-full text-left text-[14px]">
-            <thead className="bg-[#FAFAFA] border-b border-[var(--border)]">
+            <thead className="bg-[var(--surface-subdued)] border-b border-[var(--border)]">
               <tr>{cells(head).map((c, j) => <th key={j} className="px-4 py-2.5 font-semibold text-[var(--ink)]">{inline(c)}</th>)}</tr>
             </thead>
             <tbody className="divide-y divide-[var(--border)]">
               {body.map((r, k) => (
-                <tr key={k} className="bg-white">{cells(r).map((c, j) => <td key={j} className="px-4 py-2.5 text-[var(--ink-secondary)] align-top">{inline(c)}</td>)}</tr>
+                <tr key={k} className="bg-[var(--surface)]">{cells(r).map((c, j) => <td key={j} className="px-4 py-2.5 text-[var(--ink-secondary)] align-top">{inline(c)}</td>)}</tr>
               ))}
             </tbody>
           </table>
@@ -114,7 +114,7 @@ export function TheoryNotes({ markdown }: { markdown: string }) {
   return (
     <section className="flex flex-col gap-4">
       <h2 className="text-[12px] font-bold uppercase tracking-wider flex items-center gap-2 text-[var(--ink)]">
-        <BookOpen className="w-4 h-4 text-[var(--accent)]" /> Theory
+        <BookOpen aria-hidden="true" className="w-4 h-4 text-[var(--accent)]" /> Theory
       </h2>
       {blocks(markdown).map((b, i) => <Fragment key={i}>{b}</Fragment>)}
     </section>
@@ -125,7 +125,7 @@ export function LessonSources({ sources }: { sources: { title: string; url: stri
   return (
     <section className="border-t border-[var(--border)] pt-6">
       <h2 className="text-[12px] font-bold uppercase tracking-wider mb-3 flex items-center gap-2 text-[var(--ink)]">
-        <Library className="w-4 h-4 text-[var(--accent)]" /> Sources & further reading
+        <Library aria-hidden="true" className="w-4 h-4 text-[var(--accent)]" /> Sources & further reading
       </h2>
       <ul className="space-y-1.5 text-[14px]">
         {sources.map((s) => (

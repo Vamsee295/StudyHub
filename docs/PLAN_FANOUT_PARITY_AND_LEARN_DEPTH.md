@@ -1,6 +1,6 @@
 # Plan: Fanout-style features (free) + deeper Learn theory
 
-Date: 2026-11-23 · Status: **plan only, nothing built yet**
+Date: 2026-11-23 · Status: **Phases 0–2 shipped; see §7 for current gaps**
 
 Goal: match what makes fanout.sh useful (its *working functionality*, not its UI), keep everything free, and make the Learn courses genuinely deep.
 
@@ -131,3 +131,20 @@ Video lessons (production cost), AI-research/robotics tracks (not our audience),
 3. CC BY-SA (coding-interview-university): OK for derived pages to carry CC BY-SA? (If not, use it only as a checklist.)
 4. Notes length target: 700–1,200 words per lesson OK, or shorter for Aptitude?
 5. Daily brief: interview question of the day (recommended) vs. paper of the day?
+
+## 7. Status and remaining gaps (updated 2026-11-23)
+
+**Shipped:** P0 fixes (unbuilt tools hidden, prerequisite links, resume security, migrations); `theory` + `sources` lesson fields and renderer; 700+ word notes for all 195 DBMS, OS, CN, DSA and SQL lessons; auto-generated course roadmaps with "Next on your path"; `--sync` now prunes stale placeholder lessons (363 removed).
+
+**Still missing for "prepare a whole subject from scratch":**
+| Gap | Notes |
+|---|---|
+| Deep notes for Programming Fundamentals (78), OOP (41), Aptitude (64) | Same pipeline as Phase 1–2 |
+| System Design course + walkthroughs | system-design-primer (CC BY 4.0) backbone |
+| Subject mock tests and revision | Timed per-subject test from lesson quizzes, a revision sheet per module, spaced-repetition review queue |
+| "Asked in" tags | `askedIn` on lessons and problems, filter on Companies |
+| Labs | Big-O visualizer, CPU scheduling Gantt, page replacement, subnet calculator, capacity estimator |
+| Reading-order lists | Per subject, our lessons + free external resources |
+| Concept graph, daily question, ideas board, Study With Me logs | Phase 4 engagement |
+| 16 hidden tools | Rebuild top 6 or drop |
+| Content search, bookmarks, personal notes per lesson | Not built |

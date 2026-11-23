@@ -47,8 +47,8 @@ export default function SubjectPage() {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[50vh] gap-4 w-full">
-        <Loader2 className="w-8 h-8 text-[var(--accent)] animate-spin" />
-        <p className="text-[var(--ink-secondary)] text-[13px] font-mono">Loading subject details...</p>
+        <Loader2 aria-hidden="true" className="w-8 h-8 text-[var(--accent)] animate-spin" />
+        <p className="text-[var(--ink-secondary)] text-[13px] font-mono">Loading subject details…</p>
       </div>
     );
   }
@@ -87,16 +87,16 @@ export default function SubjectPage() {
       >
         <Link 
           href="/learn" 
-          className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[var(--ink-secondary)] hover:text-[var(--ink)] transition-colors self-start"
+          className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[var(--ink-secondary)] hover:text-[var(--ink)] transition-colors self-start rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
         >
-          <ArrowLeft className="w-3.5 h-3.5" />
+          <ArrowLeft aria-hidden="true" className="w-3.5 h-3.5" />
           Back to Learn
         </Link>
 
         <div className="flex flex-col gap-3 max-w-3xl">
           <div className="flex items-center gap-2">
             <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[var(--surface-subdued)] border border-[var(--border)] text-[var(--ink)] text-[11px] font-mono font-bold tracking-wider uppercase">
-              <Terminal className="w-3.5 h-3.5 text-[var(--ink-secondary)]" />
+              <Terminal aria-hidden="true" className="w-3.5 h-3.5 text-[var(--ink-secondary)]" />
               {subject.category}
             </span>
           </div>
@@ -116,9 +116,9 @@ export default function SubjectPage() {
             <span className="text-[var(--ink-secondary)] font-medium">Your Progress</span>
             <span className="text-[var(--accent)] font-bold">{subject.progress_percentage}%</span>
           </div>
-          <div className="w-full bg-[var(--border-strong)]/30 h-2 rounded-full overflow-hidden">
+          <div className="w-full bg-[var(--border-strong)]/30 h-2 rounded-full overflow-hidden" role="progressbar" aria-label="Course progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={subject.progress_percentage}>
             <motion.div 
-              className="bg-[var(--accent)] h-full rounded-full transition-all duration-700 ease-out"
+              className="bg-[var(--accent)] h-full rounded-full"
               initial={reduced ? { width: `${subject.progress_percentage}%` } : { width: 0 }}
               animate={{ width: `${subject.progress_percentage}%` }}
               transition={{ duration: 0.6, ease: "easeOut" }}
@@ -140,7 +140,7 @@ export default function SubjectPage() {
             {next ? (
               <Link
                 href={`/learn/${subject.slug}/${next.slug}`}
-                className="flex items-center justify-between gap-4 p-4 rounded-xl border border-[var(--accent)]/40 bg-[var(--surface)] hover:border-[var(--accent)] transition-colors"
+                className="flex items-center justify-between gap-4 p-4 rounded-xl border border-[var(--accent)]/40 bg-[var(--surface)] hover:border-[var(--accent)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
               >
                 <div className="flex flex-col gap-1 min-w-0">
                   <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-[var(--accent)]">
@@ -149,11 +149,11 @@ export default function SubjectPage() {
                   <span className="text-[15px] font-bold text-[var(--ink)] truncate">{next.title}</span>
                   <span className="text-[12px] text-[var(--ink-secondary)] truncate">{next.moduleTitle}</span>
                 </div>
-                <ChevronRight className="w-5 h-5 text-[var(--accent)] shrink-0" />
+                <ChevronRight aria-hidden="true" className="w-5 h-5 text-[var(--accent)] shrink-0" />
               </Link>
             ) : (
               <div className="p-4 rounded-xl border border-[var(--border)] bg-[var(--success-soft)] text-[var(--success)] text-[14px] font-medium">
-                You've completed every topic in this course.
+                You’ve completed every topic in this course.
               </div>
             )}
             <ol className="flex flex-col gap-2">
@@ -174,15 +174,15 @@ export default function SubjectPage() {
                             : "bg-[var(--surface-subdued)] text-[var(--ink-secondary)]"
                       )}
                     >
-                      {total > 0 && done === total ? <CheckCircle2 className="w-4 h-4" /> : i + 1}
+                      {total > 0 && done === total ? <CheckCircle2 aria-hidden="true" className="w-4 h-4" /> : i + 1}
                     </span>
                     <span className={clsx("text-[13px] w-40 sm:w-56 truncate", current ? "font-bold text-[var(--ink)]" : "text-[var(--ink-secondary)]")}>
                       {m.title}
                     </span>
-                    <div className="flex-1 h-1.5 rounded-full bg-[var(--border-strong)]/30 overflow-hidden">
+                    <div className="flex-1 h-1.5 rounded-full bg-[var(--border-strong)]/30 overflow-hidden" role="progressbar" aria-label={`${m.title} progress`} aria-valuemin={0} aria-valuemax={100} aria-valuenow={pct}>
                       <div className="h-full rounded-full bg-[var(--accent)]" style={{ width: `${pct}%` }} />
                     </div>
-                    <span className="text-[11px] font-mono text-[var(--ink-tertiary)] w-12 text-right">{done}/{total}</span>
+                    <span className="text-[11px] font-mono text-[var(--ink-tertiary)] w-12 text-right tabular-nums">{done}/{total}</span>
                   </li>
                 );
               })}
@@ -210,7 +210,7 @@ export default function SubjectPage() {
               <div key={module.id} className="flex flex-col gap-2">
                 <div
                   className={clsx(
-                    "group flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 sm:p-5 rounded-xl border transition-all shadow-sm",
+                    "group flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 sm:p-5 rounded-xl border shadow-sm",
                     moduleCompleted 
                       ? "bg-[var(--surface-subdued)]/40 border-[var(--border)]"
                       : "bg-[var(--surface)] border-[var(--border)]"
@@ -223,7 +223,7 @@ export default function SubjectPage() {
                         ? "bg-[var(--success-soft)] text-[var(--success)]"
                         : "bg-[var(--surface-subdued)] text-[var(--ink-secondary)]"
                     )}>
-                      {moduleCompleted ? <CheckCircle2 className="w-5 h-5" /> : <span className="text-[13px] font-mono font-bold">{index + 1}</span>}
+                      {moduleCompleted ? <CheckCircle2 aria-hidden="true" className="w-5 h-5" /> : <span className="text-[13px] font-mono font-bold">{index + 1}</span>}
                     </div>
                     
                     <div className="flex flex-col gap-1">
@@ -247,7 +247,7 @@ export default function SubjectPage() {
                         <span className="capitalize">{module.difficulty || "Intermediate"}</span>
                       </span>
                       <span className="flex items-center gap-1">
-                        <Clock className="w-3.5 h-3.5" />
+                        <Clock aria-hidden="true" className="w-3.5 h-3.5" />
                         {module.estimated_minutes || 60}m
                       </span>
                     </div>
@@ -261,7 +261,7 @@ export default function SubjectPage() {
                       key={topic.id}
                       href={`/learn/${subject.slug}/${topic.slug}`}
                       className={clsx(
-                        "flex items-center justify-between p-3 rounded-lg border transition-colors",
+                        "flex items-center justify-between p-3 rounded-lg border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]",
                         topic.status === 'completed'
                           ? "bg-[var(--surface-subdued)] border-[var(--border)]"
                           : "bg-[var(--surface)] border-[var(--border)] hover:border-[var(--accent)]"
@@ -269,9 +269,9 @@ export default function SubjectPage() {
                     >
                       <div className="flex items-center gap-3">
                         {topic.status === 'completed' ? (
-                          <CheckCircle2 className="w-4 h-4 text-[var(--success)]" />
+                          <CheckCircle2 aria-hidden="true" className="w-4 h-4 text-[var(--success)]" />
                         ) : topic.status === 'in_progress' ? (
-                          <div className="w-4 h-4 rounded-full border-2 border-[var(--accent)] border-t-transparent animate-spin" />
+                          <div aria-label="In progress" className="w-4 h-4 rounded-full border-2 border-[var(--accent)] border-t-transparent border-r-transparent" />
                         ) : (
                           <div className="w-4 h-4 rounded-full border-2 border-[var(--border-strong)]" />
                         )}
@@ -291,10 +291,10 @@ export default function SubjectPage() {
                       
                       <div className="flex items-center gap-3 text-[11px] font-mono text-[var(--ink-tertiary)]">
                         <span className="flex items-center gap-1">
-                          <Clock className="w-3.5 h-3.5" />
+                          <Clock aria-hidden="true" className="w-3.5 h-3.5" />
                           {topic.estimated_minutes}m
                         </span>
-                        <ChevronRight className="w-4 h-4 text-[var(--ink-tertiary)]" />
+                        <ChevronRight aria-hidden="true" className="w-4 h-4 text-[var(--ink-tertiary)]" />
                       </div>
                     </Link>
                   ))}
