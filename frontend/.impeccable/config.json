@@ -1,0 +1,14 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "bounce-easing",
+        "value": "cubic-bezier(0.2, 1.25, 0.4, 1)",
+        "createdAt": "2026-10-30T19:00:33.909Z",
+        "reason": "user asked for the reference site's exact text animations (itsflxkzy.com .rv reveal uses this curve)"
+      }
+    ]
+  }
+}

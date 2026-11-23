@@ -40,7 +40,7 @@ export function BrandPanel() {
         };
 
   return (
-    <section className="hidden lg:flex lg:w-[48%] relative flex-col justify-between p-10 lg:p-14 border-r border-border bg-[#f4f4f1] overflow-hidden">
+    <section className="hidden lg:flex lg:w-[48%] relative flex-col justify-between p-10 lg:p-14 border-r border-slate-200 bg-[#f8fafc] overflow-hidden">
       <div className="absolute inset-0 auth-grid-light pointer-events-none" />
       <div className="absolute inset-0 auth-ambient-glow pointer-events-none" />
       <div className="absolute -top-20 -right-20 w-80 h-80 bg-accent/5 rounded-full blur-3xl pointer-events-none" />

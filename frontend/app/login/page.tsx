@@ -17,18 +17,26 @@ import { supabase } from "@/lib/supabase/client";
 function AuthTabs({ active, onChange }: { active: "login" | "signup", onChange: (mode: "login" | "signup") => void }) {
   return (
     <div className="w-full max-w-[440px] mb-8 flex items-center justify-between relative z-10">
-      <div className="inline-flex p-1 bg-surface-subdued rounded-lg border border-border">
+      <div className="inline-flex p-1 bg-slate-100/90 rounded-lg border border-slate-200/90">
         <button 
           type="button" 
           onClick={() => onChange("login")}
-          className={`auth-tab ${active === "login" ? "active" : ""}`}
+          className={`px-5 py-1.5 rounded-md text-[13px] font-medium transition-all cursor-pointer ${
+            active === "login" 
+              ? "!bg-white !text-slate-900 border border-slate-200/80 shadow-xs font-semibold" 
+              : "text-slate-500 hover:text-slate-900 bg-transparent"
+          }`}
         >
           Sign in
         </button>
         <button 
           type="button" 
           onClick={() => onChange("signup")}
-          className={`auth-tab ${active === "signup" ? "active" : ""}`}
+          className={`px-5 py-1.5 rounded-md text-[13px] font-medium transition-all cursor-pointer ${
+            active === "signup" 
+              ? "!bg-white !text-slate-900 border border-slate-200/80 shadow-xs font-semibold" 
+              : "text-slate-500 hover:text-slate-900 bg-transparent"
+          }`}
         >
           Sign up
         </button>
@@ -371,7 +379,11 @@ function AuthForm() {
           )}
 
           <motion.div {...fade(mode === "login" ? 0.34 : 0.4)}>
-            <button type="submit" disabled={loading} className="btn-primary auth-btn mt-2 text-[14.5px]">
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full h-[50px] mt-2 inline-flex items-center justify-center gap-2 rounded-md bg-slate-950 hover:bg-slate-900 text-white font-medium text-[14.5px] shadow-xs active:translate-y-px transition-all disabled:opacity-60 cursor-pointer"
+            >
               {loading ? (
                 <Loader2 size={16} className="animate-spin" />
               ) : (

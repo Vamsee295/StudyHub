@@ -4,7 +4,7 @@
    TECHNICAL EDITORIAL — design tokens (see /DESIGN.md)
    =========================================================== */
 :root {
-  --canvas: #fafaf8;
+  --canvas: #ffffff;
   --surface: #ffffff;
   --surface-subdued: #f1f5f9;
   --border: #e2e8f0;
@@ -212,20 +212,22 @@ body {
 /* form inputs */
 .field {
   height: 38px;
-  background: var(--surface);
-  border: 1px solid var(--border);
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
   border-radius: var(--radius-md);
   padding: 0 12px;
   font-size: 14px;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  color: #0f172a;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
 }
 .field::placeholder {
-  color: var(--ink-tertiary);
+  color: #94a3b8;
 }
 .field:focus {
   outline: none;
+  background: #ffffff;
   border-color: var(--accent);
-  box-shadow: 0 0 0 1px var(--accent);
+  box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.12);
 }
 
 /* arrow micro-interaction */
@@ -270,18 +272,18 @@ button:hover .arrow {
   box-shadow: 0 1px 2px -1px rgba(15, 23, 42, 0.04);
 }
 
-/* ===== Auth split-screen (light — matches the rest of the app) ===== */
+/* ===== Auth split-screen (clean white theme) ===== */
 .auth-grid-light {
-  background-image: linear-gradient(to right, rgba(29, 78, 216, 0.05) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(29, 78, 216, 0.05) 1px, transparent 1px);
+  background-image: linear-gradient(to right, rgba(29, 78, 216, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(29, 78, 216, 0.04) 1px, transparent 1px);
   background-size: 24px 24px;
 }
 .auth-dots-light {
-  background-image: radial-gradient(rgba(29, 78, 216, 0.08) 1px, transparent 0);
+  background-image: radial-gradient(rgba(29, 78, 216, 0.06) 1px, transparent 0);
   background-size: 22px 22px;
 }
 .auth-ambient-glow {
-  background: radial-gradient(circle at 42% 38%, rgba(29, 78, 216, 0.06) 0%, rgba(244, 244, 241, 0) 68%);
+  background: radial-gradient(circle at 42% 38%, rgba(29, 78, 216, 0.04) 0%, rgba(248, 250, 252, 0) 68%);
 }
 .field-error {
   border-color: var(--error) !important;
@@ -293,28 +295,68 @@ button:hover .arrow {
 .auth-tab {
   padding: 6px 20px;
   border-radius: var(--radius-md);
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 500;
-  color: var(--ink-secondary);
+  color: #64748b;
+  background: transparent;
+  border: 1px solid transparent;
   transition: all 0.15s ease;
+  cursor: pointer;
+}
+.auth-tab:hover {
+  color: #0f172a;
 }
 .auth-tab.active {
-  background: var(--surface);
-  color: var(--ink);
-  border: 1px solid var(--border);
-  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08) !important;
+  font-weight: 600;
 }
 .field.field-lg {
   height: 50px;
 }
-.btn-primary.auth-btn,
+.btn-primary.auth-btn {
+  height: 50px;
+  width: 100%;
+  background: #0f172a;
+  color: #ffffff;
+  border: 1px solid #0f172a;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
+  transition: background-color 0.15s ease, transform 0.15s ease;
+}
+.btn-primary.auth-btn:hover {
+  background: #1e293b;
+  border-color: #1e293b;
+}
 .btn-secondary.auth-btn {
   height: 50px;
   width: 100%;
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+.btn-secondary.auth-btn:hover {
+  background: #f8fafc !important;
+  border-color: #cbd5e1 !important;
 }
 .btn-primary.auth-btn:active,
 .btn-secondary.auth-btn:active {
   transform: translateY(1px);
 }
 
-
+/* Prevent browser autofill from tinting inputs yellow/gold */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+  -webkit-text-fill-color: #0f172a !important;
+  border-color: #e2e8f0 !important;
+  transition: background-color 5000s ease-in-out 0s;
+}

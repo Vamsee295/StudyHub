@@ -21,7 +21,11 @@ export function GoogleButton({ label = "Continue with Google" }: { label?: strin
   };
 
   return (
-    <button type="button" onClick={handleGoogleSignIn} className="btn-secondary auth-btn text-[13.5px]">
+    <button
+      type="button"
+      onClick={handleGoogleSignIn}
+      className="btn-secondary auth-btn text-[13.5px] !bg-white hover:!bg-slate-50 border border-slate-200 !text-slate-800 shadow-2xs transition-colors cursor-pointer"
+    >
       <svg width="16" height="16" viewBox="0 0 24 24" className="shrink-0">
         <path d="M12 5c1.6 0 3 .6 4.1 1.7l3.1-3.1C17.3 1.8 14.8 1 12 1 7.4 1 3.5 3.6 1.6 7.4l3.7 2.9C6.2 7.4 8.9 5 12 5z" fill="#EA4335" />
         <path d="M23.5 12.3c0-.8-.1-1.7-.2-2.3H12v4.6h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.9z" fill="#4285F4" />

@@ -1,0 +1,207 @@
+/* Calm paper: warm paper, dark ink, one ink-blue accent. Scoped under .x (every app route) */
+@layer components {
+.x {
+  --x-paper: #f5efe6;
+  --x-paper-2: #ece3d4;
+  --x-card: #fbf8f2;
+  --x-ink: #191614;
+  --x-night: #151311;
+  --x-soft: rgba(25, 22, 20, 0.72);
+  --x-mute: rgba(25, 22, 20, 0.56);
+  --x-line-soft: rgba(25, 22, 20, 0.14);
+  --x-accent: #2f4f8f;
+  --x-accent-soft: rgba(47, 79, 143, 0.1);
+  --x-sky: var(--x-accent);       /* legacy name: highlight / accent */
+  --x-sky-soft: var(--x-accent-soft); /* legacy name: soft fill */
+  --x-deep: var(--x-ink);
+  --x-red: #b3261e;
+  --x-line: 1px solid rgba(25, 22, 20, 0.16);
+  --x-shadow: 0 1px 2px rgba(25, 22, 20, 0.05), 0 12px 32px -16px rgba(25, 22, 20, 0.22);
+
+  /* Two working faces: Inter for text and headings, JetBrains Mono for code and data.
+     Anton (--font-poster) is kept for .x-display hero lines only. */
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+  --font-display: var(--font-sans);
+
+  background: var(--x-paper);
+  color: var(--x-ink);
+  font-family: var(--font-inter), system-ui, sans-serif;
+  overflow-x: clip;
+  position: relative;
+  isolation: isolate;
+}
+
+/* Fine dot grid, fading out through the middle of the screen */
+.x::before {
+  content: ""; position: fixed; inset: 0; pointer-events: none; z-index: -1;
+  background: radial-gradient(rgba(25, 22, 20, 0.05) 1.1px, transparent 1.5px) 0 0 / 13px 13px;
+  -webkit-mask: linear-gradient(#000 0, rgba(0, 0, 0, 0.25) 45%, #000 100%);
+  mask: linear-gradient(#000 0, rgba(0, 0, 0, 0.25) 45%, #000 100%);
+}
+.x ::selection { background: var(--x-accent); color: #fff; }
+
+.x-wrap { width: min(1160px, 100% - 32px); margin-inline: auto; position: relative; }
+
+/* Type */
+/* Poster face for hero lines only; every other heading is sentence-case Inter */
+.x-display {
+  font-family: var(--font-poster), Impact, sans-serif;
+  font-weight: 400; text-transform: uppercase; letter-spacing: 0.005em;
+  font-size: clamp(2.9rem, 1.4rem + 5.6vw, 6rem); line-height: 1.04;
+}
+.x-head, .x-dhead { font-family: var(--font-sans); font-weight: 650; }
+.x-head { font-size: clamp(2rem, 1.4rem + 2.4vw, 3.4rem); line-height: 1.08; letter-spacing: -0.03em; }
+.x-dhead { line-height: 1.2; letter-spacing: -0.015em; }
+.x-lead { font-size: clamp(1.05rem, 0.98rem + 0.35vw, 1.2rem); line-height: 1.65; color: var(--x-soft); }
+.x-mono { font-family: var(--font-mono), ui-monospace, monospace; }
+.x-label {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--x-mute);
+}
+.x-pen { font-family: var(--font-hand), cursive; color: var(--x-ink); font-size: clamp(1.4rem, 1.15rem + 0.8vw, 1.8rem); line-height: 1.1; }
+
+/* Highlighter: a soft accent band under the lower half of the words */
+.x-mark {
+  --tc: rgba(47, 79, 143, 0.18);
+  color: inherit; padding: 0 0.08em; margin: 0 0.02em;
+  background: linear-gradient(transparent 0 55%, var(--tc) 55% 92%, transparent 92%);
+  box-decoration-break: clone; -webkit-box-decoration-break: clone;
+}
+.x-mark-paper { --tc: rgba(245, 239, 230, 0.2); }
+
+/* Reveal on scroll: fade + rise with a small overshoot */
+/* Visible by default (SSR / no JS); useReveal adds html.rv-on to hide only blocks still below the fold */
+.rv.in { transition: opacity 0.7s, translate 0.8s cubic-bezier(0.2, 1.25, 0.4, 1); }
+@media (prefers-reduced-motion: no-preference) {
+  html.rv-on .rv:not(.in) { opacity: 0; translate: 0 24px; }
+}
+.rv.d1 { transition-delay: 0.08s; }
+.rv.d2 { transition-delay: 0.16s; }
+.rv.d3 { transition-delay: 0.24s; }
+
+/* Hand-drawn strike through a phrase, drawn once it's revealed */
+.x-strike > span { position: relative; white-space: nowrap; }
+.x-strike svg { position: absolute; left: -2%; top: 30%; width: 104%; height: 0.9em; overflow: visible; }
+.x-strike path {
+  fill: none; stroke: var(--x-ink); stroke-width: 8; stroke-linecap: round;
+  stroke-dasharray: 1; stroke-dashoffset: 1;
+  transition: stroke-dashoffset 0.6s cubic-bezier(0.6, 0, 0.3, 1) 0.45s;
+}
+.x-strike.in path { stroke-dashoffset: 0; }
+
+/* Step number in a hand-drawn circle */
+.x-circle {
+  position: relative; display: inline-grid; place-items: center; width: 58px; height: 58px;
+  font-family: var(--font-mono), monospace; font-weight: 600; font-size: 1.05rem; color: var(--x-accent);
+}
+.x-circle svg { position: absolute; inset: 0; overflow: visible; }
+.x-circle path {
+  fill: none; stroke: var(--x-accent); stroke-width: 2; stroke-linecap: round;
+  stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 0.9s cubic-bezier(0.6, 0, 0.3, 1) 0.2s;
+}
+.x-circle.in path { stroke-dashoffset: 0; }
+
+/* Paper card */
+.x-sheet { background: var(--x-card); border: var(--x-line); border-radius: 14px; box-shadow: var(--x-shadow); }
+
+/* Buttons */
+.x-btn {
+  display: inline-flex; align-items: center; gap: 0.55em;
+  font-family: var(--font-sans); font-weight: 600; letter-spacing: -0.005em;
+  font-size: 1rem; padding: 0.75em 1.3em;
+  border: 1px solid var(--x-ink); border-radius: 10px;
+  background: var(--x-ink); color: var(--x-paper); box-shadow: 0 1px 2px rgba(25, 22, 20, 0.12);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+.x-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 16px -8px rgba(25, 22, 20, 0.45); }
+.x-btn:active { transform: translateY(0); box-shadow: 0 1px 2px rgba(25, 22, 20, 0.12); }
+.x-btn-sm { font-size: 0.9rem; padding: 0.55em 1em; }
+.x-btn-light { background: var(--x-paper); color: var(--x-ink); border-color: var(--x-paper); }
+.x a:focus-visible, .x button:focus-visible, .x summary:focus-visible { outline: 2px solid var(--x-accent); outline-offset: 3px; }
+
+/* Company chips */
+.x-chip {
+  border: var(--x-line); border-radius: 999px; padding: 0.4em 1em; font-weight: 500; font-size: 15px;
+  background: var(--x-card); transition: background 0.15s ease, transform 0.15s ease;
+}
+.x-chip:hover { transform: translateY(-1px); background: var(--x-paper-2); }
+.x-chip[aria-pressed="true"] { background: var(--x-ink); color: var(--x-paper); }
+
+
+/* Dark terminal card */
+.x-term { background: var(--x-night); color: #f5efe6; border: var(--x-line); border-radius: 14px; box-shadow: var(--x-shadow); overflow: hidden; }
+.x-term-bar { display: flex; align-items: center; gap: 8px; padding: 11px 16px; border-bottom: 1px solid rgba(245, 239, 230, 0.1); color: rgba(245, 239, 230, 0.5); font-size: 12.5px; }
+.x-term-bar i { width: 10px; height: 10px; border-radius: 50%; background: rgba(245, 239, 230, 0.2); }
+
+.x-row { border-top: var(--x-line); }
+.x-row:last-child { border-bottom: var(--x-line); }
+
+.x-faq summary { list-style: none; cursor: pointer; }
+.x-faq summary::-webkit-details-marker { display: none; }
+.x-faq .x-plus { transition: transform 0.2s ease; }
+.x-faq[open] .x-plus { transform: rotate(45deg); }
+
+.x-motif { width: 96px; height: 64px; }
+
+/* Dark closing band gets its own faint dots */
+.x-night { background: var(--x-night); color: var(--x-paper); position: relative; }
+.x-night::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(rgba(245, 239, 230, 0.07) 1.1px, transparent 1.5px) 0 0 / 13px 13px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rv { opacity: 1; translate: none; transition: none; }
+  .x-strike path, .x-circle path { stroke-dashoffset: 0; transition: none; }
+  .x-btn, .x-btn:hover, .x-chip { transition: none; }
+}
+}
+
+/* App design tokens re-pointed at paper + ink, so shared classes (btn-primary, text-ink, bg-accent…) follow the theme */
+@layer components {
+.x {
+  --canvas: transparent; /* let the .x paper, dots and grain show through app shells */
+  --surface: var(--x-card);
+  --surface-elevated: var(--x-card);
+  --surface-subdued: var(--x-paper-2);
+  --ink: var(--x-ink);
+  --ink-secondary: rgba(25, 22, 20, 0.72);
+  --ink-tertiary: rgba(25, 22, 20, 0.58);
+  --ink-muted: rgba(25, 22, 20, 0.45);
+  --border: rgba(25, 22, 20, 0.14);
+  --border-strong: rgba(25, 22, 20, 0.3);
+  --accent: var(--x-accent);
+  --accent-hover: #243f75;
+  --accent-soft: var(--x-accent-soft);
+  --accent-soft-border: rgba(47, 79, 143, 0.25);
+  --info: var(--x-accent);
+  --info-soft: var(--x-accent-soft);
+  --error: #b3261e;
+}
+
+/* Form field */
+.x-field {
+  width: 100%; height: 46px; padding: 0 14px; border-radius: 10px;
+  border: 1px solid var(--border-strong); background: var(--x-card); color: var(--x-ink); font-size: 15px;
+  transition: box-shadow 0.15s ease, border-color 0.15s ease;
+}
+.x-field::placeholder { color: var(--x-mute); }
+.x-field:focus { outline: none; border-color: var(--x-accent); box-shadow: 0 0 0 3px var(--x-accent-soft); }
+.x-field[aria-invalid="true"] { border-color: var(--error); }
+.x-field[aria-invalid="true"]:focus { box-shadow: 0 0 0 3px rgba(179, 38, 30, 0.14); }
+.x-field-label { display: block; margin-bottom: 6px; font-size: 13px; font-weight: 600; color: var(--x-ink); }
+.x-field-error { margin-top: 6px; font-size: 13px; font-weight: 600; color: var(--error); }
+}
+
+/* Buttons: unlayered so they beat the unlayered .btn-* primitives in globals.css.
+   Primary actions stay ink; the blue accent is for links, focus, active and progress. */
+.x .btn-primary, .x .btn-secondary {
+  font-family: var(--font-sans); font-weight: 600;
+  border: 1px solid var(--x-ink); border-radius: 10px; min-height: 44px;
+  box-shadow: 0 1px 2px rgba(25, 22, 20, 0.1);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+.x .btn-primary { background: var(--x-ink); color: var(--x-paper); }
+.x .btn-secondary { background: var(--x-card); color: var(--x-ink); border-color: var(--border-strong); }
+.x .btn-primary:hover, .x .btn-secondary:hover { transform: translateY(-1px); box-shadow: 0 6px 16px -8px rgba(25, 22, 20, 0.4); }
+.x .btn-primary:hover { background: #000; }
