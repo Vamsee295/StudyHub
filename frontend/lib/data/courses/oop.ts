@@ -1,4 +1,8 @@
 import { Course } from './types';
+import { withTheory } from './utils';
+import { oopCoreTheory } from './oop-theory-core';
+import { oopPillarsTheory } from './oop-theory-pillars';
+import { oopAdvancedTheory } from './oop-theory-advanced';
 import { oopFundamentalsLessons } from './oop-content-fundamentals';
 import { encapsulationLessons } from './oop-content-encapsulation';
 import { constructorsLessons } from './oop-content-constructors';
@@ -20,7 +24,7 @@ function extractLessonDescription(content: any): string {
   return '';
 }
 
-export const oopCourse: Course = {
+const rawOopCourse: Course = {
   id: "course-oop",
   slug: "oop",
   title: "Object-Oriented Programming",
@@ -158,4 +162,11 @@ export const oopCourse: Course = {
       }))
     }
   ]
+};
+
+const oopTheory = { ...oopCoreTheory, ...oopPillarsTheory, ...oopAdvancedTheory };
+
+export const oopCourse: Course = {
+  ...rawOopCourse,
+  modules: rawOopCourse.modules.map((m) => ({ ...m, lessons: withTheory(m.lessons, oopTheory) })),
 };
