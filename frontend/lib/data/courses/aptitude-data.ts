@@ -1,7 +1,9 @@
+import { withTheory } from './utils';
+import { aptitudeTheory } from './aptitude-theory';
 import { Course } from './types';
 import { createAptitudeLesson } from './aptitude-factory';
 
-export const aptitudeDataCourse: Course = {
+const raw_aptitudeDataCourse: Course = {
   id: "course-data-interpretation",
   slug: "data-interpretation",
   title: "Data Interpretation",
@@ -193,4 +195,9 @@ export const aptitudeDataCourse: Course = {
       ]
     }
   ]
+};
+
+export const aptitudeDataCourse: Course = {
+  ...raw_aptitudeDataCourse,
+  modules: raw_aptitudeDataCourse.modules.map((m) => ({ ...m, lessons: withTheory(m.lessons, aptitudeTheory) })),
 };

@@ -1,7 +1,9 @@
+import { withTheory } from './utils';
+import { aptitudeTheory } from './aptitude-theory';
 import { Course } from './types';
 import { createAptitudeLesson } from './aptitude-factory';
 
-export const aptitudeQuantitativeCourse: Course = {
+const raw_aptitudeQuantitativeCourse: Course = {
   id: "course-quant-aptitude",
   slug: "quantitative-aptitude",
   title: "Quantitative Aptitude",
@@ -574,4 +576,9 @@ export const aptitudeQuantitativeCourse: Course = {
       ]
     }
   ]
+};
+
+export const aptitudeQuantitativeCourse: Course = {
+  ...raw_aptitudeQuantitativeCourse,
+  modules: raw_aptitudeQuantitativeCourse.modules.map((m) => ({ ...m, lessons: withTheory(m.lessons, aptitudeTheory) })),
 };

@@ -1,7 +1,9 @@
+import { withTheory } from './utils';
+import { aptitudeTheory } from './aptitude-theory';
 import { Course } from './types';
 import { createAptitudeLesson } from './aptitude-factory';
 
-export const aptitudeLogicalCourse: Course = {
+const raw_aptitudeLogicalCourse: Course = {
   id: "course-logical-reasoning",
   slug: "logical-reasoning",
   title: "Logical Reasoning",
@@ -307,4 +309,9 @@ export const aptitudeLogicalCourse: Course = {
       ]
     }
   ]
+};
+
+export const aptitudeLogicalCourse: Course = {
+  ...raw_aptitudeLogicalCourse,
+  modules: raw_aptitudeLogicalCourse.modules.map((m) => ({ ...m, lessons: withTheory(m.lessons, aptitudeTheory) })),
 };

@@ -15,8 +15,8 @@ for (const m of course.modules) for (const l of m.lessons) {
   const issues: string[] = [];
   if (words < 700) issues.push(`only ${words} words`);
   if (/—/.test(t)) issues.push('em dash');
-  // "simple attribute" is an ER term, not marketing
-  const banned = t.replace(/\*{0,2}\bsimple\*{0,2} (and composite )?attributes?\b|\| Simple \|/gi, '');
+  // "simple attribute" (ER), "simple interest" (finance) and "present simple" (grammar) are technical terms, not filler
+  const banned = t.replace(/\*{0,2}\bsimple\*{0,2} (and composite )?attributes?\b|\| Simple \||\bsimple interest\b|\b(present|past|future) simple\b|\bsimple, continuous\b/gi, '');
   if (/\b(easy|simple|simply|just|very|really)\b/i.test(banned)) issues.push('banned word: ' + banned.match(/\b(easy|simple|simply|just|very|really)\b/i)![0]);
   if (/\$\{/.test(t)) issues.push('template interpolation');
   if (/```|~~~/.test(html)) issues.push('unclosed fence');
