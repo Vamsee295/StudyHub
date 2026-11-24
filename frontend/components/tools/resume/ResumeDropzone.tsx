@@ -49,17 +49,17 @@ export function ResumeDropzone({ onAnalyze, isAnalyzing }: ResumeDropzoneProps) 
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 sm:p-8 flex flex-col h-full justify-center items-center">
-      <h2 className="text-xl font-bold text-gray-900 mb-2">Upload your Resume</h2>
-      <p className="text-gray-500 text-sm mb-8 text-center max-w-md">
+    <div className="bg-card rounded-2xl border border-hair p-6 sm:p-8 flex flex-col h-full justify-center items-center">
+      <h2 className="text-xl font-bold text-ink mb-2">Upload your Resume</h2>
+      <p className="text-mute text-sm mb-8 text-center max-w-md">
         We'll parse your resume and evaluate it against typical placement ATS systems to give you actionable feedback.
       </p>
       
       <div 
         className={cn(
           "w-full max-w-lg border-2 border-dashed rounded-xl p-8 transition-all flex flex-col items-center text-center cursor-pointer relative",
-          dragActive ? "border-blue-500 bg-blue-50" : "border-gray-300 hover:border-gray-400 hover:bg-gray-50",
-          selectedFile ? "border-green-500 bg-green-50/50" : "",
+          dragActive ? "border-accent bg-accent-soft" : "border-ink/25 hover:border-line hover:bg-card-2",
+          selectedFile ? "border-note bg-success-soft/50" : "",
           isAnalyzing ? "opacity-50 pointer-events-none" : ""
         )}
         onDragEnter={handleDrag}
@@ -78,13 +78,13 @@ export function ResumeDropzone({ onAnalyze, isAnalyzing }: ResumeDropzoneProps) 
         
         {selectedFile ? (
           <>
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
-              <CheckCircle className="w-8 h-8 text-green-600" />
+            <div className="w-16 h-16 bg-success-soft rounded-full flex items-center justify-center mb-4">
+              <CheckCircle className="w-8 h-8 text-note" />
             </div>
-            <p className="text-green-800 font-medium">{selectedFile.name}</p>
-            <p className="text-green-600 text-xs mt-1">{(selectedFile.size / 1024 / 1024).toFixed(2)} MB</p>
+            <p className="text-note font-medium">{selectedFile.name}</p>
+            <p className="text-note text-xs mt-1">{(selectedFile.size / 1024 / 1024).toFixed(2)} MB</p>
             <button 
-              className="mt-6 px-6 py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
+              className="mt-6 px-6 py-2.5 bg-accent text-paper rounded-lg font-medium hover:bg-accent transition-colors"
               onClick={(e) => {
                 e.stopPropagation();
                 onAnalyze(selectedFile);
@@ -95,24 +95,24 @@ export function ResumeDropzone({ onAnalyze, isAnalyzing }: ResumeDropzoneProps) 
           </>
         ) : (
           <>
-            <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mb-4">
-              <UploadCloud className="w-8 h-8 text-blue-500" />
+            <div className="w-16 h-16 bg-accent-soft rounded-full flex items-center justify-center mb-4">
+              <UploadCloud className="w-8 h-8 text-accent" />
             </div>
-            <p className="text-gray-700 font-medium mb-1">Click to upload or drag and drop</p>
-            <p className="text-gray-500 text-xs mb-4">PDF or DOCX (Max 5MB)</p>
+            <p className="text-body font-medium mb-1">Click to upload or drag and drop</p>
+            <p className="text-mute text-xs mb-4">PDF or DOCX (Max 5MB)</p>
           </>
         )}
       </div>
 
       {!selectedFile && (
         <div className="mt-8 flex flex-col items-center">
-          <span className="text-sm text-gray-400 mb-4">OR</span>
+          <span className="text-sm text-mute mb-4">OR</span>
           <button 
             onClick={() => onAnalyze(null)}
             disabled={isAnalyzing}
-            className="flex items-center gap-2 px-5 py-2.5 bg-gray-50 border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors font-medium text-sm"
+            className="flex items-center gap-2 px-5 py-2.5 bg-paper-2 border border-hair text-body rounded-lg hover:bg-card-2 transition-colors font-medium text-sm"
           >
-            <FileText className="w-4 h-4 text-blue-500" />
+            <FileText className="w-4 h-4 text-accent" />
             Try with Sample SDE Resume
           </button>
         </div>
@@ -120,8 +120,8 @@ export function ResumeDropzone({ onAnalyze, isAnalyzing }: ResumeDropzoneProps) 
       
       {isAnalyzing && (
         <div className="mt-8 flex flex-col items-center">
-          <div className="w-8 h-8 border-4 border-blue-100 border-t-blue-600 rounded-full animate-spin mb-3"></div>
-          <p className="text-blue-600 font-medium animate-pulse">Analyzing resume structure and keywords...</p>
+          <div className="w-8 h-8 border-4 border-accent-line border-t-accent rounded-full animate-spin mb-3"></div>
+          <p className="text-accent-ink font-medium animate-pulse">Analyzing resume structure and keywords...</p>
         </div>
       )}
     </div>

@@ -33,7 +33,7 @@ export function ToolsSearchFilter({
   }, []);
 
   return (
-    <div className="sticky top-[64px] z-40 bg-[var(--canvas)]/80 backdrop-blur-md pt-4 pb-4 mb-8 border-b border-[var(--border)] shadow-[0_1px_2px_rgba(15,23,42,0.01)]">
+    <div className="sticky top-[64px] z-40 bg-paper/80 backdrop-blur-md pt-4 pb-4 mb-8 border-b border-hair shadow-[0_1px_2px_rgba(15,23,42,0.01)]">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         {/* Category Pills (Scrollable) */}
         <div className="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0 scrollbar-hide shrink-0 max-w-full md:max-w-[65%]">
@@ -46,8 +46,8 @@ export function ToolsSearchFilter({
                 className={clsx(
                   "shrink-0 px-3.5 py-1.5 rounded-full text-[13px] font-medium transition-all flex items-center gap-2 border",
                   isActive
-                    ? "bg-[var(--ink)] text-white border-[var(--ink)] shadow-md"
-                    : "bg-[var(--surface)] text-[var(--ink-secondary)] border-[var(--border)] hover:bg-[var(--surface-subdued)] hover:text-[var(--ink)]"
+                    ? "bg-ink text-paper border-ink shadow-md"
+                    : "bg-card text-body border-hair hover:bg-paper-2 hover:text-ink"
                 )}
               >
                 {cat.label}
@@ -55,8 +55,8 @@ export function ToolsSearchFilter({
                   className={clsx(
                     "text-[10px] font-mono px-1.5 py-0.5 rounded-full",
                     isActive
-                      ? "bg-white/20 text-white"
-                      : "bg-[var(--surface-subdued)] text-[var(--ink-tertiary)]"
+                      ? "bg-card/20 text-paper"
+                      : "bg-paper-2 text-mute"
                   )}
                 >
                   {cat.id === "all" && filteredCount !== undefined ? filteredCount : cat.count}
@@ -68,17 +68,17 @@ export function ToolsSearchFilter({
 
         {/* Search Bar */}
         <div className="relative shrink-0 md:w-72 group">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-[15px] h-[15px] text-[var(--ink-tertiary)] group-focus-within:text-[var(--accent)] transition-colors" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-[15px] h-[15px] text-mute group-focus-within:text-accent-ink transition-colors" />
           <input
             ref={searchInputRef}
             type="text"
             placeholder="Search tools, topics, or tasks..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full h-[38px] bg-[var(--surface)] border border-[var(--border)] rounded-md pl-9 pr-10 text-[13.5px] text-[var(--ink)] placeholder:text-[var(--ink-tertiary)] focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition-all shadow-[0_1px_2px_rgba(15,23,42,0.02)]"
+            className="w-full h-[38px] bg-card border border-hair rounded-md pl-9 pr-10 text-[13.5px] text-ink placeholder:text-mute focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all shadow-[0_1px_2px_rgba(15,23,42,0.02)]"
           />
           <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1 pointer-events-none">
-            <kbd className="font-mono text-[10px] bg-[var(--surface-subdued)] border border-[var(--border)] text-[var(--ink-tertiary)] px-1.5 py-0.5 rounded shadow-[0_1px_1px_0_rgba(0,0,0,0.02)] font-medium">
+            <kbd className="font-mono text-[10px] bg-paper-2 border border-hair text-mute px-1.5 py-0.5 rounded shadow-[0_1px_1px_0_rgba(0,0,0,0.02)] font-medium">
               ⌘K
             </kbd>
           </div>

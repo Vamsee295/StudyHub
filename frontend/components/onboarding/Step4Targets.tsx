@@ -48,15 +48,15 @@ export default function Step4Targets({ data, update }: Step4TargetsProps) {
   return (
     <div className="flex flex-col gap-7">
       <div className="flex flex-col gap-1.5">
-        <h2 className="display text-[32px] md:text-[38px]">Target Placement Matrix</h2>
-        <p className="text-sm text-slate-500 leading-relaxed">
-          What are your immediate goals and target employers? We'll tailor the interview practice modules based on this.
+        <h2 className="display text-[32px] md:text-[38px]">Your goals</h2>
+        <p className="text-sm text-mute leading-relaxed">
+          What you're aiming for, and the companies you'd like to get into.
         </p>
       </div>
 
       <div className="flex flex-col gap-2.5">
-        <label className="text-xs font-mono font-semibold uppercase tracking-wider text-slate-600">
-          Primary Objectives <span className="text-blue-600">*</span> (Select all that apply)
+        <label className="text-xs font-mono font-semibold uppercase tracking-wider text-body">
+          Primary Objectives <span className="text-accent-ink">*</span> (Select all that apply)
         </label>
         <div className="flex flex-wrap gap-2.5">
           {OBJECTIVES.map(obj => {
@@ -67,8 +67,8 @@ export default function Step4Targets({ data, update }: Step4TargetsProps) {
                 onClick={() => toggleObjective(obj)}
                 className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-all border ${
                   isSelected 
-                    ? 'bg-blue-600 text-white border-blue-600 shadow-xs' 
-                    : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50'
+                    ? 'bg-accent text-paper border-accent shadow-xs' 
+                    : 'bg-card border-hair text-body hover:border-ink/25 hover:bg-paper-2'
                 }`}
                 type="button"
               >
@@ -81,10 +81,10 @@ export default function Step4Targets({ data, update }: Step4TargetsProps) {
 
       <div className="flex flex-col gap-2.5">
         <div>
-          <label className="text-xs font-mono font-semibold uppercase tracking-wider text-slate-600">
+          <label className="text-xs font-mono font-semibold uppercase tracking-wider text-body">
             Target Company Archetypes
           </label>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <p className="text-xs text-mute mt-0.5">
             Select archetypes to sync specific interview patterns into your workspace.
           </p>
         </div>
@@ -98,13 +98,13 @@ export default function Step4Targets({ data, update }: Step4TargetsProps) {
                 onClick={() => toggleCompany(company)}
                 className={`flex items-center gap-2.5 p-3 rounded-xl border text-left transition-all ${
                   isSelected 
-                    ? 'bg-blue-50/70 border-blue-400 text-blue-900 font-medium shadow-2xs' 
-                    : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50/60'
+                    ? 'bg-accent-soft/70 border-accent text-accent-ink font-medium shadow-2xs' 
+                    : 'bg-card border-hair text-body hover:border-ink/25 hover:bg-paper-2/60'
                 }`}
                 type="button"
               >
                 <div className={`w-4 h-4 rounded-[4px] border flex items-center justify-center shrink-0 transition-colors ${
-                  isSelected ? 'bg-blue-600 border-blue-600 text-white' : 'border-slate-300 bg-white'
+                  isSelected ? 'bg-accent border-accent text-paper' : 'border-ink/25 bg-card'
                 }`}>
                   {isSelected && <Check className="w-3 h-3 stroke-[3]" />}
                 </div>
@@ -116,7 +116,7 @@ export default function Step4Targets({ data, update }: Step4TargetsProps) {
       </div>
       
       {data.objectives.length === 0 && (
-        <p className="text-red-600 text-xs font-mono flex items-center gap-1.5">
+        <p className="text-danger text-xs font-mono flex items-center gap-1.5">
           <AlertCircle className="w-4 h-4 shrink-0" />
           Please select at least one primary objective.
         </p>

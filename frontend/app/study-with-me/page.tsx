@@ -143,16 +143,16 @@ export default function StudyWithMePage() {
         content="See what students are learning, solving, and building today on StudyHub's community learning feed."
       />
 
-      <div className="min-h-screen bg-[var(--bg)]">
+      <div className="min-h-screen bg-paper">
         {/* Hero */}
         <StudyWithMeHero stats={stats} onShareClick={() => setShareOpen(true)} />
 
         {/* View switch: activity feed or daily logs */}
         <div className="max-w-[1050px] mx-auto px-4 sm:px-8 pt-4">
-          <div role="tablist" aria-label="Study With Me views" className="inline-flex p-1 rounded-lg border border-[var(--border)] bg-[var(--surface)]">
+          <div role="tablist" aria-label="Study With Me views" className="inline-flex p-1 rounded-lg border border-hair bg-card">
             {([["feed", "Activity feed"], ["logs", "Daily logs"]] as const).map(([id, label]) => (
               <button key={id} role="tab" type="button" aria-selected={view === id} onClick={() => switchView(id)}
-                className={`px-4 py-1.5 rounded-md text-[13px] font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] ${view === id ? "bg-[var(--accent)] text-white" : "text-[var(--ink-secondary)] hover:text-[var(--ink)]"}`}>
+                className={`px-4 py-1.5 rounded-md text-[13px] font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${view === id ? "bg-accent text-paper" : "text-body hover:text-ink"}`}>
                 {label}
               </button>
             ))}

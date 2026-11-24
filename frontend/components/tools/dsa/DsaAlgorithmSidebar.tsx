@@ -13,17 +13,17 @@ export function DsaAlgorithmSidebar({ selectedAlgorithm, onSelectAlgorithm }: Ds
 
   const getCategoryIcon = (category: string) => {
     switch (category) {
-      case 'Sorting': return <SortAsc className="w-4 h-4 text-blue-500" />;
-      case 'Searching': return <Search className="w-4 h-4 text-green-500" />;
-      default: return <Layers className="w-4 h-4 text-purple-500" />;
+      case 'Sorting': return <SortAsc className="w-4 h-4 text-accent" />;
+      case 'Searching': return <Search className="w-4 h-4 text-note" />;
+      default: return <Layers className="w-4 h-4 text-accent" />;
     }
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm flex flex-col h-full overflow-hidden">
-      <div className="p-4 border-b border-gray-100 flex items-center gap-2">
-        <GitMerge className="w-5 h-5 text-indigo-600" />
-        <h3 className="font-semibold text-gray-900">Algorithms</h3>
+    <div className="bg-card rounded-2xl border border-hair flex flex-col h-full overflow-hidden">
+      <div className="p-4 border-b border-hair flex items-center gap-2">
+        <GitMerge className="w-5 h-5 text-accent-ink" />
+        <h3 className="font-semibold text-ink">Algorithms</h3>
       </div>
       
       <div className="flex-1 overflow-y-auto p-3 space-y-4">
@@ -31,7 +31,7 @@ export function DsaAlgorithmSidebar({ selectedAlgorithm, onSelectAlgorithm }: Ds
           <div key={category}>
             <div className="flex items-center gap-2 px-2 py-1.5 mb-1">
               {getCategoryIcon(category)}
-              <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider">{category}</h4>
+              <h4 className="text-xs font-bold text-mute uppercase tracking-wider">{category}</h4>
             </div>
             <div className="space-y-1">
               {DSA_ALGORITHMS.filter(a => a.category === category).map(alg => (
@@ -41,8 +41,8 @@ export function DsaAlgorithmSidebar({ selectedAlgorithm, onSelectAlgorithm }: Ds
                   className={cn(
                     "w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors border",
                     selectedAlgorithm.id === alg.id
-                      ? "bg-indigo-50 border-indigo-200 text-indigo-700 shadow-sm"
-                      : "bg-transparent border-transparent text-gray-700 hover:bg-gray-50 hover:border-gray-200"
+                      ? "bg-accent-soft border-accent-line text-accent-ink"
+                      : "bg-transparent border-transparent text-body hover:bg-card-2 hover:border-hair"
                   )}
                 >
                   {alg.name}

@@ -49,9 +49,9 @@ export default function PracticeReviewPage({ params }: { params: Promise<{ id: s
         </h1>
         <div className="flex items-center gap-3">
           <span className="text-[14px] font-semibold text-ink">{attempt.title}</span>
-          <span className="w-1 h-1 rounded-full bg-[var(--border-strong)]"></span>
+          <span className="w-1 h-1 rounded-full bg-ink/25"></span>
           <span className="text-[13px] text-body uppercase font-mono">{attempt.domain}</span>
-          <span className="w-1 h-1 rounded-full bg-[var(--border-strong)]"></span>
+          <span className="w-1 h-1 rounded-full bg-ink/25"></span>
           <span className="text-[13px] text-body flex items-center gap-1">
             <Clock className="w-3.5 h-3.5" />
             {minutes}m {seconds}s

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { AppLayout } from "@/components/layout/AppLayout";
 
 export const metadata: Metadata = {
-  title: "Practice — StudyHub Placement Engine",
+  title: "Practice — StudyHub",
   description: "Curated coding problems, SQL queries, and technical interview questions.",
 };
 

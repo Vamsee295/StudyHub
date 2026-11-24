@@ -47,16 +47,16 @@ export default function CapacityLab() {
       <section className={cardCls}>
         <div className="flex flex-wrap gap-2 mb-4">
           {Object.keys(PRESETS).map((k) => (
-            <button key={k} type="button" onClick={() => setInput(PRESETS[k])} className={`px-3 py-1.5 rounded-lg border border-[var(--border)] text-[13px] text-[var(--ink-secondary)] hover:border-[var(--accent)] ${focusRing}`}>Load: {k}</button>
+            <button key={k} type="button" onClick={() => setInput(PRESETS[k])} className={`px-3 py-1.5 rounded-lg border border-hair text-[13px] text-body hover:border-accent ${focusRing}`}>Load: {k}</button>
           ))}
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {FIELDS.map((f) => (
-            <label key={f.key} className="flex flex-col gap-1 text-[13px] font-medium text-[var(--ink)]">
+            <label key={f.key} className="flex flex-col gap-1 text-[13px] font-medium text-ink">
               {f.label}
               <input type="number" min={0} step={f.step ?? 1} value={input[f.key]}
                 onChange={(e) => setInput((s) => ({ ...s, [f.key]: Math.max(0, Number(e.target.value) || 0) }))} className={`${inputCls} tabular-nums`} />
-              <span className="text-[11.5px] font-normal text-[var(--ink-tertiary)]">{f.hint}</span>
+              <span className="text-[11.5px] font-normal text-mute">{f.hint}</span>
             </label>
           ))}
         </div>
@@ -65,12 +65,12 @@ export default function CapacityLab() {
       <section className={cardCls}>
         <dl className="grid sm:grid-cols-2 gap-x-8 gap-y-1">
           {results.map(([k, v, how]) => (
-            <div key={k} className="flex flex-col border-b border-[var(--border)]/60 py-2">
+            <div key={k} className="flex flex-col border-b border-hair/60 py-2">
               <div className="flex justify-between gap-4">
-                <dt className="text-[13px] text-[var(--ink-secondary)]">{k}</dt>
-                <dd className="text-[16px] font-mono font-bold tabular-nums text-[var(--ink)]">{v}</dd>
+                <dt className="text-[13px] text-body">{k}</dt>
+                <dd className="text-[16px] font-mono font-bold tabular-nums text-ink">{v}</dd>
               </div>
-              <span className="text-[11.5px] text-[var(--ink-tertiary)]">{how}</span>
+              <span className="text-[11.5px] text-mute">{how}</span>
             </div>
           ))}
         </dl>
@@ -78,8 +78,8 @@ export default function CapacityLab() {
 
       {hints.length > 0 && (
         <section className={cardCls} aria-live="polite">
-          <h2 className="text-[12px] font-bold uppercase tracking-wider text-[var(--ink)] mb-2">What these numbers suggest</h2>
-          <ul className="list-disc pl-5 space-y-1 text-[14px] text-[var(--ink-secondary)]">{hints.map((h) => <li key={h}>{h}</li>)}</ul>
+          <h2 className="text-[12px] font-bold uppercase tracking-wider text-ink mb-2">What these numbers suggest</h2>
+          <ul className="list-disc pl-5 space-y-1 text-[14px] text-body">{hints.map((h) => <li key={h}>{h}</li>)}</ul>
         </section>
       )}
     </LabShell>

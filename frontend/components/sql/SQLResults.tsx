@@ -11,7 +11,7 @@ export default function SQLResults({ result, isRunning }: Props) {
   if (isRunning) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center text-mute p-8">
-        <span className="w-8 h-8 border-2 border-hair border-t-[var(--ink)] rounded-full animate-spin mb-3"></span>
+        <span className="w-8 h-8 border-2 border-hair border-t-ink rounded-full animate-spin mb-3"></span>
         <span className="text-sm">Executing query...</span>
       </div>
     );
@@ -28,9 +28,9 @@ export default function SQLResults({ result, isRunning }: Props) {
 
   if (result.error) {
     return (
-      <div className="flex-1 overflow-auto bg-red-50/50 dark:bg-red-950/10 p-4 font-mono text-sm">
-        <div className="text-red-600 font-semibold mb-1">SQL Error</div>
-        <div className="text-red-500 whitespace-pre-wrap">{result.error}</div>
+      <div className="flex-1 overflow-auto bg-danger-soft/50 p-4 font-mono text-sm">
+        <div className="text-danger font-semibold mb-1">SQL Error</div>
+        <div className="text-danger whitespace-pre-wrap">{result.error}</div>
       </div>
     );
   }
@@ -81,7 +81,7 @@ export default function SQLResults({ result, isRunning }: Props) {
       ) : (
         <div className="p-4 text-sm text-body">
           <div className="flex items-center gap-2 mb-2">
-            <span className="text-emerald-500 font-bold">✓</span> Query executed successfully.
+            <span className="text-note font-bold">✓</span> Query executed successfully.
           </div>
           {result.rowsModified > 0 && (
             <div>Rows affected: {result.rowsModified}</div>

@@ -3,7 +3,7 @@ import { AppLayout } from "@/components/layout/AppLayout";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Tools | StudyHub",
+  title: "Tools — StudyHub",
   description: "Placement preparation tools, calculators, and builders.",
 };
 

@@ -1,575 +1,148 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
-import { 
-  User, 
-  Bell, 
-  Sun, 
-  ShieldCheck, 
-  Lock, 
-  FileText, 
-  Trash2, 
-  Check, 
-  AlertTriangle,
-  Download,
-  ArrowRight,
-  Sparkles,
-  Eye,
-  KeyRound,
-  ExternalLink
-} from "lucide-react";
-import { UserProfile } from "@/types";
+import { ArrowRight, Download, Lock, LogOut, Sun, User, Database } from "lucide-react";
+import { clsx } from "clsx";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { useProfile } from "@/components/providers/ProfileProvider";
 import { AppearanceSettings } from "@/components/settings/AppearanceSettings";
+import { PageHeader } from "@/components/ui/Page";
+import { buttonClass } from "@/components/ui/Button";
+import { askConfirm } from "@/components/ui/AskDialog";
 
-type TabType = "account" | "notifications" | "appearance" | "security" | "privacy" | "danger";
+type TabType = "account" | "appearance" | "password" | "data";
+
+const tabs: { id: TabType; name: string; icon: React.ComponentType<{ className?: string }> }[] = [
+  { id: "account", name: "Account", icon: User },
+  { id: "appearance", name: "Appearance", icon: Sun },
+  { id: "password", name: "Password", icon: Lock },
+  { id: "data", name: "Your data", icon: Database },
+];
 
 export default function SettingsPage() {
   const { user } = useAuth();
-  const { draftProfile: profile, isLoading } = useProfile();
+  const { draftProfile: profile } = useProfile();
   const [activeTab, setActiveTab] = useState<TabType>("account");
-  const [savedSuccess, setSavedSuccess] = useState(false);
 
-  // Notifications State
-  const [learningReminders, setLearningReminders] = useState(true);
-  const [practiceReminders, setPracticeReminders] = useState(true);
-  const [companyAlerts, setCompanyAlerts] = useState(true);
-  const [roadmapUpdates, setRoadmapUpdates] = useState(true);
-  const [emailDigest, setEmailDigest] = useState(true);
-
-  // Privacy State
-  const [profileVisibility, setProfileVisibility] = useState("campus");
-  const [telemetry, setTelemetry] = useState(true);
-
-  // Password change state
-  const [currentPass, setCurrentPass] = useState("");
-  const [newPass, setNewPass] = useState("");
-  const [confirmPass, setConfirmPass] = useState("");
-  const [passError, setPassError] = useState("");
-  const [passSuccess, setPassSuccess] = useState(false);
-
-  // Delete account state
-  const [deleteConfirmText, setDeleteConfirmText] = useState("");
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-
-
-  const handleSaveGeneral = () => {
-    setSavedSuccess(true);
-    setTimeout(() => setSavedSuccess(false), 3000);
+  const exportData = () => {
+    const blob = new Blob([JSON.stringify(profile, null, 2)], { type: "application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `studyhub_profile_${profile.identity?.fullName || "user"}.json`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(a.href);
   };
 
-  const handlePasswordChange = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!currentPass || !newPass) {
-      setPassError("Please fill in all password fields.");
-      return;
-    }
-    if (newPass.length < 8) {
-      setPassError("New password must be at least 8 characters.");
-      return;
-    }
-    if (newPass !== confirmPass) {
-      setPassError("Passwords do not match.");
-      return;
-    }
-
-    setPassError("");
-    setPassSuccess(true);
-    setCurrentPass("");
-    setNewPass("");
-    setConfirmPass("");
-    setTimeout(() => setPassSuccess(false), 3500);
-  };
-
-  const handleExportData = () => {
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(profile, null, 2));
-    const downloadAnchor = document.createElement("a");
-    downloadAnchor.setAttribute("href", dataStr);
-    downloadAnchor.setAttribute("download", `studyhub_profile_${profile.identity?.fullName || "user"}.json`);
-    document.body.appendChild(downloadAnchor);
-    downloadAnchor.click();
-    downloadAnchor.remove();
-  };
-
-  const handleDeleteAccount = async () => {
-    if (deleteConfirmText !== "DELETE") return;
-    
-    // Clear Supabase session, cookies & storage
+  // Signs out and wipes this browser's StudyHub data. It does not delete the account on the server.
+  const signOutAndClear = async () => {
+    const ok = await askConfirm("Sign out and clear this device?", {
+      body: "Your local progress, notes and settings on this browser are removed. Your account itself is not deleted.",
+      ok: "Sign out and clear",
+      danger: true,
+    });
+    if (!ok) return;
     try {
-      const { supabase } = await import('@/lib/supabase/client');
+      const { supabase } = await import("@/lib/supabase/client");
       await supabase.auth.signOut();
-    } catch (e) {}
-
+    } catch {}
     document.cookie = "auth-session=; path=/; max-age=0; SameSite=Lax";
     document.cookie = "onboarding-complete=; path=/; max-age=0; SameSite=Lax";
-    if (typeof window !== "undefined") {
-      localStorage.clear();
-      sessionStorage.clear();
-    }
+    localStorage.clear();
+    sessionStorage.clear();
     window.location.href = "/login";
   };
 
-  const tabs: { id: TabType; name: string; icon: React.ComponentType<{ className?: string }> }[] = [
-    { id: "account", name: "Account", icon: User },
-    { id: "notifications", name: "Notifications", icon: Bell },
-    { id: "appearance", name: "Appearance", icon: Sun },
-    { id: "security", name: "Security & Password", icon: Lock },
-    { id: "privacy", name: "Privacy & Data", icon: ShieldCheck },
-    { id: "danger", name: "Delete Account", icon: Trash2 },
+  const details = [
+    ["Name", profile.identity?.fullName || "Not set"],
+    ["Email", profile.identity?.email || user?.email || "Not set"],
+    ["College", profile.identity?.college || "Not set"],
+    ["Degree", profile.identity?.degree || "Not set"],
+    ["Graduating", profile.identity?.graduationYear || "Not set"],
   ];
 
   return (
-    <div className="w-full min-w-0 pb-16">
-      {/* HEADER BANNER */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-6 border-b border-[var(--border)] mb-8">
-        <div>
-          <div className="flex items-center gap-2 mb-2">
-            <span className="text-[11px] font-mono uppercase px-2 py-0.5 rounded bg-[var(--surface-subdued)] text-[var(--ink-secondary)] font-semibold tracking-wider border border-[var(--border)]">
-              System &amp; Configuration
-            </span>
-          </div>
-          <h1 className="font-newsreader text-3xl sm:text-4xl text-[var(--ink)] font-normal tracking-tight">
-            Settings
-          </h1>
-          <p className="text-[var(--ink-secondary)] text-[15px] mt-1.5 font-normal">
-            Configure your account, alerts, privacy, security credentials, and system preferences.
-          </p>
-        </div>
+    <div className="w-full min-w-0">
+      <PageHeader eyebrow="Settings" title="Your" hl="settings" />
 
-        {savedSuccess && (
-          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-700 text-xs font-semibold border border-emerald-200">
-            <Check className="w-3.5 h-3.5" /> Preferences saved
-          </div>
-        )}
-      </div>
+      <div className="grid items-start gap-8 lg:grid-cols-[220px_minmax(0,1fr)]">
+        <nav aria-label="Settings sections" className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4 lg:mx-0 lg:flex-col lg:px-0">
+          {tabs.map(({ id, name, icon: Icon }) => (
+            <button
+              key={id}
+              onClick={() => setActiveTab(id)}
+              aria-current={activeTab === id ? "page" : undefined}
+              className={clsx(
+                "label-cond flex h-10 shrink-0 items-center gap-2.5 rounded-xl px-3 text-[16px] transition-colors",
+                activeTab === id ? "bg-ink text-paper" : "text-ink/70 hover:bg-ink/[0.06] hover:text-ink"
+              )}
+            >
+              <Icon className="size-[18px]" />
+              {name}
+            </button>
+          ))}
+        </nav>
 
-      {/* TWO-COLUMN APPLICATION LAYOUT */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* LEFT COLUMN: SETTINGS NAVIGATION TABS */}
-        <div className="lg:col-span-4 bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-2 sm:p-3 shadow-xs sticky top-24">
-          <nav className="flex flex-row lg:flex-col gap-1 overflow-x-auto no-scrollbar">
-            {tabs.map((tab) => {
-              const Icon = tab.icon;
-              const isActive = activeTab === tab.id;
-              const isDanger = tab.id === "danger";
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-left text-xs sm:text-[13px] font-medium transition-all shrink-0 cursor-pointer ${
-                    isActive
-                      ? isDanger
-                        ? "bg-red-50 text-red-700 font-bold border border-red-200"
-                        : "bg-[var(--accent-soft)] text-[var(--accent)] font-semibold border border-[var(--accent-soft-border)] shadow-xs"
-                      : isDanger
-                      ? "text-red-600 hover:bg-red-50/70"
-                      : "text-[var(--ink-secondary)] hover:text-[var(--ink)] hover:bg-[var(--surface-subdued)]"
-                  }`}
-                >
-                  <Icon className={`w-4 h-4 shrink-0 ${
-                    isActive ? (isDanger ? "text-red-700" : "text-[var(--accent)]") : (isDanger ? "text-red-500" : "text-[var(--ink-tertiary)]")
-                  }`} />
-                  <span className="whitespace-nowrap">{tab.name}</span>
-                </button>
-              );
-            })}
-          </nav>
-        </div>
-
-        {/* RIGHT COLUMN: SELECTED SETTINGS CONTENT */}
-        <div className="lg:col-span-8 bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-6 sm:p-8 shadow-xs min-w-0">
-          {/* TAB 1: ACCOUNT */}
+        <section className="min-w-0 rounded-2xl border-[1.5px] border-hair bg-card p-6 sm:p-8">
           {activeTab === "account" && (
             <div className="space-y-6">
-              <div>
-                <h2 className="text-lg font-bold text-[var(--ink)]">Account Details</h2>
-                <p className="text-xs text-[var(--ink-secondary)] mt-0.5">
-                  Your core academic identity and connected campus authentication credentials.
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-2">
-                <div className="p-4 rounded-xl bg-[var(--surface-subdued)] border border-[var(--border)]">
-                  <span className="text-[11px] font-mono text-[var(--ink-tertiary)] uppercase tracking-wider block mb-1">
-                    Primary University Email
-                  </span>
-                  <span className="text-sm font-semibold text-[var(--ink)] block font-mono">
-                    {profile.identity?.email || user?.email || ""}
-                  </span>
-                  <span className="text-[11px] text-slate-400 mt-1 block">
-                    Contact your university administrator to modify primary campus email.
-                  </span>
-                </div>
-
-                <div className="p-4 rounded-xl bg-[var(--surface-subdued)] border border-[var(--border)]">
-                  <span className="text-[11px] font-mono text-[var(--ink-tertiary)] uppercase tracking-wider block mb-1">
-                    Connected Auth Provider
-                  </span>
-                  <div className="flex items-center gap-2 mt-1">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-                    <span className="text-sm font-semibold text-[var(--ink)]">Campus SSO / Direct</span>
+              <h2 className="display text-[32px]">Account</h2>
+              <dl className="border-t-[1.5px] border-hair">
+                {details.map(([k, v]) => (
+                  <div key={k} className="flex flex-wrap items-baseline justify-between gap-2 border-b-[1.5px] border-hair py-3">
+                    <dt className="font-mono text-[11px] uppercase tracking-wider text-mute">{k}</dt>
+                    <dd className="text-[15px] font-medium">{v}</dd>
                   </div>
-                  <span className="text-[11px] text-slate-400 mt-1 block">
-                    Verified session active.
-                  </span>
-                </div>
-
-                <div className="p-4 rounded-xl bg-[var(--surface-subdued)] border border-[var(--border)]">
-                  <span className="text-[11px] font-mono text-[var(--ink-tertiary)] uppercase tracking-wider block mb-1">
-                    Target Placement Cycle
-                  </span>
-                  <span className="text-sm font-semibold text-[var(--ink)] block">
-                    {profile.identity?.driveCycle || "Campus & Off-Campus 2026–27"}
-                  </span>
-                </div>
-
-                <div className="p-4 rounded-xl bg-[var(--surface-subdued)] border border-[var(--border)]">
-                  <span className="text-[11px] font-mono text-[var(--ink-tertiary)] uppercase tracking-wider block mb-1">
-                    Account Role &amp; Tier
-                  </span>
-                  <span className="text-sm font-semibold text-[var(--accent)] block">
-                    Undergraduate Candidate (Verified)
-                  </span>
-                </div>
-              </div>
-
-              <div className="pt-4 border-t border-[var(--border)] flex items-center justify-between">
-                <span className="text-xs text-[var(--ink-secondary)]">
-                  Want to modify academic details or target roles?
-                </span>
-                <Link
-                  href="/profile/preferences"
-                  className="btn-secondary text-xs h-8 px-3 flex items-center gap-1.5"
-                >
-                  Edit Profile &amp; Preferences <ArrowRight className="w-3 h-3" />
-                </Link>
-              </div>
+                ))}
+              </dl>
+              <Link href="/profile/preferences" className={buttonClass("secondary", "sm")}>
+                Edit in your profile <ArrowRight className="size-4" />
+              </Link>
             </div>
           )}
 
-          {/* TAB 2: NOTIFICATIONS */}
-          {activeTab === "notifications" && (
-            <div className="space-y-6">
-              <div>
-                <h2 className="text-lg font-bold text-[var(--ink)]">Notification Preferences</h2>
-                <p className="text-xs text-[var(--ink-secondary)] mt-0.5">
-                  Select which automated alerts and reminders you wish to receive.
-                </p>
-              </div>
-
-              <div className="space-y-4 pt-2">
-                <div className="flex items-center justify-between p-4 rounded-xl border border-[var(--border)]">
-                  <div>
-                    <h3 className="text-xs font-bold text-[var(--ink)]">Learning &amp; Module Reminders</h3>
-                    <p className="text-[11px] text-[var(--ink-secondary)] mt-0.5">
-                      Daily prompts to continue in-progress topics and preserve streak.
-                    </p>
-                  </div>
-                  <input
-                    type="checkbox"
-                    checked={learningReminders}
-                    onChange={(e) => {
-                      setLearningReminders(e.target.checked);
-                      handleSaveGeneral();
-                    }}
-                    className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 cursor-pointer"
-                  />
-                </div>
-
-                <div className="flex items-center justify-between p-4 rounded-xl border border-[var(--border)]">
-                  <div>
-                    <h3 className="text-xs font-bold text-[var(--ink)]">Practice &amp; Drill Alerts</h3>
-                    <p className="text-[11px] text-[var(--ink-secondary)] mt-0.5">
-                      Notifications when diagnostic test sets for your target role become available.
-                    </p>
-                  </div>
-                  <input
-                    type="checkbox"
-                    checked={practiceReminders}
-                    onChange={(e) => {
-                      setPracticeReminders(e.target.checked);
-                      handleSaveGeneral();
-                    }}
-                    className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 cursor-pointer"
-                  />
-                </div>
-
-                <div className="flex items-center justify-between p-4 rounded-xl border border-[var(--border)]">
-                  <div>
-                    <h3 className="text-xs font-bold text-[var(--ink)]">Target Company Alerts</h3>
-                    <p className="text-[11px] text-[var(--ink-secondary)] mt-0.5">
-                      Recruitment window announcements and question pattern updates for tracked companies.
-                    </p>
-                  </div>
-                  <input
-                    type="checkbox"
-                    checked={companyAlerts}
-                    onChange={(e) => {
-                      setCompanyAlerts(e.target.checked);
-                      handleSaveGeneral();
-                    }}
-                    className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 cursor-pointer"
-                  />
-                </div>
-
-                <div className="flex items-center justify-between p-4 rounded-xl border border-[var(--border)]">
-                  <div>
-                    <h3 className="text-xs font-bold text-[var(--ink)]">Roadmap &amp; Milestone Updates</h3>
-                    <p className="text-[11px] text-[var(--ink-secondary)] mt-0.5">
-                      Alerts when prerequisite topics unlock new mock assessment rubrics.
-                    </p>
-                  </div>
-                  <input
-                    type="checkbox"
-                    checked={roadmapUpdates}
-                    onChange={(e) => {
-                      setRoadmapUpdates(e.target.checked);
-                      handleSaveGeneral();
-                    }}
-                    className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 cursor-pointer"
-                  />
-                </div>
-
-                <div className="flex items-center justify-between p-4 rounded-xl border border-[var(--border)]">
-                  <div>
-                    <h3 className="text-xs font-bold text-[var(--ink)]">Weekly Email Digest</h3>
-                    <p className="text-[11px] text-[var(--ink-secondary)] mt-0.5">
-                      Summary report of placement readiness score, weak areas, and solved questions.
-                    </p>
-                  </div>
-                  <input
-                    type="checkbox"
-                    checked={emailDigest}
-                    onChange={(e) => {
-                      setEmailDigest(e.target.checked);
-                      handleSaveGeneral();
-                    }}
-                    className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 cursor-pointer"
-                  />
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* TAB 3: APPEARANCE */}
           {activeTab === "appearance" && <AppearanceSettings />}
 
-          {/* TAB 4: SECURITY & PASSWORD */}
-          {activeTab === "security" && (
-            <div className="space-y-6">
-              <div>
-                <h2 className="text-lg font-bold text-[var(--ink)]">Security &amp; Password</h2>
-                <p className="text-xs text-[var(--ink-secondary)] mt-0.5">
-                  Update your authentication credentials and manage session security.
-                </p>
-              </div>
-
-              {passError && (
-                <div className="p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs flex items-center gap-2">
-                  <AlertTriangle className="w-4 h-4 shrink-0" />
-                  <span>{passError}</span>
-                </div>
-              )}
-
-              {passSuccess && (
-                <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs flex items-center gap-2">
-                  <Check className="w-4 h-4 shrink-0" />
-                  <span>Password updated successfully. Session credentials refreshed.</span>
-                </div>
-              )}
-
-              <form onSubmit={handlePasswordChange} className="space-y-4 pt-2">
-                <div>
-                  <label className="block text-xs font-mono font-semibold text-[var(--ink-secondary)] uppercase tracking-wider mb-1.5">
-                    Current Password
-                  </label>
-                  <input
-                    type="password"
-                    value={currentPass}
-                    onChange={(e) => setCurrentPass(e.target.value)}
-                    placeholder="••••••••••••"
-                    className="field w-full text-xs font-mono"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-mono font-semibold text-[var(--ink-secondary)] uppercase tracking-wider mb-1.5">
-                    New Password
-                  </label>
-                  <input
-                    type="password"
-                    value={newPass}
-                    onChange={(e) => setNewPass(e.target.value)}
-                    placeholder="Minimum 8 characters with numbers and symbols"
-                    className="field w-full text-xs font-mono"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-mono font-semibold text-[var(--ink-secondary)] uppercase tracking-wider mb-1.5">
-                    Confirm New Password
-                  </label>
-                  <input
-                    type="password"
-                    value={confirmPass}
-                    onChange={(e) => setConfirmPass(e.target.value)}
-                    placeholder="Re-enter new password"
-                    className="field w-full text-xs font-mono"
-                    required
-                  />
-                </div>
-
-                <div className="pt-3">
-                  <button type="submit" className="btn-primary text-xs h-9 px-5 flex items-center gap-1.5">
-                    <KeyRound className="w-3.5 h-3.5" /> Update Password
-                  </button>
-                </div>
-              </form>
+          {activeTab === "password" && (
+            <div className="space-y-4">
+              <h2 className="display text-[32px]">Password</h2>
+              <p className="max-w-prose text-[15px] leading-relaxed text-body">
+                We&apos;ll email a link to <span className="font-semibold text-ink">{user?.email || "your address"}</span>. Open it to set a new password.
+              </p>
+              <Link href="/forgot-password" className={buttonClass("primary", "sm")}>
+                Send me a reset link <ArrowRight className="size-4" />
+              </Link>
             </div>
           )}
 
-          {/* TAB 5: PRIVACY & DATA */}
-          {activeTab === "privacy" && (
-            <div className="space-y-6">
-              <div>
-                <h2 className="text-lg font-bold text-[var(--ink)]">Privacy &amp; Data Governance</h2>
-                <p className="text-xs text-[var(--ink-secondary)] mt-0.5">
-                  Manage how your assessment metrics and preparation activity are shared.
-                </p>
+          {activeTab === "data" && (
+            <div className="space-y-8">
+              <h2 className="display text-[32px]">Your data</h2>
+              <div className="flex flex-col justify-between gap-3 border-t-[1.5px] border-hair pt-5 sm:flex-row sm:items-center">
+                <div>
+                  <h3 className="font-semibold">Download your profile</h3>
+                  <p className="text-[14px] text-body">Your profile, targets and preferences as a JSON file.</p>
+                </div>
+                <button onClick={exportData} className={buttonClass("secondary", "sm")}>
+                  <Download className="size-4" /> Export JSON
+                </button>
               </div>
-
-              <div className="space-y-4 pt-2">
-                <div className="p-4 rounded-xl border border-[var(--border)]">
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="text-xs font-bold text-[var(--ink)]">Profile Visibility</h3>
-                    <select
-                      value={profileVisibility}
-                      onChange={(e) => {
-                        setProfileVisibility(e.target.value);
-                        handleSaveGeneral();
-                      }}
-                      className="field text-xs h-8 cursor-pointer"
-                    >
-                      <option value="campus">Campus Recruiters &amp; Faculty Only</option>
-                      <option value="public">Verified Partner Organizations</option>
-                      <option value="private">Private (Only Me)</option>
-                    </select>
-                  </div>
-                  <p className="text-[11px] text-[var(--ink-secondary)]">
-                    Allows verified campus placement cell coordinators to match you with suitable recruiter slots.
+              <div className="flex flex-col justify-between gap-3 border-t-[1.5px] border-hair pt-5 sm:flex-row sm:items-center">
+                <div>
+                  <h3 className="font-semibold">Sign out and clear this device</h3>
+                  <p className="max-w-prose text-[14px] text-body">
+                    Removes StudyHub&apos;s local data from this browser. It does not delete your account; deleting an account isn&apos;t available in the app yet.
                   </p>
                 </div>
-
-                <div className="flex items-center justify-between p-4 rounded-xl border border-[var(--border)]">
-                  <div>
-                    <h3 className="text-xs font-bold text-[var(--ink)]">Diagnostic Telemetry</h3>
-                    <p className="text-[11px] text-[var(--ink-secondary)] mt-0.5">
-                      Share anonymized problem solve-time data to help improve placement difficulty benchmarks.
-                    </p>
-                  </div>
-                  <input
-                    type="checkbox"
-                    checked={telemetry}
-                    onChange={(e) => {
-                      setTelemetry(e.target.checked);
-                      handleSaveGeneral();
-                    }}
-                    className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 cursor-pointer"
-                  />
-                </div>
-
-                <div className="p-4 rounded-xl bg-[var(--surface-subdued)] border border-[var(--border)] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                  <div>
-                    <h3 className="text-xs font-bold text-[var(--ink)]">Download Preparation Ledger</h3>
-                    <p className="text-[11px] text-[var(--ink-secondary)] mt-0.5">
-                      Export your complete profile, test scores, target companies, and module milestones as a JSON file.
-                    </p>
-                  </div>
-                  <button
-                    onClick={handleExportData}
-                    className="btn-secondary text-xs h-8 px-3 shrink-0 flex items-center gap-1.5 cursor-pointer self-start sm:self-auto"
-                  >
-                    <Download className="w-3.5 h-3.5" /> Export Data (JSON)
-                  </button>
-                </div>
+                <button onClick={signOutAndClear} className={buttonClass("danger", "sm")}>
+                  <LogOut className="size-4" /> Sign out and clear
+                </button>
               </div>
             </div>
           )}
-
-          {/* TAB 6: DELETE ACCOUNT (DANGER ZONE) */}
-          {activeTab === "danger" && (
-            <div className="space-y-6">
-              <div>
-                <h2 className="text-lg font-bold text-red-700 flex items-center gap-2">
-                  <Trash2 className="w-5 h-5 text-red-600" /> Delete Account
-                </h2>
-                <p className="text-xs text-[var(--ink-secondary)] mt-0.5">
-                  Permanently erase your StudyHub preparation workspace, submission history, and placement targets.
-                </p>
-              </div>
-
-              <div className="p-5 rounded-xl bg-red-50 border border-red-200 space-y-4">
-                <div className="flex items-start gap-3">
-                  <AlertTriangle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
-                  <div className="text-xs text-red-800 space-y-1">
-                    <p className="font-bold">This action is permanent and irreversible.</p>
-                    <p>
-                      Deleting your account removes all saved roadmaps, problem logs, mock test percentiles, and company alignments.
-                    </p>
-                  </div>
-                </div>
-
-                {!showDeleteConfirm ? (
-                  <button
-                    onClick={() => setShowDeleteConfirm(true)}
-                    className="btn-secondary text-xs h-9 px-4 text-red-600 border-red-300 hover:bg-red-100/50 cursor-pointer font-semibold"
-                  >
-                    I understand, proceed to deletion
-                  </button>
-                ) : (
-                  <div className="space-y-3 pt-2 border-t border-red-200">
-                    <p className="text-xs text-red-900 font-medium">
-                      To confirm deletion, type <span className="font-mono font-bold bg-white px-1.5 py-0.5 rounded border border-red-300">DELETE</span> below:
-                    </p>
-                    <input
-                      type="text"
-                      value={deleteConfirmText}
-                      onChange={(e) => setDeleteConfirmText(e.target.value)}
-                      placeholder="Type DELETE to confirm"
-                      className="field w-full text-xs font-mono border-red-300 focus:border-red-600"
-                    />
-                    <div className="flex items-center gap-3">
-                      <button
-                        onClick={handleDeleteAccount}
-                        disabled={deleteConfirmText !== "DELETE"}
-                        className={`text-xs h-9 px-4 rounded-lg font-semibold transition-all ${
-                          deleteConfirmText === "DELETE"
-                            ? "bg-red-600 text-white hover:bg-red-700 cursor-pointer"
-                            : "bg-slate-200 text-slate-400 cursor-not-allowed"
-                        }`}
-                      >
-                        Permanently Delete My Account
-                      </button>
-                      <button
-                        onClick={() => {
-                          setShowDeleteConfirm(false);
-                          setDeleteConfirmText("");
-                        }}
-                        className="text-xs text-slate-500 hover:text-slate-800 px-3 py-1.5 cursor-pointer"
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-        </div>
+        </section>
       </div>
     </div>
   );

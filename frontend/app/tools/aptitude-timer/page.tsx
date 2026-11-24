@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Flag, Pause, Play, RotateCcw, Timer } from "lucide-react";
 import { ToolWorkspaceHeader } from "@/components/tools/shared/ToolWorkspaceHeader";
 
-const focusRing = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]";
+const focusRing = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent";
 const fmt = (ms: number) => {
   const s = Math.max(0, Math.round(ms / 1000));
   return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
@@ -77,60 +77,60 @@ export default function AptitudeTimerPage() {
       />
 
       <div className="grid md:grid-cols-[1fr_320px] gap-6">
-        <section aria-label="Timer" className="p-6 rounded-xl border border-[var(--border)] bg-[var(--surface)] flex flex-col gap-6">
+        <section aria-label="Timer" className="p-6 rounded-xl border border-hair bg-card flex flex-col gap-6">
           <div className="grid grid-cols-2 gap-4">
             <label className="flex flex-col gap-1.5 text-[13px]">
-              <span className="font-semibold text-[var(--ink)]">Questions</span>
+              <span className="font-semibold text-ink">Questions</span>
               <input type="number" min={1} max={200} value={questions} disabled={elapsed > 0}
                 onChange={(e) => setQuestions(Math.max(1, Math.min(200, Number(e.target.value) || 1)))}
-                className={`px-3 py-2 rounded-lg border border-[var(--border)] bg-white tabular-nums disabled:opacity-60 ${focusRing}`} />
+                className={`px-3 py-2 rounded-lg border border-hair bg-card tabular-nums disabled:opacity-60 ${focusRing}`} />
             </label>
             <label className="flex flex-col gap-1.5 text-[13px]">
-              <span className="font-semibold text-[var(--ink)]">Minutes</span>
+              <span className="font-semibold text-ink">Minutes</span>
               <input type="number" min={1} max={300} value={minutes} disabled={elapsed > 0}
                 onChange={(e) => setMinutes(Math.max(1, Math.min(300, Number(e.target.value) || 1)))}
-                className={`px-3 py-2 rounded-lg border border-[var(--border)] bg-white tabular-nums disabled:opacity-60 ${focusRing}`} />
+                className={`px-3 py-2 rounded-lg border border-hair bg-card tabular-nums disabled:opacity-60 ${focusRing}`} />
             </label>
           </div>
 
           <div className="text-center flex flex-col gap-1">
-            <p className="text-[12px] uppercase tracking-wider text-[var(--ink-tertiary)]">Question {Math.min(laps.length + 1, questions)} of {questions}</p>
-            <p className={`text-6xl font-bold tabular-nums ${current > target ? "text-[var(--warning)]" : "text-[var(--ink)]"}`} aria-live="off">{fmt(current)}</p>
-            <p className="text-[13px] text-[var(--ink-secondary)] tabular-nums">Target {fmt(target)} per question · {fmt(remainingT)} left in section</p>
-            {done && <p className="text-[14px] font-semibold text-[var(--accent)] mt-2" role="status">{elapsed >= limit ? "Time's up." : "Section complete."}</p>}
+            <p className="text-[12px] uppercase tracking-wider text-mute">Question {Math.min(laps.length + 1, questions)} of {questions}</p>
+            <p className={`text-6xl font-bold tabular-nums ${current > target ? "text-warning" : "text-ink"}`} aria-live="off">{fmt(current)}</p>
+            <p className="text-[13px] text-body tabular-nums">Target {fmt(target)} per question · {fmt(remainingT)} left in section</p>
+            {done && <p className="text-[14px] font-semibold text-accent-ink mt-2" role="status">{elapsed >= limit ? "Time's up." : "Section complete."}</p>}
           </div>
 
           <div className="flex flex-wrap justify-center gap-3">
             <button type="button" onClick={() => setRunning((r) => !r)} disabled={done}
-              className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[var(--accent)] text-white font-semibold text-[14px] hover:bg-[var(--accent-hover)] disabled:opacity-50 ${focusRing}`}>
+              className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-accent text-paper font-semibold text-[14px] hover:bg-accent-ink disabled:opacity-50 ${focusRing}`}>
               {running ? <><Pause aria-hidden="true" className="w-4 h-4" /> Pause</> : <><Play aria-hidden="true" className="w-4 h-4" /> {elapsed ? "Resume" : "Start"}</>}
             </button>
             <button type="button" onClick={() => lap(false)} disabled={!running}
-              className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-[var(--border)] font-semibold text-[14px] text-[var(--ink)] disabled:opacity-50 ${focusRing}`}>
+              className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-hair font-semibold text-[14px] text-ink disabled:opacity-50 ${focusRing}`}>
               <Flag aria-hidden="true" className="w-4 h-4" /> Answered
             </button>
             <button type="button" onClick={() => lap(true)} disabled={!running}
-              className={`px-5 py-2.5 rounded-lg border border-[var(--border)] font-semibold text-[14px] text-[var(--ink-secondary)] disabled:opacity-50 ${focusRing}`}>
+              className={`px-5 py-2.5 rounded-lg border border-hair font-semibold text-[14px] text-body disabled:opacity-50 ${focusRing}`}>
               Skip
             </button>
             <button type="button" onClick={reset} disabled={elapsed === 0}
-              className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-[14px] text-[var(--ink-secondary)] hover:text-[var(--ink)] disabled:opacity-50 ${focusRing}`}>
+              className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-[14px] text-body hover:text-ink disabled:opacity-50 ${focusRing}`}>
               <RotateCcw aria-hidden="true" className="w-4 h-4" /> Reset
             </button>
           </div>
-          <p className="text-center text-[12px] text-[var(--ink-tertiary)]">Keyboard: Space start/pause · Enter answered · S skip</p>
+          <p className="text-center text-[12px] text-mute">Keyboard: Space start/pause · Enter answered · S skip</p>
         </section>
 
-        <aside aria-label="Pacing summary" className="p-6 rounded-xl border border-[var(--border)] bg-[var(--surface)] flex flex-col gap-4">
-          <h2 className="text-[12px] font-bold uppercase tracking-wider text-[var(--ink)]">Pacing</h2>
+        <aside aria-label="Pacing summary" className="p-6 rounded-xl border border-hair bg-card flex flex-col gap-4">
+          <h2 className="text-[12px] font-bold uppercase tracking-wider text-ink">Pacing</h2>
           <dl className="grid grid-cols-2 gap-3 text-[13px]">
-            <div><dt className="text-[var(--ink-tertiary)]">Answered</dt><dd className="text-xl font-bold tabular-nums">{answered.length}</dd></div>
-            <div><dt className="text-[var(--ink-tertiary)]">Skipped</dt><dd className="text-xl font-bold tabular-nums">{laps.length - answered.length}</dd></div>
-            <div><dt className="text-[var(--ink-tertiary)]">Average</dt><dd className="text-xl font-bold tabular-nums">{answered.length ? fmt(avg) : "—"}</dd></div>
-            <div><dt className="text-[var(--ink-tertiary)]">Over 2× target</dt><dd className="text-xl font-bold tabular-nums">{slow}</dd></div>
+            <div><dt className="text-mute">Answered</dt><dd className="text-xl font-bold tabular-nums">{answered.length}</dd></div>
+            <div><dt className="text-mute">Skipped</dt><dd className="text-xl font-bold tabular-nums">{laps.length - answered.length}</dd></div>
+            <div><dt className="text-mute">Average</dt><dd className="text-xl font-bold tabular-nums">{answered.length ? fmt(avg) : "—"}</dd></div>
+            <div><dt className="text-mute">Over 2× target</dt><dd className="text-xl font-bold tabular-nums">{slow}</dd></div>
           </dl>
           {elapsed > 0 && !done && remainingQ > 0 && (
-            <p className={`text-[13px] ${pacePerQ < target ? "text-[var(--warning)]" : "text-[var(--ink-secondary)]"}`}>
+            <p className={`text-[13px] ${pacePerQ < target ? "text-warning" : "text-body"}`}>
               To finish, you need {fmt(pacePerQ)} per remaining question{pacePerQ < target ? ", faster than your target" : ""}.
             </p>
           )}
@@ -138,12 +138,12 @@ export default function AptitudeTimerPage() {
             <ol className="flex flex-col gap-1 max-h-72 overflow-y-auto text-[13px] tabular-nums">
               {laps.map((l, i) => (
                 <li key={i} className="flex items-center gap-2">
-                  <span className="w-8 text-[var(--ink-tertiary)]">Q{i + 1}</span>
-                  <span className="flex-1 h-1.5 rounded-full bg-[var(--border)] overflow-hidden" aria-hidden="true">
-                    <span className="block h-full rounded-full" style={{ width: `${Math.min(100, (50 * l.ms) / target)}%`, background: l.ms > 2 * target ? "var(--error)" : l.ms > target ? "var(--warning)" : "var(--success)" }} />
+                  <span className="w-8 text-mute">Q{i + 1}</span>
+                  <span className="flex-1 h-1.5 rounded-full bg-hair overflow-hidden" aria-hidden="true">
+                    <span className="block h-full rounded-full" style={{ width: `${Math.min(100, (50 * l.ms) / target)}%`, background: l.ms > 2 * target ? "var(--danger)" : l.ms > target ? "var(--warning)" : "var(--note)" }} />
                   </span>
                   <span className="w-12 text-right">{fmt(l.ms)}</span>
-                  {l.skipped && <span className="text-[11px] text-[var(--ink-tertiary)]">skip</span>}
+                  {l.skipped && <span className="text-[11px] text-mute">skip</span>}
                 </li>
               ))}
             </ol>

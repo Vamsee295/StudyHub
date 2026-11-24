@@ -37,12 +37,12 @@ export default function CpuSchedulingLab() {
           {ALGOS.map((a) => (
             <button key={a.id} type="button" aria-pressed={algo === a.id} onClick={() => setAlgo(a.id)}
               className={clsx("px-3 py-1.5 rounded-lg border text-[13px] font-medium", focusRing,
-                algo === a.id ? "border-[var(--accent)] bg-[var(--accent)] text-white" : "border-[var(--border)] text-[var(--ink)] hover:border-[var(--accent)]")}>
+                algo === a.id ? "border-accent bg-accent text-paper" : "border-hair text-ink hover:border-accent")}>
               {a.label}
             </button>
           ))}
           {algo === "RR" && (
-            <label className="flex items-center gap-2 text-[13px] text-[var(--ink)] ml-2">
+            <label className="flex items-center gap-2 text-[13px] text-ink ml-2">
               Quantum
               <input type="number" min={1} value={quantum} onChange={(e) => setQuantum(Math.max(1, Number(e.target.value) || 1))} className={`${inputCls} w-20`} />
             </label>
@@ -51,7 +51,7 @@ export default function CpuSchedulingLab() {
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-[14px]">
-            <thead><tr className="text-[var(--ink-secondary)] text-[12px] uppercase tracking-wider">
+            <thead><tr className="text-body text-[12px] uppercase tracking-wider">
               <th className="py-1.5 pr-2 font-semibold">Process</th><th className="py-1.5 pr-2 font-semibold">Arrival</th><th className="py-1.5 pr-2 font-semibold">Burst</th><th className="py-1.5 pr-2 font-semibold">Priority (low = high)</th><th className="py-1.5"><span className="sr-only">Remove</span></th>
             </tr></thead>
             <tbody>
@@ -61,7 +61,7 @@ export default function CpuSchedulingLab() {
                   <td className="py-1 pr-2"><input aria-label={`${p.id} arrival time`} type="number" min={0} value={p.arrival} onChange={(e) => update(i, "arrival", e.target.value)} className={`${inputCls} w-20`} /></td>
                   <td className="py-1 pr-2"><input aria-label={`${p.id} burst time`} type="number" min={1} value={p.burst} onChange={(e) => update(i, "burst", e.target.value)} className={`${inputCls} w-20`} /></td>
                   <td className="py-1 pr-2"><input aria-label={`${p.id} priority`} type="number" min={0} value={p.priority} onChange={(e) => update(i, "priority", e.target.value)} className={`${inputCls} w-20`} /></td>
-                  <td className="py-1"><button type="button" aria-label={`Remove ${p.id}`} onClick={() => setProcs((ps) => ps.filter((_, k) => k !== i))} className={`p-2 rounded-lg text-[var(--ink-tertiary)] hover:text-[var(--error)] ${focusRing}`}><Trash2 aria-hidden="true" className="w-4 h-4" /></button></td>
+                  <td className="py-1"><button type="button" aria-label={`Remove ${p.id}`} onClick={() => setProcs((ps) => ps.filter((_, k) => k !== i))} className={`p-2 rounded-lg text-mute hover:text-danger ${focusRing}`}><Trash2 aria-hidden="true" className="w-4 h-4" /></button></td>
                 </tr>
               ))}
             </tbody>
@@ -70,30 +70,30 @@ export default function CpuSchedulingLab() {
         <div className="flex flex-wrap gap-2 mt-3">
           <button type="button" disabled={procs.length >= 8}
             onClick={() => setProcs((ps) => [...ps, { id: `P${ps.length + 1}`, arrival: 0, burst: 3, priority: ps.length + 1 }])}
-            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[var(--border)] text-[13px] text-[var(--ink)] hover:border-[var(--accent)] disabled:opacity-40 ${focusRing}`}>
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-hair text-[13px] text-ink hover:border-accent disabled:opacity-40 ${focusRing}`}>
             <Plus aria-hidden="true" className="w-4 h-4" /> Add process
           </button>
           {Object.keys(PRESETS).map((k) => (
-            <button key={k} type="button" onClick={() => setProcs(PRESETS[k])} className={`px-3 py-1.5 rounded-lg border border-[var(--border)] text-[13px] text-[var(--ink-secondary)] hover:border-[var(--accent)] ${focusRing}`}>Load: {k}</button>
+            <button key={k} type="button" onClick={() => setProcs(PRESETS[k])} className={`px-3 py-1.5 rounded-lg border border-hair text-[13px] text-body hover:border-accent ${focusRing}`}>Load: {k}</button>
           ))}
         </div>
-        {!valid && <p className="text-[13px] text-[var(--error)] mt-2">Add at least one process, and give every process a burst of 1 or more.</p>}
+        {!valid && <p className="text-[13px] text-danger mt-2">Add at least one process, and give every process a burst of 1 or more.</p>}
       </section>
 
       {result && (
         <>
           <section className={cardCls}>
-            <h2 className="text-[12px] font-bold uppercase tracking-wider text-[var(--ink)] mb-3">Gantt chart</h2>
-            <div className="flex w-full h-12 rounded-lg overflow-hidden border border-[var(--border)]" role="img"
+            <h2 className="text-[12px] font-bold uppercase tracking-wider text-ink mb-3">Gantt chart</h2>
+            <div className="flex w-full h-12 rounded-lg overflow-hidden border border-hair" role="img"
               aria-label={result.gantt.map((s) => `${s.id ?? "idle"} from ${s.start} to ${s.end}`).join(", ")}>
               {result.gantt.map((s, i) => (
-                <div key={i} className="flex items-center justify-center text-[12px] font-mono font-bold text-white border-r border-white/40 last:border-r-0"
-                  style={{ width: `${((s.end - s.start) / total) * 100}%`, background: s.id ? color(s.id) : "var(--surface-subdued)", color: s.id ? "white" : "var(--ink-tertiary)" }}>
+                <div key={i} className="flex items-center justify-center text-[12px] font-mono font-bold text-paper border-r border-card/40 last:border-r-0"
+                  style={{ width: `${((s.end - s.start) / total) * 100}%`, background: s.id ? color(s.id) : "var(--card-2)", color: s.id ? "white" : "var(--mute)" }}>
                   {(s.end - s.start) / total > 0.04 ? s.id ?? "idle" : ""}
                 </div>
               ))}
             </div>
-            <div className="relative h-5 mt-1 text-[11px] font-mono text-[var(--ink-tertiary)] tabular-nums">
+            <div className="relative h-5 mt-1 text-[11px] font-mono text-mute tabular-nums">
               {[0, ...result.gantt.map((s) => s.end)].map((t, i) => (
                 <span key={i} className="absolute -translate-x-1/2" style={{ left: `${(t / total) * 100}%` }}>{t}</span>
               ))}
@@ -103,39 +103,39 @@ export default function CpuSchedulingLab() {
           <section className={cardCls}>
             <div className="overflow-x-auto">
               <table className="w-full text-left text-[14px] tabular-nums">
-                <thead><tr className="border-b border-[var(--border)] text-[var(--ink-secondary)]">
+                <thead><tr className="border-b border-hair text-body">
                   {["Process", "Arrival", "Burst", "Completion", "Turnaround", "Waiting", "Response"].map((h) => <th key={h} className="py-2 pr-3 font-semibold">{h}</th>)}
                 </tr></thead>
                 <tbody>
                   {result.procs.map((p) => (
-                    <tr key={p.id} className="border-b border-[var(--border)]/60">
+                    <tr key={p.id} className="border-b border-hair/60">
                       <td className="py-2 pr-3 font-mono font-bold" style={{ color: color(p.id) }}>{p.id}</td>
                       <td className="py-2 pr-3">{p.arrival}</td><td className="py-2 pr-3">{p.burst}</td><td className="py-2 pr-3">{p.completion}</td>
                       <td className="py-2 pr-3">{p.turnaround}</td><td className="py-2 pr-3">{p.waiting}</td><td className="py-2 pr-3">{p.response}</td>
                     </tr>
                   ))}
-                  <tr className="font-semibold text-[var(--ink)]">
+                  <tr className="font-semibold text-ink">
                     <td className="py-2 pr-3" colSpan={4}>Average</td>
                     <td className="py-2 pr-3">{result.avgTurnaround.toFixed(2)}</td><td className="py-2 pr-3">{result.avgWaiting.toFixed(2)}</td><td className="py-2 pr-3">{result.avgResponse.toFixed(2)}</td>
                   </tr>
                 </tbody>
               </table>
             </div>
-            <p className="text-[12px] text-[var(--ink-tertiary)] mt-2">Turnaround = completion − arrival. Waiting = turnaround − burst. Response = first run − arrival.</p>
+            <p className="text-[12px] text-mute mt-2">Turnaround = completion − arrival. Waiting = turnaround − burst. Response = first run − arrival.</p>
           </section>
 
           <section className={cardCls}>
-            <h2 className="text-[12px] font-bold uppercase tracking-wider text-[var(--ink)] mb-3">Average waiting time by algorithm</h2>
+            <h2 className="text-[12px] font-bold uppercase tracking-wider text-ink mb-3">Average waiting time by algorithm</h2>
             <ul className="flex flex-col gap-2">
               {comparison.map((c) => {
                 const max = Math.max(...comparison.map((x) => x.avg), 1);
                 return (
                   <li key={c.id} className="flex items-center gap-3 text-[13px]">
-                    <span className={clsx("w-44 truncate", c.id === algo ? "font-bold text-[var(--ink)]" : "text-[var(--ink-secondary)]")}>{c.label}</span>
-                    <div className="flex-1 h-2 rounded-full bg-[var(--border-strong)]/30 overflow-hidden">
-                      <div className="h-full rounded-full bg-[var(--accent)]" style={{ width: `${(c.avg / max) * 100}%` }} />
+                    <span className={clsx("w-44 truncate", c.id === algo ? "font-bold text-ink" : "text-body")}>{c.label}</span>
+                    <div className="flex-1 h-2 rounded-full bg-ink/30 overflow-hidden">
+                      <div className="h-full rounded-full bg-accent" style={{ width: `${(c.avg / max) * 100}%` }} />
                     </div>
-                    <span className="w-14 text-right font-mono tabular-nums text-[var(--ink)]">{c.avg.toFixed(2)}</span>
+                    <span className="w-14 text-right font-mono tabular-nums text-ink">{c.avg.toFixed(2)}</span>
                   </li>
                 );
               })}

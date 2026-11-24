@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { ResumeAnalysisDetailPage } from "@/components/resume-analyzer/ResumeAnalysisDetailPage";
 
 export const metadata: Metadata = {
-  title: "Resume Analysis Report | StudyHub",
+  title: "Resume Analysis Report — StudyHub",
   description: "Detailed placement benchmark report and actionable resume feedback.",
 };
 

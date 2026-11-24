@@ -26,25 +26,25 @@ export function InterviewSummaryReport({ evaluations, onRestart }: InterviewSumm
   return (
     <div className="max-w-4xl mx-auto flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-12">
       <div className="flex items-center justify-between mb-2">
-        <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-          <BarChart className="w-6 h-6 text-blue-600" /> Session Complete
+        <h2 className="text-2xl font-bold text-ink flex items-center gap-2">
+          <BarChart className="w-6 h-6 text-accent-ink" /> Session Complete
         </h2>
         <button
           onClick={onRestart}
-          className="flex items-center gap-2 px-4 py-2 bg-white text-gray-700 rounded-lg border border-gray-200 font-medium hover:bg-gray-50 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 bg-card text-body rounded-lg border border-hair font-medium hover:bg-card-2 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" /> Start New Session
         </button>
       </div>
 
-      <ToolCard className="text-center p-8 bg-gradient-to-br from-blue-600 to-indigo-700 border-none text-white relative overflow-hidden">
+      <ToolCard className="text-center p-8 bg-accent border-none text-paper relative overflow-hidden">
         <div className="absolute top-0 right-0 p-8 opacity-10">
           <Trophy className="w-48 h-48" />
         </div>
         <div className="relative z-10 flex flex-col items-center justify-center">
-          <p className="text-blue-100 font-medium uppercase tracking-widest text-sm mb-4">Final Score</p>
-          <div className="text-7xl font-black mb-2">{outOf100}<span className="text-3xl text-blue-300 ml-1">/100</span></div>
-          <p className="text-blue-100 text-lg max-w-lg mt-4">
+          <p className="text-paper/80 font-medium uppercase tracking-widest text-sm mb-4">Final Score</p>
+          <div className="text-7xl font-black mb-2">{outOf100}<span className="text-3xl text-paper/80 ml-1">/100</span></div>
+          <p className="text-paper/80 text-lg max-w-lg mt-4">
             {outOf100 >= 80 ? 'Excellent performance! You are well prepared.' : 
              outOf100 >= 60 ? 'Good effort. Review the rubric feedback to close the final gaps.' : 
              'Keep practicing! Focus on completeness and technical accuracy.'}
@@ -54,8 +54,8 @@ export function InterviewSummaryReport({ evaluations, onRestart }: InterviewSumm
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <ToolCard>
-          <h3 className="font-bold text-gray-900 mb-6 flex items-center gap-2">
-            <Target className="w-5 h-5 text-indigo-500" /> Average Metrics
+          <h3 className="font-bold text-ink mb-6 flex items-center gap-2">
+            <Target className="w-5 h-5 text-accent" /> Average Metrics
           </h3>
           <div className="space-y-4">
             <MetricBar label="Understanding" value={totalUnd / n} />
@@ -66,23 +66,23 @@ export function InterviewSummaryReport({ evaluations, onRestart }: InterviewSumm
         </ToolCard>
 
         <ToolCard>
-          <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
-            <Trophy className="w-5 h-5 text-amber-500" /> Question Summary
+          <h3 className="font-bold text-ink mb-4 flex items-center gap-2">
+            <Trophy className="w-5 h-5 text-gold" /> Question Summary
           </h3>
           <div className="space-y-2">
             {evaluations.map((ev, i) => {
               const qScore = (ev.feedback.understanding.score + ev.feedback.technicalAccuracy.score + ev.feedback.clarity.score + ev.feedback.completeness.score) / 4;
               return (
-                <div key={i} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-100">
-                  <span className="text-sm font-medium text-gray-700">Question {i + 1}</span>
+                <div key={i} className="flex items-center justify-between p-3 bg-paper-2 rounded-lg border border-hair">
+                  <span className="text-sm font-medium text-body">Question {i + 1}</span>
                   <div className="flex items-center gap-2">
-                    <div className="w-24 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                    <div className="w-24 h-1.5 bg-ink/10 rounded-full overflow-hidden">
                       <div 
-                        className="h-full bg-blue-500 rounded-full"
+                        className="h-full bg-accent rounded-full"
                         style={{ width: `${(qScore / 5) * 100}%` }}
                       ></div>
                     </div>
-                    <span className="text-xs font-bold text-gray-500 w-8 text-right">{qScore.toFixed(1)}/5</span>
+                    <span className="text-xs font-bold text-mute w-8 text-right">{qScore.toFixed(1)}/5</span>
                   </div>
                 </div>
               );
@@ -98,12 +98,12 @@ function MetricBar({ label, value }: { label: string, value: number }) {
   return (
     <div>
       <div className="flex justify-between text-sm mb-1">
-        <span className="font-medium text-gray-700">{label}</span>
-        <span className="font-bold text-gray-900">{value.toFixed(1)} <span className="text-gray-400 font-normal">/ 5</span></span>
+        <span className="font-medium text-body">{label}</span>
+        <span className="font-bold text-ink">{value.toFixed(1)} <span className="text-mute font-normal">/ 5</span></span>
       </div>
-      <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+      <div className="h-2 w-full bg-card-2 rounded-full overflow-hidden">
         <div 
-          className="h-full bg-indigo-500 rounded-full" 
+          className="h-full bg-accent rounded-full" 
           style={{ width: `${(value / 5) * 100}%` }}
         ></div>
       </div>

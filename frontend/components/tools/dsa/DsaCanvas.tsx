@@ -10,8 +10,8 @@ interface DsaCanvasProps {
 export function DsaCanvas({ currentStep }: DsaCanvasProps) {
   if (!currentStep) {
     return (
-      <div className="flex-1 bg-white rounded-2xl border border-gray-100 shadow-sm flex items-center justify-center p-8">
-        <p className="text-gray-500">Select an algorithm and click Play to start visualization.</p>
+      <div className="flex-1 bg-card rounded-2xl border border-hair flex items-center justify-center p-8">
+        <p className="text-mute">Select an algorithm and click Play to start visualization.</p>
       </div>
     );
   }
@@ -21,18 +21,18 @@ export function DsaCanvas({ currentStep }: DsaCanvasProps) {
 
   const getStateColor = (state: string) => {
     switch (state) {
-      case 'comparing': return 'bg-amber-400 border-amber-500 text-amber-900';
-      case 'swapping': return 'bg-red-400 border-red-500 text-white';
-      case 'sorted': return 'bg-green-400 border-green-500 text-white';
-      case 'found': return 'bg-indigo-500 border-indigo-600 text-white';
-      default: return 'bg-blue-100 border-blue-200 text-blue-900';
+      case 'comparing': return 'bg-gold border-gold text-warning';
+      case 'swapping': return 'bg-danger border-danger text-paper';
+      case 'sorted': return 'bg-note border-note text-paper';
+      case 'found': return 'bg-accent border-accent text-paper';
+      default: return 'bg-accent-soft border-accent-line text-accent-ink';
     }
   };
 
   return (
-    <div className="flex-1 bg-white rounded-2xl border border-gray-100 shadow-sm flex flex-col overflow-hidden relative">
-      <div className="p-4 border-b border-gray-100 bg-gray-50/50 flex items-center justify-center">
-        <p className="font-mono text-sm text-gray-700 bg-white px-4 py-2 rounded-lg border border-gray-200 shadow-sm inline-block">
+    <div className="flex-1 bg-card rounded-2xl border border-hair flex flex-col overflow-hidden relative">
+      <div className="p-4 border-b border-hair bg-paper-2/50 flex items-center justify-center">
+        <p className="font-mono text-sm text-body bg-card px-4 py-2 rounded-lg border border-hair inline-block">
           {currentStep.description || "Initializing..."}
         </p>
       </div>
@@ -52,7 +52,7 @@ export function DsaCanvas({ currentStep }: DsaCanvasProps) {
                 animate={{ height: `${heightPercent}%` }}
                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
                 className={cn(
-                  "w-full rounded-t-md border-t-2 border-l-2 border-r-2 flex flex-col justify-end items-center pb-2 shadow-sm",
+                  "w-full rounded-t-md border-t-2 border-l-2 border-r-2 flex flex-col justify-end items-center pb-2",
                   getStateColor(element.state)
                 )}
               >
@@ -60,7 +60,7 @@ export function DsaCanvas({ currentStep }: DsaCanvasProps) {
               </motion.div>
               
               {/* Index label */}
-              <div className="absolute -bottom-6 text-xs text-gray-400 font-mono">
+              <div className="absolute -bottom-6 text-xs text-mute font-mono">
                 {index}
               </div>
 
@@ -69,8 +69,8 @@ export function DsaCanvas({ currentStep }: DsaCanvasProps) {
                 <div className="absolute -bottom-14 flex flex-col items-center gap-1">
                   {pointersForIndex.map((p, i) => (
                     <div key={i} className="flex flex-col items-center">
-                      <div className="w-1 h-3 bg-indigo-500 rounded-full mb-0.5"></div>
-                      <span className="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-1.5 rounded">{p.label}</span>
+                      <div className="w-1 h-3 bg-accent rounded-full mb-0.5"></div>
+                      <span className="text-[10px] font-bold text-accent-ink bg-accent-soft px-1.5 rounded">{p.label}</span>
                     </div>
                   ))}
                 </div>

@@ -17,16 +17,16 @@ export function ResumeFormErrors({ errors, apiError, errorRef }: ResumeFormError
       ref={errorRef}
       role="alert"
       tabIndex={-1}
-      className="rounded-md border border-[var(--error-soft-border)] bg-[var(--error-soft)] p-4"
+      className="rounded-md border border-danger-line bg-danger-soft p-4"
     >
-      <p className="text-[13px] font-semibold text-[var(--error)]">
+      <p className="text-[13px] font-semibold text-danger">
         {fieldErrors.length > 0 ? "Check the highlighted fields before continuing." : apiError ?? "Something went wrong."}
       </p>
       {fieldErrors.length > 0 && (
-        <ul className="mt-2 list-disc space-y-1 pl-5 text-[12.5px] leading-relaxed text-[var(--ink-secondary)]">
+        <ul className="mt-2 list-disc space-y-1 pl-5 text-[12.5px] leading-relaxed text-body">
           {fieldErrors.map(([field, message]) => (
             <li key={field}>
-              <a href={`#${field}`} className="font-medium text-[var(--error)] hover:underline">
+              <a href={`#${field}`} className="font-medium text-danger hover:underline">
                 {message}
               </a>
             </li>
@@ -34,7 +34,7 @@ export function ResumeFormErrors({ errors, apiError, errorRef }: ResumeFormError
         </ul>
       )}
       {apiError && fieldErrors.length > 0 && (
-        <p className="mt-2 text-[12.5px] leading-relaxed text-[var(--ink-secondary)]">{apiError}</p>
+        <p className="mt-2 text-[12.5px] leading-relaxed text-body">{apiError}</p>
       )}
     </div>
   );

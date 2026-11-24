@@ -472,7 +472,7 @@ export const companyRecommendations: CompanyRecommendation[] = [
     id: "cisco",
     name: "Cisco Systems",
     matchPercentage: 94,
-    rationale: "Recommended because your OS and Networking module scores are in the top 10th percentile.",
+    rationale: "Interviews lean on operating systems and computer networks.",
     roadmapsCount: 2,
     practiceSetsCount: 14
   },
@@ -480,7 +480,7 @@ export const companyRecommendations: CompanyRecommendation[] = [
     id: "oracle",
     name: "Oracle OCI",
     matchPercentage: 89,
-    rationale: "Strong alignment with your SQL & Database Engineering progression and recent practice.",
+    rationale: "Rounds go deep on SQL and database design.",
     roadmapsCount: 1,
     practiceSetsCount: 8
   },
@@ -488,7 +488,7 @@ export const companyRecommendations: CompanyRecommendation[] = [
     id: "adobe",
     name: "Adobe Systems",
     matchPercentage: 86,
-    rationale: "Matches your proficiency in DSA and String/Array manipulation patterns.",
+    rationale: "Coding rounds favour arrays, strings and classic DSA patterns.",
     roadmapsCount: 1,
     practiceSetsCount: 12
   }

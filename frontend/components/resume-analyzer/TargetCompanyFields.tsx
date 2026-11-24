@@ -32,7 +32,7 @@ export function TargetCompanyFields({
   return (
     <div className="space-y-4">
       <div>
-        <label htmlFor="target-company" className="mb-1.5 block text-[12px] font-semibold text-[var(--ink-secondary)]">
+        <label htmlFor="target-company" className="mb-1.5 block text-[12px] font-semibold text-body">
           Target company
         </label>
         <input
@@ -45,23 +45,23 @@ export function TargetCompanyFields({
           placeholder="For example: Microsoft"
           aria-invalid={Boolean(companyError)}
           aria-describedby={companyError ? "target-company-error" : "target-company-hint"}
-          className="field w-full text-[var(--ink)] disabled:cursor-not-allowed disabled:bg-[var(--surface-subdued)]"
+          className="field w-full text-ink disabled:cursor-not-allowed disabled:bg-paper-2"
         />
         <div className="mt-1.5 flex items-center justify-between gap-3">
-          <p id="target-company-hint" className="text-[11.5px] text-[var(--ink-tertiary)]">
+          <p id="target-company-hint" className="text-[11.5px] text-mute">
             Enter the company or hiring organization named in the opening.
           </p>
-          <span className="text-[11px] font-mono text-[var(--ink-tertiary)]">{target.company.length}/120</span>
+          <span className="text-[11px] font-mono text-mute">{target.company.length}/120</span>
         </div>
         {companyError && (
-          <p id="target-company-error" className="mt-1.5 text-[12px] font-medium text-[var(--error)]">
+          <p id="target-company-error" className="mt-1.5 text-[12px] font-medium text-danger">
             {companyError}
           </p>
         )}
       </div>
 
       <div>
-        <label htmlFor="company-type" className="mb-1.5 block text-[12px] font-semibold text-[var(--ink-secondary)]">
+        <label htmlFor="company-type" className="mb-1.5 block text-[12px] font-semibold text-body">
           Company type
         </label>
         <div className="relative">
@@ -72,7 +72,7 @@ export function TargetCompanyFields({
             disabled={disabled}
             aria-invalid={Boolean(companyTypeError)}
             aria-describedby={companyTypeError ? "company-type-error" : undefined}
-            className="field w-full appearance-none pr-9 text-[var(--ink)] disabled:cursor-not-allowed disabled:bg-[var(--surface-subdued)]"
+            className="field w-full appearance-none pr-9 text-ink disabled:cursor-not-allowed disabled:bg-paper-2"
           >
             <option value="" disabled>Select company type</option>
             {companyTypes.map((option) => (
@@ -83,11 +83,11 @@ export function TargetCompanyFields({
           </select>
           <ChevronDown
             size={15}
-            className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[var(--ink-tertiary)]"
+            className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-mute"
           />
         </div>
         {companyTypeError && (
-          <p id="company-type-error" className="mt-1.5 text-[12px] font-medium text-[var(--error)]">
+          <p id="company-type-error" className="mt-1.5 text-[12px] font-medium text-danger">
             {companyTypeError}
           </p>
         )}

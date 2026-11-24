@@ -3,7 +3,7 @@ import { Metadata } from "next";
 import { AppLayout } from "@/components/layout/AppLayout";
 
 export const metadata: Metadata = {
-  title: "Labs | StudyHub",
+  title: "Labs — StudyHub",
   description: "Interactive simulators for DSA, operating systems, networks and system design.",
 };
 

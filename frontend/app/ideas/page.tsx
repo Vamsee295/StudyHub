@@ -2,20 +2,21 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
+import { PageHeader } from "@/components/ui/Page";
 import { ChevronUp, Lightbulb, Loader2, Search, Trash2 } from "lucide-react";
 import { clsx } from "clsx";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { ideasApi, Idea, IdeaCategory, IdeaFilter, IdeaList, IdeaStatus } from "@/lib/api/ideas";
 
-const focusRing = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]";
+const focusRing = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent";
 const PAGE = 20;
 
 const STATUS: Record<IdeaStatus, { label: string; cls: string }> = {
-  open: { label: "Open", cls: "bg-[var(--surface-subdued)] text-[var(--ink-secondary)] border-[var(--border)]" },
-  planned: { label: "Planned", cls: "bg-[var(--accent-soft)] text-[var(--accent)] border-[var(--accent-soft-border)]" },
-  in_progress: { label: "In progress", cls: "bg-[var(--warning-soft)] text-[var(--warning)] border-[var(--warning)]/30" },
-  shipped: { label: "Shipped", cls: "bg-[var(--success-soft)] text-[var(--success)] border-[var(--success-soft-border)]" },
-  declined: { label: "Declined", cls: "bg-[var(--surface-subdued)] text-[var(--ink-tertiary)] border-[var(--border)]" },
+  open: { label: "Open", cls: "bg-paper-2 text-body border-hair" },
+  planned: { label: "Planned", cls: "bg-accent-soft text-accent-ink border-accent-line" },
+  in_progress: { label: "In progress", cls: "bg-warning-soft text-warning border-warning/30" },
+  shipped: { label: "Shipped", cls: "bg-success-soft text-note border-success-line" },
+  declined: { label: "Declined", cls: "bg-paper-2 text-mute border-hair" },
 };
 const FILTERS: { id: IdeaFilter; label: string }[] = [
   { id: "active", label: "Active" }, { id: "open", label: "Open" }, { id: "planned", label: "Planned" },
@@ -109,19 +110,12 @@ export default function IdeasPage() {
     f === "active" ? (counts.open ?? 0) + (counts.planned ?? 0) + (counts.in_progress ?? 0) : f === "all" ? undefined : counts[f] ?? 0;
 
   return (
-    <div className="w-full max-w-[900px] mx-auto pb-20 flex flex-col gap-8">
-      <header className="flex flex-col gap-2">
-        <h1 className="font-newsreader text-3xl sm:text-4xl text-[var(--ink)] tracking-tight flex items-center gap-3">
-          <Lightbulb aria-hidden="true" className="w-7 h-7 text-[var(--accent)]" /> Ideas board
-        </h1>
-        <p className="text-[15px] text-[var(--ink-secondary)] max-w-2xl">
-          Suggest what StudyHub should build next and upvote the ideas you want. Statuses show what's planned, in progress and shipped.
-        </p>
-      </header>
+    <div className="flex w-full max-w-[900px] flex-col gap-8">
+      <PageHeader eyebrow="Ideas board" title="What should we" hl="build?" note="suggest it, upvote it, watch it ship" />
 
       {user ? <NewIdeaForm onCreated={() => { setFilter("active"); setSort("new"); load(0); }} /> : !authLoading && (
-        <p className="p-4 rounded-xl border border-dashed border-[var(--border)] text-[14px] text-[var(--ink-secondary)]">
-          <Link href="/login?redirect=/ideas" className={`text-[var(--accent)] font-semibold underline rounded ${focusRing}`}>Sign in</Link> to post ideas and vote.
+        <p className="p-4 rounded-xl border border-dashed border-hair text-[14px] text-body">
+          <Link href="/login?redirect=/ideas" className={`text-accent-ink font-semibold underline rounded ${focusRing}`}>Sign in</Link> to post ideas and vote.
         </p>
       )}
 
@@ -131,7 +125,7 @@ export default function IdeasPage() {
             {FILTERS.map((f) => (
               <button key={f.id} role="tab" aria-selected={filter === f.id} type="button" onClick={() => setFilter(f.id)}
                 className={clsx("px-3 py-1.5 rounded-full text-[13px] border transition-colors", focusRing,
-                  filter === f.id ? "bg-[var(--accent-soft)] border-[var(--accent-soft-border)] text-[var(--accent)] font-semibold" : "border-[var(--border)] text-[var(--ink-secondary)] hover:text-[var(--ink)]")}>
+                  filter === f.id ? "bg-accent-soft border-accent-line text-accent-ink font-semibold" : "border-hair text-body hover:text-ink")}>
                 {f.label} <span className="tabular-nums opacity-70">{countFor(f.id)}</span>
               </button>
             ))}
@@ -139,13 +133,13 @@ export default function IdeasPage() {
           <div className="flex items-center gap-2 ml-auto">
             <label className="relative">
               <span className="sr-only">Search ideas</span>
-              <Search aria-hidden="true" className="w-4 h-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--ink-tertiary)]" />
+              <Search aria-hidden="true" className="w-4 h-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-mute" />
               <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search…" maxLength={100}
-                className={`pl-8 pr-3 py-1.5 rounded-lg border border-[var(--border)] bg-white text-[13px] w-40 ${focusRing}`} />
+                className={`pl-8 pr-3 py-1.5 rounded-lg border border-hair bg-card text-[13px] w-40 ${focusRing}`} />
             </label>
             <label className="text-[13px]">
               <span className="sr-only">Sort</span>
-              <select value={sort} onChange={(e) => setSort(e.target.value as "top" | "new")} className={`px-2 py-1.5 rounded-lg border border-[var(--border)] bg-white ${focusRing}`}>
+              <select value={sort} onChange={(e) => setSort(e.target.value as "top" | "new")} className={`px-2 py-1.5 rounded-lg border border-hair bg-card ${focusRing}`}>
                 <option value="top">Most votes</option>
                 <option value="new">Newest</option>
               </select>
@@ -153,50 +147,50 @@ export default function IdeasPage() {
           </div>
         </div>
 
-        {error && <p role="alert" className="text-[13px] text-[var(--error)]">{error}</p>}
+        {error && <p role="alert" className="text-[13px] text-danger">{error}</p>}
 
         {data && data.items.length === 0 && !loading && (
-          <p className="p-8 text-center rounded-xl border border-dashed border-[var(--border)] text-[14px] text-[var(--ink-secondary)]">
+          <p className="p-8 text-center rounded-xl border border-dashed border-hair text-[14px] text-body">
             {debounced ? `No ideas match “${debounced}”.` : "No ideas here yet."} {user && filter !== "shipped" && filter !== "declined" ? "Be the first to suggest one." : ""}
           </p>
         )}
 
         <ul className="flex flex-col gap-3">
           {data?.items.map((idea) => (
-            <li key={idea.id} className="flex gap-4 p-4 rounded-xl border border-[var(--border)] bg-[var(--surface)]">
+            <li key={idea.id} className="flex gap-4 p-4 rounded-xl border border-hair bg-card">
               <button type="button" onClick={() => toggleVote(idea)} disabled={!user || busy === idea.id}
                 aria-pressed={idea.has_voted} aria-label={`${idea.has_voted ? "Remove your vote from" : "Upvote"} ${idea.title}. ${idea.vote_count} votes`}
                 title={user ? undefined : "Sign in to vote"}
                 className={clsx("shrink-0 w-14 h-16 rounded-lg border flex flex-col items-center justify-center gap-0.5 transition-colors", focusRing,
-                  idea.has_voted ? "bg-[var(--accent-soft)] border-[var(--accent-soft-border)] text-[var(--accent)]" : "border-[var(--border)] text-[var(--ink-secondary)] hover:border-[var(--accent)]",
+                  idea.has_voted ? "bg-accent-soft border-accent-line text-accent-ink" : "border-hair text-body hover:border-accent",
                   !user && "cursor-not-allowed opacity-70")}>
                 <ChevronUp aria-hidden="true" className="w-5 h-5" />
                 <span className="text-[14px] font-bold tabular-nums">{idea.vote_count}</span>
               </button>
               <div className="flex-1 min-w-0 flex flex-col gap-1.5">
                 <div className="flex flex-wrap items-center gap-2">
-                  <h2 className="text-[15px] font-semibold text-[var(--ink)]">{idea.title}</h2>
+                  <h2 className="text-[15px] font-semibold text-ink">{idea.title}</h2>
                   <span className={`px-2 py-0.5 rounded-full border text-[11px] font-semibold ${STATUS[idea.status].cls}`}>{STATUS[idea.status].label}</span>
                 </div>
-                {idea.description && <p className="text-[13.5px] text-[var(--ink-secondary)] whitespace-pre-line">{idea.description}</p>}
+                {idea.description && <p className="text-[13.5px] text-body whitespace-pre-line">{idea.description}</p>}
                 {idea.status_note && (
-                  <p className="text-[13px] text-[var(--ink)] border-l-2 border-[var(--accent)] pl-2"><span className="font-semibold">Team note:</span> {idea.status_note}</p>
+                  <p className="text-[13px] text-ink border-l-2 border-accent pl-2"><span className="font-semibold">Team note:</span> {idea.status_note}</p>
                 )}
-                <p className="text-[12px] text-[var(--ink-tertiary)] flex flex-wrap items-center gap-x-2">
+                <p className="text-[12px] text-mute flex flex-wrap items-center gap-x-2">
                   <span className="capitalize">{idea.category}</span><span aria-hidden="true">·</span>
                   <span>{idea.author_name}</span><span aria-hidden="true">·</span><span>{timeAgo(idea.created_at)}</span>
                   {data.is_admin && (
                     <label className="ml-auto inline-flex items-center gap-1">
                       <span className="sr-only">Change status</span>
                       <select value={idea.status} onChange={(e) => changeStatus(idea, e.target.value as IdeaStatus)}
-                        className={`px-1.5 py-0.5 rounded border border-[var(--border)] bg-white text-[12px] ${focusRing}`}>
+                        className={`px-1.5 py-0.5 rounded border border-hair bg-card text-[12px] ${focusRing}`}>
                         {(Object.keys(STATUS) as IdeaStatus[]).map((s) => <option key={s} value={s}>{STATUS[s].label}</option>)}
                       </select>
                     </label>
                   )}
                   {(data.is_admin || (idea.is_mine && idea.status === "open")) && (
                     <button type="button" onClick={() => remove(idea)} aria-label={`Delete ${idea.title}`}
-                      className={`${data.is_admin ? "" : "ml-auto"} p-1 rounded text-[var(--ink-tertiary)] hover:text-[var(--error)] ${focusRing}`}>
+                      className={`${data.is_admin ? "" : "ml-auto"} p-1 rounded text-mute hover:text-danger ${focusRing}`}>
                       <Trash2 aria-hidden="true" className="w-3.5 h-3.5" />
                     </button>
                   )}
@@ -206,10 +200,10 @@ export default function IdeasPage() {
           ))}
         </ul>
 
-        {loading && <p className="flex items-center gap-2 text-[13px] text-[var(--ink-secondary)]"><Loader2 aria-hidden="true" className="w-4 h-4 animate-spin" /> Loading ideas…</p>}
+        {loading && <p className="flex items-center gap-2 text-[13px] text-body"><Loader2 aria-hidden="true" className="w-4 h-4 animate-spin" /> Loading ideas…</p>}
         {data && !loading && data.items.length < data.total && (
           <button type="button" onClick={() => load(data.items.length)}
-            className={`self-center px-4 py-2 rounded-lg border border-[var(--border)] text-[13px] font-semibold text-[var(--ink)] hover:border-[var(--accent)] ${focusRing}`}>
+            className={`self-center px-4 py-2 rounded-lg border border-hair text-[13px] font-semibold text-ink hover:border-accent ${focusRing}`}>
             Show more ({data.total - data.items.length} left)
           </button>
         )}
@@ -247,40 +241,40 @@ function NewIdeaForm({ onCreated }: { onCreated: () => void }) {
   if (!open) {
     return (
       <button type="button" onClick={() => setOpen(true)}
-        className={`self-start inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--accent)] text-white text-[14px] font-semibold hover:bg-[var(--accent-hover)] ${focusRing}`}>
+        className={`self-start inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-accent text-paper text-[14px] font-semibold hover:bg-accent-ink ${focusRing}`}>
         <Lightbulb aria-hidden="true" className="w-4 h-4" /> Suggest an idea
       </button>
     );
   }
 
   return (
-    <form onSubmit={submit} className="p-5 rounded-xl border border-[var(--border)] bg-[var(--surface)] flex flex-col gap-4">
+    <form onSubmit={submit} className="p-5 rounded-xl border border-hair bg-card flex flex-col gap-4">
       <label className="flex flex-col gap-1.5 text-[13px]">
-        <span className="flex justify-between font-semibold text-[var(--ink)]">Title <span className="font-normal text-[var(--ink-tertiary)] tabular-nums">{title.trim().length}/120</span></span>
+        <span className="flex justify-between font-semibold text-ink">Title <span className="font-normal text-mute tabular-nums">{title.trim().length}/120</span></span>
         <input value={title} onChange={(e) => setTitle(e.target.value)} maxLength={120} autoFocus required
           placeholder="e.g. Add practice questions for operating systems" aria-describedby="title-help"
-          className={`px-3 py-2 rounded-lg border border-[var(--border)] bg-white text-[14px] ${focusRing}`} />
-        <span id="title-help" className="text-[12px] text-[var(--ink-tertiary)]">At least 8 characters. Check the board first: upvoting an existing idea counts more than a duplicate.</span>
+          className={`px-3 py-2 rounded-lg border border-hair bg-card text-[14px] ${focusRing}`} />
+        <span id="title-help" className="text-[12px] text-mute">At least 8 characters. Check the board first: upvoting an existing idea counts more than a duplicate.</span>
       </label>
       <label className="flex flex-col gap-1.5 text-[13px]">
-        <span className="font-semibold text-[var(--ink)]">Details <span className="font-normal text-[var(--ink-tertiary)]">(optional)</span></span>
+        <span className="font-semibold text-ink">Details <span className="font-normal text-mute">(optional)</span></span>
         <textarea value={description} onChange={(e) => setDescription(e.target.value)} maxLength={2000} rows={3}
           placeholder="What problem would this solve for you?"
-          className={`px-3 py-2 rounded-lg border border-[var(--border)] bg-white text-[14px] resize-y ${focusRing}`} />
+          className={`px-3 py-2 rounded-lg border border-hair bg-card text-[14px] resize-y ${focusRing}`} />
       </label>
       <label className="flex flex-col gap-1.5 text-[13px] max-w-[200px]">
-        <span className="font-semibold text-[var(--ink)]">Area</span>
-        <select value={category} onChange={(e) => setCategory(e.target.value as IdeaCategory)} className={`px-3 py-2 rounded-lg border border-[var(--border)] bg-white ${focusRing}`}>
+        <span className="font-semibold text-ink">Area</span>
+        <select value={category} onChange={(e) => setCategory(e.target.value as IdeaCategory)} className={`px-3 py-2 rounded-lg border border-hair bg-card ${focusRing}`}>
           {CATEGORIES.map((c) => <option key={c.id} value={c.id}>{c.label}</option>)}
         </select>
       </label>
-      {error && <p role="alert" className="text-[13px] text-[var(--error)]">{error}</p>}
+      {error && <p role="alert" className="text-[13px] text-danger">{error}</p>}
       <div className="flex gap-2">
         <button type="submit" disabled={!titleOk || saving}
-          className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--accent)] text-white text-[14px] font-semibold hover:bg-[var(--accent-hover)] disabled:opacity-50 ${focusRing}`}>
+          className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-accent text-paper text-[14px] font-semibold hover:bg-accent-ink disabled:opacity-50 ${focusRing}`}>
           {saving && <Loader2 aria-hidden="true" className="w-4 h-4 animate-spin" />} Post idea
         </button>
-        <button type="button" onClick={() => setOpen(false)} className={`px-4 py-2 rounded-lg text-[14px] text-[var(--ink-secondary)] hover:text-[var(--ink)] ${focusRing}`}>Cancel</button>
+        <button type="button" onClick={() => setOpen(false)} className={`px-4 py-2 rounded-lg text-[14px] text-body hover:text-ink ${focusRing}`}>Cancel</button>
       </div>
     </form>
   );

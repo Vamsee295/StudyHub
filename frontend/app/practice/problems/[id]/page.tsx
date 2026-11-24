@@ -32,11 +32,11 @@ const statusLabel: Record<string, string> = {
 };
 
 function CaseTabIcon({ status }: { status: string }) {
-  if (status === "running") return <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-500" />;
-  if (status === "passed") return <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />;
-  if (status === "wrong_answer" || status === "failed") return <XCircle className="w-3.5 h-3.5 text-rose-500" />;
+  if (status === "running") return <Loader2 className="w-3.5 h-3.5 animate-spin text-accent" />;
+  if (status === "passed") return <CheckCircle2 className="w-3.5 h-3.5 text-note" />;
+  if (status === "wrong_answer" || status === "failed") return <XCircle className="w-3.5 h-3.5 text-danger" />;
   if (status === "compile_error" || status === "runtime_error" || status === "time_limit")
-    return <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />;
+    return <AlertTriangle className="w-3.5 h-3.5 text-gold" />;
   return null;
 }
 
@@ -58,16 +58,16 @@ function VerdictBanner({
   const isWrongAnswer = result.status === "wrong_answer";
 
   const bannerClass = isAccepted
-    ? "bg-emerald-50 border-emerald-200 text-emerald-900"
+    ? "bg-success-soft border-success-line text-note"
     : isCompileError
-    ? "bg-amber-50 border-amber-200 text-amber-900"
-    : "bg-rose-50 border-rose-200 text-rose-900";
+    ? "bg-warning-soft border-warning-line text-warning"
+    : "bg-danger-soft border-danger-line text-danger";
 
   const labelClass = isAccepted
-    ? "bg-emerald-600 text-white"
+    ? "bg-note text-paper"
     : isCompileError
-    ? "bg-amber-600 text-white"
-    : "bg-rose-600 text-white";
+    ? "bg-gold text-paper"
+    : "bg-danger text-paper";
 
   const label = isAccepted
     ? "ACCEPTED"
@@ -111,23 +111,23 @@ function VerdictBanner({
       {/* Compiler error details */}
       {isCompileError && result.compilerError && (
         <div className="space-y-2">
-          <pre className="font-mono text-xs whitespace-pre-wrap bg-amber-100/60 border border-amber-200 rounded p-3 overflow-auto max-h-48 text-amber-900">
+          <pre className="font-mono text-xs whitespace-pre-wrap bg-warning-soft/60 border border-warning-line rounded p-3 overflow-auto max-h-48 text-warning">
             {result.compilerError}
           </pre>
           <div className="flex justify-end">
             <button 
               onClick={onExplain}
               disabled={isExplaining}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-200 text-amber-900 hover:bg-amber-300 rounded-md text-xs font-semibold transition-colors disabled:opacity-50"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-warning-line text-warning hover:bg-warning-line rounded-md text-xs font-semibold transition-colors disabled:opacity-50"
             >
               {isExplaining ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Lightbulb className="w-3.5 h-3.5" />}
               {isExplaining ? "Explaining..." : "Explain Error"}
             </button>
           </div>
           {explanation && (
-            <div className="p-3 bg-indigo-50 border border-indigo-200 rounded-md text-sm text-indigo-900 prose prose-sm max-w-none">
-              <div className="flex items-center gap-2 mb-2 font-semibold text-indigo-800">
-                <Lightbulb className="w-4 h-4 text-indigo-600" />
+            <div className="p-3 bg-accent-soft border border-accent-line rounded-md text-sm text-accent-ink prose prose-sm max-w-none">
+              <div className="flex items-center gap-2 mb-2 font-semibold text-accent-ink">
+                <Lightbulb className="w-4 h-4 text-accent-ink" />
                 AI Explanation
               </div>
               <div dangerouslySetInnerHTML={{ __html: explanation.replace(/\n/g, '<br/>') }} />
@@ -139,23 +139,23 @@ function VerdictBanner({
       {/* Runtime error details */}
       {isRuntimeError && result.runtimeError && (
         <div className="space-y-2">
-          <pre className="font-mono text-xs whitespace-pre-wrap bg-rose-100/60 border border-rose-200 rounded p-3 overflow-auto max-h-48 text-rose-900">
+          <pre className="font-mono text-xs whitespace-pre-wrap bg-danger-soft/60 border border-danger-line rounded p-3 overflow-auto max-h-48 text-danger">
             {result.runtimeError}
           </pre>
           <div className="flex justify-end">
             <button 
               onClick={onExplain}
               disabled={isExplaining}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-rose-200 text-rose-900 hover:bg-rose-300 rounded-md text-xs font-semibold transition-colors disabled:opacity-50"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-danger-line text-danger hover:bg-danger-line rounded-md text-xs font-semibold transition-colors disabled:opacity-50"
             >
               {isExplaining ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Lightbulb className="w-3.5 h-3.5" />}
               {isExplaining ? "Explaining..." : "Explain Error"}
             </button>
           </div>
           {explanation && (
-            <div className="p-3 bg-indigo-50 border border-indigo-200 rounded-md text-sm text-indigo-900 prose prose-sm max-w-none">
-              <div className="flex items-center gap-2 mb-2 font-semibold text-indigo-800">
-                <Lightbulb className="w-4 h-4 text-indigo-600" />
+            <div className="p-3 bg-accent-soft border border-accent-line rounded-md text-sm text-accent-ink prose prose-sm max-w-none">
+              <div className="flex items-center gap-2 mb-2 font-semibold text-accent-ink">
+                <Lightbulb className="w-4 h-4 text-accent-ink" />
                 AI Explanation
               </div>
               <div dangerouslySetInnerHTML={{ __html: explanation.replace(/\n/g, '<br/>') }} />
@@ -208,10 +208,10 @@ function TestCaseDetail({ tc }: { tc: TestCaseResult }) {
           <div className={clsx(
             "rounded-lg p-3 border",
             isPassed
-              ? "bg-emerald-50 border-emerald-200 text-emerald-800"
+              ? "bg-success-soft border-success-line text-note"
               : isError
-              ? "bg-amber-50 border-amber-200 text-amber-800"
-              : "bg-rose-50 border-rose-200 text-rose-800"
+              ? "bg-warning-soft border-warning-line text-warning"
+              : "bg-danger-soft border-danger-line text-danger"
           )}>
             {tc.actualOutput !== undefined
               ? JSON.stringify(tc.actualOutput)
@@ -227,10 +227,10 @@ function TestCaseDetail({ tc }: { tc: TestCaseResult }) {
       <div className={clsx(
         "flex items-center gap-2 px-3 py-2 rounded-lg border text-[11px] font-semibold uppercase tracking-wider",
         isPassed
-          ? "bg-emerald-50 border-emerald-200 text-emerald-700"
+          ? "bg-success-soft border-success-line text-note"
           : isError
-          ? "bg-amber-50 border-amber-200 text-amber-700"
-          : "bg-rose-50 border-rose-200 text-rose-700"
+          ? "bg-warning-soft border-warning-line text-warning"
+          : "bg-danger-soft border-danger-line text-danger"
       )}>
         {isPassed
           ? <CheckCircle2 className="w-4 h-4" />
@@ -516,8 +516,8 @@ export default function ProblemWorkspace() {
 
             {/* Hint */}
             {hintOpen && problem.hint && (
-              <div className="fade-in space-y-1.5 rounded-xl border-[1.5px] border-[var(--warning-soft-border)] bg-[var(--warning-soft)] p-4">
-                <p className="flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-wider text-[var(--warning)]">
+              <div className="fade-in space-y-1.5 rounded-xl border-[1.5px] border-warning-line bg-warning-soft p-4">
+                <p className="flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-wider text-warning">
                   <Lightbulb className="size-3.5" /> Hint
                 </p>
                 <p className="text-[15px] leading-relaxed">
@@ -620,8 +620,8 @@ export default function ProblemWorkspace() {
                       testCases: <ListChecks className="w-3.5 h-3.5" />,
                       testResult: execResult
                         ? execResult.status === "accepted"
-                          ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
-                          : <XCircle className="w-3.5 h-3.5 text-rose-500" />
+                          ? <CheckCircle2 className="w-3.5 h-3.5 text-note" />
+                          : <XCircle className="w-3.5 h-3.5 text-danger" />
                         : <CheckCircle2 className="w-3.5 h-3.5" />,
                       stdout: <Terminal className="w-3.5 h-3.5" />,
                     };
@@ -646,8 +646,8 @@ export default function ProblemWorkspace() {
                   <div className={clsx(
                     "flex items-center gap-1.5 font-mono text-[11px] font-bold px-2 py-0.5 rounded shrink-0",
                     execResult.status === "accepted"
-                      ? "text-emerald-700 bg-emerald-50"
-                      : "text-rose-700 bg-rose-50"
+                      ? "text-note bg-success-soft"
+                      : "text-danger bg-danger-soft"
                   )}>
                     {execResult.status === "accepted"
                       ? <CheckCircle2 className="w-3.5 h-3.5" />
@@ -663,7 +663,7 @@ export default function ProblemWorkspace() {
 
                 {/* ── ERROR state (network/service) ── */}
                 {execError && (
-                  <div className="p-3 rounded-lg bg-rose-50 border border-rose-200 text-rose-800 text-sm flex items-start gap-2">
+                  <div className="p-3 rounded-lg bg-danger-soft border border-danger-line text-danger text-sm flex items-start gap-2">
                     <AlertTriangle className="w-5 h-5 shrink-0 mt-0.5" />
                     <div>
                       <p className="font-semibold">Execution Service Error</p>
@@ -687,7 +687,7 @@ export default function ProblemWorkspace() {
                             className={clsx(
                               "px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 border transition-colors",
                               selectedCase === i
-                                ? "bg-paper-2 border-[var(--border-strong)] text-ink"
+                                ? "bg-paper-2 border-ink/25 text-ink"
                                 : "border-transparent text-body hover:bg-paper-2 hover:text-ink"
                             )}
                           >
@@ -759,10 +759,10 @@ export default function ProblemWorkspace() {
                                   className={clsx(
                                     "px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 border transition-colors",
                                     tr.status === "passed"
-                                      ? "bg-emerald-50 border-emerald-200 text-emerald-700"
+                                      ? "bg-success-soft border-success-line text-note"
                                       : tr.status === "runtime_error" || tr.status === "time_limit"
-                                      ? "bg-amber-50 border-amber-200 text-amber-700"
-                                      : "bg-rose-50 border-rose-200 text-rose-700"
+                                      ? "bg-warning-soft border-warning-line text-warning"
+                                      : "bg-danger-soft border-danger-line text-danger"
                                   )}
                                 >
                                   {tr.id.startsWith("hidden") ? `Hidden #${i + 1}` : `Case ${i + 1}`}

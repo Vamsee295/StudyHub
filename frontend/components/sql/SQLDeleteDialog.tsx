@@ -53,7 +53,7 @@ export default function SQLDeleteDialog({
         aria-describedby="delete-dialog-desc"
       >
         <div className="flex items-start gap-3">
-          <div className="p-2.5 rounded-full bg-red-100 dark:bg-red-950/50 text-red-600 dark:text-red-400 shrink-0">
+          <div className="p-2.5 rounded-full bg-danger-soft text-danger shrink-0">
             <AlertTriangle className="w-5 h-5" />
           </div>
           <div className="flex-1 min-w-0">
@@ -77,7 +77,7 @@ export default function SQLDeleteDialog({
           <button
             ref={confirmBtnRef}
             type="button"
-            className="px-3.5 py-1.5 text-xs font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors cursor-pointer"
+            className="px-3.5 py-1.5 text-xs font-medium text-paper bg-danger hover:bg-danger rounded-lg transition-colors cursor-pointer"
             onClick={() => onConfirm(file.id)}
           >
             Delete File

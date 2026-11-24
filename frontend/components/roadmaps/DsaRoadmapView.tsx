@@ -112,35 +112,35 @@ export const DsaRoadmapView = () => {
   };
 
   if (loading) {
-    return <div className="p-12 text-center text-slate-500 font-medium">Loading roadmap...</div>;
+    return <div className="p-12 text-center text-mute font-medium">Loading roadmap...</div>;
   }
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       {/* Header section */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm">
+      <div className="bg-card rounded-2xl border border-hair p-8">
         <div className="max-w-3xl">
-          <div className="text-xs font-bold text-blue-600 tracking-wider uppercase mb-3">Stage 04 of 12 · Core Engineering</div>
-          <h1 className="text-3xl font-bold text-slate-900 mb-4">Data Structures & Algorithms</h1>
-          <p className="text-slate-600 leading-relaxed text-lg mb-8">
-            Master algorithmic patterns, data structures, and company-calibrated problem types commonly required for technical interviews.
+          <p className="eyebrow mb-3">Roadmap · DSA</p>
+          <h1 className="display mb-4 text-[36px] md:text-[44px]">Data structures &amp; algorithms</h1>
+          <p className="text-body leading-relaxed text-lg mb-8">
+            The data structures and problem patterns that technical interviews ask about most.
           </p>
 
           {/* Progress Card */}
-          <div className="bg-slate-50 rounded-xl p-6 border border-slate-100">
+          <div className="bg-paper-2 rounded-xl p-6 border border-hair">
             <div className="flex items-end justify-between mb-4">
               <div>
-                <div className="text-sm font-medium text-slate-500 mb-1">Overall Progress</div>
-                <div className="text-3xl font-bold text-slate-900">{solvedCount} <span className="text-slate-400 text-xl font-medium">/ {totalProblems}</span></div>
+                <div className="text-sm font-medium text-mute mb-1">Overall Progress</div>
+                <div className="text-3xl font-bold text-ink">{solvedCount} <span className="text-mute text-xl font-medium">/ {totalProblems}</span></div>
               </div>
-              <div className="text-sm font-semibold text-blue-600">
+              <div className="text-sm font-semibold text-accent-ink">
                 {Math.round((solvedCount / totalProblems) * 100 || 0)}% Completed
               </div>
             </div>
             
-            <div className="h-3 w-full bg-slate-200 rounded-full overflow-hidden mb-6">
+            <div className="h-3 w-full bg-ink/10 rounded-full overflow-hidden mb-6">
               <motion.div 
-                className="h-full bg-blue-600 rounded-full"
+                className="h-full bg-accent rounded-full"
                 initial={{ width: 0 }}
                 animate={{ width: `${(solvedCount / totalProblems) * 100}%` }}
                 transition={{ duration: 1, ease: "easeOut" }}
@@ -148,9 +148,9 @@ export const DsaRoadmapView = () => {
             </div>
 
             <div className="grid grid-cols-3 gap-4">
-              <DifficultyStat label="Easy" solved={diffStats.easy.solved} total={diffStats.easy.total} color="bg-green-500" />
-              <DifficultyStat label="Medium" solved={diffStats.medium.solved} total={diffStats.medium.total} color="bg-amber-500" />
-              <DifficultyStat label="Hard" solved={diffStats.hard.solved} total={diffStats.hard.total} color="bg-red-500" />
+              <DifficultyStat label="Easy" solved={diffStats.easy.solved} total={diffStats.easy.total} color="bg-note" />
+              <DifficultyStat label="Medium" solved={diffStats.medium.solved} total={diffStats.medium.total} color="bg-gold" />
+              <DifficultyStat label="Hard" solved={diffStats.hard.solved} total={diffStats.hard.total} color="bg-danger" />
             </div>
           </div>
         </div>
@@ -159,20 +159,20 @@ export const DsaRoadmapView = () => {
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-4 items-center">
         <div className="relative flex-1 w-full">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-mute" />
           <input 
             type="text"
             placeholder="Search problems or patterns..."
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
-            className="w-full pl-12 pr-4 py-3 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+            className="w-full pl-12 pr-4 py-3 bg-card border border-hair rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
           />
         </div>
         <div className="flex gap-3 w-full sm:w-auto">
           <select 
             value={difficultyFilter} 
             onChange={e => setDifficultyFilter(e.target.value)}
-            className="px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-700 outline-none focus:ring-2 focus:ring-blue-500"
+            className="px-4 py-3 bg-card border border-hair rounded-xl text-sm font-medium text-body outline-none focus:ring-2 focus:ring-accent"
           >
             <option value="all">All Difficulties</option>
             <option value="easy">Easy</option>
@@ -182,7 +182,7 @@ export const DsaRoadmapView = () => {
           <select 
             value={statusFilter} 
             onChange={e => setStatusFilter(e.target.value)}
-            className="px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-700 outline-none focus:ring-2 focus:ring-blue-500"
+            className="px-4 py-3 bg-card border border-hair rounded-xl text-sm font-medium text-body outline-none focus:ring-2 focus:ring-accent"
           >
             <option value="all">All Status</option>
             <option value="solved">Solved</option>
@@ -218,31 +218,31 @@ export const DsaRoadmapView = () => {
           const isExpanded = expandedStages.has(stage) || searchQuery.length > 0;
 
           return (
-            <div key={stage} className="bg-white border border-slate-200 rounded-2xl overflow-hidden transition-all hover:border-slate-300">
+            <div key={stage} className="bg-card border border-hair rounded-2xl overflow-hidden transition-all hover:border-ink/25">
               <button 
                 onClick={() => toggleStage(stage)}
-                className="w-full flex items-center justify-between p-5 sm:p-6 text-left bg-white hover:bg-slate-50 transition-colors"
+                className="w-full flex items-center justify-between p-5 sm:p-6 text-left bg-card hover:bg-paper-2 transition-colors"
               >
                 <div className="flex items-center gap-4 sm:gap-6">
-                  <div className="flex-shrink-0 w-12 h-12 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-500 font-bold font-mono">
+                  <div className="flex-shrink-0 w-12 h-12 rounded-full bg-card-2 border border-hair flex items-center justify-center text-mute font-bold font-mono">
                     {String(idx + 1).padStart(2, '0')}
                   </div>
                   <div>
-                    <h3 className="text-lg sm:text-xl font-bold text-slate-900">{stage}</h3>
-                    <div className="text-sm text-slate-500 mt-1 flex items-center gap-3">
+                    <h3 className="text-lg sm:text-xl font-bold text-ink">{stage}</h3>
+                    <div className="text-sm text-mute mt-1 flex items-center gap-3">
                       <span>{stageProblems.length} Problems</span>
-                      <span className="w-1 h-1 rounded-full bg-slate-300"></span>
-                      <span className={stageSolved === stageProblems.length ? "text-green-600 font-medium" : ""}>
+                      <span className="w-1 h-1 rounded-full bg-ink/20"></span>
+                      <span className={stageSolved === stageProblems.length ? "text-note font-medium" : ""}>
                         {stageSolved} Solved
                       </span>
                     </div>
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
-                  <div className="hidden sm:block text-sm font-medium text-blue-600">
+                  <div className="hidden sm:block text-sm font-medium text-accent-ink">
                     {isExpanded ? 'Hide Problems' : 'View Problems'}
                   </div>
-                  <ChevronDown className={`w-5 h-5 text-slate-400 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />
+                  <ChevronDown className={`w-5 h-5 text-mute transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />
                 </div>
               </button>
 
@@ -253,7 +253,7 @@ export const DsaRoadmapView = () => {
                     animate={{ height: 'auto', opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
                     transition={{ duration: 0.3 }}
-                    className="border-t border-slate-100 bg-slate-50/50"
+                    className="border-t border-hair bg-paper-2/50"
                   >
                     <div className="p-4 sm:p-6 space-y-3">
                       {filteredProblems.map(problem => {
@@ -262,7 +262,7 @@ export const DsaRoadmapView = () => {
                           <div 
                             key={problem.id}
                             onClick={() => setSelectedProblem(problem)}
-                            className="group flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-white border border-slate-200 rounded-xl hover:border-blue-300 hover:shadow-sm transition-all cursor-pointer gap-4"
+                            className="group flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-card border border-hair rounded-xl hover:border-accent-line hover:shadow-sm transition-all cursor-pointer gap-4"
                           >
                             <div className="flex items-start sm:items-center gap-4">
                               <button 
@@ -270,32 +270,32 @@ export const DsaRoadmapView = () => {
                                 className="mt-1 sm:mt-0 flex-shrink-0 relative focus:outline-none group/btn"
                               >
                                 {s === 'solved' ? (
-                                  <CheckCircle2 className="w-6 h-6 text-green-500 transition-transform group-hover/btn:scale-110" />
+                                  <CheckCircle2 className="w-6 h-6 text-note transition-transform group-hover/btn:scale-110" />
                                 ) : s === 'attempted' ? (
-                                  <Clock className="w-6 h-6 text-amber-500 transition-transform group-hover/btn:scale-110" />
+                                  <Clock className="w-6 h-6 text-gold transition-transform group-hover/btn:scale-110" />
                                 ) : (
-                                  <Circle className="w-6 h-6 text-slate-300 group-hover/btn:text-blue-400 transition-colors" />
+                                  <Circle className="w-6 h-6 text-ink/30 group-hover/btn:text-accent transition-colors" />
                                 )}
                               </button>
                               
                               <div>
                                 <div className="flex items-center gap-3 mb-1">
-                                  <span className="text-sm font-mono text-slate-400">#{problem.id}</span>
-                                  <h4 className="font-semibold text-slate-900 group-hover:text-blue-600 transition-colors">{problem.title}</h4>
+                                  <span className="text-sm font-mono text-mute">#{problem.id}</span>
+                                  <h4 className="font-semibold text-ink group-hover:text-accent-ink transition-colors">{problem.title}</h4>
                                 </div>
                                 <div className="flex flex-wrap items-center gap-2">
                                   <DifficultyBadge difficulty={problem.difficulty} />
-                                  <span className="hidden sm:inline-flex px-2 py-0.5 bg-slate-100 text-slate-600 text-xs font-medium rounded">
+                                  <span className="hidden sm:inline-flex px-2 py-0.5 bg-card-2 text-body text-xs font-medium rounded">
                                     {problem.timeComplexity}
                                   </span>
                                   {problem.tags.slice(0, 2).map(t => (
-                                    <span key={t} className="text-xs text-slate-500">{t}</span>
+                                    <span key={t} className="text-xs text-mute">{t}</span>
                                   ))}
                                 </div>
                               </div>
                             </div>
                             
-                            <div className="hidden sm:flex items-center gap-2 text-sm font-medium text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div className="hidden sm:flex items-center gap-2 text-sm font-medium text-accent-ink opacity-0 group-hover:opacity-100 transition-opacity">
                               View Details &rarr;
                             </div>
                           </div>
@@ -333,20 +333,20 @@ export const DsaRoadmapView = () => {
 };
 
 const DifficultyStat = ({ label, solved, total, color }: { label: string, solved: number, total: number, color: string }) => (
-  <div className="flex items-center gap-3 bg-white p-3 rounded-lg border border-slate-100 shadow-sm">
+  <div className="flex items-center gap-3 bg-card p-3 rounded-lg border border-hair">
     <div className={`w-2 h-2 rounded-full ${color}`} />
     <div className="flex-1">
-      <div className="text-xs font-medium text-slate-500 uppercase">{label}</div>
-      <div className="text-sm font-bold text-slate-900">{solved} <span className="text-slate-400 font-normal">/ {total}</span></div>
+      <div className="text-xs font-medium text-mute uppercase">{label}</div>
+      <div className="text-sm font-bold text-ink">{solved} <span className="text-mute font-normal">/ {total}</span></div>
     </div>
   </div>
 );
 
 const DifficultyBadge = ({ difficulty }: { difficulty: string }) => {
   const colors = {
-    easy: 'text-green-600 bg-green-50 border-green-200',
-    medium: 'text-amber-600 bg-amber-50 border-amber-200',
-    hard: 'text-red-600 bg-red-50 border-red-200'
+    easy: 'text-note bg-success-soft border-success-line',
+    medium: 'text-warning bg-warning-soft border-warning-line',
+    hard: 'text-danger bg-danger-soft border-danger-line'
   };
   return (
     <span className={`px-2 py-0.5 text-[11px] font-bold uppercase rounded border ${colors[difficulty as keyof typeof colors]}`}>

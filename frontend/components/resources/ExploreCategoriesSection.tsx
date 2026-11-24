@@ -21,8 +21,11 @@ export function ExploreCategoriesSection({ onCategoryClick }: ExploreCategoriesS
     <section className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-newsreader font-medium text-[var(--ink)]">Explore Library</h2>
-          <p className="text-[13px] text-[var(--ink-secondary)]">Browse resources mapped by technical domains.</p>
+          <h2 className="sec">
+          <span className="eyebrow sec-n mb-1.5 block">Topics</span>
+          <span className="display text-[28px] md:text-[34px]">Browse by topic</span>
+        </h2>
+          <p className="text-[13px] text-body">Browse resources mapped by technical domains.</p>
         </div>
       </div>
 
@@ -30,7 +33,7 @@ export function ExploreCategoriesSection({ onCategoryClick }: ExploreCategoriesS
         {libraryCategories.map((cat) => (
           <div 
             key={cat.id}
-            className="group relative bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-5 hover:border-[var(--accent)] hover:shadow-md hover:shadow-[var(--accent)]/5 transition-all flex flex-col h-full cursor-pointer"
+            className="group relative bg-card border border-hair rounded-2xl p-5 hover:border-accent hover:shadow-md hover:shadow-accent/5 transition-all flex flex-col h-full cursor-pointer"
             onClick={() => onCategoryClick(cat.filterKey)}
           >
             <div className="flex items-start gap-4 mb-4">
@@ -38,28 +41,28 @@ export function ExploreCategoriesSection({ onCategoryClick }: ExploreCategoriesS
                 {iconMap[cat.icon]}
               </div>
               <div>
-                <h3 className="text-[15px] font-semibold text-[var(--ink)] leading-snug group-hover:text-[var(--accent)] transition-colors mb-1">
+                <h3 className="text-[15px] font-semibold text-ink leading-snug group-hover:text-accent-ink transition-colors mb-1">
                   {cat.title}
                 </h3>
-                <p className="text-[13px] text-[var(--ink-secondary)] leading-relaxed">
+                <p className="text-[13px] text-body leading-relaxed">
                   {cat.description}
                 </p>
               </div>
             </div>
 
-            <div className="mt-auto pt-4 border-t border-[var(--border)] flex items-center justify-between">
+            <div className="mt-auto pt-4 border-t border-hair flex items-center justify-between">
               <div className="flex gap-4">
                 <div className="flex flex-col">
-                  <span className="text-[16px] font-semibold text-[var(--ink)] leading-none mb-1">{cat.resourcesCount}</span>
-                  <span className="text-[10px] uppercase tracking-wider font-semibold text-[var(--ink-tertiary)]">Resources</span>
+                  <span className="text-[16px] font-semibold text-ink leading-none mb-1">{cat.resourcesCount}</span>
+                  <span className="text-[10px] uppercase tracking-wider font-semibold text-mute">Resources</span>
                 </div>
-                <div className="w-px bg-[var(--border)]"></div>
+                <div className="w-px bg-hair"></div>
                 <div className="flex flex-col">
-                  <span className="text-[16px] font-semibold text-[var(--ink)] leading-none mb-1">{cat.guidesCount}</span>
-                  <span className="text-[10px] uppercase tracking-wider font-semibold text-[var(--ink-tertiary)]">Guides</span>
+                  <span className="text-[16px] font-semibold text-ink leading-none mb-1">{cat.guidesCount}</span>
+                  <span className="text-[10px] uppercase tracking-wider font-semibold text-mute">Guides</span>
                 </div>
               </div>
-              <div className="w-8 h-8 rounded-full bg-[var(--surface-subdued)] group-hover:bg-[var(--accent)] flex items-center justify-center text-[var(--ink-secondary)] group-hover:text-white transition-all transform group-hover:translate-x-1">
+              <div className="w-8 h-8 rounded-full bg-paper-2 group-hover:bg-accent flex items-center justify-center text-body group-hover:text-paper transition-all transform group-hover:translate-x-1">
                 <ArrowRight className="w-4 h-4" />
               </div>
             </div>

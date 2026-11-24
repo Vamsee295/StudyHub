@@ -38,12 +38,12 @@ export function ActivityFeed({
           <div className="flex items-center gap-4 mb-5 px-4 sm:px-0">
             <span
               id={`date-${group.date}`}
-              className="text-[12px] font-semibold uppercase tracking-[0.12em] text-slate-500"
+              className="text-[12px] font-semibold uppercase tracking-[0.12em] text-mute"
             >
               {group.label}
             </span>
-            <div className="flex-1 h-px bg-slate-200" />
-            <span className="text-[12px] text-slate-400 font-medium uppercase tracking-[0.05em]">
+            <div className="flex-1 h-px bg-ink/10" />
+            <span className="text-[12px] text-mute font-medium uppercase tracking-[0.05em]">
               {group.posts.length} post{group.posts.length !== 1 ? "s" : ""}
             </span>
           </div>
@@ -68,7 +68,7 @@ export function ActivityFeed({
           <button
             onClick={onLoadMore}
             disabled={isLoadingMore}
-            className="px-6 py-2.5 rounded-xl border border-[var(--border)] text-[13px] font-medium text-[var(--ink-secondary)] hover:bg-[var(--surface-subdued)] transition-colors disabled:opacity-50"
+            className="px-6 py-2.5 rounded-xl border border-hair text-[13px] font-medium text-body hover:bg-paper-2 transition-colors disabled:opacity-50"
           >
             {isLoadingMore ? "Loading…" : "Load more"}
           </button>

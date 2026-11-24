@@ -208,11 +208,11 @@ function InterviewTrapsBlock({ section }: { section: any }) {
         {section.traps?.map((trap: any, idx: number) => (
           <div key={idx} className="flex flex-col gap-3 p-5">
             <p className="text-[16px] font-semibold">{trap.question}</p>
-            <p className="rounded-xl border-[1.5px] border-[var(--error-soft-border)] bg-[var(--error-soft)] px-4 py-3 text-[15px] leading-relaxed">
+            <p className="rounded-xl border-[1.5px] border-danger-line bg-danger-soft px-4 py-3 text-[15px] leading-relaxed">
               <span className="mb-1 block font-mono text-[11px] uppercase tracking-wider text-danger">The trap</span>
               {trap.trap}
             </p>
-            <p className="rounded-xl border-[1.5px] border-[var(--success-soft-border)] bg-[var(--success-soft)] px-4 py-3 text-[15px] leading-relaxed">
+            <p className="rounded-xl border-[1.5px] border-success-line bg-success-soft px-4 py-3 text-[15px] leading-relaxed">
               <span className="mb-1 block font-mono text-[11px] uppercase tracking-wider text-note">What to say</span>
               {trap.solution}
             </p>
@@ -306,7 +306,7 @@ function SectionRenderer({ section, subjectSlug }: { section: any; subjectSlug: 
       );
     case "warning":
       return (
-        <aside className="rounded-xl border-[1.5px] border-[var(--error-soft-border)] bg-[var(--error-soft)] px-5 py-4">
+        <aside className="rounded-xl border-[1.5px] border-danger-line bg-danger-soft px-5 py-4">
           <p className="mb-2 flex items-center gap-1.5 font-mono text-[12px] uppercase tracking-[0.08em] text-danger">
             <AlertTriangle aria-hidden className="size-3.5" /> {section.title || "Common mistakes"}
           </p>
@@ -602,7 +602,7 @@ export default function TopicPage() {
           <div className="flex shrink-0 items-center gap-2">
             <LessonBookmarkButton course={subjectSlug} lesson={topicSlug} />
             {isCompleted ? (
-              <span className="label-cond flex h-9 items-center gap-1.5 rounded-xl bg-[var(--success-soft)] px-3 text-[14px] text-note">
+              <span className="label-cond flex h-9 items-center gap-1.5 rounded-xl bg-success-soft px-3 text-[14px] text-note">
                 <CheckCircle2 className="size-4" /> Completed
               </span>
             ) : (

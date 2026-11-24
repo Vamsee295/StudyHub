@@ -15,8 +15,8 @@ export function BookmarkButton({ resourceId, isBookmarked, onToggle, className }
       className={clsx(
         "p-2 rounded-lg transition-colors flex items-center justify-center border",
         isBookmarked 
-          ? "bg-[var(--accent-soft)] border-[var(--accent-soft-border)] text-[var(--accent)]" 
-          : "bg-[var(--surface-subdued)] border-transparent hover:border-[var(--border)] text-[var(--ink-secondary)] hover:text-[var(--ink)]",
+          ? "bg-accent-soft border-accent-line text-accent-ink" 
+          : "bg-paper-2 border-transparent hover:border-hair text-body hover:text-ink",
         className
       )}
       aria-label={isBookmarked ? "Remove bookmark" : "Add bookmark"}

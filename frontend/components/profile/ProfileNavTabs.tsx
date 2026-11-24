@@ -6,38 +6,36 @@ import { User, Compass, Building2, TrendingUp } from "lucide-react";
 import { clsx } from "clsx";
 
 const tabs = [
-  { name: "Profile & Preferences", href: "/profile/preferences", icon: User },
-  { name: "My Learning Path", href: "/profile/learning-path", icon: Compass },
-  { name: "Target Companies", href: "/profile/target-companies", icon: Building2 },
-  { name: "Progress & Readiness", href: "/profile/progress", icon: TrendingUp },
+  { name: "About you", href: "/profile/preferences", icon: User },
+  { name: "Path", href: "/profile/learning-path", icon: Compass },
+  { name: "Targets", href: "/profile/target-companies", icon: Building2 },
+  { name: "Progress", href: "/profile/progress", icon: TrendingUp },
 ];
 
+/** Sub-navigation shared by the four profile pages; sticks under the phone top bar. */
 export function ProfileNavTabs() {
   const pathname = usePathname();
-
   return (
-    <div className="w-full border-b border-[var(--border)] bg-[var(--surface)] -mx-4 sm:-mx-6 px-4 sm:px-6 mb-8 sticky top-14 md:top-0 z-20 backdrop-blur-md bg-opacity-95">
-      <div className="max-w-7xl mx-auto flex items-center gap-1 sm:gap-2 overflow-x-auto no-scrollbar py-2">
-        {tabs.map((tab) => {
-          const isActive = pathname === tab.href;
-          const Icon = tab.icon;
+    <nav aria-label="Profile sections" className="sticky top-14 z-20 -mx-4 mb-8 border-b-[1.5px] border-hair bg-paper/95 px-4 backdrop-blur md:top-0 md:-mx-8 md:px-8">
+      <div className="no-scrollbar flex gap-2 overflow-x-auto py-3">
+        {tabs.map(({ name, href, icon: Icon }) => {
+          const on = pathname === href;
           return (
             <Link
-              key={tab.href}
-              href={tab.href}
+              key={href}
+              href={href}
+              aria-current={on ? "page" : undefined}
               className={clsx(
-                "flex items-center gap-2 px-3.5 py-2 rounded-lg text-[13px] font-medium transition-all whitespace-nowrap",
-                isActive
-                  ? "bg-[var(--accent-soft)] text-[var(--accent)] font-semibold ring-1 ring-[var(--accent-soft-border)] shadow-xs"
-                  : "text-[var(--ink-secondary)] hover:text-[var(--ink)] hover:bg-[var(--surface-subdued)]"
+                "label-cond flex h-9 shrink-0 items-center gap-2 rounded-full border-2 px-4 text-[15px] transition-colors",
+                on ? "border-ink bg-ink text-paper" : "border-hair text-body hover:border-line hover:text-ink"
               )}
             >
-              <Icon className={clsx("w-4 h-4", isActive ? "text-[var(--accent)]" : "text-[var(--ink-tertiary)]")} />
-              <span>{tab.name}</span>
+              <Icon className="size-4" aria-hidden />
+              {name}
             </Link>
           );
         })}
       </div>
-    </div>
+    </nav>
   );
 }

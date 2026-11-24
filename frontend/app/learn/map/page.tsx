@@ -152,7 +152,7 @@ export default function ConceptMapPage() {
                 const active = neighbours && neighbours.has(e.from) && neighbours.has(e.to) && (e.from === focus || e.to === focus);
                 return (
                   <line key={i} x1={a.x} y1={a.y} x2={b.x} y2={b.y} markerEnd="url(#arrow)"
-                    stroke={active ? "var(--accent)" : e.kind === "cross" ? "var(--mute)" : "var(--border-strong)"}
+                    stroke={active ? "var(--accent)" : e.kind === "cross" ? "var(--mute)" : "var(--hair)"}
                     strokeWidth={active ? 2.2 : e.kind === "cross" ? 1.2 : 1}
                     strokeDasharray={e.kind === "cross" ? "4 3" : undefined}
                     opacity={neighbours ? (active ? 1 : 0.08) : (dim(e.from) && dim(e.to) ? 0.1 : 0.6)} />

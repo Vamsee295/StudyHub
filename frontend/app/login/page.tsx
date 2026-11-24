@@ -291,7 +291,7 @@ function AuthForm() {
         </motion.div>
 
         {message && (
-          <motion.div className="mb-4 rounded-xl border-[1.5px] border-[var(--accent-soft-border)] bg-[var(--accent-soft)] p-3 text-center text-[14px] font-medium text-accent-ink">
+          <motion.div className="mb-4 rounded-xl border-[1.5px] border-accent-line bg-accent-soft p-3 text-center text-[14px] font-medium text-accent-ink">
             {message}
           </motion.div>
         )}
@@ -359,7 +359,7 @@ function AuthForm() {
                 type="checkbox"
                 checked={remember}
                 onChange={(e) => setRemember(e.target.checked)}
-                className="size-4 accent-[var(--ink)]"
+                className="size-4 accent-ink"
               />
               <label htmlFor="remember" className="select-none text-[14px] text-body">
                 Remember this device for 30 days

@@ -121,7 +121,7 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ id: 
       </header>
 
       {submitError && (
-        <div role="alert" className="px-6 py-2 text-[13px] bg-[var(--error-soft)] text-danger border-b border-hair">{submitError}</div>
+        <div role="alert" className="px-6 py-2 text-[13px] bg-danger-soft text-danger border-b border-hair">{submitError}</div>
       )}
 
       {isLoading ? (
@@ -140,7 +140,7 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ id: 
               onClick={() => setActiveTab("problem")}
               className={`flex-1 flex items-center justify-center gap-2 py-2.5 text-[12px] font-semibold transition-colors ${
                 activeTab === "problem"
-                  ? "text-ink bg-card border-b-2 border-b-[var(--accent)]"
+                  ? "text-ink bg-card border-b-2 border-b-accent"
                   : "text-body hover:text-ink hover:bg-card-2"
               }`}
             >
@@ -151,7 +151,7 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ id: 
               onClick={() => setActiveTab("tutor")}
               className={`flex-1 flex items-center justify-center gap-2 py-2.5 text-[12px] font-semibold transition-colors ${
                 activeTab === "tutor"
-                  ? "text-accent-ink bg-card border-b-2 border-b-[var(--accent)]"
+                  ? "text-accent-ink bg-card border-b-2 border-b-accent"
                   : "text-body hover:text-ink hover:bg-card-2"
               }`}
             >

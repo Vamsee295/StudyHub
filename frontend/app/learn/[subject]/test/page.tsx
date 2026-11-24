@@ -132,7 +132,7 @@ export default function MockTestPage() {
                     type="checkbox"
                     checked={selectedModules.includes(m.slug)}
                     onChange={(e) => setSelectedModules((s) => (e.target.checked ? [...s, m.slug] : s.filter((x) => x !== m.slug)))}
-                    className="size-4 accent-[var(--ink)]"
+                    className="size-4 accent-ink"
                   />
                   <span className="min-w-0 flex-1 truncate">{m.title}</span>
                   <span className="font-mono text-[11px] tabular-nums text-mute">{n}</span>
@@ -238,7 +238,7 @@ export default function MockTestPage() {
             aria-pressed={flags[current]}
             className={clsx(
               "label-cond inline-flex h-9 items-center gap-1.5 rounded-xl border-2 px-3 text-[14px]",
-              flags[current] ? "border-gold bg-[var(--warning-soft)] text-[var(--warning)]" : "border-hair text-body hover:border-line"
+              flags[current] ? "border-gold bg-warning-soft text-warning" : "border-hair text-body hover:border-line"
             )}
           >
             <Flag aria-hidden className="size-4" /> {flags[current] ? "Flagged" : "Flag"}
@@ -270,7 +270,7 @@ export default function MockTestPage() {
               className={clsx(
                 "no-press size-9 rounded-lg border-2 font-mono text-[12px] tabular-nums",
                 i === current ? "border-ink" : "border-hair",
-                flags[i] ? "bg-[var(--warning-soft)]" : answers[i] !== null ? "bg-ink/10 text-ink" : "text-mute"
+                flags[i] ? "bg-warning-soft" : answers[i] !== null ? "bg-ink/10 text-ink" : "text-mute"
               )}
             >
               {i + 1}

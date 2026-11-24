@@ -73,7 +73,7 @@ export default function InterviewSimulatorPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50/50 p-4 md:p-8">
+    <div className="min-h-screen bg-paper-2/50 p-4 md:p-8">
       <div className="max-w-[1200px] mx-auto h-full flex flex-col">
         <ToolWorkspaceHeader
           title="Interview Simulator"

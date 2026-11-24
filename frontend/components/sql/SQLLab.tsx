@@ -315,7 +315,7 @@ export default function SQLLab() {
   if (!mounted || isInitializing || !workspace) {
     return (
       <div className="flex-1 flex items-center justify-center bg-paper-2">
-        <span className="w-6 h-6 border-2 border-hair border-t-[var(--ink)] rounded-full animate-spin"></span>
+        <span className="w-6 h-6 border-2 border-hair border-t-ink rounded-full animate-spin"></span>
       </div>
     );
   }
@@ -340,9 +340,9 @@ export default function SQLLab() {
           <Link href="/practice" className="text-body hover:text-ink font-medium text-sm">
             Practice
           </Link>
-          <span className="text-[var(--border-strong)]">/</span>
+          <span className="text-ink/25">/</span>
           <div className="flex items-center gap-2 text-ink font-bold text-sm">
-            <Database className="w-4 h-4 text-emerald-600" /> SQL Lab
+            <Database className="w-4 h-4 text-note" /> SQL Lab
           </div>
         </div>
 
@@ -356,10 +356,10 @@ export default function SQLLab() {
           <button 
             onClick={runQuery} 
             disabled={isRunning || !activeFile?.content.trim()} 
-            className="bg-blue-600 hover:bg-blue-700 text-white h-8 px-4 rounded text-xs font-medium flex items-center gap-1.5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+            className="bg-accent hover:bg-accent text-paper h-8 px-4 rounded text-xs font-medium flex items-center gap-1.5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
           >
             {isRunning ? (
-               <span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+               <span className="w-3.5 h-3.5 border-2 border-card/30 border-t-white rounded-full animate-spin"></span>
             ) : (
               <Play className="w-3.5 h-3.5" />
             )}
@@ -437,7 +437,7 @@ export default function SQLLab() {
         
         {/* Horizontal Drag Handle */}
         <div 
-          className="w-1 cursor-col-resize hover:bg-blue-500/50 active:bg-blue-500 hidden md:block transition-colors z-10 -ml-[1px]" 
+          className="w-1 cursor-col-resize hover:bg-accent/50 active:bg-accent hidden md:block transition-colors z-10 -ml-[1px]" 
           onMouseDown={handleSchemaDragStart} 
         />
 
@@ -454,13 +454,13 @@ export default function SQLLab() {
                 <div 
                   key={id}
                   onClick={() => switchTab(id)}
-                  className={`flex items-center h-9 px-4 gap-2 text-xs cursor-pointer border-r border-[#2b2723] select-none ${isActive ? 'bg-[#151311] text-blue-400 border-t-2 border-t-blue-500' : 'text-gray-400 hover:bg-[#221f1c] border-t-2 border-t-transparent'}`}
+                  className={`flex items-center h-9 px-4 gap-2 text-xs cursor-pointer border-r border-[#2b2723] select-none ${isActive ? 'bg-[#151311] text-accent border-t-2 border-t-accent' : 'text-mute hover:bg-[#221f1c] border-t-2 border-t-transparent'}`}
                 >
                   <FileCode2 className="w-3.5 h-3.5" />
                   <span>{file.name}</span>
                   <button 
                     onClick={(e) => { e.stopPropagation(); closeFile(id); }}
-                    className="ml-2 opacity-50 hover:opacity-100 hover:text-white p-0.5 rounded hover:bg-white/10"
+                    className="ml-2 opacity-50 hover:opacity-100 hover:text-paper p-0.5 rounded hover:bg-card/10"
                   >
                     ×
                   </button>
@@ -469,7 +469,7 @@ export default function SQLLab() {
             })}
             <button 
               onClick={createNewFile}
-              className="h-9 px-3 flex items-center justify-center text-gray-400 hover:text-white hover:bg-[#221f1c] transition-colors"
+              className="h-9 px-3 flex items-center justify-center text-mute hover:text-paper hover:bg-[#221f1c] transition-colors"
               title="New SQL File"
             >
               <Plus className="w-4 h-4" />
@@ -497,12 +497,12 @@ export default function SQLLab() {
                 }}
               />
             ) : (
-              <div className="flex-1 h-full flex flex-col items-center justify-center text-gray-500">
+              <div className="flex-1 h-full flex flex-col items-center justify-center text-mute">
                 <FileCode2 className="w-12 h-12 mb-4 opacity-20" />
                 <p>Open a file or create a new one</p>
                 <button 
                   onClick={createNewFile}
-                  className="mt-4 text-sm text-blue-400 hover:text-blue-300 flex items-center gap-1"
+                  className="mt-4 text-sm text-accent hover:text-accent-ink flex items-center gap-1"
                 >
                   <Plus className="w-4 h-4" /> New File
                 </button>
@@ -512,7 +512,7 @@ export default function SQLLab() {
 
           {/* BOTTOM RESULTS DRAG HANDLE */}
           <div 
-            className="h-1 cursor-row-resize bg-[#2b2723] hover:bg-blue-500/50 active:bg-blue-500 transition-colors z-20 shrink-0" 
+            className="h-1 cursor-row-resize bg-[#2b2723] hover:bg-accent/50 active:bg-accent transition-colors z-20 shrink-0" 
             onMouseDown={handleBottomDragStart}
           />
 
@@ -523,7 +523,7 @@ export default function SQLLab() {
           >
             <div className="h-9 border-b border-hair bg-paper-2 flex items-center justify-between px-4 shrink-0">
               <div className="flex items-center gap-4 text-xs font-semibold uppercase tracking-wider text-body">
-                <span className="flex items-center gap-1.5 text-ink border-b-2 border-blue-500 h-9">
+                <span className="flex items-center gap-1.5 text-ink border-b-2 border-accent h-9">
                   <Terminal className="w-3.5 h-3.5" /> Results
                 </span>
               </div>

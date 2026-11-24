@@ -5,7 +5,7 @@ import { Check, Copy, MessageSquareQuote, Plus, Trash2 } from "lucide-react";
 import { ToolWorkspaceHeader } from "@/components/tools/shared/ToolWorkspaceHeader";
 import { markChanged, SYNCED_EVENT } from "@/lib/sync/userSync";
 
-const focusRing = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]";
+const focusRing = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent";
 const KEY = "studyhub_star_stories_v1";
 const WPM = 130; // typical conversational speaking pace
 
@@ -96,22 +96,22 @@ export default function StarBuilderPage() {
 
       <div className="grid lg:grid-cols-[240px_1fr_280px] gap-6">
         <nav aria-label="Your stories" className="flex flex-col gap-2">
-          <button type="button" onClick={add} className={`inline-flex items-center justify-center gap-2 px-3 py-2 rounded-lg border border-dashed border-[var(--border)] text-[13px] font-semibold text-[var(--ink-secondary)] hover:text-[var(--ink)] ${focusRing}`}>
+          <button type="button" onClick={add} className={`inline-flex items-center justify-center gap-2 px-3 py-2 rounded-lg border border-dashed border-hair text-[13px] font-semibold text-body hover:text-ink ${focusRing}`}>
             <Plus aria-hidden="true" className="w-4 h-4" /> New story
           </button>
           {stories.map((x) => (
             <button key={x.id} type="button" onClick={() => setActiveId(x.id)} aria-current={x.id === st.id ? "true" : undefined}
-              className={`text-left px-3 py-2 rounded-lg text-[13px] border ${x.id === st.id ? "border-[var(--accent)] bg-[var(--accent-soft)]/40 text-[var(--ink)]" : "border-transparent text-[var(--ink-secondary)] hover:bg-[var(--surface-subdued)]"} ${focusRing}`}>
+              className={`text-left px-3 py-2 rounded-lg text-[13px] border ${x.id === st.id ? "border-accent bg-accent-soft/40 text-ink" : "border-transparent text-body hover:bg-paper-2"} ${focusRing}`}>
               <span className="line-clamp-2">{x.question || "Untitled story"}</span>
             </button>
           ))}
         </nav>
 
-        <section aria-label="Story editor" className="p-6 rounded-xl border border-[var(--border)] bg-[var(--surface)] flex flex-col gap-5">
+        <section aria-label="Story editor" className="p-6 rounded-xl border border-hair bg-card flex flex-col gap-5">
           <label className="flex flex-col gap-1.5 text-[13px]">
-            <span className="font-semibold text-[var(--ink)]">Question</span>
+            <span className="font-semibold text-ink">Question</span>
             <input list="star-prompts" value={st.question} onChange={(e) => update({ question: e.target.value })}
-              className={`px-3 py-2 rounded-lg border border-[var(--border)] bg-white text-[14px] ${focusRing}`} />
+              className={`px-3 py-2 rounded-lg border border-hair bg-card text-[14px] ${focusRing}`} />
             <datalist id="star-prompts">{PROMPTS.map((p) => <option key={p} value={p} />)}</datalist>
           </label>
           {PARTS.map((p) => {
@@ -120,40 +120,40 @@ export default function StarBuilderPage() {
             return (
               <label key={p.key} className="flex flex-col gap-1.5 text-[13px]">
                 <span className="flex items-baseline justify-between gap-2">
-                  <span className="font-semibold text-[var(--ink)]">{p.label}</span>
-                  <span className={`tabular-nums text-[12px] ${n === 0 ? "text-[var(--ink-tertiary)]" : ok ? "text-[var(--success)]" : "text-[var(--warning)]"}`}>
+                  <span className="font-semibold text-ink">{p.label}</span>
+                  <span className={`tabular-nums text-[12px] ${n === 0 ? "text-mute" : ok ? "text-note" : "text-warning"}`}>
                     {n} words · aim {p.target[0]}–{p.target[1]}
                   </span>
                 </span>
-                <span className="text-[12px] text-[var(--ink-tertiary)]">{p.hint}</span>
+                <span className="text-[12px] text-mute">{p.hint}</span>
                 <textarea value={st[p.key]} onChange={(e) => update({ [p.key]: e.target.value } as Partial<Story>)} rows={p.key === "a" ? 6 : 3}
-                  className={`px-3 py-2 rounded-lg border border-[var(--border)] bg-white text-[14px] leading-relaxed resize-y ${focusRing}`} />
+                  className={`px-3 py-2 rounded-lg border border-hair bg-card text-[14px] leading-relaxed resize-y ${focusRing}`} />
               </label>
             );
           })}
         </section>
 
         <aside aria-label="Story check" className="flex flex-col gap-4">
-          <div className="p-5 rounded-xl border border-[var(--border)] bg-[var(--surface)] flex flex-col gap-1">
-            <h2 className="text-[12px] font-bold uppercase tracking-wider text-[var(--ink-tertiary)]">Speaking time</h2>
-            <p className="text-3xl font-bold tabular-nums text-[var(--ink)]">{Math.floor(secs / 60)}:{String(secs % 60).padStart(2, "0")}</p>
-            <p className="text-[12px] text-[var(--ink-tertiary)]">{total} words at about {WPM} words per minute. Aim for 1:00 to 2:00.</p>
+          <div className="p-5 rounded-xl border border-hair bg-card flex flex-col gap-1">
+            <h2 className="text-[12px] font-bold uppercase tracking-wider text-mute">Speaking time</h2>
+            <p className="text-3xl font-bold tabular-nums text-ink">{Math.floor(secs / 60)}:{String(secs % 60).padStart(2, "0")}</p>
+            <p className="text-[12px] text-mute">{total} words at about {WPM} words per minute. Aim for 1:00 to 2:00.</p>
           </div>
-          <div className="p-5 rounded-xl border border-[var(--border)] bg-[var(--surface)] flex flex-col gap-2">
-            <h2 className="text-[12px] font-bold uppercase tracking-wider text-[var(--ink-tertiary)]">Checks</h2>
+          <div className="p-5 rounded-xl border border-hair bg-card flex flex-col gap-2">
+            <h2 className="text-[12px] font-bold uppercase tracking-wider text-mute">Checks</h2>
             {total === 0 ? (
-              <p className="text-[13px] text-[var(--ink-secondary)]">Start writing to see feedback.</p>
+              <p className="text-[13px] text-body">Start writing to see feedback.</p>
             ) : tips.length ? (
-              <ul className="flex flex-col gap-2 text-[13px] text-[var(--ink-secondary)] list-disc pl-4">{tips.map((t) => <li key={t}>{t}</li>)}</ul>
+              <ul className="flex flex-col gap-2 text-[13px] text-body list-disc pl-4">{tips.map((t) => <li key={t}>{t}</li>)}</ul>
             ) : (
-              <p className="text-[13px] text-[var(--success)] font-medium">Structure looks balanced. Practise saying it aloud.</p>
+              <p className="text-[13px] text-note font-medium">Structure looks balanced. Practise saying it aloud.</p>
             )}
           </div>
           <div className="flex gap-2">
-            <button type="button" onClick={copy} className={`flex-1 inline-flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-[var(--accent)] text-white text-[13px] font-semibold hover:bg-[var(--accent-hover)] ${focusRing}`}>
+            <button type="button" onClick={copy} className={`flex-1 inline-flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-accent text-paper text-[13px] font-semibold hover:bg-accent-ink ${focusRing}`}>
               {copied ? <><Check aria-hidden="true" className="w-4 h-4" /> Copied</> : <><Copy aria-hidden="true" className="w-4 h-4" /> Copy story</>}
             </button>
-            <button type="button" onClick={remove} aria-label="Delete this story" className={`px-3 py-2 rounded-lg border border-[var(--border)] text-[var(--ink-secondary)] hover:text-[var(--error)] ${focusRing}`}>
+            <button type="button" onClick={remove} aria-label="Delete this story" className={`px-3 py-2 rounded-lg border border-hair text-body hover:text-danger ${focusRing}`}>
               <Trash2 aria-hidden="true" className="w-4 h-4" />
             </button>
           </div>

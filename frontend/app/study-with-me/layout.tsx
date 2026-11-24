@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { AppLayout } from "@/components/layout/AppLayout";
 
 export const metadata: Metadata = {
-  title: "Study With Me — StudyHub Placement Engine",
+  title: "Study With Me — StudyHub",
   description: "See what students are learning, solving, and building today on StudyHub's community learning feed.",
 };
 

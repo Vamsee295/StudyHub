@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { buttonClass } from "@/components/ui/Button";
 import { motion } from "framer-motion";
 import { 
   User, 
@@ -17,7 +18,6 @@ import {
   Building,
   Target,
   ArrowRight,
-  ShieldCheck,
   Award
 } from "lucide-react";
 import { UserProfile } from "@/types";
@@ -67,93 +67,82 @@ export default function ProfilePreferencesPage() {
   const completion = profile.completionPercentage || (profile.profileCompleted ? 100 : 0);
 
   return (
-    <div className="w-full min-w-0 pb-16">
+    <div className="w-full min-w-0">
       {/* SECTION TABS */}
       <ProfileNavTabs />
 
       {/* PAGE TITLE BANNER */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-6 border-b border-[var(--border)] mb-8">
+      <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 mb-2">
-            <span className="text-[11px] font-mono uppercase px-2 py-0.5 rounded bg-[var(--accent-soft)] text-[var(--accent)] font-semibold tracking-wider">
-              Profile Verification &amp; Calibration
-            </span>
-          </div>
-          <h1 className="font-newsreader text-3xl sm:text-4xl text-[var(--ink)] font-normal tracking-tight">
-            Profile &amp; Preferences
+          <p className="eyebrow mb-2">Profile</p>
+          <h1 className="display text-[44px] md:text-[72px]">
+            About <span className="hl">you</span>
           </h1>
-          <p className="text-[var(--ink-secondary)] text-[15px] mt-1.5 font-normal">
-            Manage your academic standing, target placement roles, and preparation criteria.
-          </p>
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex items-center gap-3 shrink-0">
+        <div className="flex flex-wrap items-center gap-3">
           {savedSuccess && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-700 text-xs font-medium border border-emerald-200">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-success-soft text-note text-xs font-medium border border-success-line">
               <Check className="w-3.5 h-3.5" /> Changes saved to profile
             </span>
           )}
           {!isEditing ? (
             <button
               onClick={() => setIsEditing(true)}
-              className="btn-secondary text-xs h-9 px-4 flex items-center gap-2 cursor-pointer"
+              className={buttonClass("secondary", "sm")}
             >
-              <Edit3 className="w-3.5 h-3.5" />
-              Edit Information
+              <Edit3 className="size-4" />
+              Edit
             </button>
           ) : (
             <button
               onClick={handleCancel}
-              className="text-xs text-[var(--ink-secondary)] hover:text-[var(--ink)] px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
+              className="text-xs text-body hover:text-ink px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
             >
               Cancel
             </button>
           )}
           <Link
             href="/onboarding"
-            className="btn-primary text-xs h-9 px-4 flex items-center gap-1.5"
+            className={buttonClass("ghost", "sm")}
           >
-            <Sparkles className="w-3.5 h-3.5" />
-            Re-calibrate Matrix
+            <Sparkles className="size-4" />
+            Redo setup
           </Link>
         </div>
       </div>
 
       {/* TOP OVERVIEW CARD */}
-      <div className="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-6 sm:p-8 shadow-xs mb-8">
+      <div className="bg-card border border-hair rounded-2xl p-6 sm:p-8 mb-8">
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
           <div className="flex items-center gap-5 min-w-0">
             <div className="relative shrink-0">
               <img
                 src={displayAvatar}
                 alt={displayName}
-                className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover ring-2 ring-[var(--border)] shadow-xs bg-slate-50"
+                className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover ring-2 ring-hair bg-paper-2"
               />
-              <span className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-[var(--success)] ring-2 ring-white"></span>
+              <span className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-note ring-2 ring-card"></span>
             </div>
             <div className="flex flex-col min-w-0">
               <div className="flex items-center gap-2.5 flex-wrap">
-                <h2 className="text-xl sm:text-2xl font-bold text-[var(--ink)] tracking-tight">
+                <h2 className="display text-[32px]">
                   {displayName}
                 </h2>
-                <span className="text-[11px] font-mono font-semibold px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">
+                <span className="text-[11px] font-mono font-semibold px-2 py-0.5 rounded bg-accent-soft text-accent-ink border border-accent-line">
                   {profile.identity?.driveCycle || "Cycle '26"}
                 </span>
-                <span className="inline-flex items-center gap-1 text-[11px] font-mono text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded">
-                  <ShieldCheck className="w-3 h-3" /> Campus Verified
-                </span>
               </div>
-              <p className="text-[14px] font-medium text-[var(--ink-secondary)] mt-1">
+              <p className="text-[14px] font-medium text-body mt-1">
                 {displayRole}
               </p>
-              <div className="flex items-center gap-4 text-xs text-[var(--ink-tertiary)] font-mono mt-2 flex-wrap">
+              <div className="flex items-center gap-4 text-xs text-mute font-mono mt-2 flex-wrap">
                 <span className="flex items-center gap-1.5">
-                  <Mail className="w-3.5 h-3.5 text-slate-400" />
+                  <Mail className="w-3.5 h-3.5 text-mute" />
                   {profile.identity?.email || user?.email || ""}
                 </span>
                 <span className="flex items-center gap-1.5">
-                  <GraduationCap className="w-3.5 h-3.5 text-slate-400" />
+                  <GraduationCap className="w-3.5 h-3.5 text-mute" />
                   {profile.identity?.college || "University Candidate"}
                 </span>
               </div>
@@ -161,19 +150,19 @@ export default function ProfilePreferencesPage() {
           </div>
 
           {/* Profile Calibration Gauge */}
-          <div className="w-full lg:w-72 p-4 rounded-xl bg-[var(--surface-subdued)] border border-[var(--border)] shrink-0">
+          <div className="w-full lg:w-72 p-4 rounded-xl bg-paper-2 border border-hair shrink-0">
             <div className="flex items-center justify-between text-xs mb-2">
-              <span className="font-mono text-[var(--ink-secondary)] uppercase font-semibold">Profile Calibration</span>
-              <span className="font-mono text-[var(--accent)] font-bold">{completion}%</span>
+              <span className="font-mono text-body uppercase font-semibold">Profile complete</span>
+              <span className="font-mono text-accent-ink font-bold">{completion}%</span>
             </div>
-            <div className="h-2 w-full bg-[var(--border-strong)]/40 rounded-full overflow-hidden mb-2">
+            <div className="h-2 w-full bg-ink/40 rounded-full overflow-hidden mb-2">
               <div 
-                className="h-full bg-[var(--accent)] rounded-full transition-all duration-500"
+                className="h-full bg-accent rounded-full transition-all duration-500"
                 style={{ width: `${completion}%` }}
               />
             </div>
-            <p className="text-[11px] text-[var(--ink-tertiary)]">
-              All 4 baseline assessment modules completed for off-campus placement synching.
+            <p className="text-[11px] text-mute">
+              {completion < 100 ? "Fill in the rest so suggestions fit you better." : "Every field is filled in."}
             </p>
           </div>
         </div>
@@ -181,17 +170,17 @@ export default function ProfilePreferencesPage() {
 
       {/* FORM / DETAILS SECTION */}
       {isEditing ? (
-        <form onSubmit={handleSave} className="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-6 sm:p-8 shadow-xs">
-          <div className="flex items-center justify-between pb-4 mb-6 border-b border-[var(--border)]">
-            <h3 className="text-base font-bold text-[var(--ink)] flex items-center gap-2">
-              <Edit3 className="w-4 h-4 text-[var(--accent)]" /> Edit Candidate Profile
+        <form onSubmit={handleSave} className="bg-card border border-hair rounded-2xl p-6 sm:p-8">
+          <div className="flex items-center justify-between pb-4 mb-6 border-b border-hair">
+            <h3 className="text-base font-bold text-ink flex items-center gap-2">
+              <Edit3 className="w-4 h-4 text-accent-ink" /> Edit profile
             </h3>
-            <span className="text-xs text-[var(--ink-secondary)]">All fields sync with your preparation workspace</span>
+            
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-xs font-mono font-semibold text-[var(--ink-secondary)] uppercase tracking-wider mb-2">
+              <label className="block text-xs font-mono font-semibold text-body uppercase tracking-wider mb-2">
                 Full Name
               </label>
               <input
@@ -204,7 +193,7 @@ export default function ProfilePreferencesPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-mono font-semibold text-[var(--ink-secondary)] uppercase tracking-wider mb-2">
+              <label className="block text-xs font-mono font-semibold text-body uppercase tracking-wider mb-2">
                 University Email Address
               </label>
               <input
@@ -217,7 +206,7 @@ export default function ProfilePreferencesPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-mono font-semibold text-[var(--ink-secondary)] uppercase tracking-wider mb-2">
+              <label className="block text-xs font-mono font-semibold text-body uppercase tracking-wider mb-2">
                 College / University
               </label>
               <input
@@ -230,7 +219,7 @@ export default function ProfilePreferencesPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-mono font-semibold text-[var(--ink-secondary)] uppercase tracking-wider mb-2">
+              <label className="block text-xs font-mono font-semibold text-body uppercase tracking-wider mb-2">
                 Degree &amp; Program
               </label>
               <input
@@ -243,7 +232,7 @@ export default function ProfilePreferencesPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-mono font-semibold text-[var(--ink-secondary)] uppercase tracking-wider mb-2">
+              <label className="block text-xs font-mono font-semibold text-body uppercase tracking-wider mb-2">
                 Discipline / Branch
               </label>
               <input
@@ -256,7 +245,7 @@ export default function ProfilePreferencesPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-mono font-semibold text-[var(--ink-secondary)] uppercase tracking-wider mb-2">
+              <label className="block text-xs font-mono font-semibold text-body uppercase tracking-wider mb-2">
                 Graduation Year
               </label>
               <select
@@ -272,7 +261,7 @@ export default function ProfilePreferencesPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-mono font-semibold text-[var(--ink-secondary)] uppercase tracking-wider mb-2">
+              <label className="block text-xs font-mono font-semibold text-body uppercase tracking-wider mb-2">
                 Current Semester
               </label>
               <select
@@ -289,7 +278,7 @@ export default function ProfilePreferencesPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-mono font-semibold text-[var(--ink-secondary)] uppercase tracking-wider mb-2">
+              <label className="block text-xs font-mono font-semibold text-body uppercase tracking-wider mb-2">
                 Primary Target Role
               </label>
               <input
@@ -302,7 +291,7 @@ export default function ProfilePreferencesPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-mono font-semibold text-[var(--ink-secondary)] uppercase tracking-wider mb-2">
+              <label className="block text-xs font-mono font-semibold text-body uppercase tracking-wider mb-2">
                 Preferred Job Type
               </label>
               <input
@@ -314,7 +303,7 @@ export default function ProfilePreferencesPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-mono font-semibold text-[var(--ink-secondary)] uppercase tracking-wider mb-2">
+              <label className="block text-xs font-mono font-semibold text-body uppercase tracking-wider mb-2">
                 Location Preference
               </label>
               <input
@@ -326,7 +315,7 @@ export default function ProfilePreferencesPage() {
             </div>
           </div>
 
-          <div className="flex items-center justify-end gap-3 mt-8 pt-6 border-t border-[var(--border)]">
+          <div className="flex items-center justify-end gap-3 mt-8 pt-6 border-t border-hair">
             <button
               type="button"
               disabled={saving}
@@ -342,7 +331,7 @@ export default function ProfilePreferencesPage() {
             >
               {saving ? (
                 <>
-                  <span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                  <span className="w-3.5 h-3.5 border-2 border-card/30 border-t-white rounded-full animate-spin"></span>
                   Saving Changes...
                 </>
               ) : (
@@ -355,49 +344,49 @@ export default function ProfilePreferencesPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Column 1 & 2: Academic & Placement Specifications */}
           <div className="lg:col-span-2 flex flex-col gap-6">
-            <div className="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-6 sm:p-8 shadow-xs">
-              <h3 className="text-sm font-bold text-[var(--ink)] uppercase font-mono tracking-wider mb-6 flex items-center gap-2">
-                <GraduationCap className="w-4 h-4 text-[var(--accent)]" /> Academic Standing &amp; Credentials
+            <div className="bg-card border border-hair rounded-2xl p-6 sm:p-8">
+              <h3 className="text-sm font-bold text-ink uppercase font-mono tracking-wider mb-6 flex items-center gap-2">
+                <GraduationCap className="w-4 h-4 text-accent-ink" /> Academic Standing &amp; Credentials
               </h3>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                <div className="p-4 rounded-xl bg-[var(--surface-subdued)] border border-[var(--border)]/70">
-                  <span className="text-[11px] font-mono text-[var(--ink-tertiary)] uppercase tracking-wider">Institution</span>
-                  <p className="text-sm font-semibold text-[var(--ink)] mt-1">{profile.identity?.college || "—"}</p>
+                <div className="p-4 rounded-xl bg-paper-2 border border-hair/70">
+                  <span className="text-[11px] font-mono text-mute uppercase tracking-wider">Institution</span>
+                  <p className="text-sm font-semibold text-ink mt-1">{profile.identity?.college || "—"}</p>
                 </div>
-                <div className="p-4 rounded-xl bg-[var(--surface-subdued)] border border-[var(--border)]/70">
-                  <span className="text-[11px] font-mono text-[var(--ink-tertiary)] uppercase tracking-wider">Degree &amp; Program</span>
-                  <p className="text-sm font-semibold text-[var(--ink)] mt-1">{profile.identity?.degree || "—"}</p>
+                <div className="p-4 rounded-xl bg-paper-2 border border-hair/70">
+                  <span className="text-[11px] font-mono text-mute uppercase tracking-wider">Degree &amp; Program</span>
+                  <p className="text-sm font-semibold text-ink mt-1">{profile.identity?.degree || "—"}</p>
                 </div>
-                <div className="p-4 rounded-xl bg-[var(--surface-subdued)] border border-[var(--border)]/70">
-                  <span className="text-[11px] font-mono text-[var(--ink-tertiary)] uppercase tracking-wider">Academic Term</span>
-                  <p className="text-sm font-semibold text-[var(--ink)] mt-1">{profile.identity?.currentSemester || "—"}</p>
+                <div className="p-4 rounded-xl bg-paper-2 border border-hair/70">
+                  <span className="text-[11px] font-mono text-mute uppercase tracking-wider">Academic Term</span>
+                  <p className="text-sm font-semibold text-ink mt-1">{profile.identity?.currentSemester || "—"}</p>
                 </div>
-                <div className="p-4 rounded-xl bg-[var(--surface-subdued)] border border-[var(--border)]/70">
-                  <span className="text-[11px] font-mono text-[var(--ink-tertiary)] uppercase tracking-wider">Batch Graduation</span>
-                  <p className="text-sm font-semibold text-[var(--ink)] mt-1">Class of {profile.identity?.graduationYear || "2026"}</p>
+                <div className="p-4 rounded-xl bg-paper-2 border border-hair/70">
+                  <span className="text-[11px] font-mono text-mute uppercase tracking-wider">Batch Graduation</span>
+                  <p className="text-sm font-semibold text-ink mt-1">Class of {profile.identity?.graduationYear || "2026"}</p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-6 sm:p-8 shadow-xs">
-              <h3 className="text-sm font-bold text-[var(--ink)] uppercase font-mono tracking-wider mb-6 flex items-center gap-2">
-                <Briefcase className="w-4 h-4 text-[var(--accent)]" /> Career Objectives &amp; Role Targeting
+            <div className="bg-card border border-hair rounded-2xl p-6 sm:p-8">
+              <h3 className="text-sm font-bold text-ink uppercase font-mono tracking-wider mb-6 flex items-center gap-2">
+                <Briefcase className="w-4 h-4 text-accent-ink" /> Career Objectives &amp; Role Targeting
               </h3>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                <div className="p-4 rounded-xl bg-[var(--surface-subdued)] border border-[var(--border)]/70">
-                  <span className="text-[11px] font-mono text-[var(--ink-tertiary)] uppercase tracking-wider">Primary Target Role</span>
-                  <p className="text-sm font-semibold text-[var(--accent)] mt-1">{displayRole}</p>
+                <div className="p-4 rounded-xl bg-paper-2 border border-hair/70">
+                  <span className="text-[11px] font-mono text-mute uppercase tracking-wider">Primary Target Role</span>
+                  <p className="text-sm font-semibold text-accent-ink mt-1">{displayRole}</p>
                 </div>
-                <div className="p-4 rounded-xl bg-[var(--surface-subdued)] border border-[var(--border)]/70">
-                  <span className="text-[11px] font-mono text-[var(--ink-tertiary)] uppercase tracking-wider">Engagement Type</span>
-                  <p className="text-sm font-semibold text-[var(--ink)] mt-1">{profile.identity?.preferredJobType || "Full-Time Campus & Off-Campus"}</p>
+                <div className="p-4 rounded-xl bg-paper-2 border border-hair/70">
+                  <span className="text-[11px] font-mono text-mute uppercase tracking-wider">Engagement Type</span>
+                  <p className="text-sm font-semibold text-ink mt-1">{profile.identity?.preferredJobType || "Full-Time Campus & Off-Campus"}</p>
                 </div>
-                <div className="sm:col-span-2 p-4 rounded-xl bg-[var(--surface-subdued)] border border-[var(--border)]/70">
-                  <span className="text-[11px] font-mono text-[var(--ink-tertiary)] uppercase tracking-wider">Locations Mapped</span>
-                  <p className="text-sm font-semibold text-[var(--ink)] mt-1 flex items-center gap-1.5">
-                    <MapPin className="w-3.5 h-3.5 text-slate-400" />
+                <div className="sm:col-span-2 p-4 rounded-xl bg-paper-2 border border-hair/70">
+                  <span className="text-[11px] font-mono text-mute uppercase tracking-wider">Locations Mapped</span>
+                  <p className="text-sm font-semibold text-ink mt-1 flex items-center gap-1.5">
+                    <MapPin className="w-3.5 h-3.5 text-mute" />
                     {profile.identity?.locationPreference || "Bangalore / Hyderabad / Pune / Remote"}
                   </p>
                 </div>
@@ -407,24 +396,24 @@ export default function ProfilePreferencesPage() {
 
           {/* Column 3: Objectives, Career Tracks & Matrix Baseline */}
           <div className="flex flex-col gap-6">
-            <div className="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-6 shadow-xs">
-              <h3 className="text-sm font-bold text-[var(--ink)] uppercase font-mono tracking-wider mb-4 flex items-center gap-2">
-                <Target className="w-4 h-4 text-[var(--accent)]" /> Active Objectives
+            <div className="bg-card border border-hair rounded-2xl p-6">
+              <h3 className="text-sm font-bold text-ink uppercase font-mono tracking-wider mb-4 flex items-center gap-2">
+                <Target className="w-4 h-4 text-accent-ink" /> Active Objectives
               </h3>
               <div className="flex flex-wrap gap-2">
                 {(profile.targets?.objectives || ["Campus Placements", "Product Roles"]).map((obj) => (
-                  <span key={obj} className="px-3 py-1.5 rounded-lg bg-blue-50 text-blue-700 text-xs font-semibold border border-blue-200/80">
+                  <span key={obj} className="px-3 py-1.5 rounded-lg bg-accent-soft text-accent-ink text-xs font-semibold border border-accent-line/80">
                     {obj}
                   </span>
                 ))}
               </div>
 
-              <h4 className="text-xs font-mono font-bold text-[var(--ink-secondary)] uppercase tracking-wider mt-6 mb-3">
+              <h4 className="text-xs font-mono font-bold text-body uppercase tracking-wider mt-6 mb-3">
                 Selected Career Tracks
               </h4>
               <div className="flex flex-wrap gap-2">
                 {(profile.careerTracks || ["Software Engineer"]).map((track) => (
-                  <span key={track} className="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-800 text-xs font-medium border border-slate-200">
+                  <span key={track} className="px-3 py-1.5 rounded-lg bg-card-2 text-ink text-xs font-medium border border-hair">
                     {track}
                   </span>
                 ))}
@@ -432,12 +421,12 @@ export default function ProfilePreferencesPage() {
             </div>
 
             {/* Skill Baseline Snapshot */}
-            <div className="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-6 shadow-xs">
+            <div className="bg-card border border-hair rounded-2xl p-6">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-bold text-[var(--ink)] uppercase font-mono tracking-wider">
+                <h3 className="text-sm font-bold text-ink uppercase font-mono tracking-wider">
                   Baseline Matrix
                 </h3>
-                <Link href="/onboarding" className="text-xs text-[var(--accent)] hover:underline flex items-center gap-1">
+                <Link href="/onboarding" className="text-xs text-accent-ink hover:underline flex items-center gap-1">
                   Adjust <ArrowRight className="w-3 h-3" />
                 </Link>
               </div>
@@ -450,9 +439,9 @@ export default function ProfilePreferencesPage() {
                   coreCS: "Intermediate",
                   aptitude: "Advanced"
                 }).map(([skill, level]) => (
-                  <div key={skill} className="flex items-center justify-between py-1.5 border-b border-[var(--border)]/50 last:border-0">
-                    <span className="font-mono uppercase text-[var(--ink-secondary)] text-[11px]">{skill}</span>
-                    <span className="font-semibold text-[var(--ink)] px-2 py-0.5 rounded bg-[var(--surface-subdued)]">
+                  <div key={skill} className="flex items-center justify-between py-1.5 border-b border-hair/50 last:border-0">
+                    <span className="font-mono uppercase text-body text-[11px]">{skill}</span>
+                    <span className="font-semibold text-ink px-2 py-0.5 rounded bg-paper-2">
                       {level}
                     </span>
                   </div>

@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { 
   Bell,
   CheckCircle2, 
@@ -31,32 +30,32 @@ interface NotificationDropdownProps {
 const getNotificationIcon = (type: NotificationType) => {
   switch (type) {
     case 'LESSON_COMPLETED':
-      return <CheckCircle2 className="w-4 h-4 text-emerald-600" />;
+      return <CheckCircle2 className="w-4 h-4 text-note" />;
     case 'COURSE_MILESTONE':
     case 'DSA_MILESTONE':
-      return <Trophy className="w-4 h-4 text-amber-600" />;
+      return <Trophy className="w-4 h-4 text-warning" />;
     case 'DSA_PROBLEM_SOLVED':
-      return <Code className="w-4 h-4 text-blue-600" />;
+      return <Code className="w-4 h-4 text-accent-ink" />;
     case 'NEW_RESOURCE':
-      return <FileText className="w-4 h-4 text-indigo-600" />;
+      return <FileText className="w-4 h-4 text-ink" />;
     case 'PLACEMENT_UPDATE':
-      return <Briefcase className="w-4 h-4 text-purple-600" />;
+      return <Briefcase className="w-4 h-4 text-accent-ink" />;
     case 'SYSTEM':
     default:
-      return <Info className="w-4 h-4 text-slate-600" />;
+      return <Info className="w-4 h-4 text-mute" />;
   }
 };
 
 const getNotificationBg = (type: NotificationType) => {
   switch (type) {
-    case 'LESSON_COMPLETED': return "bg-emerald-50";
+    case 'LESSON_COMPLETED': return "bg-success-soft";
     case 'COURSE_MILESTONE':
-    case 'DSA_MILESTONE': return "bg-amber-50";
-    case 'DSA_PROBLEM_SOLVED': return "bg-blue-50";
-    case 'NEW_RESOURCE': return "bg-indigo-50";
-    case 'PLACEMENT_UPDATE': return "bg-purple-50";
+    case 'DSA_MILESTONE': return "bg-warning-soft";
+    case 'DSA_PROBLEM_SOLVED': return "bg-accent-soft";
+    case 'NEW_RESOURCE': return "bg-card-2";
+    case 'PLACEMENT_UPDATE': return "bg-accent-soft";
     case 'SYSTEM':
-    default: return "bg-slate-100";
+    default: return "bg-card-2";
   }
 };
 
@@ -128,23 +127,19 @@ export function NotificationDropdown({
   const hasUnread = notifications.some(n => !n.read);
 
   return (
-    <AnimatePresence>
+    <>
       {isOpen && (
-        <motion.div
+        <div
           ref={dropdownRef}
-          initial={{ opacity: 0, y: 8, scale: 0.98 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: 6, scale: 0.98 }}
-          transition={{ duration: 0.16, ease: "easeOut" }}
           className={`pop-in brut absolute ${placement} w-[360px] max-w-[calc(100vw-24px)] bg-card rounded-2xl z-50 overflow-hidden font-sans`}
         >
           {/* HEADER */}
-          <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border)] bg-[var(--surface-subdued)]/50">
-            <h3 className="font-bold text-[14px] text-[var(--ink)]">Notifications</h3>
+          <div className="flex items-center justify-between px-4 py-3 border-b border-hair bg-paper-2/50">
+            <h3 className="label-cond text-[17px]">Notifications</h3>
             {hasUnread && (
               <button
                 onClick={onMarkAllAsRead}
-                className="text-[12px] font-semibold text-[var(--accent)] hover:text-[var(--accent-hover)] transition-colors flex items-center gap-1"
+                className="text-[12px] font-semibold text-accent-ink hover:text-accent-ink transition-colors flex items-center gap-1"
               >
                 <Check className="w-3.5 h-3.5" />
                 Mark all as read
@@ -156,16 +151,16 @@ export function NotificationDropdown({
           <div className="max-h-[400px] overflow-y-auto">
             {isLoading ? (
               <div className="flex flex-col items-center justify-center py-10">
-                <Loader2 className="w-6 h-6 text-[var(--accent)] animate-spin mb-2" />
-                <span className="text-[12px] text-[var(--ink-tertiary)]">Loading notifications...</span>
+                <Loader2 className="w-6 h-6 text-accent-ink animate-spin mb-2" />
+                <span className="text-[12px] text-mute">Loading notifications...</span>
               </div>
             ) : notifications.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12 px-6 text-center">
-                <div className="w-12 h-12 rounded-full bg-[var(--surface-subdued)] flex items-center justify-center mb-3">
-                  <Bell className="w-5 h-5 text-[var(--ink-tertiary)]" />
+                <div className="w-12 h-12 rounded-full bg-paper-2 flex items-center justify-center mb-3">
+                  <Bell className="w-5 h-5 text-mute" />
                 </div>
-                <h4 className="font-semibold text-[14px] text-[var(--ink)] mb-1">You're all caught up</h4>
-                <p className="text-[12px] text-[var(--ink-secondary)]">No new notifications right now.</p>
+                <h4 className="font-semibold text-[14px] text-ink mb-1">You're all caught up</h4>
+                <p className="text-[12px] text-body">No new notifications right now.</p>
               </div>
             ) : (
               <div className="flex flex-col">
@@ -174,12 +169,12 @@ export function NotificationDropdown({
                     key={notification.id}
                     onClick={() => handleNotificationClick(notification)}
                     className={clsx(
-                      "w-full text-left p-4 border-b border-[var(--border)]/50 hover:bg-[var(--surface-subdued)]/50 transition-colors flex gap-3 group relative cursor-pointer",
-                      !notification.read ? "bg-[var(--accent-soft)]/10" : "bg-white"
+                      "group relative flex w-full cursor-pointer gap-3 border-b-[1.5px] border-hair p-4 text-left transition-colors hover:bg-card-2",
+                      !notification.read ? "bg-accent-soft" : "bg-card"
                     )}
                   >
                     {!notification.read && (
-                      <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-[var(--accent)] rounded-r-full" />
+                      <span aria-label="Unread" className="absolute right-4 top-4 size-2 rounded-full bg-accent" />
                     )}
                     
                     <div className={clsx(
@@ -193,17 +188,17 @@ export function NotificationDropdown({
                       <div className="flex items-start justify-between gap-2 mb-0.5">
                         <span className={clsx(
                           "text-[13px] font-semibold truncate pr-2",
-                          !notification.read ? "text-[var(--ink)]" : "text-[var(--ink-secondary)]"
+                          !notification.read ? "text-ink" : "text-body"
                         )}>
                           {notification.title}
                         </span>
-                        <span className="text-[11px] text-[var(--ink-tertiary)] shrink-0 whitespace-nowrap pt-0.5">
+                        <span className="text-[11px] text-mute shrink-0 whitespace-nowrap pt-0.5">
                           {formatTimeAgo(notification.created_at)}
                         </span>
                       </div>
                       <p className={clsx(
                         "text-[12px] leading-snug line-clamp-2",
-                        !notification.read ? "text-[var(--ink-secondary)] font-medium" : "text-[var(--ink-tertiary)]"
+                        !notification.read ? "text-body font-medium" : "text-mute"
                       )}>
                         {notification.message}
                       </p>
@@ -213,8 +208,8 @@ export function NotificationDropdown({
               </div>
             )}
           </div>
-        </motion.div>
+        </div>
       )}
-    </AnimatePresence>
+    </>
   );
 }

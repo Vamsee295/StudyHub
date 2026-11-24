@@ -13,7 +13,7 @@ export function ActivityFilterBar({ active, onChange }: ActivityFilterBarProps) 
   const scrollRef = useRef<HTMLDivElement>(null);
 
   return (
-    <div className="bg-card border-b border-slate-200 sticky top-14 md:top-0 z-30">
+    <div className="bg-card border-b border-hair sticky top-14 md:top-0 z-30">
       <div
         ref={scrollRef}
         className="max-w-[1050px] mx-auto flex items-center gap-2 overflow-x-auto scrollbar-none py-2 px-4 sm:px-8"
@@ -29,8 +29,8 @@ export function ActivityFilterBar({ active, onChange }: ActivityFilterBarProps) 
             className={clsx(
               "shrink-0 px-3 h-[42px] rounded-[8px] text-[14px] font-medium transition-colors whitespace-nowrap",
               active === f.id
-                ? "bg-blue-50 text-accent-ink"
-                : "bg-transparent text-slate-500 hover:text-slate-800 hover:bg-slate-50"
+                ? "bg-accent-soft text-accent-ink"
+                : "bg-transparent text-mute hover:text-ink hover:bg-paper-2"
             )}
           >
             {f.label}

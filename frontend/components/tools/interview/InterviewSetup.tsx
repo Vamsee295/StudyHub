@@ -17,19 +17,19 @@ export function InterviewSetup({ onStart }: InterviewSetupProps) {
   return (
     <ToolCard className="max-w-2xl mx-auto p-8">
       <div className="flex items-center gap-3 mb-8">
-        <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
-          <Settings className="w-6 h-6 text-blue-600" />
+        <div className="w-12 h-12 bg-accent-soft rounded-xl flex items-center justify-center">
+          <Settings className="w-6 h-6 text-accent-ink" />
         </div>
         <div>
-          <h2 className="text-xl font-bold text-gray-900">Configure Interview</h2>
-          <p className="text-gray-500 text-sm">Customize your mock interview session</p>
+          <h2 className="text-xl font-bold text-ink">Configure Interview</h2>
+          <p className="text-mute text-sm">Customize your mock interview session</p>
         </div>
       </div>
 
       <div className="space-y-6 mb-8">
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
-            <Target className="w-4 h-4 text-gray-400" /> Domain / Topic
+          <label className="block text-sm font-semibold text-body mb-2 flex items-center gap-2">
+            <Target className="w-4 h-4 text-mute" /> Domain / Topic
           </label>
           <div className="flex flex-wrap gap-2">
             {domains.map(d => (
@@ -38,8 +38,8 @@ export function InterviewSetup({ onStart }: InterviewSetupProps) {
                 onClick={() => setDomain(d)}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors border ${
                   domain === d 
-                    ? 'bg-blue-50 border-blue-200 text-blue-700' 
-                    : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'
+                    ? 'bg-accent-soft border-accent-line text-accent-ink' 
+                    : 'bg-card border-hair text-body hover:bg-card-2'
                 }`}
               >
                 {d}
@@ -49,8 +49,8 @@ export function InterviewSetup({ onStart }: InterviewSetupProps) {
         </div>
 
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
-            <ListOrdered className="w-4 h-4 text-gray-400" /> Number of Questions
+          <label className="block text-sm font-semibold text-body mb-2 flex items-center gap-2">
+            <ListOrdered className="w-4 h-4 text-mute" /> Number of Questions
           </label>
           <div className="flex items-center gap-4">
             <input 
@@ -58,20 +58,20 @@ export function InterviewSetup({ onStart }: InterviewSetupProps) {
               min="1" max="10" 
               value={count} 
               onChange={(e) => setCount(Number(e.target.value))}
-              className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+              className="flex-1 h-2 bg-ink/10 rounded-lg appearance-none cursor-pointer accent-accent-ink"
             />
-            <span className="w-12 text-center font-bold text-gray-900 bg-gray-100 py-1 rounded-md">{count}</span>
+            <span className="w-12 text-center font-bold text-ink bg-card-2 py-1 rounded-md">{count}</span>
           </div>
         </div>
 
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
-            <Target className="w-4 h-4 text-gray-400" /> Target Company Style (Optional)
+          <label className="block text-sm font-semibold text-body mb-2 flex items-center gap-2">
+            <Target className="w-4 h-4 text-mute" /> Target Company Style (Optional)
           </label>
           <select 
             value={company}
             onChange={(e) => setCompany(e.target.value)}
-            className="w-full bg-white border border-gray-200 text-gray-700 rounded-lg px-4 py-2.5 outline-none focus:border-blue-500 transition-colors"
+            className="w-full bg-card border border-hair text-body rounded-lg px-4 py-2.5 outline-none focus:border-accent transition-colors"
           >
             {companies.map(c => (
               <option key={c} value={c}>{c}</option>
@@ -82,7 +82,7 @@ export function InterviewSetup({ onStart }: InterviewSetupProps) {
 
       <button
         onClick={() => onStart({ domain, count, company })}
-        className="w-full bg-blue-600 text-white rounded-xl py-3.5 font-bold hover:bg-blue-700 transition-all flex items-center justify-center gap-2 shadow-sm hover:shadow-md"
+        className="w-full bg-accent text-paper rounded-xl py-3.5 font-bold hover:bg-accent transition-all flex items-center justify-center gap-2 hover:shadow-md"
       >
         <Play className="w-5 h-5 fill-current" />
         Start Interview Session

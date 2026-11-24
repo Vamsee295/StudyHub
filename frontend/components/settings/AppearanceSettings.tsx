@@ -64,7 +64,7 @@ export function AppearanceSettings() {
           type="checkbox"
           checked={reduceMotion}
           onChange={(e) => setReduceMotion(e.target.checked)}
-          className="size-5 shrink-0 cursor-pointer accent-[var(--ink)]"
+          className="size-5 shrink-0 cursor-pointer accent-ink"
         />
       </label>
     </div>

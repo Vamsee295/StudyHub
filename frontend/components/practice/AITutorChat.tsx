@@ -102,8 +102,8 @@ export function AITutorChat({ questionId }: AITutorChatProps) {
   return (
     <div className="flex flex-col h-full bg-paper-2 border-t border-hair">
       <div className="flex items-center gap-2 p-3 border-b border-hair bg-card">
-        <div className="w-6 h-6 rounded-md bg-[var(--accent)] flex items-center justify-center">
-          <Sparkles className="w-3.5 h-3.5 text-white" />
+        <div className="w-6 h-6 rounded-md bg-accent flex items-center justify-center">
+          <Sparkles className="w-3.5 h-3.5 text-paper" />
         </div>
         <h3 className="text-[13px] font-semibold text-ink">AI Tutor</h3>
       </div>
@@ -114,7 +114,7 @@ export function AITutorChat({ questionId }: AITutorChatProps) {
             <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 ${
               msg.role === 'user' 
                 ? 'bg-paper-2 border border-hair text-body' 
-                : 'bg-[var(--accent-soft)] text-accent-ink'
+                : 'bg-accent-soft text-accent-ink'
             }`}>
               {msg.role === 'user' ? <User className="w-3.5 h-3.5" /> : <Bot className="w-3.5 h-3.5" />}
             </div>
@@ -129,7 +129,7 @@ export function AITutorChat({ questionId }: AITutorChatProps) {
         ))}
         {isStreaming && messages[messages.length - 1].content === "" && (
           <div className="flex gap-3">
-            <div className="w-6 h-6 rounded-full bg-[var(--accent-soft)] text-accent-ink flex items-center justify-center shrink-0">
+            <div className="w-6 h-6 rounded-full bg-accent-soft text-accent-ink flex items-center justify-center shrink-0">
               <Loader2 className="w-3 h-3 animate-spin" />
             </div>
           </div>
@@ -145,7 +145,7 @@ export function AITutorChat({ questionId }: AITutorChatProps) {
             onChange={(e) => setInput(e.target.value)}
             disabled={isStreaming}
             placeholder="Ask for a hint..."
-            className="w-full bg-paper-2 border border-hair rounded-md pl-3 pr-10 py-2 text-[13px] text-ink placeholder:text-mute focus:outline-none focus:border-accent focus:ring-1 focus:ring-[var(--accent)] disabled:opacity-50"
+            className="w-full bg-paper-2 border border-hair rounded-md pl-3 pr-10 py-2 text-[13px] text-ink placeholder:text-mute focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent disabled:opacity-50"
           />
           <button 
             type="submit"

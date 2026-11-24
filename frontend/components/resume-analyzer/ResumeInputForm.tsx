@@ -48,12 +48,12 @@ export function ResumeInputForm({
       <section aria-labelledby="source-heading" className="space-y-4">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h2 id="source-heading" className="text-[16px] font-bold text-[var(--ink)]">1. Add the resume</h2>
-            <p className="mt-1 text-[13px] leading-relaxed text-[var(--ink-secondary)]">
+            <h2 id="source-heading" className="text-[16px] font-bold text-ink">1. Add the resume</h2>
+            <p className="mt-1 text-[13px] leading-relaxed text-body">
               Use one source. A PDF is preferred because the parser can preserve section and page metadata.
             </p>
           </div>
-          <span className="mt-0.5 hidden rounded border border-[var(--border)] bg-[var(--surface-subdued)] px-2 py-1 text-[10.5px] font-mono text-[var(--ink-secondary)] sm:inline-flex">
+          <span className="mt-0.5 hidden rounded border border-hair bg-paper-2 px-2 py-1 text-[10.5px] font-mono text-body sm:inline-flex">
             INPUT
           </span>
         </div>
@@ -82,7 +82,7 @@ export function ResumeInputForm({
           </div>
         ) : (
           <div className="mt-4">
-            <label htmlFor="resume-text" className="mb-1.5 block text-[12px] font-semibold text-[var(--ink-secondary)]">
+            <label htmlFor="resume-text" className="mb-1.5 block text-[12px] font-semibold text-body">
               Resume text
             </label>
             <textarea
@@ -93,19 +93,19 @@ export function ResumeInputForm({
               rows={12}
               placeholder="Paste the resume text here, including experience, projects, education, and skills."
               aria-invalid={Boolean(resumeError)}
-              aria-describedby={resumeError ? "resume-text-error" : "resume-text-hint"}
-              className="field min-h-[260px] resize-y w-full text-[var(--ink)] disabled:cursor-not-allowed disabled:bg-[var(--surface-subdued)]"
+              aria-describedby={resumeError ? "resume-text-danger" : "resume-text-hint"}
+              className="field min-h-[260px] resize-y w-full text-ink disabled:cursor-not-allowed disabled:bg-paper-2"
             />
             <div className="mt-1.5 flex items-center justify-between gap-3">
-              <p id="resume-text-hint" className="text-[11.5px] text-[var(--ink-tertiary)]">
+              <p id="resume-text-hint" className="text-[11.5px] text-mute">
                 Paste at least {MIN_RESUME_TEXT_LENGTH} characters. Do not include passwords or confidential client data.
               </p>
-              <span className={textLength < MIN_RESUME_TEXT_LENGTH ? "text-[11px] font-mono text-[var(--warning)]" : "text-[11px] font-mono text-[var(--ink-tertiary)]"}>
+              <span className={textLength < MIN_RESUME_TEXT_LENGTH ? "text-[11px] font-mono text-warning" : "text-[11px] font-mono text-mute"}>
                 {textLength.toLocaleString()}/{MAX_RESUME_TEXT_LENGTH.toLocaleString()}
               </span>
             </div>
             {resumeError && (
-              <p id="resume-text-error" className="mt-1.5 text-[12px] font-medium text-[var(--error)]">
+              <p id="resume-text-danger" className="mt-1.5 text-[12px] font-medium text-danger">
                 {resumeError}
               </p>
             )}
@@ -113,15 +113,15 @@ export function ResumeInputForm({
         )}
       </section>
 
-      <section aria-labelledby="target-heading" className="space-y-5 border-t border-[var(--border)] pt-6">
+      <section aria-labelledby="target-heading" className="space-y-5 border-t border-hair pt-6">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h2 id="target-heading" className="text-[16px] font-bold text-[var(--ink)]">2. Set the target benchmark</h2>
-            <p className="mt-1 text-[13px] leading-relaxed text-[var(--ink-secondary)]">
+            <h2 id="target-heading" className="text-[16px] font-bold text-ink">2. Set the target benchmark</h2>
+            <p className="mt-1 text-[13px] leading-relaxed text-body">
               The report compares the resume with the role and hiring context you provide.
             </p>
           </div>
-          <span className="mt-0.5 hidden rounded border border-[var(--border)] bg-[var(--surface-subdued)] px-2 py-1 text-[10.5px] font-mono text-[var(--ink-secondary)] sm:inline-flex">
+          <span className="mt-0.5 hidden rounded border border-hair bg-paper-2 px-2 py-1 text-[10.5px] font-mono text-body sm:inline-flex">
             BENCHMARK
           </span>
         </div>
@@ -144,15 +144,15 @@ export function ResumeInputForm({
         </div>
       </section>
 
-      <section aria-labelledby="jd-heading" className="space-y-4 border-t border-[var(--border)] pt-6">
+      <section aria-labelledby="jd-heading" className="space-y-4 border-t border-hair pt-6">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h2 id="jd-heading" className="text-[16px] font-bold text-[var(--ink)]">3. Add Job Description</h2>
-            <p className="mt-1 text-[13px] leading-relaxed text-[var(--ink-secondary)]">
+            <h2 id="jd-heading" className="text-[16px] font-bold text-ink">3. Add Job Description</h2>
+            <p className="mt-1 text-[13px] leading-relaxed text-body">
               Paste the job description so the AI can extract the exact skills, keywords, and responsibilities.
             </p>
           </div>
-          <span className="mt-0.5 hidden rounded border border-[var(--border)] bg-[var(--surface-subdued)] px-2 py-1 text-[10.5px] font-mono text-[var(--ink-secondary)] sm:inline-flex">
+          <span className="mt-0.5 hidden rounded border border-hair bg-paper-2 px-2 py-1 text-[10.5px] font-mono text-body sm:inline-flex">
             CONTEXT
           </span>
         </div>
@@ -168,26 +168,26 @@ export function ResumeInputForm({
             placeholder="Paste the role description here..."
             aria-invalid={Boolean(errors.jobDescription)}
             aria-describedby={errors.jobDescription ? "job-description-error" : "job-description-hint"}
-            className="field min-h-[160px] resize-y w-full text-[var(--ink)] disabled:cursor-not-allowed disabled:bg-[var(--surface-subdued)]"
+            className="field min-h-[160px] resize-y w-full text-ink disabled:cursor-not-allowed disabled:bg-paper-2"
           />
           <div className="mt-1.5 flex items-center justify-between gap-3">
-            <p id="job-description-hint" className="text-[11.5px] text-[var(--ink-tertiary)]">
+            <p id="job-description-hint" className="text-[11.5px] text-mute">
               Provides context for keyword analysis and skill matching.
             </p>
-            <span className="text-[11px] font-mono text-[var(--ink-tertiary)]">
+            <span className="text-[11px] font-mono text-mute">
               {(request.target.jobDescription ?? "").length}/12,000
             </span>
           </div>
           {errors.jobDescription && (
-            <p id="job-description-error" className="mt-1.5 text-[12px] font-medium text-[var(--error)]">
+            <p id="job-description-error" className="mt-1.5 text-[12px] font-medium text-danger">
               {errors.jobDescription}
             </p>
           )}
         </div>
       </section>
 
-      <div className="flex flex-col-reverse gap-3 border-t border-[var(--border)] pt-5 sm:flex-row sm:items-center sm:justify-between">
-        <p className="flex items-start gap-2 text-[11.5px] leading-relaxed text-[var(--ink-tertiary)]">
+      <div className="flex flex-col-reverse gap-3 border-t border-hair pt-5 sm:flex-row sm:items-center sm:justify-between">
+        <p className="flex items-start gap-2 text-[11.5px] leading-relaxed text-mute">
           <LockKeyhole size={14} className="mt-0.5 shrink-0" />
           Resume data is sent only to the authenticated StudyHub backend. Provider credentials stay server-side.
         </p>

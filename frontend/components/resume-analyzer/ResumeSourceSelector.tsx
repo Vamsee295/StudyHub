@@ -35,8 +35,8 @@ export function ResumeSourceSelector({
   disabled = false,
 }: ResumeSourceSelectorProps) {
   return (
-    <fieldset className="border border-[var(--border)] rounded-lg p-4 bg-[var(--surface)]">
-      <legend className="px-1.5 text-[11px] font-mono font-semibold uppercase tracking-wide text-[var(--ink-secondary)]">
+    <fieldset className="border border-hair rounded-lg p-4 bg-card">
+      <legend className="px-1.5 text-[11px] font-mono font-semibold uppercase tracking-wide text-body">
         Resume source
       </legend>
       <div className="grid sm:grid-cols-2 gap-3">
@@ -57,8 +57,8 @@ export function ResumeSourceSelector({
                 className={
                   "source-option flex gap-3 rounded-md border p-3 transition-colors " +
                   (selected
-                    ? "border-[var(--accent)] bg-[var(--accent-soft)]"
-                    : "border-[var(--border)] bg-[var(--surface)] hover:border-[var(--border-strong)]") +
+                    ? "border-accent bg-accent-soft"
+                    : "border-hair bg-card hover:border-line") +
                   (disabled ? " opacity-60 cursor-not-allowed" : "")
                 }
               >
@@ -66,15 +66,15 @@ export function ResumeSourceSelector({
                   className={
                     "mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded border " +
                     (selected
-                      ? "border-[var(--accent-soft-border)] bg-white text-[var(--accent)]"
-                      : "border-[var(--border)] bg-[var(--surface-subdued)] text-[var(--ink-secondary)]")
+                      ? "border-accent-line bg-card text-accent-ink"
+                      : "border-hair bg-paper-2 text-body")
                   }
                 >
                   <Icon size={16} strokeWidth={1.8} />
                 </span>
                 <span className="min-w-0">
-                  <span className="block text-[13.5px] font-semibold text-[var(--ink)]">{label}</span>
-                  <span className="mt-0.5 block text-[12px] leading-relaxed text-[var(--ink-secondary)]">
+                  <span className="block text-[13.5px] font-semibold text-ink">{label}</span>
+                  <span className="mt-0.5 block text-[12px] leading-relaxed text-body">
                     {description}
                   </span>
                 </span>

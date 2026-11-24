@@ -68,7 +68,7 @@ export const libraryCategories: ResourceCategoryItem[] = [
     icon: "code_blocks",
     resourcesCount: 8,
     guidesCount: 4,
-    colorScheme: "bg-blue-50 text-blue-700",
+    colorScheme: "bg-accent-soft text-accent-ink",
     filterKey: "DSA"
   },
   {
@@ -78,7 +78,7 @@ export const libraryCategories: ResourceCategoryItem[] = [
     icon: "terminal",
     resourcesCount: 10,
     guidesCount: 4,
-    colorScheme: "bg-orange-50 text-orange-700",
+    colorScheme: "bg-warning-soft text-warning",
     filterKey: "Java"
   },
   {
@@ -88,7 +88,7 @@ export const libraryCategories: ResourceCategoryItem[] = [
     icon: "code_blocks",
     resourcesCount: 5,
     guidesCount: 3,
-    colorScheme: "bg-amber-50 text-amber-700",
+    colorScheme: "bg-warning-soft text-warning",
     filterKey: "JavaScript"
   },
   {
@@ -98,7 +98,7 @@ export const libraryCategories: ResourceCategoryItem[] = [
     icon: "memory",
     resourcesCount: 2,
     guidesCount: 2,
-    colorScheme: "bg-purple-50 text-purple-700",
+    colorScheme: "bg-accent-soft text-accent-ink",
     filterKey: "Network Protocols"
   },
   {
@@ -108,7 +108,7 @@ export const libraryCategories: ResourceCategoryItem[] = [
     icon: "database",
     resourcesCount: 3,
     guidesCount: 2,
-    colorScheme: "bg-indigo-50 text-indigo-700",
+    colorScheme: "bg-accent-soft text-accent-ink",
     filterKey: "DBMS"
   },
   {
@@ -118,7 +118,7 @@ export const libraryCategories: ResourceCategoryItem[] = [
     icon: "database",
     resourcesCount: 3,
     guidesCount: 2,
-    colorScheme: "bg-emerald-50 text-emerald-700",
+    colorScheme: "bg-success-soft text-note",
     filterKey: "SQL"
   },
   {
@@ -128,7 +128,7 @@ export const libraryCategories: ResourceCategoryItem[] = [
     icon: "calculate",
     resourcesCount: 2,
     guidesCount: 1,
-    colorScheme: "bg-teal-50 text-teal-700",
+    colorScheme: "bg-success-soft text-note",
     filterKey: "Python"
   }
 ];

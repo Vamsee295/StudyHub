@@ -173,13 +173,13 @@ export function NativePdfReader({
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center p-12 text-center min-h-[500px] w-full bg-[var(--surface)] border border-[var(--border)] rounded-2xl">
-        <AlertCircle className="w-10 h-10 text-[var(--error)] mb-3" />
-        <h3 className="text-[16px] font-semibold text-[var(--ink)] mb-1">Unable to load document</h3>
-        <p className="text-[13px] text-[var(--ink-secondary)] mb-6">{error}</p>
+      <div className="flex flex-col items-center justify-center p-12 text-center min-h-[500px] w-full bg-card border border-hair rounded-2xl">
+        <AlertCircle className="w-10 h-10 text-danger mb-3" />
+        <h3 className="text-[16px] font-semibold text-ink mb-1">Unable to load document</h3>
+        <p className="text-[13px] text-body mb-6">{error}</p>
         <button 
           onClick={() => window.location.reload()}
-          className="px-4 py-2 rounded-xl bg-[var(--surface-subdued)] border border-[var(--border)] text-[13px] font-semibold text-[var(--ink)] hover:bg-[var(--border)] transition-colors"
+          className="px-4 py-2 rounded-xl bg-paper-2 border border-hair text-[13px] font-semibold text-ink hover:bg-hair transition-colors"
         >
           Try Again
         </button>
@@ -196,8 +196,8 @@ export function NativePdfReader({
       )}
     >
       {isLoading && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#525659] z-10 text-white/80">
-          <RefreshCw className="w-8 h-8 animate-spin mb-4 text-white/50" />
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#525659] z-10 text-paper/80">
+          <RefreshCw className="w-8 h-8 animate-spin mb-4 text-paper/50" />
           <p className="text-[14px] font-medium tracking-wide">Loading Document...</p>
         </div>
       )}
@@ -205,7 +205,7 @@ export function NativePdfReader({
         <canvas 
           ref={canvasRef} 
           className={clsx(
-            "bg-white shadow-2xl transition-opacity duration-300 rounded-sm",
+            "bg-card shadow-2xl transition-opacity duration-300 rounded-sm",
             isLoading ? "opacity-0" : "opacity-100"
           )}
         />

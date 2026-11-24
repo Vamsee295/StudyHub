@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { AppLayout } from "@/components/layout/AppLayout";
 
 export const metadata: Metadata = {
-  title: "Roadmaps — StudyHub Placement Engine",
+  title: "Roadmaps — StudyHub",
   description: "Curated role-based roadmaps for software engineering, frontend, backend, devops, and data science.",
 };
 

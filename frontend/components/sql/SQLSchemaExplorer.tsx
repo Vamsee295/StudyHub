@@ -42,14 +42,14 @@ export default function SQLSchemaExplorer({ schema, onInsertText }: Props) {
                 ) : (
                   <ChevronRight className="w-3.5 h-3.5 text-mute" />
                 )}
-                <Table2 className="w-3.5 h-3.5 text-emerald-500" />
+                <Table2 className="w-3.5 h-3.5 text-note" />
                 <span className="font-semibold text-ink select-none truncate flex-1">
                   {table.name}
                 </span>
                 
                 {/* Hover actions */}
                 <button 
-                  className="opacity-0 group-hover:opacity-100 text-[10px] text-body hover:text-blue-500 font-medium px-1 rounded transition-opacity"
+                  className="opacity-0 group-hover:opacity-100 text-[10px] text-body hover:text-accent font-medium px-1 rounded transition-opacity"
                   onClick={(e) => {
                     e.stopPropagation();
                     onInsertText(`SELECT * FROM ${table.name};\n`);

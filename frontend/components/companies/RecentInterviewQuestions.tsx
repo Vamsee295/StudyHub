@@ -13,15 +13,15 @@ export function RecentInterviewQuestions({ questions, companyName }: RecentInter
     <div className="flex flex-col gap-5">
       <div className="flex items-center justify-between">
         <div className="flex flex-col gap-1">
-          <h3 className="text-lg font-bold text-[var(--ink)] flex items-center gap-2">
+          <h3 className="text-lg font-bold text-ink flex items-center gap-2">
             <History className="w-5 h-5" />
             Recent {companyName} Interview Problems
           </h3>
-          <p className="text-[13px] text-[var(--ink-secondary)]">Verified problems from candidates in Cycle 2026.</p>
+          <p className="text-[13px] text-body">Questions on the topics this company tests.</p>
         </div>
         <Link 
           href={`/practice?search=${encodeURIComponent(companyName)}`}
-          className="hidden sm:inline-flex text-[12px] font-semibold text-[var(--accent)] hover:text-[var(--accent-hover)] transition-colors"
+          className="hidden sm:inline-flex text-[12px] font-semibold text-accent-ink hover:text-accent-ink transition-colors"
         >
           View All Questions →
         </Link>
@@ -33,37 +33,37 @@ export function RecentInterviewQuestions({ questions, companyName }: RecentInter
           const isMedium = q.difficulty === "Medium" || q.difficulty === "Easy-Medium";
 
           return (
-            <div key={q.id} className="flex flex-col bg-[var(--surface)] border border-[var(--border)] hover:border-[var(--border-strong)] rounded-xl p-4 gap-4 transition-all hover:shadow-sm group">
+            <div key={q.id} className="flex flex-col bg-card border border-hair hover:border-line rounded-xl p-4 gap-4 transition-all hover:shadow-sm group">
               <div className="flex flex-col gap-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] uppercase font-bold tracking-wider text-[var(--ink-secondary)]">
+                  <span className="text-[10px] uppercase font-bold tracking-wider text-body">
                     {q.domain}
                   </span>
                   <span className={clsx(
                     "text-[10px] font-mono font-bold px-1.5 py-0.5 rounded uppercase tracking-wider",
-                    isHard ? "bg-[var(--error-soft)] text-[var(--error)]" :
-                    isMedium ? "bg-[var(--warning-soft)] text-[var(--warning)]" :
-                    "bg-[var(--success-soft)] text-[var(--success)]"
+                    isHard ? "bg-danger-soft text-danger" :
+                    isMedium ? "bg-warning-soft text-warning" :
+                    "bg-success-soft text-note"
                   )}>
                     {q.difficulty}
                   </span>
                 </div>
-                <h4 className="text-[15px] font-bold text-[var(--ink)] leading-snug group-hover:text-[var(--accent)] transition-colors">
+                <h4 className="text-[15px] font-bold text-ink leading-snug group-hover:text-accent-ink transition-colors">
                   {q.title}
                 </h4>
-                <p className="text-[13px] text-[var(--ink-secondary)] line-clamp-2 leading-relaxed">
+                <p className="text-[13px] text-body line-clamp-2 leading-relaxed">
                   {q.description}
                 </p>
               </div>
 
-              <div className="flex items-center justify-between mt-auto pt-4 border-t border-[var(--border)]">
+              <div className="flex items-center justify-between mt-auto pt-4 border-t border-hair">
                 <div className="flex flex-col gap-0.5">
-                  <span className="text-[11px] font-semibold text-[var(--ink)]">{q.recurrenceRate}</span>
-                  <span className="text-[10px] text-[var(--ink-tertiary)]">{q.askedDate}</span>
+                  <span className="text-[11px] font-semibold text-ink">{q.recurrenceRate}</span>
+                  <span className="text-[10px] text-mute">{q.askedDate}</span>
                 </div>
                 <Link 
                   href="/practice"
-                  className="flex items-center gap-1.5 px-3 py-1.5 bg-[var(--surface-subdued)] hover:bg-[var(--border)] rounded-lg text-[12px] font-semibold text-[var(--ink)] transition-colors"
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-paper-2 hover:bg-hair rounded-lg text-[12px] font-semibold text-ink transition-colors"
                 >
                   <Code2 className="w-3.5 h-3.5" />
                   Practice

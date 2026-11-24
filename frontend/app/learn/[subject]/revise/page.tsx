@@ -89,10 +89,10 @@ function RevisionSheet() {
                   <p className="mt-1 text-[14px] text-mute">No takeaways for this lesson yet.</p>
                 )}
                 {l.traps.length > 0 && (
-                  <div className="mt-3 flex flex-col gap-2 rounded-xl border-[1.5px] border-[var(--warning-soft-border)] bg-[var(--warning-soft)] px-4 py-3">
+                  <div className="mt-3 flex flex-col gap-2 rounded-xl border-[1.5px] border-warning-line bg-warning-soft px-4 py-3">
                     {l.traps.map((t, i) => (
                       <p key={i} className="text-[14px] leading-relaxed text-body">
-                        <AlertTriangle aria-hidden className="mr-1 inline size-3.5 text-[var(--warning)]" />
+                        <AlertTriangle aria-hidden className="mr-1 inline size-3.5 text-warning" />
                         <strong className="text-ink">{t.question}</strong> Trap: {t.trap} Fix: {t.solution}
                       </p>
                     ))}

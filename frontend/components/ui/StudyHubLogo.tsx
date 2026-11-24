@@ -72,7 +72,7 @@ export function StudyHubEmblem({
 
   const variantClasses = {
     dark: "bg-ink text-paper",
-    blue: "bg-gradient-to-br from-blue-600 via-indigo-600 to-blue-700 text-white shadow-blue-500/20 shadow-md",
+    blue: "bg-accent text-paper",
   };
 
   return (
@@ -125,7 +125,7 @@ export function StudyHubLogo({
             <span
               className={clsx(
                 "hidden sm:inline-block font-mono uppercase rounded font-bold tracking-wider",
-                "bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200/80 dark:border-blue-800/60",
+                "bg-accent-soft text-accent-ink border border-accent-line/80",
                 badgeSizes[size]
               )}
             >

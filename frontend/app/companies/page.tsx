@@ -14,8 +14,7 @@ import {
   targetCompanies, 
   companyWorkspaces, 
   directoryCompanies, 
-  companyRecommendations, 
-  initialRecentHistory 
+  companyRecommendations
 } from "@/lib/data/companiesData";
 import { RecentCompanyLog } from "@/types";
 
@@ -39,10 +38,10 @@ export default function CompaniesPage() {
       try {
         setRecentHistory(JSON.parse(saved));
       } catch (e) {
-        setRecentHistory(initialRecentHistory);
+        setRecentHistory([]);
       }
     } else {
-      setRecentHistory(initialRecentHistory);
+      setRecentHistory([]);
     }
 
     const handleKeyDown = (e: KeyboardEvent) => {

@@ -12,15 +12,15 @@ interface SqlSchemaSidebarProps {
 }
 
 function columnTypeIcon(type: string, isPrimaryKey: boolean) {
-  if (isPrimaryKey) return <Key className="w-3 h-3 text-amber-500 shrink-0" />;
+  if (isPrimaryKey) return <Key className="w-3 h-3 text-gold shrink-0" />;
   const t = type.toUpperCase();
   if (t.includes("INT") || t.includes("NUM") || t.includes("REAL") || t.includes("FLOAT") || t.includes("DECIMAL"))
-    return <Hash className="w-3 h-3 text-blue-400 shrink-0" />;
+    return <Hash className="w-3 h-3 text-accent shrink-0" />;
   if (t.includes("DATE") || t.includes("TIME"))
-    return <Calendar className="w-3 h-3 text-green-500 shrink-0" />;
+    return <Calendar className="w-3 h-3 text-note shrink-0" />;
   if (t.includes("BOOL"))
-    return <ToggleLeft className="w-3 h-3 text-purple-400 shrink-0" />;
-  return <Type className="w-3 h-3 text-gray-400 shrink-0" />;
+    return <ToggleLeft className="w-3 h-3 text-accent shrink-0" />;
+  return <Type className="w-3 h-3 text-mute shrink-0" />;
 }
 
 function normalizeType(type: string): string {
@@ -35,17 +35,17 @@ function TableRow({ table, onTableClick }: { table: DatabaseTable; onTableClick:
     <div>
       <button
         onClick={() => setOpen((o) => !o)}
-        className="w-full flex items-center gap-1.5 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors text-left group"
+        className="w-full flex items-center gap-1.5 px-3 py-2 rounded-lg hover:bg-card-2 transition-colors text-left group"
         aria-expanded={open}
         aria-label={`Toggle table ${table.name}`}
       >
         {open ? (
-          <ChevronDown className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+          <ChevronDown className="w-3.5 h-3.5 text-mute shrink-0" />
         ) : (
-          <ChevronRight className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+          <ChevronRight className="w-3.5 h-3.5 text-mute shrink-0" />
         )}
-        <Table className="w-3.5 h-3.5 text-[var(--accent)] shrink-0" />
-        <span className="font-mono text-[13px] font-semibold text-[var(--ink)] flex-1 truncate">
+        <Table className="w-3.5 h-3.5 text-accent-ink shrink-0" />
+        <span className="font-mono text-[13px] font-semibold text-ink flex-1 truncate">
           {table.name}
         </span>
         <button
@@ -53,7 +53,7 @@ function TableRow({ table, onTableClick }: { table: DatabaseTable; onTableClick:
             e.stopPropagation();
             onTableClick(table.name);
           }}
-          className="opacity-0 group-hover:opacity-100 text-[10px] text-[var(--accent)] font-semibold bg-[var(--accent-soft)] px-1.5 py-0.5 rounded transition-all hover:bg-[var(--accent)] hover:text-white"
+          className="opacity-0 group-hover:opacity-100 text-[10px] text-accent-ink font-semibold bg-accent-soft px-1.5 py-0.5 rounded transition-all hover:bg-accent hover:text-paper"
           title={`SELECT * FROM ${table.name}`}
         >
           SELECT
@@ -73,14 +73,14 @@ function TableRow({ table, onTableClick }: { table: DatabaseTable; onTableClick:
 
 function ColumnRow({ col }: { col: DatabaseColumn }) {
   return (
-    <div className="flex items-center gap-2 px-3 py-1.5 rounded hover:bg-gray-50/60 transition-colors">
+    <div className="flex items-center gap-2 px-3 py-1.5 rounded hover:bg-card-2/60 transition-colors">
       {columnTypeIcon(col.type, col.isPrimaryKey)}
-      <span className="font-mono text-[12px] text-[var(--ink)] flex-1 truncate">{col.name}</span>
-      <span className="font-mono text-[10px] text-[var(--ink-tertiary)] uppercase shrink-0">
+      <span className="font-mono text-[12px] text-ink flex-1 truncate">{col.name}</span>
+      <span className="font-mono text-[10px] text-mute uppercase shrink-0">
         {normalizeType(col.type)}
       </span>
       {col.isNotNull && !col.isPrimaryKey && (
-        <span className="text-[9px] text-amber-500 font-bold shrink-0">NN</span>
+        <span className="text-[9px] text-gold font-bold shrink-0">NN</span>
       )}
     </div>
   );
@@ -88,18 +88,18 @@ function ColumnRow({ col }: { col: DatabaseColumn }) {
 
 export function SqlSchemaSidebar({ tables, isLoading, onTableClick, onRefresh }: SqlSchemaSidebarProps) {
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm flex flex-col h-full overflow-hidden">
+    <div className="bg-card rounded-2xl border border-hair flex flex-col h-full overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 bg-gray-50/60 shrink-0">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-hair bg-paper-2/60 shrink-0">
         <div className="flex items-center gap-2">
-          <Database className="w-4 h-4 text-[var(--accent)]" />
-          <span className="text-[13px] font-semibold text-[var(--ink)]">Database Schema</span>
+          <Database className="w-4 h-4 text-accent-ink" />
+          <span className="text-[13px] font-semibold text-ink">Database Schema</span>
         </div>
         <button
           onClick={onRefresh}
           title="Refresh schema"
           aria-label="Refresh schema"
-          className="p-1 rounded-md text-gray-400 hover:text-[var(--accent)] hover:bg-[var(--accent-soft)] transition-colors"
+          className="p-1 rounded-md text-mute hover:text-accent-ink hover:bg-accent-soft transition-colors"
         >
           <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? "animate-spin" : ""}`} />
         </button>
@@ -110,13 +110,13 @@ export function SqlSchemaSidebar({ tables, isLoading, onTableClick, onRefresh }:
         {isLoading ? (
           <div className="flex flex-col gap-2 p-2">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-8 bg-gray-100 animate-pulse rounded-lg" />
+              <div key={i} className="h-8 bg-card-2 animate-pulse rounded-lg" />
             ))}
           </div>
         ) : tables.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-8 text-center px-4">
-            <Database className="w-8 h-8 text-gray-300 mb-2" />
-            <p className="text-[12px] text-gray-400">No tables found. Create one with CREATE TABLE.</p>
+            <Database className="w-8 h-8 text-ink/30 mb-2" />
+            <p className="text-[12px] text-mute">No tables found. Create one with CREATE TABLE.</p>
           </div>
         ) : (
           <div className="flex flex-col gap-0.5">
@@ -128,12 +128,12 @@ export function SqlSchemaSidebar({ tables, isLoading, onTableClick, onRefresh }:
       </div>
 
       {/* Footer legend */}
-      <div className="px-4 py-2.5 border-t border-gray-100 bg-gray-50/40 shrink-0">
+      <div className="px-4 py-2.5 border-t border-hair bg-paper-2/40 shrink-0">
         <div className="flex flex-wrap gap-x-3 gap-y-1">
-          <div className="flex items-center gap-1"><Key className="w-2.5 h-2.5 text-amber-500" /><span className="text-[10px] text-gray-400">PK</span></div>
-          <div className="flex items-center gap-1"><Hash className="w-2.5 h-2.5 text-blue-400" /><span className="text-[10px] text-gray-400">Number</span></div>
-          <div className="flex items-center gap-1"><Type className="w-2.5 h-2.5 text-gray-400" /><span className="text-[10px] text-gray-400">Text</span></div>
-          <div className="flex items-center gap-1"><Calendar className="w-2.5 h-2.5 text-green-500" /><span className="text-[10px] text-gray-400">Date</span></div>
+          <div className="flex items-center gap-1"><Key className="w-2.5 h-2.5 text-gold" /><span className="text-[10px] text-mute">PK</span></div>
+          <div className="flex items-center gap-1"><Hash className="w-2.5 h-2.5 text-accent" /><span className="text-[10px] text-mute">Number</span></div>
+          <div className="flex items-center gap-1"><Type className="w-2.5 h-2.5 text-mute" /><span className="text-[10px] text-mute">Text</span></div>
+          <div className="flex items-center gap-1"><Calendar className="w-2.5 h-2.5 text-note" /><span className="text-[10px] text-mute">Date</span></div>
         </div>
       </div>
     </div>

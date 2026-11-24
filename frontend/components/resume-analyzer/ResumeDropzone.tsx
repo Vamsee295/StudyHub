@@ -38,10 +38,10 @@ export function ResumeDropzone({ file, error, disabled = false, onFileChange }: 
         aria-labelledby="resume-dropzone-label"
         aria-describedby={error ? "resume-dropzone-error" : undefined}
         className={clsx(
-          "flex min-h-[168px] cursor-pointer flex-col items-center justify-center gap-2 rounded-md border-2 border-dashed px-5 py-6 text-center transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:ring-offset-2",
+          "flex min-h-[168px] cursor-pointer flex-col items-center justify-center gap-2 rounded-md border-2 border-dashed px-5 py-6 text-center transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2",
           isDragging
-            ? "border-[var(--accent)] bg-[var(--accent-soft)]"
-            : "border-[var(--border-strong)] bg-[var(--surface-subdued)]/40 hover:border-[var(--accent)] hover:bg-[var(--accent-soft)]",
+            ? "border-accent bg-accent-soft"
+            : "border-line bg-paper-2/40 hover:border-accent hover:bg-accent-soft",
           disabled && "cursor-not-allowed opacity-60",
         )}
         onClick={() => !disabled && document.getElementById(inputId)?.click()}
@@ -62,19 +62,19 @@ export function ResumeDropzone({ file, error, disabled = false, onFileChange }: 
           className={
             "flex h-10 w-10 items-center justify-center rounded-full border " +
             (isDragging
-              ? "border-[var(--accent-soft-border)] bg-white text-[var(--accent)]"
-              : "border-[var(--border)] bg-white text-[var(--ink-secondary)]")
+              ? "border-accent-line bg-card text-accent-ink"
+              : "border-hair bg-card text-body")
           }
         >
           <UploadCloud size={20} strokeWidth={1.8} />
         </span>
-        <span id="resume-dropzone-label" className="text-[14px] font-semibold text-[var(--ink)]">
+        <span id="resume-dropzone-label" className="text-[14px] font-semibold text-ink">
           {file ? "Replace the selected PDF" : "Drag and drop your resume PDF"}
         </span>
-        <span className="max-w-md text-[12.5px] leading-relaxed text-[var(--ink-secondary)]">
+        <span className="max-w-md text-[12.5px] leading-relaxed text-body">
           PDF only, up to 10 MB. The file is sent to the secure backend for parsing.
         </span>
-        <span className="mt-1 inline-flex items-center gap-1.5 text-[11.5px] font-mono text-[var(--ink-tertiary)]">
+        <span className="mt-1 inline-flex items-center gap-1.5 text-[11.5px] font-mono text-mute">
           <FileUp size={13} />
           or choose a file
         </span>
@@ -88,7 +88,7 @@ export function ResumeDropzone({ file, error, disabled = false, onFileChange }: 
         disabled={disabled}
       />
       {error && (
-        <p id="resume-dropzone-error" className="mt-2 text-[12px] font-medium text-[var(--error)]">
+        <p id="resume-dropzone-error" className="mt-2 text-[12px] font-medium text-danger">
           {error}
         </p>
       )}

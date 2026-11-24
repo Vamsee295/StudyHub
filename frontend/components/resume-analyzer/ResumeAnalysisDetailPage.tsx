@@ -165,9 +165,9 @@ export function ResumeAnalysisDetailPage({ analysisId }: ResumeAnalysisDetailPag
   if (loading) {
     return (
       <div className="w-full max-w-5xl mx-auto py-12 flex flex-col items-center justify-center min-h-[50vh]">
-        <Loader2 className="w-8 h-8 text-[var(--accent)] animate-spin mb-4" />
-        <p className="text-[14px] font-medium text-[var(--ink)]">Loading resume analysis...</p>
-        <p className="text-[12px] text-[var(--ink-secondary)] mt-1">Connecting to evaluation service</p>
+        <Loader2 className="w-8 h-8 text-accent-ink animate-spin mb-4" />
+        <p className="text-[14px] font-medium text-ink">Loading resume analysis...</p>
+        <p className="text-[12px] text-body mt-1">Connecting to evaluation service</p>
       </div>
     );
   }
@@ -176,18 +176,18 @@ export function ResumeAnalysisDetailPage({ analysisId }: ResumeAnalysisDetailPag
     return (
       <div className="w-full max-w-3xl mx-auto py-10">
         <nav className="mb-6">
-          <Link href="/tools/resume-analyzer" className="inline-flex items-center gap-2 text-[12.5px] font-medium text-[var(--ink-secondary)] hover:text-[var(--accent)]">
+          <Link href="/tools/resume-analyzer" className="inline-flex items-center gap-2 text-[12.5px] font-medium text-body hover:text-accent-ink">
             <ArrowLeft size={15} /> Back to Resume Analyzer
           </Link>
         </nav>
-        <div className="rounded-xl border border-[var(--error)]/30 bg-[var(--surface)] p-6 md:p-8 shadow-sm">
+        <div className="rounded-xl border border-danger/30 bg-card p-6 md:p-8">
           <div className="flex items-start gap-4">
-            <div className="p-2.5 rounded-lg bg-[var(--error)]/10 text-[var(--error)] shrink-0">
+            <div className="p-2.5 rounded-lg bg-danger/10 text-danger shrink-0">
               <AlertCircle size={24} />
             </div>
             <div className="flex-1">
-              <h2 className="text-lg font-semibold text-[var(--ink)]">Analysis could not be completed</h2>
-              <p className="mt-2 text-[14px] text-[var(--ink-secondary)] leading-relaxed">{error}</p>
+              <h2 className="text-lg font-semibold text-ink">Analysis could not be completed</h2>
+              <p className="mt-2 text-[14px] text-body leading-relaxed">{error}</p>
               <div className="mt-6 flex flex-wrap items-center gap-3">
                 <button
                   onClick={handleRetry}
@@ -217,30 +217,30 @@ export function ResumeAnalysisDetailPage({ analysisId }: ResumeAnalysisDetailPag
     return (
       <div className="w-full max-w-3xl mx-auto py-8">
         <header className="mb-8">
-          <div className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-[var(--surface)] border border-[var(--border)] w-fit mb-3">
-            <span className="w-2 h-2 rounded-full bg-[var(--accent)] animate-pulse" />
-            <span className="text-[11px] font-mono font-semibold uppercase tracking-wider text-[var(--accent)]">
+          <div className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-card border border-hair w-fit mb-3">
+            <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
+            <span className="text-[11px] font-mono font-semibold uppercase tracking-wider text-accent-ink">
               Real-time Processing
             </span>
           </div>
-          <h1 className="text-2xl md:text-3xl font-display font-medium text-[var(--ink)]">
+          <h1 className="text-2xl md:text-3xl font-display font-medium text-ink">
             Analyzing your resume benchmark
           </h1>
-          <p className="mt-2 text-[14px] text-[var(--ink-secondary)]">
+          <p className="mt-2 text-[14px] text-body">
             Extracting text structure, matching role competencies, evaluating ATS criteria, and aligning company criteria.
           </p>
         </header>
 
-        <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-6 md:p-8 shadow-sm">
+        <div className="rounded-xl border border-hair bg-card p-6 md:p-8">
           {/* Progress bar */}
           <div className="mb-6">
-            <div className="flex justify-between items-center text-[12px] font-semibold text-[var(--ink-secondary)] mb-2">
+            <div className="flex justify-between items-center text-[12px] font-semibold text-body mb-2">
               <span>Analysis Progress</span>
-              <span className="font-mono text-[var(--accent)]">{progressPercent}%</span>
+              <span className="font-mono text-accent-ink">{progressPercent}%</span>
             </div>
-            <div className="w-full h-2 rounded-full bg-[var(--surface-subdued)] overflow-hidden">
+            <div className="w-full h-2 rounded-full bg-paper-2 overflow-hidden">
               <div
-                className="h-full bg-[var(--accent)] transition-all duration-300 ease-out"
+                className="h-full bg-accent transition-all duration-300 ease-out"
                 style={{ width: `${progressPercent}%` }}
               />
             </div>
@@ -258,34 +258,34 @@ export function ResumeAnalysisDetailPage({ analysisId }: ResumeAnalysisDetailPag
                   key={stage.id}
                   className={`flex items-start gap-3.5 p-3 rounded-lg border transition-colors ${
                     isCurrent
-                      ? "border-[var(--accent)]/40 bg-[var(--accent)]/5"
+                      ? "border-accent/40 bg-accent/5"
                       : isDone
-                      ? "border-[var(--border)]/60 bg-[var(--surface)]"
+                      ? "border-hair/60 bg-card"
                       : "border-transparent opacity-60"
                   }`}
                 >
                   <div className="mt-0.5 shrink-0">
                     {isDone ? (
-                      <CheckCircle2 size={18} className="text-[var(--success)]" />
+                      <CheckCircle2 size={18} className="text-note" />
                     ) : isCurrent ? (
-                      <Loader2 size={18} className="text-[var(--accent)] animate-spin" />
+                      <Loader2 size={18} className="text-accent-ink animate-spin" />
                     ) : isFailed ? (
-                      <XCircle size={18} className="text-[var(--error)]" />
+                      <XCircle size={18} className="text-danger" />
                     ) : (
-                      <div className="w-4 h-4 rounded-full border border-[var(--ink-tertiary)] opacity-40 ml-0.5" />
+                      <div className="w-4 h-4 rounded-full border border-mute opacity-40 ml-0.5" />
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
-                      <p className={`text-[13px] font-medium ${isCurrent ? "text-[var(--accent)]" : "text-[var(--ink)]"}`}>
+                      <p className={`text-[13px] font-medium ${isCurrent ? "text-accent-ink" : "text-ink"}`}>
                         {idx + 1}. {stage.label}
                       </p>
                       {isDone && (
-                        <span className="text-[11px] font-mono text-[var(--success)] font-medium">Done</span>
+                        <span className="text-[11px] font-mono text-note font-medium">Done</span>
                       )}
                     </div>
                     {stage.message && (
-                      <p className="text-[12px] text-[var(--ink-secondary)] mt-0.5 truncate">
+                      <p className="text-[12px] text-body mt-0.5 truncate">
                         {stage.message}
                       </p>
                     )}
@@ -305,10 +305,10 @@ export function ResumeAnalysisDetailPage({ analysisId }: ResumeAnalysisDetailPag
   const score = report.overallScore;
   const ratingBadge =
     score >= 80
-      ? { label: "Placement Ready", color: "text-[var(--success)] bg-[var(--success)]/10 border-[var(--success)]/30" }
+      ? { label: "Placement Ready", color: "text-note bg-note/10 border-note/30" }
       : score >= 65
-      ? { label: "Competitive", color: "text-[var(--accent)] bg-[var(--accent)]/10 border-[var(--accent)]/30" }
-      : { label: "Needs Targeted Polish", color: "text-[var(--warning)] bg-[var(--warning)]/10 border-[var(--warning)]/30" };
+      ? { label: "Competitive", color: "text-accent-ink bg-accent/10 border-accent/30" }
+      : { label: "Needs Targeted Polish", color: "text-warning bg-warning/10 border-warning/30" };
 
   return (
     <div className="w-full max-w-5xl mx-auto py-6 space-y-6">
@@ -317,7 +317,7 @@ export function ResumeAnalysisDetailPage({ analysisId }: ResumeAnalysisDetailPag
         <nav aria-label="Breadcrumb">
           <Link
             href="/tools/resume-analyzer"
-            className="inline-flex items-center gap-2 text-[12.5px] font-medium text-[var(--ink-secondary)] hover:text-[var(--accent)] transition-colors"
+            className="inline-flex items-center gap-2 text-[12.5px] font-medium text-body hover:text-accent-ink transition-colors"
           >
             <ArrowLeft size={15} /> Back to Analyzer
           </Link>
@@ -340,37 +340,37 @@ export function ResumeAnalysisDetailPage({ analysisId }: ResumeAnalysisDetailPag
       </div>
 
       {/* Target Benchmark & Hero Header */}
-      <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-6 md:p-8 shadow-sm">
+      <div className="rounded-xl border border-hair bg-card p-6 md:p-8">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           <div className="space-y-2">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold tracking-wide uppercase bg-[var(--accent)]/10 text-[var(--accent)] border border-[var(--accent)]/20">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold tracking-wide uppercase bg-accent/10 text-accent-ink border border-accent/20">
                 <Building2 size={12} /> {report.target.company}
               </span>
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold tracking-wide uppercase bg-[var(--surface-subdued)] text-[var(--ink-secondary)] border border-[var(--border)]">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold tracking-wide uppercase bg-paper-2 text-body border border-hair">
                 <Briefcase size={12} /> {report.target.role.replace(/_/g, " ").toUpperCase()}
               </span>
               <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${ratingBadge.color}`}>
                 {ratingBadge.label}
               </span>
             </div>
-            <h1 className="text-2xl md:text-3xl font-display font-medium text-[var(--ink)] tracking-tight">
+            <h1 className="text-2xl md:text-3xl font-display font-medium text-ink tracking-tight">
               Placement Benchmark Report
             </h1>
-            <p className="text-[13.5px] text-[var(--ink-secondary)] max-w-2xl">
-              Targeting <span className="font-semibold text-[var(--ink)]">{report.target.company}</span> as a{" "}
-              <span className="font-semibold text-[var(--ink)]">{report.target.role.replace(/_/g, " ")}</span>. Report based on verified resume content, ATS parsing criteria, and industry hiring standards.
+            <p className="text-[13.5px] text-body max-w-2xl">
+              Targeting <span className="font-semibold text-ink">{report.target.company}</span> as a{" "}
+              <span className="font-semibold text-ink">{report.target.role.replace(/_/g, " ")}</span>. Report based on verified resume content, ATS parsing criteria, and industry hiring standards.
             </p>
           </div>
 
           {/* Overall Score Dial */}
-          <div className="flex items-center gap-4 shrink-0 rounded-xl bg-[var(--background)] p-4 border border-[var(--border)]">
+          <div className="flex items-center gap-4 shrink-0 rounded-xl bg-paper p-4 border border-hair">
             <div className="text-center">
-              <div className="text-4xl md:text-5xl font-display font-bold text-[var(--accent)] tracking-tight">
+              <div className="text-4xl md:text-5xl font-display font-bold text-accent-ink tracking-tight">
                 {report.overallScore}
-                <span className="text-lg font-normal text-[var(--ink-tertiary)]">/100</span>
+                <span className="text-lg font-normal text-mute">/100</span>
               </div>
-              <p className="text-[11px] font-mono uppercase tracking-wider text-[var(--ink-secondary)] mt-0.5">
+              <p className="text-[11px] font-mono uppercase tracking-wider text-body mt-0.5">
                 Readiness Score
               </p>
             </div>
@@ -378,26 +378,26 @@ export function ResumeAnalysisDetailPage({ analysisId }: ResumeAnalysisDetailPag
         </div>
 
         {/* Candidate Snapshot Bar */}
-        <div className="mt-6 pt-5 border-t border-[var(--border)] flex flex-wrap items-center gap-y-2 gap-x-6 text-[12px] text-[var(--ink-secondary)]">
-          <div className="inline-flex items-center gap-1.5 font-medium text-[var(--ink)]">
-            <User size={14} className="text-[var(--accent)]" />
+        <div className="mt-6 pt-5 border-t border-hair flex flex-wrap items-center gap-y-2 gap-x-6 text-[12px] text-body">
+          <div className="inline-flex items-center gap-1.5 font-medium text-ink">
+            <User size={14} className="text-accent-ink" />
             {report.candidate.fullName || "Candidate"}
           </div>
           {report.candidate.email && (
             <div className="inline-flex items-center gap-1.5">
-              <Mail size={14} className="text-[var(--ink-tertiary)]" />
+              <Mail size={14} className="text-mute" />
               {report.candidate.email}
             </div>
           )}
           {report.candidate.phone && (
             <div className="inline-flex items-center gap-1.5">
-              <Phone size={14} className="text-[var(--ink-tertiary)]" />
+              <Phone size={14} className="text-mute" />
               {report.candidate.phone}
             </div>
           )}
           {report.candidate.yearsOfExperience !== undefined && report.candidate.yearsOfExperience !== null && (
             <div className="inline-flex items-center gap-1.5">
-              <Clock size={14} className="text-[var(--ink-tertiary)]" />
+              <Clock size={14} className="text-mute" />
               {report.candidate.yearsOfExperience} yrs experience detected
             </div>
           )}
@@ -411,17 +411,17 @@ export function ResumeAnalysisDetailPage({ analysisId }: ResumeAnalysisDetailPag
           return (
             <div
               key={item.label}
-              className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-3.5 shadow-sm"
+              className="rounded-lg border border-hair bg-card p-3.5"
             >
-              <div className="flex items-center justify-between text-[11.5px] font-semibold text-[var(--ink-secondary)]">
+              <div className="flex items-center justify-between text-[11.5px] font-semibold text-body">
                 <span className="truncate">{item.label}</span>
-                <span className="font-mono text-[var(--ink)] ml-1">
+                <span className="font-mono text-ink ml-1">
                   {item.value}/{item.maxValue}
                 </span>
               </div>
-              <div className="w-full h-1.5 rounded-full bg-[var(--surface-subdued)] mt-2 overflow-hidden">
+              <div className="w-full h-1.5 rounded-full bg-paper-2 mt-2 overflow-hidden">
                 <div
-                  className="h-full bg-[var(--accent)] rounded-full transition-all duration-300"
+                  className="h-full bg-accent rounded-full transition-all duration-300"
                   style={{ width: `${pct}%` }}
                 />
               </div>
@@ -431,7 +431,7 @@ export function ResumeAnalysisDetailPage({ analysisId }: ResumeAnalysisDetailPag
       </div>
 
       {/* Tab Navigation */}
-      <div className="border-b border-[var(--border)] flex gap-2 overflow-x-auto pb-px">
+      <div className="border-b border-hair flex gap-2 overflow-x-auto pb-px">
         {[
           { key: "overview", label: "Executive Summary & Plan" },
           { key: "ats", label: `ATS Audit (${report.atsCompatibility.score}%)` },
@@ -443,8 +443,8 @@ export function ResumeAnalysisDetailPage({ analysisId }: ResumeAnalysisDetailPag
             onClick={() => setActiveTab(tab.key as TabKey)}
             className={`px-4 py-2.5 text-[13px] font-medium border-b-2 whitespace-nowrap transition-colors ${
               activeTab === tab.key
-                ? "border-[var(--accent)] text-[var(--accent)]"
-                : "border-transparent text-[var(--ink-secondary)] hover:text-[var(--ink)]"
+                ? "border-accent text-accent-ink"
+                : "border-transparent text-body hover:text-ink"
             }`}
           >
             {tab.label}
@@ -458,15 +458,15 @@ export function ResumeAnalysisDetailPage({ analysisId }: ResumeAnalysisDetailPag
       {activeTab === "overview" && (
         <div className="space-y-6">
           {/* Prioritized Action Plan */}
-          <section className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-sm">
+          <section className="rounded-xl border border-hair bg-card p-6">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h2 className="text-base font-semibold text-[var(--ink)]">Prioritized Action Plan</h2>
-                <p className="text-[12.5px] text-[var(--ink-secondary)] mt-0.5">
+                <h2 className="text-base font-semibold text-ink">Prioritized Action Plan</h2>
+                <p className="text-[12.5px] text-body mt-0.5">
                   High-leverage recommendations to maximize shortlisting rates at {report.target.company}.
                 </p>
               </div>
-              <span className="text-[11px] font-mono text-[var(--ink-tertiary)]">
+              <span className="text-[11px] font-mono text-mute">
                 {report.actionPlan.length} actions
               </span>
             </div>
@@ -475,25 +475,25 @@ export function ResumeAnalysisDetailPage({ analysisId }: ResumeAnalysisDetailPag
               {report.actionPlan.map((action, idx) => {
                 const priorityStyles =
                   action.priority === "high"
-                    ? "bg-[var(--error)]/10 text-[var(--error)] border-[var(--error)]/20"
+                    ? "bg-danger/10 text-danger border-danger/20"
                     : action.priority === "medium"
-                    ? "bg-[var(--warning)]/10 text-[var(--warning)] border-[var(--warning)]/20"
-                    : "bg-[var(--accent)]/10 text-[var(--accent)] border-[var(--accent)]/20";
+                    ? "bg-warning/10 text-warning border-warning/20"
+                    : "bg-accent/10 text-accent-ink border-accent/20";
 
                 return (
                   <div
                     key={idx}
-                    className="p-4 rounded-lg border border-[var(--border)] bg-[var(--background)]/50 hover:bg-[var(--background)] transition-colors"
+                    className="p-4 rounded-lg border border-hair bg-paper/50 hover:bg-paper transition-colors"
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex items-start gap-3">
-                        <CheckSquare size={17} className="text-[var(--accent)] shrink-0 mt-0.5" />
+                        <CheckSquare size={17} className="text-accent-ink shrink-0 mt-0.5" />
                         <div>
-                          <p className="text-[13.5px] font-medium text-[var(--ink)] leading-snug">
+                          <p className="text-[13.5px] font-medium text-ink leading-snug">
                             {action.action}
                           </p>
-                          <p className="text-[12px] text-[var(--ink-secondary)] mt-1.5 leading-relaxed">
-                            <span className="font-semibold text-[var(--ink)]">Why: </span>
+                          <p className="text-[12px] text-body mt-1.5 leading-relaxed">
+                            <span className="font-semibold text-ink">Why: </span>
                             {action.rationale}
                           </p>
                         </div>
@@ -510,41 +510,41 @@ export function ResumeAnalysisDetailPage({ analysisId }: ResumeAnalysisDetailPag
 
           {/* Critical Issues Identified */}
           {report.issues.length > 0 && (
-            <section className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-sm">
-              <h2 className="text-base font-semibold text-[var(--ink)] mb-1">Detected Resume Risks</h2>
-              <p className="text-[12.5px] text-[var(--ink-secondary)] mb-4">
+            <section className="rounded-xl border border-hair bg-card p-6">
+              <h2 className="text-base font-semibold text-ink mb-1">Detected Resume Risks</h2>
+              <p className="text-[12.5px] text-body mb-4">
                 Items that could negatively influence screening algorithms or recruiter impression.
               </p>
               <div className="space-y-3">
                 {report.issues.map((issue, idx) => (
                   <div
                     key={idx}
-                    className="p-4 rounded-lg border border-[var(--border)] bg-[var(--surface)]"
+                    className="p-4 rounded-lg border border-hair bg-card"
                   >
                     <div className="flex items-start gap-3">
                       <AlertTriangle
                         size={17}
                         className={
                           issue.severity === "high"
-                            ? "text-[var(--error)]"
-                            : "text-[var(--warning)]"
+                            ? "text-danger"
+                            : "text-warning"
                         }
                       />
                       <div className="flex-1">
                         <div className="flex items-center justify-between">
-                          <p className="text-[13px] font-semibold text-[var(--ink)]">{issue.issue}</p>
+                          <p className="text-[13px] font-semibold text-ink">{issue.issue}</p>
                           <span
                             className={`text-[10px] uppercase font-semibold px-2 py-0.5 rounded border ${
                               issue.severity === "high"
-                                ? "text-[var(--error)] border-[var(--error)]/30 bg-[var(--error)]/5"
-                                : "text-[var(--warning)] border-[var(--warning)]/30 bg-[var(--warning)]/5"
+                                ? "text-danger border-danger/30 bg-danger/5"
+                                : "text-warning border-warning/30 bg-warning/5"
                             }`}
                           >
                             {issue.severity} severity
                           </span>
                         </div>
-                        <p className="text-[12px] text-[var(--ink-secondary)] mt-1">
-                          <span className="font-semibold text-[var(--ink)]">Recommendation: </span>
+                        <p className="text-[12px] text-body mt-1">
+                          <span className="font-semibold text-ink">Recommendation: </span>
                           {issue.recommendation}
                         </p>
                       </div>
@@ -559,10 +559,10 @@ export function ResumeAnalysisDetailPage({ analysisId }: ResumeAnalysisDetailPag
 
       {/* 2. ATS AUDIT */}
       {activeTab === "ats" && (
-        <section className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-sm space-y-6">
+        <section className="rounded-xl border border-hair bg-card p-6 space-y-6">
           <div>
-            <h2 className="text-base font-semibold text-[var(--ink)]">Applicant Tracking System (ATS) Health</h2>
-            <p className="text-[12.5px] text-[var(--ink-secondary)] mt-0.5">
+            <h2 className="text-base font-semibold text-ink">Applicant Tracking System (ATS) Health</h2>
+            <p className="text-[12.5px] text-body mt-0.5">
               {report.atsCompatibility.summary}
             </p>
           </div>
@@ -571,40 +571,40 @@ export function ResumeAnalysisDetailPage({ analysisId }: ResumeAnalysisDetailPag
             {report.atsCompatibility.checks.map((check) => {
               const statusIcon =
                 check.status === "pass" ? (
-                  <CheckCircle2 size={16} className="text-[var(--success)]" />
+                  <CheckCircle2 size={16} className="text-note" />
                 ) : check.status === "warning" ? (
-                  <AlertTriangle size={16} className="text-[var(--warning)]" />
+                  <AlertTriangle size={16} className="text-warning" />
                 ) : (
-                  <XCircle size={16} className="text-[var(--error)]" />
+                  <XCircle size={16} className="text-danger" />
                 );
 
               const statusBadge =
                 check.status === "pass"
-                  ? "bg-[var(--success)]/10 text-[var(--success)] border-[var(--success)]/20"
+                  ? "bg-note/10 text-note border-note/20"
                   : check.status === "warning"
-                  ? "bg-[var(--warning)]/10 text-[var(--warning)] border-[var(--warning)]/20"
-                  : "bg-[var(--error)]/10 text-[var(--error)] border-[var(--error)]/20";
+                  ? "bg-warning/10 text-warning border-warning/20"
+                  : "bg-danger/10 text-danger border-danger/20";
 
               return (
                 <div
                   key={check.id}
-                  className="p-4 rounded-lg border border-[var(--border)] bg-[var(--background)]/40 flex items-start gap-3.5"
+                  className="p-4 rounded-lg border border-hair bg-paper/40 flex items-start gap-3.5"
                 >
                   <div className="mt-0.5 shrink-0">{statusIcon}</div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-2">
-                      <p className="text-[13px] font-medium text-[var(--ink)]">{check.label}</p>
+                      <p className="text-[13px] font-medium text-ink">{check.label}</p>
                       <span className={`px-2 py-0.5 rounded text-[10.5px] font-semibold uppercase tracking-wider border ${statusBadge}`}>
                         {check.status}
                       </span>
                     </div>
-                    <p className="text-[12.5px] text-[var(--ink-secondary)] mt-1">{check.detail}</p>
+                    <p className="text-[12.5px] text-body mt-1">{check.detail}</p>
                     {check.evidence && check.evidence.length > 0 && (
                       <div className="mt-2 flex flex-wrap gap-1.5">
                         {check.evidence.map((ev, i) => (
                           <span
                             key={i}
-                            className="inline-block px-2 py-0.5 rounded bg-[var(--surface)] border border-[var(--border)] text-[11px] font-mono text-[var(--ink-secondary)]"
+                            className="inline-block px-2 py-0.5 rounded bg-card border border-hair text-[11px] font-mono text-body"
                           >
                             {ev}
                           </span>
@@ -625,27 +625,27 @@ export function ResumeAnalysisDetailPage({ analysisId }: ResumeAnalysisDetailPag
           {/* Matched & Missing Skills */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Matched */}
-            <section className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-sm">
+            <section className="rounded-xl border border-hair bg-card p-6">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-semibold text-[var(--ink)] flex items-center gap-2">
-                  <CheckCircle2 size={16} className="text-[var(--success)]" /> Matched Role Skills
+                <h3 className="text-sm font-semibold text-ink flex items-center gap-2">
+                  <CheckCircle2 size={16} className="text-note" /> Matched Role Skills
                 </h3>
-                <span className="text-[11px] font-mono text-[var(--success)] font-medium">
+                <span className="text-[11px] font-mono text-note font-medium">
                   {report.skillMatching.matched.length} detected
                 </span>
               </div>
               {report.skillMatching.matched.length === 0 ? (
-                <p className="text-[12.5px] text-[var(--ink-secondary)]">No verified skills detected.</p>
+                <p className="text-[12.5px] text-body">None of the target skills were found in your resume.</p>
               ) : (
                 <div className="space-y-2.5">
                   {report.skillMatching.matched.map((skill) => (
                     <div
                       key={skill.name}
-                      className="p-3 rounded-lg border border-[var(--border)] bg-[var(--background)]/30"
+                      className="p-3 rounded-lg border border-hair bg-paper/30"
                     >
-                      <p className="text-[12.5px] font-semibold text-[var(--ink)]">{skill.name}</p>
+                      <p className="text-[12.5px] font-semibold text-ink">{skill.name}</p>
                       {skill.evidence && skill.evidence.length > 0 && (
-                        <p className="text-[11.5px] text-[var(--ink-secondary)] mt-1 italic">
+                        <p className="text-[11.5px] text-body mt-1 italic">
                           &quot;{skill.evidence[0]}&quot;
                         </p>
                       )}
@@ -656,27 +656,27 @@ export function ResumeAnalysisDetailPage({ analysisId }: ResumeAnalysisDetailPag
             </section>
 
             {/* Missing Skills */}
-            <section className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-sm">
+            <section className="rounded-xl border border-hair bg-card p-6">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-semibold text-[var(--ink)] flex items-center gap-2">
-                  <AlertCircle size={16} className="text-[var(--error)]" /> Recommended Skills to Add
+                <h3 className="text-sm font-semibold text-ink flex items-center gap-2">
+                  <AlertCircle size={16} className="text-danger" /> Recommended Skills to Add
                 </h3>
-                <span className="text-[11px] font-mono text-[var(--error)] font-medium">
+                <span className="text-[11px] font-mono text-danger font-medium">
                   {report.skillMatching.missing.length} missing
                 </span>
               </div>
               {report.skillMatching.missing.length === 0 ? (
-                <p className="text-[12.5px] text-[var(--ink-secondary)]">Great coverage! All core skills verified.</p>
+                <p className="text-[12.5px] text-body">Every core skill shows up in your resume.</p>
               ) : (
                 <div className="space-y-2.5">
                   {report.skillMatching.missing.map((skill) => (
                     <div
                       key={skill.name}
-                      className="p-3 rounded-lg border border-[var(--border)] bg-[var(--background)]/30"
+                      className="p-3 rounded-lg border border-hair bg-paper/30"
                     >
-                      <p className="text-[12.5px] font-semibold text-[var(--ink)]">{skill.name}</p>
+                      <p className="text-[12.5px] font-semibold text-ink">{skill.name}</p>
                       {skill.recommendation && (
-                        <p className="text-[11.5px] text-[var(--ink-secondary)] mt-1">
+                        <p className="text-[11.5px] text-body mt-1">
                           {skill.recommendation}
                         </p>
                       )}
@@ -688,9 +688,9 @@ export function ResumeAnalysisDetailPage({ analysisId }: ResumeAnalysisDetailPag
           </div>
 
           {/* Keyword Frequency Analysis */}
-          <section className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-sm">
-            <h3 className="text-sm font-semibold text-[var(--ink)] mb-1">Keyword Match Frequency</h3>
-            <p className="text-[12px] text-[var(--ink-secondary)] mb-4">
+          <section className="rounded-xl border border-hair bg-card p-6">
+            <h3 className="text-sm font-semibold text-ink mb-1">Keyword Match Frequency</h3>
+            <p className="text-[12px] text-body mb-4">
               Screening keywords searched by ATS scanners based on your target role.
             </p>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2.5">
@@ -699,8 +699,8 @@ export function ResumeAnalysisDetailPage({ analysisId }: ResumeAnalysisDetailPag
                   key={item.keyword}
                   className={`p-2.5 rounded-lg border text-center ${
                     item.status === "present"
-                      ? "border-[var(--success)]/30 bg-[var(--success)]/5 text-[var(--ink)]"
-                      : "border-[var(--border)] bg-[var(--surface-subdued)] text-[var(--ink-tertiary)]"
+                      ? "border-note/30 bg-note/5 text-ink"
+                      : "border-hair bg-paper-2 text-mute"
                   }`}
                 >
                   <p className="text-[12px] font-medium truncate">{item.keyword}</p>
@@ -716,12 +716,12 @@ export function ResumeAnalysisDetailPage({ analysisId }: ResumeAnalysisDetailPag
 
       {/* 4. COMPANY FIT */}
       {activeTab === "company" && (
-        <section className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-sm space-y-6">
+        <section className="rounded-xl border border-hair bg-card p-6 space-y-6">
           <div>
-            <h2 className="text-base font-semibold text-[var(--ink)]">
+            <h2 className="text-base font-semibold text-ink">
               {report.target.company} Alignment Factors
             </h2>
-            <p className="text-[12.5px] text-[var(--ink-secondary)] mt-0.5">
+            <p className="text-[12.5px] text-body mt-0.5">
               How well the resume aligns with the hiring profile and evaluation style of {report.target.company} ({report.target.companyType.replace(/_/g, " ")}).
             </p>
           </div>
@@ -730,25 +730,25 @@ export function ResumeAnalysisDetailPage({ analysisId }: ResumeAnalysisDetailPag
             {report.companyAlignment.map((factor, idx) => (
               <div
                 key={idx}
-                className="p-4 rounded-lg border border-[var(--border)] bg-[var(--background)]/40"
+                className="p-4 rounded-lg border border-hair bg-paper/40"
               >
                 <div className="flex items-center justify-between mb-1.5">
-                  <h3 className="text-[13.5px] font-semibold text-[var(--ink)]">{factor.factor}</h3>
+                  <h3 className="text-[13.5px] font-semibold text-ink">{factor.factor}</h3>
                   <span
                     className={`px-2 py-0.5 rounded text-[10.5px] font-semibold uppercase tracking-wider border ${
                       factor.status === "aligned"
-                        ? "bg-[var(--success)]/10 text-[var(--success)] border-[var(--success)]/20"
-                        : "bg-[var(--warning)]/10 text-[var(--warning)] border-[var(--warning)]/20"
+                        ? "bg-note/10 text-note border-note/20"
+                        : "bg-warning/10 text-warning border-warning/20"
                     }`}
                   >
                     {factor.status}
                   </span>
                 </div>
-                <p className="text-[12.5px] text-[var(--ink-secondary)] leading-relaxed">
+                <p className="text-[12.5px] text-body leading-relaxed">
                   {factor.assessment}
                 </p>
                 {factor.evidence && factor.evidence.length > 0 && (
-                  <p className="text-[11.5px] text-[var(--ink-tertiary)] mt-2 font-mono">
+                  <p className="text-[11.5px] text-mute mt-2 font-mono">
                     Evidence: {factor.evidence.join(", ")}
                   </p>
                 )}

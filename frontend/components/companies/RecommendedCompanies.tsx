@@ -9,44 +9,36 @@ export function RecommendedCompanies({ recommendations }: RecommendedCompaniesPr
   return (
     <div className="flex flex-col gap-5">
       <div className="flex items-center gap-2">
-        <Sparkles className="w-5 h-5 text-[var(--warning)]" />
+        <Sparkles className="w-5 h-5 text-warning" />
         <div className="flex flex-col gap-0.5">
-          <h2 className="text-xl font-semibold text-[var(--ink)] tracking-tight">Recommended for Your Profile</h2>
-          <p className="text-[13px] text-[var(--ink-secondary)]">
-            Affinity matching based on your learning mastery and recent practice metrics.
-          </p>
+          <h2 className="text-xl font-semibold text-ink tracking-tight">More companies to explore</h2>
+          <p className="text-[13px] text-body">Companies that hire for similar roles.</p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {recommendations.map((rec) => (
-          <div key={rec.id} className="bg-[var(--surface)] border border-[var(--border)] rounded-xl p-5 flex flex-col h-full gap-4 shadow-[0_1px_2px_0_rgba(0,0,0,0.02)] relative overflow-hidden group">
-            {/* Ambient Match Glow */}
-            <div className="absolute -top-10 -right-10 w-32 h-32 bg-[var(--warning)] opacity-[0.03] rounded-full blur-2xl group-hover:opacity-[0.08] transition-opacity" />
+          <div key={rec.id} className="bg-card border border-hair rounded-xl p-5 flex flex-col h-full gap-4 shadow-[0_1px_2px_0_rgba(0,0,0,0.02)] relative overflow-hidden group">
 
             <div className="flex items-start justify-between">
-              <h3 className="text-[16px] font-bold text-[var(--ink)]">{rec.name}</h3>
-              <div className="flex flex-col items-end gap-0.5">
-                <span className="text-[10px] font-semibold text-[var(--ink-tertiary)] uppercase tracking-wider">Affinity Match</span>
-                <span className="text-sm font-mono font-bold text-[var(--warning)]">{rec.matchPercentage}%</span>
-              </div>
+              <h3 className="text-[16px] font-bold text-ink">{rec.name}</h3>
             </div>
 
-            <p className="text-[13px] text-[var(--ink-secondary)] leading-relaxed">
+            <p className="text-[13px] text-body leading-relaxed">
               {rec.rationale}
             </p>
 
-            <div className="flex items-center gap-3 mt-auto pt-4 border-t border-[var(--border)]">
-              <div className="flex items-center gap-1.5 text-[11px] font-medium text-[var(--ink-secondary)]">
-                <span className="text-[var(--ink)] font-bold">{rec.roadmapsCount}</span> Roadmaps
+            <div className="flex items-center gap-3 mt-auto pt-4 border-t border-hair">
+              <div className="flex items-center gap-1.5 text-[11px] font-medium text-body">
+                <span className="text-ink font-bold">{rec.roadmapsCount}</span> Roadmaps
               </div>
-              <span className="w-1 h-1 rounded-full bg-[var(--border-strong)]" />
-              <div className="flex items-center gap-1.5 text-[11px] font-medium text-[var(--ink-secondary)]">
-                <span className="text-[var(--ink)] font-bold">{rec.practiceSetsCount}</span> Practice Sets
+              <span className="w-1 h-1 rounded-full bg-ink/25" />
+              <div className="flex items-center gap-1.5 text-[11px] font-medium text-body">
+                <span className="text-ink font-bold">{rec.practiceSetsCount}</span> Practice Sets
               </div>
             </div>
 
-            <button className="w-full py-2 mt-2 bg-[var(--surface-subdued)] hover:bg-[var(--border)] border border-transparent hover:border-[var(--border-strong)] text-[12.5px] font-semibold text-[var(--ink)] rounded-lg transition-colors flex items-center justify-center gap-1.5">
+            <button className="w-full py-2 mt-2 bg-paper-2 hover:bg-hair border border-transparent hover:border-line text-[12.5px] font-semibold text-ink rounded-lg transition-colors flex items-center justify-center gap-1.5">
               Explore Track <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>

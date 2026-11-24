@@ -207,16 +207,16 @@ export default function ResourceDetailPage({ params }: { params: Promise<{ id: s
   if (!resource) {
     return (
       <div className="flex flex-col items-center justify-center py-32 text-center max-w-2xl mx-auto px-6">
-        <div className="w-12 h-12 rounded-full bg-[var(--surface-subdued)] flex items-center justify-center mb-4">
-          <FileText className="w-6 h-6 text-[var(--ink-tertiary)]" />
+        <div className="w-12 h-12 rounded-full bg-paper-2 flex items-center justify-center mb-4">
+          <FileText className="w-6 h-6 text-mute" />
         </div>
-        <h1 className="text-2xl font-newsreader font-bold text-[var(--ink)] mb-2">Resource not found</h1>
-        <p className="text-[14px] text-[var(--ink-secondary)] mb-8">
+        <h1 className="display mb-2 text-[40px]">Resource not found</h1>
+        <p className="text-[14px] text-body mb-8">
           The requested study material could not be located in the StudyHub catalog.
         </p>
         <Link 
           href="/resources" 
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[var(--ink)] text-white text-[13px] font-semibold hover:bg-[var(--ink)]/90 transition-colors"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-ink text-paper text-[13px] font-semibold hover:bg-ink/90 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" /> Back to Resources
         </Link>
@@ -238,55 +238,55 @@ export default function ResourceDetailPage({ params }: { params: Promise<{ id: s
     <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 pb-24 font-sans">
       
       {/* NAVIGATION BREADCRUMB */}
-      <nav className="flex items-center gap-2 text-[13px] text-[var(--ink-tertiary)] mb-6 font-medium">
-        <Link href="/resources" className="hover:text-[var(--ink)] transition-colors flex items-center gap-1.5">
+      <nav className="flex items-center gap-2 text-[13px] text-mute mb-6 font-medium">
+        <Link href="/resources" className="hover:text-ink transition-colors flex items-center gap-1.5">
           <ArrowLeft className="w-3.5 h-3.5" />
           Resources
         </Link>
         <span>/</span>
-        <span className="hover:text-[var(--ink)] transition-colors">{resource.category}</span>
+        <span className="hover:text-ink transition-colors">{resource.category}</span>
         <span>/</span>
-        <span className="text-[var(--ink)] truncate max-w-[220px] sm:max-w-md">{resource.title}</span>
+        <span className="text-ink truncate max-w-[220px] sm:max-w-md">{resource.title}</span>
       </nav>
 
       {/* HEADER BAR */}
-      <header className="flex flex-col gap-6 mb-8 pb-6 border-b border-[var(--border)]">
+      <header className="flex flex-col gap-6 mb-8 pb-6 border-b border-hair">
         <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
           <div className="flex flex-col gap-3 max-w-3xl">
             <div className="flex items-center gap-2.5 flex-wrap">
-              <span className="px-2.5 py-1 rounded text-[11px] font-semibold bg-[var(--accent-soft)] text-[var(--accent)] border border-[var(--accent-soft-border)] flex items-center gap-1.5">
+              <span className="px-2.5 py-1 rounded text-[11px] font-semibold bg-accent-soft text-accent-ink border border-accent-line flex items-center gap-1.5">
                 <FileText className="w-3.5 h-3.5" />
                 PDF · {resource.category}
               </span>
 
               {resource.readTimeEstimate && (
-                <span className="text-[12px] text-[var(--ink-tertiary)] font-medium flex items-center gap-1.5">
+                <span className="text-[12px] text-mute font-medium flex items-center gap-1.5">
                   <Clock className="w-3.5 h-3.5" />
                   {resource.readTimeEstimate}
                 </span>
               )}
 
-              <span className="w-1 h-1 rounded-full bg-[var(--border-strong)]"></span>
-              <span className="text-[12px] text-[var(--ink-tertiary)] font-mono">
+              <span className="w-1 h-1 rounded-full bg-ink/25"></span>
+              <span className="text-[12px] text-mute font-mono">
                 {pageCount > 1 ? pageCount : resource.pageCount} Pages
               </span>
 
-              <span className="w-1 h-1 rounded-full bg-[var(--border-strong)]"></span>
+              <span className="w-1 h-1 rounded-full bg-ink/25"></span>
               <span className={clsx(
                 "text-[12px] font-semibold",
-                resource.difficulty === "Advanced" ? "text-purple-600" :
-                resource.difficulty === "Intermediate" ? "text-orange-600" :
-                "text-emerald-600"
+                resource.difficulty === "Advanced" ? "text-accent-ink" :
+                resource.difficulty === "Intermediate" ? "text-warning" :
+                "text-note"
               )}>
                 {resource.difficulty}
               </span>
             </div>
 
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-newsreader font-medium text-[var(--ink)] leading-tight tracking-tight">
+            <h1 className="display text-[40px] md:text-[56px]">
               {resource.title}
             </h1>
 
-            <p className="text-[15px] text-[var(--ink-secondary)] leading-relaxed">
+            <p className="text-[15px] text-body leading-relaxed">
               {resource.description}
             </p>
           </div>
@@ -298,8 +298,8 @@ export default function ResourceDetailPage({ params }: { params: Promise<{ id: s
               className={clsx(
                 "flex items-center gap-2 px-3.5 py-2 rounded-xl text-[13px] font-medium transition-all border cursor-pointer",
                 isBookmarked 
-                  ? "bg-[var(--accent-soft)] border-[var(--accent-soft-border)] text-[var(--accent)]" 
-                  : "bg-[var(--surface)] border-[var(--border)] text-[var(--ink-secondary)] hover:border-[var(--border-strong)] hover:text-[var(--ink)] shadow-xs"
+                  ? "bg-accent-soft border-accent-line text-accent-ink" 
+                  : "bg-card border-hair text-body hover:border-line hover:text-ink"
               )}
             >
               <Bookmark className={clsx("w-4 h-4", isBookmarked && "fill-current")} />
@@ -309,7 +309,7 @@ export default function ResourceDetailPage({ params }: { params: Promise<{ id: s
             <a
               href={downloadUrl}
               download={resource.filename}
-              className="flex items-center gap-2 px-3.5 py-2 rounded-xl text-[13px] font-medium bg-[var(--surface)] border border-[var(--border)] text-[var(--ink-secondary)] hover:border-[var(--border-strong)] hover:text-[var(--ink)] transition-all shadow-xs"
+              className="flex items-center gap-2 px-3.5 py-2 rounded-xl text-[13px] font-medium bg-card border border-hair text-body hover:border-line hover:text-ink transition-all"
               title="Download PDF"
             >
               <Download className="w-4 h-4" />
@@ -318,10 +318,10 @@ export default function ResourceDetailPage({ params }: { params: Promise<{ id: s
 
             <button 
               onClick={handleShare}
-              className="flex items-center gap-2 p-2 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-[var(--ink-secondary)] hover:border-[var(--border-strong)] hover:text-[var(--ink)] transition-all shadow-xs cursor-pointer"
+              className="flex items-center gap-2 p-2 rounded-xl bg-card border border-hair text-body hover:border-line hover:text-ink transition-all cursor-pointer"
               title="Share Link"
             >
-              {copiedLink ? <Check className="w-4 h-4 text-[var(--success)]" /> : <Share2 className="w-4 h-4" />}
+              {copiedLink ? <Check className="w-4 h-4 text-note" /> : <Share2 className="w-4 h-4" />}
             </button>
           </div>
         </div>
@@ -334,9 +334,9 @@ export default function ResourceDetailPage({ params }: { params: Promise<{ id: s
         );
         if (!parentPack || !parentPack.packItems) return null;
         return (
-          <div className="mb-6 p-3 bg-[var(--surface)] border border-[var(--border)] rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
-            <div className="flex items-center gap-2 text-[13px] font-semibold text-[var(--ink)]">
-              <Layers className="w-4 h-4 text-[var(--accent)]" />
+          <div className="mb-6 p-3 bg-card border border-hair rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex items-center gap-2 text-[13px] font-semibold text-ink">
+              <Layers className="w-4 h-4 text-accent-ink" />
               <span>{parentPack.title}:</span>
             </div>
             <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0 hide-scrollbar">
@@ -349,8 +349,8 @@ export default function ResourceDetailPage({ params }: { params: Promise<{ id: s
                     className={clsx(
                       "px-3 py-1.5 rounded-xl text-[12px] font-semibold transition-all shrink-0 flex items-center gap-1.5",
                       isActive
-                        ? "bg-[var(--accent)] text-white shadow-xs"
-                        : "bg-[var(--surface-subdued)] text-[var(--ink-secondary)] hover:text-[var(--ink)] hover:bg-[var(--surface-subdued)]/80 border border-transparent hover:border-[var(--border)]"
+                        ? "bg-accent text-paper"
+                        : "bg-paper-2 text-body hover:text-ink hover:bg-paper-2/80 border border-transparent hover:border-hair"
                     )}
                   >
                     <span>{item.unit || item.title}</span>
@@ -366,7 +366,7 @@ export default function ResourceDetailPage({ params }: { params: Promise<{ id: s
       <div 
         ref={readerContainerRef}
         className={clsx(
-          "flex flex-col bg-[var(--surface)] border border-[var(--border)] rounded-2xl overflow-hidden shadow-lg transition-all",
+          "flex flex-col bg-card border border-hair rounded-2xl overflow-hidden shadow-lg transition-all",
           isFullscreen ? "fixed inset-0 z-50 rounded-none border-0 h-screen w-screen" : "w-full"
         )}
       >
@@ -408,32 +408,32 @@ export default function ResourceDetailPage({ params }: { params: Promise<{ id: s
         <button 
           onClick={toggleCompleted}
           className={clsx(
-            "flex items-center gap-2 px-6 py-3 rounded-xl text-[14px] font-semibold transition-all border shadow-sm cursor-pointer",
+            "flex items-center gap-2 px-6 py-3 rounded-xl text-[14px] font-semibold transition-all border cursor-pointer",
             isCompleted 
-              ? "bg-[var(--success)] border-[var(--success)] text-white" 
-              : "bg-[var(--surface)] border-[var(--border-strong)] text-[var(--ink)] hover:bg-[var(--surface-subdued)]"
+              ? "bg-note border-note text-paper" 
+              : "bg-card border-line text-ink hover:bg-paper-2"
           )}
         >
-          <CheckCircle2 className={clsx("w-5 h-5", isCompleted && "fill-white text-[var(--success)]")} />
+          <CheckCircle2 className={clsx("w-5 h-5", isCompleted && "fill-white text-note")} />
           {isCompleted ? "Resource Completed" : "Mark as Completed"}
         </button>
       </div>
 
       {/* RELATED STUDY MATERIALS */}
       {relatedResources.length > 0 && (
-        <section className="mt-16 pt-10 border-t border-[var(--border)] flex flex-col gap-6">
+        <section className="mt-16 pt-10 border-t border-hair flex flex-col gap-6">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-xl font-newsreader font-medium text-[var(--ink)]">
+              <h3 className="text-xl font-medium text-ink">
                 More in {resource.category}
               </h3>
-              <p className="text-[13px] text-[var(--ink-secondary)]">
+              <p className="text-[13px] text-body">
                 Complementary study guides and handwritten notes in this track.
               </p>
             </div>
             <Link 
               href={`/resources`}
-              className="text-[13px] font-semibold text-[var(--accent)] hover:text-[var(--accent-hover)] flex items-center gap-1"
+              className="text-[13px] font-semibold text-accent-ink hover:text-accent-ink flex items-center gap-1"
             >
               View all <ArrowLeft className="w-3.5 h-3.5 rotate-180" />
             </Link>
@@ -444,19 +444,19 @@ export default function ResourceDetailPage({ params }: { params: Promise<{ id: s
               <Link 
                 key={rel.id}
                 href={`/resources/${rel.id}`}
-                className="group p-4 rounded-xl border border-[var(--border)] hover:border-[var(--accent)] hover:bg-[var(--surface-subdued)]/30 transition-all flex flex-col justify-between gap-3 bg-[var(--surface)]"
+                className="group p-4 rounded-xl border border-hair hover:border-accent hover:bg-paper-2/30 transition-all flex flex-col justify-between gap-3 bg-card"
               >
                 <div>
-                  <span className="text-[11px] font-semibold text-[var(--accent)] uppercase font-mono mb-1 block">
+                  <span className="text-[11px] font-semibold text-accent-ink uppercase font-mono mb-1 block">
                     PDF · {rel.category}
                   </span>
-                  <h4 className="text-[14px] font-semibold text-[var(--ink)] group-hover:text-[var(--accent)] transition-colors line-clamp-2">
+                  <h4 className="text-[14px] font-semibold text-ink group-hover:text-accent-ink transition-colors line-clamp-2">
                     {rel.title}
                   </h4>
                 </div>
-                <div className="flex items-center justify-between text-[11px] text-[var(--ink-tertiary)] pt-2 border-t border-[var(--border)]/60">
+                <div className="flex items-center justify-between text-[11px] text-mute pt-2 border-t border-hair/60">
                   <span>{rel.difficulty}</span>
-                  <span className="group-hover:translate-x-1 transition-transform text-[var(--accent)] font-semibold">
+                  <span className="group-hover:translate-x-1 transition-transform text-accent-ink font-semibold">
                     Read →
                   </span>
                 </div>

@@ -304,18 +304,18 @@ export function AnnotationLayer({ width, height, currentPage, fileUrl, onClose }
       />
 
       {/* Floating Toolbar */}
-      <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-[var(--surface)] border border-[var(--border)] rounded-2xl shadow-xl flex flex-col p-2.5 pointer-events-auto min-w-[310px] select-none">
+      <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-card border border-hair rounded-2xl shadow-xl flex flex-col p-2.5 pointer-events-auto min-w-[310px] select-none">
         
         {/* Tools row */}
         <div className="flex items-center justify-between gap-1 mb-2">
           <div className="flex items-center gap-1">
             <ToolButton icon={<Pencil className="w-4 h-4" />} active={activeTool === "pencil"} onClick={() => setActiveTool("pencil")} title="Pencil" />
             <ToolButton icon={<Highlighter className="w-4 h-4" />} active={activeTool === "highlighter"} onClick={() => setActiveTool("highlighter")} title="Highlighter" />
-            <div className="w-px h-5 bg-[var(--border)] mx-1" />
+            <div className="w-px h-5 bg-hair mx-1" />
             <ToolButton icon={<Circle className="w-4 h-4" />} active={activeTool === "circle"} onClick={() => setActiveTool("circle")} title="Circle" />
             <ToolButton icon={<Minus className="w-4 h-4" />} active={activeTool === "line"} onClick={() => setActiveTool("line")} title="Line" />
             <ToolButton icon={<ArrowUpRight className="w-4 h-4" />} active={activeTool === "arrow"} onClick={() => setActiveTool("arrow")} title="Arrow" />
-            <div className="w-px h-5 bg-[var(--border)] mx-1" />
+            <div className="w-px h-5 bg-hair mx-1" />
             <ToolButton icon={<Eraser className="w-4 h-4" />} active={activeTool === "eraser"} onClick={() => setActiveTool("eraser")} title="Eraser" />
             <ToolButton icon={<Pointer className="w-4 h-4" />} active={activeTool === "laser"} onClick={() => setActiveTool("laser")} title="Laser Pointer" />
           </div>
@@ -330,14 +330,14 @@ export function AnnotationLayer({ width, height, currentPage, fileUrl, onClose }
                 onClick={() => setActiveColor(color)}
                 className={clsx(
                   "w-5 h-5 rounded-full border-2 transition-all",
-                  activeColor === color ? "border-[var(--ink)] scale-110" : "border-transparent hover:scale-110"
+                  activeColor === color ? "border-ink scale-110" : "border-transparent hover:scale-110"
                 )}
                 style={{ backgroundColor: color, boxShadow: color === "#ffffff" ? "inset 0 0 0 1px #e5e7eb" : "none" }}
               />
             ))}
           </div>
 
-          <div className="flex items-center gap-1 border-l border-[var(--border)] pl-2">
+          <div className="flex items-center gap-1 border-l border-hair pl-2">
             <ToolButton icon={<Undo2 className="w-4 h-4" />} onClick={undo} disabled={annotations.length === 0} title="Undo" />
             <ToolButton icon={<Redo2 className="w-4 h-4" />} onClick={redo} disabled={redoStack.length === 0} title="Redo" />
             <ToolButton icon={<Trash2 className="w-4 h-4" />} onClick={clear} disabled={annotations.length === 0} title="Clear Page" />
@@ -347,11 +347,11 @@ export function AnnotationLayer({ width, height, currentPage, fileUrl, onClose }
 
         {/* Size row (conditionally rendered) */}
         {(activeTool === "pencil" || activeTool === "eraser") && (
-          <div className="flex items-center justify-between gap-2 px-2.5 py-1.5 mt-2 bg-[var(--surface-subdued)] rounded-xl border border-[var(--border)]">
-            <span className="text-[10px] font-bold text-[var(--ink-secondary)] uppercase tracking-wider shrink-0">
+          <div className="flex items-center justify-between gap-2 px-2.5 py-1.5 mt-2 bg-paper-2 rounded-xl border border-hair">
+            <span className="text-[10px] font-bold text-body uppercase tracking-wider shrink-0">
               {activeTool === "pencil" ? "Size" : "Eraser"}
             </span>
-            <div className="w-px h-3 bg-[var(--border)] shrink-0" />
+            <div className="w-px h-3 bg-hair shrink-0" />
             <div className="flex items-center gap-1.5">
               {activeTool === "pencil" ? (
                 [1, 2, 4, 6, 10, 16].map((size) => {
@@ -363,7 +363,7 @@ export function AnnotationLayer({ width, height, currentPage, fileUrl, onClose }
                       title={`Set pencil size to ${size}px`}
                       className={clsx(
                         "w-7 h-7 flex items-center justify-center rounded-lg transition-colors shrink-0",
-                        pencilSize === size ? "bg-[var(--accent)] text-white shadow-sm" : "hover:bg-[var(--surface)] text-[var(--ink-secondary)] hover:text-[var(--ink)]"
+                        pencilSize === size ? "bg-accent text-paper" : "hover:bg-card text-body hover:text-ink"
                       )}
                     >
                       <div 
@@ -383,7 +383,7 @@ export function AnnotationLayer({ width, height, currentPage, fileUrl, onClose }
                       title={`Set eraser size to ${size}px`}
                       className={clsx(
                         "w-7 h-7 flex items-center justify-center rounded-lg transition-colors shrink-0",
-                        eraserSize === size ? "bg-[var(--accent)] text-white shadow-sm" : "hover:bg-[var(--surface)] text-[var(--ink-secondary)] hover:text-[var(--ink)]"
+                        eraserSize === size ? "bg-accent text-paper" : "hover:bg-card text-body hover:text-ink"
                       )}
                     >
                       <div 
@@ -414,8 +414,8 @@ function ToolButton({ icon, active, onClick, disabled, title }: { icon: React.Re
       className={clsx(
         "p-1.5 rounded-lg transition-colors",
         active 
-          ? "bg-[var(--accent)] text-white" 
-          : "text-[var(--ink-secondary)] hover:bg-[var(--surface-subdued)] hover:text-[var(--ink)]",
+          ? "bg-accent text-paper" 
+          : "text-body hover:bg-paper-2 hover:text-ink",
         disabled && "opacity-40 cursor-not-allowed hover:bg-transparent"
       )}
     >

@@ -63,8 +63,8 @@ export default function ToolsPage() {
 
       {/* Empty State for Core Tools if filtering returns nothing */}
       {isFiltering && filteredCoreTools.length === 0 && (
-        <div className="text-center py-20 bg-[var(--surface-subdued)]/50 rounded-xl border border-[var(--border)] border-dashed">
-          <p className="text-[14px] text-[var(--ink-secondary)] font-medium">
+        <div className="text-center py-20 bg-paper-2/50 rounded-xl border border-hair border-dashed">
+          <p className="text-[14px] text-body font-medium">
             No tools found for "{searchQuery}" in this category.
           </p>
           <button
@@ -72,7 +72,7 @@ export default function ToolsPage() {
               setSearchQuery("");
               setActiveCategory("all");
             }}
-            className="mt-4 text-[13px] font-semibold text-[var(--accent)] hover:underline"
+            className="mt-4 text-[13px] font-semibold text-accent-ink hover:underline"
           >
             Clear filters
           </button>

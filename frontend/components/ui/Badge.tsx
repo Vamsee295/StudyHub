@@ -9,10 +9,10 @@ export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
 
 const variants = {
   neutral: "bg-card-2 text-body border-hair",
-  accent: "bg-[var(--accent-soft)] text-accent-ink border-[var(--accent-soft-border)]",
-  success: "bg-[var(--success-soft)] text-note border-[var(--success-soft-border)]",
-  warning: "bg-[var(--warning-soft)] text-[var(--warning)] border-[var(--warning-soft-border)]",
-  danger: "bg-[var(--error-soft)] text-danger border-[var(--error-soft-border)]",
+  accent: "bg-accent-soft text-accent-ink border-accent-line",
+  success: "bg-success-soft text-note border-success-line",
+  warning: "bg-warning-soft text-warning border-warning-line",
+  danger: "bg-danger-soft text-danger border-danger-line",
 };
 const dots = { neutral: "bg-mute", accent: "bg-accent", success: "bg-note", warning: "bg-gold", danger: "bg-danger" };
 

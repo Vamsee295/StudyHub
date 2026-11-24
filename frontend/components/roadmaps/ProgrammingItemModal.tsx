@@ -82,9 +82,9 @@ export const ProgrammingItemModal: React.FC<ProgrammingItemModalProps> = ({
   const exerciseItem = item as PfExercise;
 
   const difficultyColors = {
-    easy: 'text-green-600 bg-green-50 border-green-200',
-    medium: 'text-amber-600 bg-amber-50 border-amber-200',
-    hard: 'text-red-600 bg-red-50 border-red-200'
+    easy: 'text-note bg-success-soft border-success-line',
+    medium: 'text-warning bg-warning-soft border-warning-line',
+    hard: 'text-danger bg-danger-soft border-danger-line'
   };
 
   return (
@@ -95,7 +95,7 @@ export const ProgrammingItemModal: React.FC<ProgrammingItemModalProps> = ({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50"
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
             onClick={onClose}
           />
           <motion.div 
@@ -103,14 +103,14 @@ export const ProgrammingItemModal: React.FC<ProgrammingItemModalProps> = ({
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed inset-y-0 right-0 w-full max-w-md bg-white shadow-2xl z-50 flex flex-col border-l border-slate-200"
+            className="fixed inset-y-0 right-0 w-full max-w-md bg-card shadow-2xl z-50 flex flex-col border-l border-hair"
           >
             {/* HEADER */}
             <div className="flex items-start justify-between p-6 pb-4">
               <div>
                 <div className="flex items-center gap-3 mb-3">
                   {isLesson ? (
-                    <div className="px-2 py-0.5 text-[11px] font-bold rounded border uppercase tracking-wider text-blue-600 bg-blue-50 border-blue-200 flex items-center gap-1.5">
+                    <div className="px-2 py-0.5 text-[11px] font-bold rounded border uppercase tracking-wider text-accent-ink bg-accent-soft border-accent-line flex items-center gap-1.5">
                       <BookOpen className="w-3 h-3" /> LESSON
                     </div>
                   ) : (
@@ -118,16 +118,16 @@ export const ProgrammingItemModal: React.FC<ProgrammingItemModalProps> = ({
                       {exerciseItem.difficulty}
                     </div>
                   )}
-                  <span className="text-sm font-mono text-slate-500">#{item.order}</span>
+                  <span className="text-sm font-mono text-mute">#{item.order}</span>
                 </div>
-                <h2 className="text-2xl font-bold text-slate-900 mb-1">{item.title}</h2>
-                <div className="text-sm text-slate-500 font-medium">
+                <h2 className="text-2xl font-bold text-ink mb-1">{item.title}</h2>
+                <div className="text-sm text-mute font-medium">
                   {item.category}
                 </div>
               </div>
               <button 
                 onClick={onClose}
-                className="p-2 hover:bg-slate-100 rounded-full text-slate-400 hover:text-slate-600 transition-colors"
+                className="p-2 hover:bg-card-2 rounded-full text-mute hover:text-body transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -138,11 +138,11 @@ export const ProgrammingItemModal: React.FC<ProgrammingItemModalProps> = ({
               
               {/* Common: Why this matters / Why this problem */}
               <div className="mb-6">
-                <h3 className="text-[13px] font-bold uppercase tracking-wider text-slate-900 mb-2 flex items-center gap-2">
-                  <Lightbulb className="w-4 h-4 text-amber-500" />
+                <h3 className="text-[13px] font-bold uppercase tracking-wider text-ink mb-2 flex items-center gap-2">
+                  <Lightbulb className="w-4 h-4 text-gold" />
                   {isLesson ? "Why this matters" : "Why this problem"}
                 </h3>
-                <p className="text-sm text-slate-600 leading-relaxed bg-slate-50 p-4 rounded-xl border border-slate-100">
+                <p className="text-sm text-body leading-relaxed bg-paper-2 p-4 rounded-xl border border-hair">
                   {isLesson ? lessonItem.whyItMatters : exerciseItem.whyThisProblem}
                 </p>
               </div>
@@ -150,13 +150,13 @@ export const ProgrammingItemModal: React.FC<ProgrammingItemModalProps> = ({
               {/* Lesson Specific: What you'll learn */}
               {isLesson && (
                 <div className="mb-6">
-                  <h3 className="text-[13px] font-bold uppercase tracking-wider text-slate-900 mb-2">
+                  <h3 className="text-[13px] font-bold uppercase tracking-wider text-ink mb-2">
                     What you'll learn
                   </h3>
                   <ul className="space-y-2">
                     {lessonItem.learningPoints.map((pt, i) => (
-                      <li key={i} className="flex items-start gap-2 text-sm text-slate-700">
-                        <CheckCircle2 className="w-4 h-4 text-blue-500 mt-0.5 shrink-0" />
+                      <li key={i} className="flex items-start gap-2 text-sm text-body">
+                        <CheckCircle2 className="w-4 h-4 text-accent mt-0.5 shrink-0" />
                         <span>{pt}</span>
                       </li>
                     ))}
@@ -167,12 +167,12 @@ export const ProgrammingItemModal: React.FC<ProgrammingItemModalProps> = ({
               {/* Exercise Specific: What you'll practice */}
               {!isLesson && (
                 <div className="mb-6">
-                  <h3 className="text-[13px] font-bold uppercase tracking-wider text-slate-900 mb-2">
+                  <h3 className="text-[13px] font-bold uppercase tracking-wider text-ink mb-2">
                     What you'll practice
                   </h3>
                   <div className="flex flex-wrap gap-2">
                     {exerciseItem.practiceSkills.map((skill, i) => (
-                      <span key={i} className="px-2.5 py-1 bg-slate-100 text-slate-700 text-xs font-medium rounded-md border border-slate-200">
+                      <span key={i} className="px-2.5 py-1 bg-card-2 text-body text-xs font-medium rounded-md border border-hair">
                         {skill}
                       </span>
                     ))}
@@ -183,12 +183,12 @@ export const ProgrammingItemModal: React.FC<ProgrammingItemModalProps> = ({
               {/* Lesson Specific: Java Concept */}
               {isLesson && lessonItem.javaConcept && (
                 <div className="mb-6">
-                  <h3 className="text-[13px] font-bold uppercase tracking-wider text-slate-900 mb-2 flex items-center gap-2">
-                    <Code className="w-4 h-4 text-slate-500" />
+                  <h3 className="text-[13px] font-bold uppercase tracking-wider text-ink mb-2 flex items-center gap-2">
+                    <Code className="w-4 h-4 text-mute" />
                     Java Concept
                   </h3>
-                  <div className="bg-slate-900 rounded-xl p-4 overflow-x-auto">
-                    <pre className="text-sm font-mono text-blue-300 leading-relaxed">
+                  <div className="bg-night rounded-xl p-4 overflow-x-auto">
+                    <pre className="text-sm font-mono text-[#f0a07e] leading-relaxed">
                       {lessonItem.javaConcept}
                     </pre>
                   </div>
@@ -197,18 +197,18 @@ export const ProgrammingItemModal: React.FC<ProgrammingItemModalProps> = ({
 
               {/* Complexity */}
               {item.complexity && (
-                <div className="mb-6 bg-blue-50/50 rounded-xl p-4 border border-blue-100">
-                  <h3 className="text-[13px] font-bold uppercase tracking-wider text-slate-900 mb-3">
+                <div className="mb-6 bg-accent-soft/50 rounded-xl p-4 border border-accent-line">
+                  <h3 className="text-[13px] font-bold uppercase tracking-wider text-ink mb-3">
                     Complexity
                   </h3>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <div className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Time</div>
-                      <div className="font-mono text-sm font-medium text-slate-900">{item.complexity.time}</div>
+                      <div className="text-[11px] font-semibold text-mute uppercase tracking-wider mb-1">Time</div>
+                      <div className="font-mono text-sm font-medium text-ink">{item.complexity.time}</div>
                     </div>
                     <div>
-                      <div className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Space</div>
-                      <div className="font-mono text-sm font-medium text-slate-900">{item.complexity.space}</div>
+                      <div className="text-[11px] font-semibold text-mute uppercase tracking-wider mb-1">Space</div>
+                      <div className="font-mono text-sm font-medium text-ink">{item.complexity.space}</div>
                     </div>
                   </div>
                 </div>
@@ -217,13 +217,13 @@ export const ProgrammingItemModal: React.FC<ProgrammingItemModalProps> = ({
               {/* Lesson Specific: Common Mistakes */}
               {isLesson && lessonItem.commonMistakes.length > 0 && (
                 <div className="mb-6">
-                  <h3 className="text-[13px] font-bold uppercase tracking-wider text-red-600 mb-2">
+                  <h3 className="text-[13px] font-bold uppercase tracking-wider text-danger mb-2">
                     Common Mistakes
                   </h3>
-                  <ul className="space-y-2 bg-red-50/50 p-4 rounded-xl border border-red-100">
+                  <ul className="space-y-2 bg-danger-soft/50 p-4 rounded-xl border border-danger-line">
                     {lessonItem.commonMistakes.map((mistake, i) => (
-                      <li key={i} className="flex items-start gap-2 text-sm text-red-800">
-                        <span className="w-1.5 h-1.5 rounded-full bg-red-400 mt-1.5 shrink-0" />
+                      <li key={i} className="flex items-start gap-2 text-sm text-danger">
+                        <span className="w-1.5 h-1.5 rounded-full bg-danger mt-1.5 shrink-0" />
                         <span>{mistake}</span>
                       </li>
                     ))}
@@ -236,7 +236,7 @@ export const ProgrammingItemModal: React.FC<ProgrammingItemModalProps> = ({
                 <div className="mb-6">
                   <button 
                     onClick={() => setShowHint(!showHint)}
-                    className="flex items-center justify-between w-full p-4 rounded-xl border border-amber-200 bg-amber-50/50 text-amber-900 hover:bg-amber-50 transition-colors"
+                    className="flex items-center justify-between w-full p-4 rounded-xl border border-warning-line bg-warning-soft/50 text-warning hover:bg-warning-soft transition-colors"
                   >
                     <span className="font-semibold text-sm">Need a hint?</span>
                     <ChevronRight className={clsx("w-4 h-4 transition-transform", showHint && "rotate-90")} />
@@ -249,7 +249,7 @@ export const ProgrammingItemModal: React.FC<ProgrammingItemModalProps> = ({
                         exit={{ opacity: 0, height: 0 }}
                         className="overflow-hidden"
                       >
-                        <div className="p-4 mt-2 bg-white border border-amber-100 rounded-xl text-sm text-amber-900 leading-relaxed shadow-sm">
+                        <div className="p-4 mt-2 bg-card border border-warning-line rounded-xl text-sm text-warning leading-relaxed">
                           {exerciseItem.hint}
                         </div>
                       </motion.div>
@@ -261,8 +261,8 @@ export const ProgrammingItemModal: React.FC<ProgrammingItemModalProps> = ({
               {/* Exercise Specific: Notes */}
               {!isLesson && (
                 <div className="mb-6">
-                  <h3 className="text-[13px] font-bold uppercase tracking-wider text-slate-900 mb-2 flex items-center gap-2">
-                    <PenLine className="w-4 h-4 text-slate-500" />
+                  <h3 className="text-[13px] font-bold uppercase tracking-wider text-ink mb-2 flex items-center gap-2">
+                    <PenLine className="w-4 h-4 text-mute" />
                     My Notes
                   </h3>
                   <textarea 
@@ -270,10 +270,10 @@ export const ProgrammingItemModal: React.FC<ProgrammingItemModalProps> = ({
                     onChange={(e) => handleNoteChange(e.target.value)}
                     onBlur={handleNoteBlur}
                     placeholder="Write down edge cases, approaches, or things to review..."
-                    className="w-full h-32 p-4 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white text-sm text-slate-700 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-slate-400"
+                    className="w-full h-32 p-4 rounded-xl border border-hair bg-paper-2 focus:bg-card text-sm text-body resize-none focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all placeholder:text-mute"
                   />
                   <div className="flex justify-end mt-2">
-                    <span className="text-[11px] text-slate-400 font-medium">
+                    <span className="text-[11px] text-mute font-medium">
                       {saveTimeout ? 'Saving...' : 'Saved'}
                     </span>
                   </div>
@@ -283,7 +283,7 @@ export const ProgrammingItemModal: React.FC<ProgrammingItemModalProps> = ({
             </div>
 
             {/* FOOTER ACTIONS */}
-            <div className="p-6 border-t border-slate-100 bg-white">
+            <div className="p-6 border-t border-hair bg-card">
               <div className="grid grid-cols-1 gap-3">
                 
                 {/* For Lessons */}
@@ -293,7 +293,7 @@ export const ProgrammingItemModal: React.FC<ProgrammingItemModalProps> = ({
                       <button 
                         onClick={() => handleStatusUpdate('completed')}
                         disabled={isUpdating}
-                        className="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-colors shadow-sm disabled:opacity-50"
+                        className="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-paper bg-accent hover:bg-accent transition-colors disabled:opacity-50"
                       >
                         <CheckCircle2 className="w-5 h-5" />
                         Mark as Completed
@@ -303,7 +303,7 @@ export const ProgrammingItemModal: React.FC<ProgrammingItemModalProps> = ({
                       <button 
                         onClick={() => handleStatusUpdate('not_started')}
                         disabled={isUpdating}
-                        className="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors"
+                        className="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-body bg-card-2 hover:bg-ink/10 transition-colors"
                       >
                         <Circle className="w-5 h-5" />
                         Mark as Unread
@@ -317,7 +317,7 @@ export const ProgrammingItemModal: React.FC<ProgrammingItemModalProps> = ({
                       <button 
                         onClick={() => handleStatusUpdate('solved')}
                         disabled={isUpdating}
-                        className="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-colors shadow-sm disabled:opacity-50"
+                        className="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-paper bg-accent hover:bg-accent transition-colors disabled:opacity-50"
                       >
                         <CheckCircle2 className="w-5 h-5" />
                         Mark as Solved
@@ -327,9 +327,9 @@ export const ProgrammingItemModal: React.FC<ProgrammingItemModalProps> = ({
                       <button 
                         onClick={() => handleStatusUpdate('attempted')}
                         disabled={isUpdating}
-                        className="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors disabled:opacity-50"
+                        className="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-body bg-card-2 hover:bg-ink/10 transition-colors disabled:opacity-50"
                       >
-                        <Clock className="w-5 h-5 text-amber-500" />
+                        <Clock className="w-5 h-5 text-gold" />
                         Mark as Attempted
                       </button>
                     )}
@@ -337,7 +337,7 @@ export const ProgrammingItemModal: React.FC<ProgrammingItemModalProps> = ({
                       <button 
                         onClick={() => handleStatusUpdate('not_started')}
                         disabled={isUpdating}
-                        className="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors disabled:opacity-50"
+                        className="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-body bg-card-2 hover:bg-ink/10 transition-colors disabled:opacity-50"
                       >
                         <Circle className="w-5 h-5" />
                         Reset Progress

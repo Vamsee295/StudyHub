@@ -13,15 +13,35 @@ import {
   ArrowRight, 
   ArrowUpRight, 
   ChevronDown, 
-  Sparkles,
   Layers,
-  Flame,
   CheckCheck
 } from "lucide-react";
 import { clsx } from "clsx";
 import { roadmapModules, RoadmapModule } from "@/lib/data/roadmapModules";
+import { getCourseBySlug } from "@/lib/data/courses";
+import { getStoredProgress } from "@/lib/services/learnService";
+import { PageHeader } from "@/components/ui/Page";
 import { DsaRoadmapView } from "@/components/roadmaps/DsaRoadmapView";
 import { ProgrammingCurriculumView } from "@/components/roadmaps/ProgrammingCurriculumView";
+
+/** Real progress for a roadmap module: lesson completion of the Learn course with the same slug (saved locally).
+ *  Modules with no course behind them (projects, resume, interviews) aren't tracked yet, so they show as upcoming. */
+function withProgress(m: RoadmapModule): RoadmapModule {
+  const course = getCourseBySlug(m.slug);
+  if (!course) return { ...m, status: "upcoming", statusText: "Not tracked yet", progressPct: 0, progressDetail: "no lessons to track" };
+  const store = getStoredProgress();
+  const lessons = course.modules.flatMap((x) => x.lessons);
+  const done = lessons.filter((l) => store[l.id]?.status === "completed" || store[l.slug]?.status === "completed").length;
+  const pct = lessons.length ? Math.round((100 * done) / lessons.length) : 0;
+  const status = pct === 100 ? "completed" : done > 0 ? "in-progress" : "upcoming";
+  return {
+    ...m,
+    status,
+    progressPct: pct,
+    progressDetail: `${done} of ${lessons.length} lessons`,
+    statusText: status === "completed" ? "Completed" : status === "in-progress" ? `In progress · ${pct}%` : "Not started",
+  };
+}
 
 function RoadmapContent() {
   const searchParams = useSearchParams();
@@ -32,20 +52,24 @@ function RoadmapContent() {
   
   const [selectedSlug, setSelectedSlug] = useState<string>(initialModuleSlug);
   const [showAnswer, setShowAnswer] = useState<boolean>(false);
+  // client-only render (AppLayout), so saved progress is readable on first render
+  const [modules] = useState(() => roadmapModules.map(withProgress));
+  const doneCount = modules.filter((m) => m.status === "completed").length;
+  const overallPct = Math.round(modules.reduce((n, m) => n + m.progressPct, 0) / modules.length);
 
   // Sync state if URL changes externally
   useEffect(() => {
     const param = searchParams.get("module");
-    if (param && roadmapModules.some((m) => m.slug === param)) {
+    if (param && modules.some((m) => m.slug === param)) {
       setSelectedSlug(param);
     }
-  }, [searchParams]);
+  }, [searchParams, modules]);
 
   const activeModule: RoadmapModule = useMemo(() => {
     return (
-      roadmapModules.find((m) => m.slug === selectedSlug) || roadmapModules[0]
+      modules.find((m) => m.slug === selectedSlug) || modules[0]
     );
-  }, [selectedSlug]);
+  }, [selectedSlug, modules]);
 
   const handleSelectModule = (slug: string) => {
     setSelectedSlug(slug);
@@ -59,39 +83,16 @@ function RoadmapContent() {
   };
 
   return (
-    <div className="flex flex-col gap-8 pb-16 w-full">
-      {/* PAGE HEADER */}
-      <motion.section 
-        initial={reduced ? undefined : { opacity: 0, y: 12 }}
-        animate={reduced ? undefined : { opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-6 border-b border-[var(--border)]/80"
-      >
-        <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--accent-soft)] border border-[var(--accent-soft-border)] text-[var(--accent)] text-xs font-semibold uppercase tracking-wider mb-2.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)]"></span>
-            Placement Roadmap Architecture
-          </div>
-          <h1 className="font-newsreader text-3xl sm:text-4xl text-[var(--ink)] font-normal tracking-tight leading-tight">
-            From learning to placement.
-          </h1>
-          <p className="text-[var(--ink-secondary)] text-[15px] mt-1.5 max-w-2xl font-normal leading-relaxed">
-            Follow a structured path from fundamentals to technical and HR interviews.
+    <div className="flex w-full flex-col gap-8">
+      <PageHeader eyebrow="Software engineer track" title="Learning to" hl="placement" note="one stage at a time">
+        <div className="text-right max-md:text-left">
+          <p className="display text-[44px] leading-none tabular-nums">
+            {doneCount}
+            <span className="text-[24px] text-mute">/{modules.length}</span>
           </p>
+          <p className="mt-1 font-mono text-[11px] uppercase tracking-wider text-mute">Stages done</p>
         </div>
-
-        {/* Subtle Track Selector Pill */}
-        <div className="flex items-center gap-3 shrink-0">
-          <div className="inline-flex items-center gap-2 bg-[var(--surface)] px-3.5 py-2 rounded-lg border border-[var(--border)] shadow-sm text-[var(--ink)] hover:border-[var(--border-strong)] transition-colors">
-            <Terminal className="w-4 h-4 text-[var(--accent)]" />
-            <span className="text-xs font-medium text-[var(--ink)]">Software Engineer Track</span>
-            <span className="text-[var(--border-strong)]">·</span>
-            <span className="text-xs font-semibold text-[var(--accent)] bg-[var(--accent-soft)] px-2 py-0.5 rounded-md">
-              4 of 12 Cleared
-            </span>
-          </div>
-        </div>
-      </motion.section>
+      </PageHeader>
 
       {/* TWO-COLUMN ROADMAP ARCHITECTURE */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
@@ -103,22 +104,22 @@ function RoadmapContent() {
           transition={{ duration: 0.45 }}
           className="lg:col-span-4 flex flex-col gap-3"
         >
-          <div className="bg-[var(--surface)] rounded-2xl p-5 border border-[var(--border)] shadow-sm">
-            <div className="flex items-center justify-between pb-3.5 mb-2 border-b border-[var(--border)]/60">
-              <h2 className="text-[13px] font-bold text-[var(--ink)] uppercase tracking-wider">
+          <div className="bg-card rounded-2xl p-5 border border-hair">
+            <div className="flex items-center justify-between pb-3.5 mb-2 border-b border-hair/60">
+              <h2 className="text-[13px] font-bold text-ink uppercase tracking-wider">
                 Curriculum Path
               </h2>
-              <span className="font-mono text-xs font-semibold text-[var(--accent)] bg-[var(--accent-soft)] px-2 py-0.5 rounded">
-                33% Complete
+              <span className="font-mono text-xs font-semibold text-accent-ink bg-accent-soft px-2 py-0.5 rounded">
+                {overallPct}% complete
               </span>
             </div>
 
             {/* Vertical Interactive Timeline */}
             <div className="relative flex flex-col gap-1 py-1">
               {/* Spine track line */}
-              <div className="absolute left-[19px] top-4 bottom-4 w-0.5 bg-[var(--border)] -z-0" />
+              <div className="absolute left-[19px] top-4 bottom-4 w-0.5 bg-hair -z-0" />
 
-              {roadmapModules.map((module) => {
+              {modules.map((module) => {
                 const isSelected = module.slug === activeModule.slug;
                 const isCompleted = module.status === "completed";
                 const isInProgress = module.status === "in-progress";
@@ -130,31 +131,31 @@ function RoadmapContent() {
                     className={clsx(
                       "relative z-10 flex items-center gap-3.5 p-2.5 rounded-xl text-left cursor-pointer transition-all group w-full",
                       isSelected
-                        ? "bg-[var(--accent-soft)] border border-[var(--accent)]/50 ring-2 ring-[var(--accent-soft-border)] shadow-sm"
-                        : "hover:bg-[var(--surface-subdued)]/70 border border-transparent"
+                        ? "bg-accent-soft border border-accent/50 ring-2 ring-accent-line"
+                        : "hover:bg-paper-2/70 border border-transparent"
                     )}
                   >
                     {/* Status icon badge */}
                     {isCompleted ? (
                       <div className={clsx(
-                        "w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition-colors shadow-sm",
+                        "w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition-colors",
                         isSelected 
-                          ? "bg-[var(--accent)] text-white ring-2 ring-[var(--accent-soft-border)]"
-                          : "bg-[var(--accent-soft)] border border-[var(--accent-soft-border)] text-[var(--accent)] group-hover:bg-[var(--accent-soft-border)]/40"
+                          ? "bg-accent text-paper ring-2 ring-accent-line"
+                          : "bg-accent-soft border border-accent-line text-accent-ink group-hover:bg-accent-line/40"
                       )}>
                         <Check className="w-4 h-4 stroke-[2.5]" />
                       </div>
                     ) : isInProgress ? (
-                      <div className="relative w-7 h-7 rounded-full bg-[var(--accent)] text-white flex items-center justify-center shrink-0 shadow-sm font-mono text-[11px] font-bold ring-2 ring-[var(--accent-soft-border)]">
+                      <div className="relative w-7 h-7 rounded-full bg-accent text-paper flex items-center justify-center shrink-0 font-mono text-[11px] font-bold ring-2 ring-accent-line">
                         <span>{module.numStr}</span>
-                        <span className="absolute inset-0 rounded-full bg-[var(--accent)] animate-ping opacity-25"></span>
+                        <span className="absolute inset-0 rounded-full bg-accent animate-ping opacity-25"></span>
                       </div>
                     ) : (
                       <div className={clsx(
                         "w-7 h-7 rounded-full flex items-center justify-center shrink-0 font-mono text-[11px] font-semibold transition-colors",
                         isSelected
-                          ? "bg-[var(--accent)] text-white ring-2 ring-[var(--accent-soft-border)]"
-                          : "bg-[var(--surface)] border-2 border-[var(--border-strong)] text-[var(--ink-tertiary)] group-hover:border-[var(--ink-secondary)] group-hover:text-[var(--ink)]"
+                          ? "bg-accent text-paper ring-2 ring-accent-line"
+                          : "bg-card border-2 border-line text-mute group-hover:border-body group-hover:text-ink"
                       )}>
                         {module.numStr}
                       </div>
@@ -166,25 +167,25 @@ function RoadmapContent() {
                         <span className={clsx(
                           "text-[13.5px] truncate",
                           isSelected 
-                            ? "font-bold text-[var(--accent-hover)]" 
+                            ? "font-bold text-accent-ink" 
                             : isCompleted 
-                              ? "font-semibold text-[var(--ink)] group-hover:text-[var(--accent)]" 
-                              : "font-medium text-[var(--ink-secondary)] group-hover:text-[var(--ink)]"
+                              ? "font-semibold text-ink group-hover:text-accent-ink" 
+                              : "font-medium text-body group-hover:text-ink"
                         )}>
                           {module.shortTitle}
                         </span>
                         {isSelected && (
-                          <span className="w-2 h-2 rounded-full bg-[var(--accent)] shrink-0"></span>
+                          <span className="w-2 h-2 rounded-full bg-accent shrink-0"></span>
                         )}
                       </div>
 
                       <span className={clsx(
                         "text-[11px] font-medium",
                         isCompleted 
-                          ? "text-[var(--success)]" 
+                          ? "text-note" 
                           : isInProgress 
-                            ? "text-[var(--accent)] font-semibold" 
-                            : "text-[var(--ink-tertiary)]"
+                            ? "text-accent-ink font-semibold" 
+                            : "text-mute"
                       )}>
                         {module.statusText}
                       </span>
@@ -204,7 +205,7 @@ function RoadmapContent() {
           className="lg:col-span-8 flex flex-col gap-6"
         >
           {/* MAIN DOSSIER WHITE CARD */}
-          <div className="bg-[var(--surface)] rounded-2xl p-6 sm:p-10 border border-[var(--border)] shadow-card flex flex-col gap-8">
+          <div className="bg-card rounded-2xl p-6 sm:p-10 border border-hair shadow-card flex flex-col gap-8">
             
             <AnimatePresence mode="wait">
               {selectedSlug === "dsa" ? (
@@ -230,55 +231,45 @@ function RoadmapContent() {
                   {/* STAGE HEADER & METADATA */}
                 <div className="flex flex-col gap-3 pb-2">
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-[var(--accent-soft)] border border-[var(--accent-soft-border)] text-[var(--accent)] text-[11px] font-mono font-bold tracking-wider uppercase">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)]"></span>
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-accent-soft border border-accent-line text-accent-ink text-[11px] font-mono font-bold tracking-wider uppercase">
+                      <span className="w-1.5 h-1.5 rounded-full bg-accent"></span>
                       {activeModule.badge}
-                    </span>
-                    <span className="inline-flex items-center gap-1.5 text-[var(--ink-secondary)] text-xs font-mono">
-                      <CheckCircle2 className="w-4 h-4 text-[var(--success)]" />
-                      Verified Placement Standard
                     </span>
                   </div>
 
-                  <h2 className="font-newsreader text-[32px] sm:text-[40px] text-[var(--ink)] font-normal leading-[1.15] tracking-tight mt-1">
+                  <h2 className="display mt-1 text-[36px] sm:text-[48px]">
                     {activeModule.title}
                   </h2>
                   
-                  <p className="text-[var(--ink-secondary)] text-[16px] sm:text-[17px] font-normal leading-relaxed max-w-3xl">
+                  <p className="text-body text-[16px] sm:text-[17px] font-normal leading-relaxed max-w-3xl">
                     {activeModule.description}
                   </p>
                 </div>
 
                 {/* OVERALL PROGRESS SECTION */}
-                <div className="bg-[var(--surface-subdued)]/70 p-6 sm:p-7 rounded-xl border border-[var(--border)] flex flex-col gap-3.5 shadow-sm">
+                <div className="bg-paper-2/70 p-6 sm:p-7 rounded-xl border border-hair flex flex-col gap-3.5">
                   <div className="flex flex-wrap justify-between items-center text-sm gap-2">
-                    <span className="text-[12px] font-bold text-[var(--ink)] uppercase tracking-wider font-mono">
+                    <span className="text-[12px] font-bold text-ink uppercase tracking-wider font-mono">
                       Overall Stage Progress
                     </span>
-                    <span className="text-[13.5px] font-semibold text-[var(--accent)] font-mono">
+                    <span className="text-[13.5px] font-semibold text-accent-ink font-mono">
                       {activeModule.progressPct}% Complete{" "}
-                      <span className="text-[var(--ink-tertiary)] font-normal">
+                      <span className="text-mute font-normal">
                         ({activeModule.progressDetail})
                       </span>
                     </span>
                   </div>
 
                   {/* Royal Blue Progress Bar */}
-                  <div className="w-full bg-[var(--border-strong)]/30 h-2.5 rounded-full overflow-hidden">
+                  <div className="w-full bg-ink/30 h-2.5 rounded-full overflow-hidden">
                     <motion.div 
-                      className="bg-[var(--accent)] h-full rounded-full transition-all duration-700 ease-out shadow-xs"
+                      className="bg-accent h-full rounded-full transition-all duration-700 ease-out"
                       initial={reduced ? { width: `${activeModule.progressPct}%` } : { width: 0 }}
                       animate={{ width: `${activeModule.progressPct}%` }}
                       transition={{ duration: 0.6, ease: "easeOut" }}
                     />
                   </div>
 
-                  <div className="flex flex-wrap items-center justify-between text-xs text-[var(--ink-secondary)] pt-0.5">
-                    <span>Target Velocity: {activeModule.targetVelocity}</span>
-                    <span className="font-medium text-[var(--ink)]">
-                      Estimated Clearance: {activeModule.clearanceEstimate}
-                    </span>
-                  </div>
                 </div>
 
                 {/* DYNAMIC CONTENT BLOCK */}
@@ -288,11 +279,11 @@ function RoadmapContent() {
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
                     
                     {/* CARD 1: WHAT TO LEARN */}
-                  <div className="bg-[var(--surface)] p-6 rounded-xl border border-[var(--border)] hover:border-[var(--border-strong)] transition-all flex flex-col justify-between shadow-sm hover:shadow-md">
+                  <div className="bg-card p-6 rounded-xl border border-hair hover:border-line transition-all flex flex-col justify-between hover:shadow-md">
                     <div className="flex flex-col gap-3.5">
-                      <div className="flex items-center gap-2 pb-2.5 border-b border-[var(--border)]/60">
-                        <Layers className="w-4 h-4 text-[var(--accent)]" />
-                        <h3 className="text-xs font-bold text-[var(--ink)] uppercase tracking-wider">
+                      <div className="flex items-center gap-2 pb-2.5 border-b border-hair/60">
+                        <Layers className="w-4 h-4 text-accent-ink" />
+                        <h3 className="text-xs font-bold text-ink uppercase tracking-wider">
                           What to Learn
                         </h3>
                       </div>
@@ -303,8 +294,8 @@ function RoadmapContent() {
                             className={clsx(
                               "text-xs px-2.5 py-1 rounded-md font-medium transition-colors",
                               i >= 4 
-                                ? "bg-[var(--accent-soft)] text-[var(--accent)] ring-1 ring-[var(--accent-soft-border)]"
-                                : "bg-[var(--surface-subdued)] text-[var(--ink)]"
+                                ? "bg-accent-soft text-accent-ink ring-1 ring-accent-line"
+                                : "bg-paper-2 text-ink"
                             )}
                           >
                             {topic}
@@ -313,20 +304,20 @@ function RoadmapContent() {
                       </div>
                     </div>
 
-                    <div className="pt-3.5 mt-4 border-t border-[var(--border)]/60 flex items-center justify-between text-[11px] font-mono text-[var(--ink-tertiary)]">
+                    <div className="pt-3.5 mt-4 border-t border-hair/60 flex items-center justify-between text-[11px] font-mono text-mute">
                       <span className="flex items-center gap-1.5">
-                        <CheckCheck className="w-3.5 h-3.5 text-[var(--accent)]" />
+                        <CheckCheck className="w-3.5 h-3.5 text-accent-ink" />
                         {activeModule.modulesSummary}
                       </span>
                     </div>
                   </div>
 
                   {/* CARD 2: CURATED RESOURCES */}
-                  <div className="bg-[var(--surface)] p-6 rounded-xl border border-[var(--border)] hover:border-[var(--border-strong)] transition-all flex flex-col justify-between shadow-sm hover:shadow-md">
+                  <div className="bg-card p-6 rounded-xl border border-hair hover:border-line transition-all flex flex-col justify-between hover:shadow-md">
                     <div className="flex flex-col gap-3.5">
-                      <div className="flex items-center gap-2 pb-2.5 border-b border-[var(--border)]/60">
-                        <BookOpen className="w-4 h-4 text-[var(--accent)]" />
-                        <h3 className="text-xs font-bold text-[var(--ink)] uppercase tracking-wider">
+                      <div className="flex items-center gap-2 pb-2.5 border-b border-hair/60">
+                        <BookOpen className="w-4 h-4 text-accent-ink" />
+                        <h3 className="text-xs font-bold text-ink uppercase tracking-wider">
                           Curated Resources
                         </h3>
                       </div>
@@ -335,17 +326,17 @@ function RoadmapContent() {
                           <Link
                             key={res.title}
                             href={res.href}
-                            className="group/item flex items-center justify-between p-2 rounded-lg hover:bg-[var(--surface-subdued)]/70 transition-colors border border-transparent hover:border-[var(--border)]"
+                            className="group/item flex items-center justify-between p-2 rounded-lg hover:bg-paper-2/70 transition-colors border border-transparent hover:border-hair"
                           >
                             <div className="flex flex-col min-w-0 pr-2">
-                              <span className="text-[12.5px] font-semibold text-[var(--ink)] group-hover/item:text-[var(--accent)] truncate">
+                              <span className="text-[12.5px] font-semibold text-ink group-hover/item:text-accent-ink truncate">
                                 {res.title}
                               </span>
-                              <span className="text-[11px] text-[var(--ink-tertiary)] font-mono">
+                              <span className="text-[11px] text-mute font-mono">
                                 {res.readTime} · {res.tag}
                               </span>
                             </div>
-                            <ArrowUpRight className="w-4 h-4 text-[var(--ink-tertiary)] group-hover/item:text-[var(--accent)] shrink-0 transition-colors" />
+                            <ArrowUpRight className="w-4 h-4 text-mute group-hover/item:text-accent-ink shrink-0 transition-colors" />
                           </Link>
                         ))}
                       </div>
@@ -353,36 +344,36 @@ function RoadmapContent() {
 
                     <Link 
                       href="/resources"
-                      className="text-xs font-semibold text-[var(--accent)] hover:text-[var(--accent-hover)] flex items-center gap-1 pt-3.5 mt-4 border-t border-[var(--border)]/60"
+                      className="text-xs font-semibold text-accent-ink hover:text-accent-ink flex items-center gap-1 pt-3.5 mt-4 border-t border-hair/60"
                     >
                       View all reading material →
                     </Link>
                   </div>
 
                   {/* CARD 3: PRACTICE & LABS */}
-                  <div className="bg-[var(--surface)] p-6 rounded-xl border border-[var(--border)] hover:border-[var(--border-strong)] transition-all flex flex-col justify-between shadow-sm hover:shadow-md">
+                  <div className="bg-card p-6 rounded-xl border border-hair hover:border-line transition-all flex flex-col justify-between hover:shadow-md">
                     <div className="flex flex-col gap-3.5">
-                      <div className="flex items-center gap-2 pb-2.5 border-b border-[var(--border)]/60">
-                        <Code2 className="w-4 h-4 text-[var(--accent)]" />
-                        <h3 className="text-xs font-bold text-[var(--ink)] uppercase tracking-wider">
+                      <div className="flex items-center gap-2 pb-2.5 border-b border-hair/60">
+                        <Code2 className="w-4 h-4 text-accent-ink" />
+                        <h3 className="text-xs font-bold text-ink uppercase tracking-wider">
                           Practice &amp; Labs
                         </h3>
                       </div>
                       <div className="flex flex-col gap-2 pt-1">
                         <div className="flex items-center justify-between text-xs">
-                          <span className="font-medium text-[var(--ink-secondary)]">Total Solved:</span>
-                          <span className="font-mono font-bold text-[var(--ink)]">
+                          <span className="font-medium text-body">Total Solved:</span>
+                          <span className="font-mono font-bold text-ink">
                             {activeModule.practice.totalSolved} / {activeModule.practice.totalQuestions}
                           </span>
                         </div>
                         <div className="flex items-center gap-1.5 flex-wrap">
-                          <span className="text-[11px] px-2 py-0.5 rounded font-mono font-medium bg-[var(--success-soft)] text-[var(--success)] border border-[var(--success-soft-border)]">
+                          <span className="text-[11px] px-2 py-0.5 rounded font-mono font-medium bg-success-soft text-note border border-success-line">
                             {activeModule.practice.easy} Easy
                           </span>
-                          <span className="text-[11px] px-2 py-0.5 rounded font-mono font-medium bg-[var(--warning-soft)] text-[var(--warning)] border border-amber-200">
+                          <span className="text-[11px] px-2 py-0.5 rounded font-mono font-medium bg-warning-soft text-warning border border-warning-line">
                             {activeModule.practice.medium} Med
                           </span>
-                          <span className="text-[11px] px-2 py-0.5 rounded font-mono font-medium bg-[var(--error-soft)] text-[var(--error)] border border-[var(--error-soft-border)]">
+                          <span className="text-[11px] px-2 py-0.5 rounded font-mono font-medium bg-danger-soft text-danger border border-danger-line">
                             {activeModule.practice.hard} Hard
                           </span>
                         </div>
@@ -391,7 +382,7 @@ function RoadmapContent() {
 
                     <Link
                       href={activeModule.learnUrl}
-                      className="mt-4 w-full inline-flex items-center justify-center gap-2 bg-[var(--accent)] hover:bg-[var(--accent-hover)] active:scale-[0.99] text-white px-4 py-2.5 rounded-lg text-[13px] font-semibold shadow-sm transition-all"
+                      className="mt-4 w-full inline-flex items-center justify-center gap-2 bg-accent hover:bg-accent-ink active:scale-[0.99] text-paper px-4 py-2.5 rounded-lg text-[13px] font-semibold transition-all"
                     >
                       <span>Continue Learning</span>
                       <ArrowRight className="w-4 h-4" />
@@ -401,17 +392,17 @@ function RoadmapContent() {
                 )}
 
                 {/* FEATURED SAMPLE INTERVIEW QUESTION CALLOUT CARD */}
-                <div className="mt-2 rounded-xl border border-[var(--accent-soft-border)] bg-[var(--accent-soft)]/40 p-6 sm:p-7 flex flex-col gap-4 relative overflow-hidden shadow-sm">
+                <div className="mt-2 rounded-xl border border-accent-line bg-accent-soft/40 p-6 sm:p-7 flex flex-col gap-4 relative overflow-hidden">
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-[var(--accent)] bg-[var(--accent-soft)] border border-[var(--accent-soft-border)] px-2.5 py-0.5 rounded">
+                    <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-accent-ink bg-accent-soft border border-accent-line px-2.5 py-0.5 rounded">
                       {activeModule.interviewQuestion.companyBadge}
                     </span>
-                    <span className="text-[11px] font-mono text-[var(--ink-tertiary)]">
+                    <span className="text-[11px] font-mono text-mute">
                       {activeModule.interviewQuestion.frequency}
                     </span>
                   </div>
 
-                  <p className="text-[var(--ink)] font-medium text-[15px] sm:text-[16px] leading-relaxed">
+                  <p className="text-ink font-medium text-[15px] sm:text-[16px] leading-relaxed">
                     &ldquo;{activeModule.interviewQuestion.question}&rdquo;
                   </p>
 
@@ -419,7 +410,7 @@ function RoadmapContent() {
                     <button
                       onClick={() => setShowAnswer((prev) => !prev)}
                       type="button"
-                      className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--accent)] hover:text-[var(--accent-hover)] transition-colors cursor-pointer"
+                      className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-accent-ink hover:text-accent-ink transition-colors cursor-pointer"
                     >
                       <span>{showAnswer ? "Hide Answer & Approach" : "View Optimal Answer & Approach"}</span>
                       <ChevronDown className={clsx(
@@ -439,8 +430,8 @@ function RoadmapContent() {
                         transition={{ duration: 0.2 }}
                         className="overflow-hidden"
                       >
-                        <div className="mt-2 p-4 bg-[var(--surface)] rounded-lg border border-[var(--accent-soft-border)] text-xs text-[var(--ink-secondary)] leading-relaxed shadow-sm">
-                          <strong className="text-[var(--ink)] block mb-1 text-[13px]">
+                        <div className="mt-2 p-4 bg-card rounded-lg border border-accent-line text-xs text-body leading-relaxed">
+                          <strong className="text-ink block mb-1 text-[13px]">
                             Key Interview Talking Points:
                           </strong>
                           <span>{activeModule.interviewQuestion.answer}</span>
@@ -467,10 +458,10 @@ export default function RoadmapsPage() {
     <Suspense
       fallback={
         <div className="flex flex-col gap-8 pb-16 w-full animate-pulse">
-          <div className="h-10 w-80 bg-[var(--border)]/70 rounded-lg"></div>
+          <div className="h-10 w-80 bg-hair/70 rounded-lg"></div>
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            <div className="lg:col-span-4 bg-[var(--surface)] h-[600px] rounded-2xl border border-[var(--border)]"></div>
-            <div className="lg:col-span-8 bg-[var(--surface)] h-[600px] rounded-2xl border border-[var(--border)]"></div>
+            <div className="lg:col-span-4 bg-card h-[600px] rounded-2xl border border-hair"></div>
+            <div className="lg:col-span-8 bg-card h-[600px] rounded-2xl border border-hair"></div>
           </div>
         </div>
       }

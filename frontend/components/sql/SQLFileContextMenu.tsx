@@ -93,9 +93,9 @@ export default function SQLFileContextMenu({
           onClick={e => e.stopPropagation()}
         >
           {/* Header handle & file name */}
-          <div className="w-10 h-1 bg-[var(--border-strong)] rounded-full mx-auto mb-3" />
+          <div className="w-10 h-1 bg-ink/25 rounded-full mx-auto mb-3" />
           <div className="flex items-center gap-2 px-2 pb-3 border-b border-hair mb-2">
-            <FileCode2 className="w-4 h-4 text-blue-500" />
+            <FileCode2 className="w-4 h-4 text-accent" />
             <span className="text-sm font-semibold text-ink truncate">{file.name}</span>
           </div>
 
@@ -150,17 +150,17 @@ export default function SQLFileContextMenu({
 
             <button
               type="button"
-              className="w-full text-left px-3 py-2.5 text-sm rounded-lg text-red-500 active:bg-red-50 dark:active:bg-red-950/40 flex items-center justify-between"
+              className="w-full text-left px-3 py-2.5 text-sm rounded-lg text-danger active:bg-danger-soft flex items-center justify-between"
               onClick={() => {
                 onDelete(file);
                 onClose();
               }}
             >
               <div className="flex items-center gap-2.5">
-                <Trash2 className="w-4 h-4 text-red-500" />
+                <Trash2 className="w-4 h-4 text-danger" />
                 <span>Delete</span>
               </div>
-              <span className="text-xs text-red-400 font-mono">Del</span>
+              <span className="text-xs text-danger font-mono">Del</span>
             </button>
           </div>
         </div>
@@ -235,17 +235,17 @@ export default function SQLFileContextMenu({
       <button
         type="button"
         role="menuitem"
-        className="w-full text-left px-3 py-1.5 text-xs text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 focus:bg-red-50 dark:focus:bg-red-950/30 focus:outline-hidden flex items-center justify-between transition-colors cursor-pointer"
+        className="w-full text-left px-3 py-1.5 text-xs text-danger hover:bg-danger-soft focus:bg-danger-soft focus:outline-hidden flex items-center justify-between transition-colors cursor-pointer"
         onClick={() => {
           onDelete(file);
           onClose();
         }}
       >
         <div className="flex items-center gap-2">
-          <Trash2 className="w-3.5 h-3.5 text-red-500" />
+          <Trash2 className="w-3.5 h-3.5 text-danger" />
           <span>Delete</span>
         </div>
-        <span className="text-[10px] text-red-400 font-mono">Del</span>
+        <span className="text-[10px] text-danger font-mono">Del</span>
       </button>
     </div>
   );

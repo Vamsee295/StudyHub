@@ -9,7 +9,7 @@ const SQLLab = dynamic(() => import("@/components/sql/SQLLab"), {
   loading: () => (
     <div className="flex h-full w-full flex-col bg-paper-2 items-center justify-center text-body gap-4">
       <Database className="w-8 h-8 animate-pulse text-accent" />
-      <div className="text-sm">Initializing SQL Engine...</div>
+      <div className="text-sm">Loading the SQL lab…</div>
     </div>
   )
 });

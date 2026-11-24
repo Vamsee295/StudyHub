@@ -31,7 +31,7 @@ export function TargetRoleFields({
   return (
     <div className="space-y-4">
       <div>
-        <label htmlFor="target-role" className="mb-1.5 block text-[12px] font-semibold text-[var(--ink-secondary)]">
+        <label htmlFor="target-role" className="mb-1.5 block text-[12px] font-semibold text-body">
           Target role
         </label>
         <div className="relative">
@@ -42,7 +42,7 @@ export function TargetRoleFields({
             disabled={disabled}
             aria-invalid={Boolean(error)}
             aria-describedby={error ? "target-role-error" : undefined}
-            className="field w-full appearance-none pr-9 text-[var(--ink)] disabled:cursor-not-allowed disabled:bg-[var(--surface-subdued)]"
+            className="field w-full appearance-none pr-9 text-ink disabled:cursor-not-allowed disabled:bg-paper-2"
           >
             <option value="">Select a role</option>
             {ROLE_OPTIONS.map((option) => (
@@ -53,11 +53,11 @@ export function TargetRoleFields({
           </select>
           <ChevronDown
             size={15}
-            className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[var(--ink-tertiary)]"
+            className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-mute"
           />
         </div>
         {error && (
-          <p id="target-role-error" className="mt-1.5 text-[12px] font-medium text-[var(--error)]">
+          <p id="target-role-error" className="mt-1.5 text-[12px] font-medium text-danger">
             {error}
           </p>
         )}
@@ -65,7 +65,7 @@ export function TargetRoleFields({
 
       {target.role === "custom" && (
         <div>
-          <label htmlFor="custom-role" className="mb-1.5 block text-[12px] font-semibold text-[var(--ink-secondary)]">
+          <label htmlFor="custom-role" className="mb-1.5 block text-[12px] font-semibold text-body">
             Custom role title
           </label>
           <input
@@ -78,18 +78,18 @@ export function TargetRoleFields({
             placeholder="For example: Machine Learning Engineer"
             aria-invalid={Boolean(customRoleError)}
             aria-describedby={customRoleError ? "custom-role-error" : "custom-role-hint"}
-            className="field w-full text-[var(--ink)] disabled:cursor-not-allowed disabled:bg-[var(--surface-subdued)]"
+            className="field w-full text-ink disabled:cursor-not-allowed disabled:bg-paper-2"
           />
           <div className="mt-1.5 flex items-center justify-between gap-3">
-            <p id="custom-role-hint" className="text-[11.5px] text-[var(--ink-tertiary)]">
+            <p id="custom-role-hint" className="text-[11.5px] text-mute">
               Use the exact title from the role you are targeting.
             </p>
-            <span className="text-[11px] font-mono text-[var(--ink-tertiary)]">
+            <span className="text-[11px] font-mono text-mute">
               {(target.customRole ?? "").length}/120
             </span>
           </div>
           {customRoleError && (
-            <p id="custom-role-error" className="mt-1.5 text-[12px] font-medium text-[var(--error)]">
+            <p id="custom-role-error" className="mt-1.5 text-[12px] font-medium text-danger">
               {customRoleError}
             </p>
           )}

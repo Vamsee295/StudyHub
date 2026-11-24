@@ -73,7 +73,7 @@ export function SpinSticker({ text, glyph = "↗" }: { text: string; glyph?: str
         <defs>
           <path id={id} d="M50,50 m-38,0 a38,38 0 1,1 76,0 a38,38 0 1,1 -76,0" />
         </defs>
-        <text className="fill-[var(--paper)] font-cond text-[11.5px] font-bold tracking-[0.18em]">
+        <text className="fill-paper font-cond text-[11.5px] font-bold tracking-[0.18em]">
           <textPath href={`#${id}`}>{text}</textPath>
         </text>
       </svg>

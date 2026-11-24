@@ -29,12 +29,12 @@ function Avatar({ author }: { author?: CommunityAuthor | null }) {
       <img
         src={author.avatar_url}
         alt={name}
-        className="w-9 h-9 rounded-full object-cover border border-[var(--border)] shrink-0"
+        className="w-9 h-9 rounded-full object-cover border border-hair shrink-0"
       />
     );
   }
   return (
-    <div className="w-[38px] h-[38px] rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center shrink-0">
+    <div className="w-[38px] h-[38px] rounded-full bg-accent-soft border border-accent-line flex items-center justify-center shrink-0">
       <span className="text-[13px] font-bold text-accent-ink">{initials}</span>
     </div>
   );
@@ -42,7 +42,7 @@ function Avatar({ author }: { author?: CommunityAuthor | null }) {
 
 function ActivityBadge({ type }: { type: ActivityType }) {
   return (
-    <span className="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full bg-[var(--accent-soft)] text-[var(--accent)] border border-[var(--accent-soft-border)]">
+    <span className="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full bg-accent-soft text-accent-ink border border-accent-line">
       {ACTIVITY_TYPE_EMOJI[type]} {ACTIVITY_TYPE_LABELS[type]}
     </span>
   );
@@ -56,7 +56,7 @@ function TagList({ tags }: { tags?: string | null }) {
       {list.map((t) => (
         <span
           key={t}
-          className="text-[11px] px-2 py-0.5 rounded-md bg-gray-100 text-gray-600 font-medium border border-gray-200"
+          className="text-[11px] px-2 py-0.5 rounded-md bg-card-2 text-body font-medium border border-hair"
         >
           {t}
         </span>
@@ -101,7 +101,7 @@ export function ActivityCard({
 
   return (
     <article
-      className="bg-card rounded-[12px] border border-slate-200 p-[22px] transition-colors hover:border-slate-300"
+      className="bg-card rounded-[12px] border border-hair p-[22px] transition-colors hover:border-ink/25"
       aria-label={`Post by ${post.author?.full_name || "a learner"}`}
     >
       {/* Header: Avatar + Author + Time */}
@@ -113,13 +113,13 @@ export function ActivityCard({
               {post.author?.full_name || "StudyHub Learner"}
             </span>
             {post.author?.university && (
-              <p className="text-[13px] text-slate-500 truncate mt-0.5 leading-tight">
+              <p className="text-[13px] text-mute truncate mt-0.5 leading-tight">
                 {post.author.university}
               </p>
             )}
           </div>
         </div>
-        <span className="text-[13px] text-slate-400 shrink-0">
+        <span className="text-[13px] text-mute shrink-0">
           {timeAgo}
         </span>
       </div>
@@ -139,7 +139,7 @@ export function ActivityCard({
       )}
 
       {/* Post content */}
-      <p className="text-[15px] text-slate-600 leading-[1.55] mb-4 whitespace-pre-wrap break-words">
+      <p className="text-[15px] text-body leading-[1.55] mb-4 whitespace-pre-wrap break-words">
         {post.content}
       </p>
 
@@ -147,7 +147,7 @@ export function ActivityCard({
       <TagList tags={post.tags} />
 
       {/* Action Bar */}
-      <div className="flex items-center justify-between mt-5 pt-4 border-t border-slate-100">
+      <div className="flex items-center justify-between mt-5 pt-4 border-t border-hair">
         <div className="flex items-center gap-6">
           {/* Like */}
           <button
@@ -157,8 +157,8 @@ export function ActivityCard({
             className={clsx(
               "flex items-center gap-2 text-[13px] font-medium transition-colors",
               liked
-                ? "text-red-500"
-                : "text-slate-500 hover:text-slate-800",
+                ? "text-danger"
+                : "text-mute hover:text-ink",
               !currentUserId && "opacity-50 cursor-default"
             )}
           >
@@ -172,7 +172,7 @@ export function ActivityCard({
           <button
             onClick={() => onCommentClick(post.id)}
             aria-label="View comments"
-            className="flex items-center gap-2 text-[13px] font-medium text-slate-500 hover:text-slate-800 transition-colors"
+            className="flex items-center gap-2 text-[13px] font-medium text-mute hover:text-ink transition-colors"
           >
             <MessageCircle className="w-4 h-4" />
             <span>{post.comment_count}</span>
@@ -183,7 +183,7 @@ export function ActivityCard({
         {link && (
           <Link
             href={link}
-            className="inline-flex items-center gap-1 text-[12px] font-medium text-[var(--accent)] hover:underline"
+            className="inline-flex items-center gap-1 text-[12px] font-medium text-accent-ink hover:underline"
             aria-label="Open related StudyHub page"
           >
             <ExternalLink className="w-3.5 h-3.5" />

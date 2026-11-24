@@ -115,7 +115,7 @@ export function ResumeAnalyzerPage() {
   return (
     <div className="w-full max-w-5xl mx-auto">
       <nav aria-label="Breadcrumb" className="mb-6">
-        <Link href="/tools" className="inline-flex items-center gap-2 text-[12.5px] font-medium text-[var(--ink-secondary)] hover:text-[var(--accent)]">
+        <Link href="/tools" className="inline-flex items-center gap-2 text-[12.5px] font-medium text-body hover:text-accent-ink">
           <ArrowLeft size={15} />
           All tools
         </Link>
@@ -123,32 +123,32 @@ export function ResumeAnalyzerPage() {
 
       <header className="mb-7">
         <div className="flex items-center gap-3 mb-4">
-          <div className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-[var(--surface)] border border-[var(--border)] shadow-[0_1px_2px_-1px_rgba(15,23,42,0.04)]">
-            <span className="w-1.5 h-1.5 rounded-full bg-[var(--telemetry)] animate-pulse"></span>
-            <span className="text-[10.5px] font-mono font-semibold uppercase tracking-wider text-[var(--telemetry)]">
+          <div className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-card border border-hair shadow-[0_1px_2px_-1px_rgba(15,23,42,0.04)]">
+            <span className="w-1.5 h-1.5 rounded-full bg-note animate-pulse"></span>
+            <span className="text-[10.5px] font-mono font-semibold uppercase tracking-wider text-note">
               Resume Analyzer
             </span>
           </div>
-          <div className="hidden sm:block w-px h-4 bg-[var(--border)]"></div>
-          <span className="hidden sm:inline-block text-[11px] font-medium text-[var(--ink-secondary)] uppercase tracking-wider">
+          <div className="hidden sm:block w-px h-4 bg-hair"></div>
+          <span className="hidden sm:inline-block text-[11px] font-medium text-body uppercase tracking-wider">
             Evidence-backed placement review
           </span>
         </div>
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-2xl">
-            <h1 className="text-3xl md:text-4xl font-display font-medium text-[var(--ink)] leading-[1.1] tracking-tight">
+            <h1 className="display text-[44px] md:text-[60px]">
               Compare your resume with the role you want.
             </h1>
-            <p className="mt-3 text-[15px] leading-relaxed text-[var(--ink-secondary)]">
-              Build a target benchmark, then let the secure analysis pipeline extract the resume and return a structured report with evidence, gaps, and prioritized next steps.
+            <p className="mt-3 text-[15px] leading-relaxed text-body">
+              Describe the role you want, upload your resume, and get a report with the evidence, the gaps, and what to fix first.
             </p>
           </div>
           <div className="flex shrink-0 flex-wrap gap-2">
-            <span className="inline-flex items-center gap-1.5 rounded border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1.5 text-[11px] font-mono text-[var(--ink-secondary)]">
+            <span className="inline-flex items-center gap-1.5 rounded border border-hair bg-card px-2.5 py-1.5 text-[11px] font-mono text-body">
               <FileCheck2 size={14} />
               PDF + text
             </span>
-            <span className="inline-flex items-center gap-1.5 rounded border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1.5 text-[11px] font-mono text-[var(--ink-secondary)]">
+            <span className="inline-flex items-center gap-1.5 rounded border border-hair bg-card px-2.5 py-1.5 text-[11px] font-mono text-body">
               <ShieldCheck size={14} />
               Authenticated
             </span>
@@ -157,7 +157,7 @@ export function ResumeAnalyzerPage() {
       </header>
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_260px] items-start">
-        <main className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4 shadow-[0_1px_2px_-1px_rgba(15,23,42,0.04)] sm:p-6">
+        <main className="rounded-lg border border-hair bg-card p-4 shadow-[0_1px_2px_-1px_rgba(15,23,42,0.04)] sm:p-6">
           <ResumeInputForm
             request={request}
             file={file}
@@ -174,19 +174,19 @@ export function ResumeAnalyzerPage() {
         </main>
 
         <aside className="space-y-4 lg:sticky lg:top-24" aria-labelledby="analyzer-notes-heading">
-          <section className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4">
-            <h2 id="analyzer-notes-heading" className="text-[13px] font-bold text-[var(--ink)]">What gets checked</h2>
-            <ul className="mt-3 space-y-2.5 text-[12.5px] leading-relaxed text-[var(--ink-secondary)]">
-              <li className="flex gap-2"><span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--accent)]"></span>Candidate and contact details</li>
-              <li className="flex gap-2"><span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--accent)]"></span>Skills, keywords, and role fit</li>
-              <li className="flex gap-2"><span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--accent)]"></span>Experience, projects, and education</li>
-              <li className="flex gap-2"><span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--accent)]"></span>ATS compatibility and resume issues</li>
-              <li className="flex gap-2"><span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--accent)]"></span>Prioritized action plan</li>
+          <section className="rounded-lg border border-hair bg-card p-4">
+            <h2 id="analyzer-notes-heading" className="text-[13px] font-bold text-ink">What gets checked</h2>
+            <ul className="mt-3 space-y-2.5 text-[12.5px] leading-relaxed text-body">
+              <li className="flex gap-2"><span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-accent"></span>Candidate and contact details</li>
+              <li className="flex gap-2"><span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-accent"></span>Skills, keywords, and role fit</li>
+              <li className="flex gap-2"><span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-accent"></span>Experience, projects, and education</li>
+              <li className="flex gap-2"><span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-accent"></span>ATS compatibility and resume issues</li>
+              <li className="flex gap-2"><span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-accent"></span>Prioritized action plan</li>
             </ul>
           </section>
-          <section className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4">
-            <h2 className="text-[13px] font-bold text-[var(--ink)]">Before you analyze</h2>
-            <p className="mt-3 text-[12.5px] leading-relaxed text-[var(--ink-secondary)]">
+          <section className="rounded-lg border border-hair bg-card p-4">
+            <h2 className="text-[13px] font-bold text-ink">Before you analyze</h2>
+            <p className="mt-3 text-[12.5px] leading-relaxed text-body">
               Use a PDF with selectable text when possible. Add the exact company and role so the comparison reflects the opportunity rather than a generic checklist.
             </p>
           </section>

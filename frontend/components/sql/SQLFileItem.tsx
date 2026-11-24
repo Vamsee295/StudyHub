@@ -90,7 +90,7 @@ export default function SQLFileItem({
     <div
       className={`flex items-center justify-between px-3 py-1.5 cursor-pointer group transition-colors select-none ${
         isActive
-          ? "bg-blue-500/10 text-blue-600 dark:text-blue-400 font-medium"
+          ? "bg-accent/10 text-accent-ink font-medium"
           : "text-ink hover:bg-paper-2"
       }`}
       onContextMenu={handleContextMenu}
@@ -99,7 +99,7 @@ export default function SQLFileItem({
       <div className="flex items-center gap-2 overflow-hidden flex-1 mr-2 min-w-0">
         <FileCode2
           className={`w-4 h-4 shrink-0 ${
-            isActive ? "text-blue-500" : "text-body"
+            isActive ? "text-accent" : "text-body"
           }`}
         />
 
@@ -111,7 +111,7 @@ export default function SQLFileItem({
             onChange={(e) => setEditName(e.target.value)}
             onBlur={() => onRenameSubmit(file.id, editName)}
             onKeyDown={handleKeyDown}
-            className="flex-1 bg-card border border-blue-500 rounded px-1.5 py-0.5 text-xs text-ink outline-hidden w-full min-w-0"
+            className="flex-1 bg-card border border-accent rounded px-1.5 py-0.5 text-xs text-ink outline-hidden w-full min-w-0"
             onClick={(e) => e.stopPropagation()}
             onMouseDown={(e) => e.stopPropagation()}
             onTouchStart={(e) => e.stopPropagation()}

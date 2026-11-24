@@ -687,7 +687,7 @@ export default function CodeIDE() {
             <ChevronLeft className="w-4 h-4" />
           </Link>
           <div className="code-ide-breadcrumb">
-            <FileCode2 className="w-4 h-4 text-blue-400" />
+            <FileCode2 className="w-4 h-4 text-accent" />
             <span>Code Playground</span>
           </div>
         </div>
