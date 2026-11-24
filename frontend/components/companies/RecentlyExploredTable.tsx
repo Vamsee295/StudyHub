@@ -59,7 +59,7 @@ export function RecentlyExploredTable({ history, onClear, onSelect }: RecentlyEx
                     <span className={clsx(
                       "inline-flex text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded",
                       log.cohortStatus === "Active" ? "bg-[var(--accent-soft)] text-[var(--accent)] border border-[var(--accent-soft-border)]" :
-                      "bg-[#f8fafc] text-[var(--ink-tertiary)] border border-[var(--border)]"
+                      "bg-paper text-[var(--ink-tertiary)] border border-[var(--border)]"
                     )}>
                       {log.cohortStatus}
                     </span>

@@ -1,93 +1,191 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useSyncExternalStore, ViewTransition } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Search, Bell, ChevronDown, Menu, X, Loader2 } from "lucide-react";
+import {
+  Bell,
+  Bookmark,
+  BookOpen,
+  Building,
+  CalendarCheck,
+  CodeXml,
+  Database,
+  Dumbbell,
+  FileText,
+  FlaskConical,
+  LayoutDashboard,
+  Library,
+  LifeBuoy,
+  Lightbulb,
+  ListChecks,
+  Loader2,
+  Network,
+  PanelLeftClose,
+  PanelLeftOpen,
+  Route,
+  Settings,
+  Timer,
+  UserRound,
+  Wrench,
+  type LucideIcon,
+} from "lucide-react";
 import { clsx } from "clsx";
 import { ProfileDropdown } from "@/components/layout/ProfileDropdown";
 import { NotificationDropdown } from "@/components/layout/NotificationDropdown";
 import { notificationService, AppNotification } from "@/lib/services/notificationService";
-import { onboardingService, BLANK_USER_PROFILE } from "@/lib/services/onboardingService";
-import { UserProfile } from "@/types";
 import { authApi } from "@/lib/api/auth";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { useProfile } from "@/components/providers/ProfileProvider";
 import { StudyHubLogo } from "@/components/ui/StudyHubLogo";
 import { SearchLauncher } from "@/components/learn/SearchLauncher";
+import { applyTheme } from "@/lib/theme";
+import { AskDialog } from "@/components/ui/AskDialog";
 
-const navLinks = [
-  { name: "Dashboard", href: "/dashboard" },
-  { name: "Learn", href: "/learn" },
-  { name: "Roadmaps", href: "/roadmaps" },
-  { name: "Practice", href: "/practice" },
-  { name: "Companies", href: "/companies" },
-  { name: "Resources", href: "/resources" },
-  { name: "Templates", href: "/templates" },
-  { name: "Tools", href: "/tools" },
-  { name: "Labs", href: "/labs" },
-  { name: "Study With Me", href: "/study-with-me" },
+type NavItem = readonly [href: string, label: string, icon: LucideIcon];
+
+const groups: { title: string; items: NavItem[] }[] = [
+  {
+    title: "Today",
+    items: [
+      ["/dashboard", "Dashboard", LayoutDashboard],
+      ["/learn/daily", "Daily", CalendarCheck],
+      ["/study-with-me", "Study With Me", Timer],
+    ],
+  },
+  {
+    title: "Learn",
+    items: [
+      ["/learn", "Learn", BookOpen],
+      ["/roadmaps", "Roadmaps", Route],
+      ["/learn/map", "Knowledge map", Network],
+      ["/learn/saved", "Saved", Bookmark],
+    ],
+  },
+  {
+    title: "Practice",
+    items: [
+      ["/practice", "Practice", Dumbbell],
+      ["/practice/problems", "Problems", ListChecks],
+      ["/practice/sql", "SQL", Database],
+      ["/practice/code", "Code", CodeXml],
+    ],
+  },
+  {
+    title: "Career",
+    items: [
+      ["/companies", "Companies", Building],
+      ["/resources", "Resources", Library],
+      ["/templates", "Templates", FileText],
+      ["/tools", "Tools", Wrench],
+      ["/labs", "Labs", FlaskConical],
+    ],
+  },
+];
+const utility: NavItem[] = [
+  ["/ideas", "Ideas", Lightbulb],
+  ["/help", "Help", LifeBuoy],
+  ["/settings", "Settings", Settings],
+];
+const tabs: NavItem[] = [
+  ["/dashboard", "Home", LayoutDashboard],
+  ["/learn", "Learn", BookOpen],
+  ["/practice", "Practice", Dumbbell],
+  ["/tools", "Tools", Wrench],
+  ["/profile", "Me", UserRound],
 ];
 
+const matches = (path: string, href: string) => path === href || path.startsWith(href + "/");
+/** The single most specific item for this path, so /learn/daily lights "Daily" and not also "Learn". */
+const activeHref = (path: string, items: NavItem[]) =>
+  items.filter(([h]) => matches(path, h)).sort((a, b) => b[0].length - a[0].length)[0]?.[0];
+const allItems = [...groups.flatMap((g) => g.items), ...utility];
+
+const SIDEBAR_KEY = "sh-sidebar-collapsed";
+const readCollapsed = () => {
+  try {
+    return localStorage.getItem(SIDEBAR_KEY) === "1";
+  } catch {
+    return false;
+  }
+};
+const noop = () => () => {};
+// The first page to appear is the app opening, not a navigation, so it doesn't slide in.
+let started = false;
+
 export function AppLayout({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
-  const [mounted, setMounted] = useState(false);
+  const pathname = usePathname() ?? "";
+  const router = useRouter();
   const { user } = useAuth();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  // Profile Quick Launcher Dropdown State
-  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
-
-  // Notification State
+  const { draftProfile: profile, isLoading } = useProfile();
+  // false only while hydrating the server HTML. Each section's layout.tsx renders its own AppLayout, so moving
+  // between sections remounts it; on those client mounts this is already true and the spinner doesn't flash.
+  const mounted = useSyncExternalStore(noop, () => true, () => false);
+  // read on first render: nothing reads it until `mounted`, so the server/client difference never reaches the DOM
+  const [collapsed, setCollapsed] = useState(readCollapsed);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const [mobileProfileOpen, setMobileProfileOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [notifications, setNotifications] = useState<AppNotification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [isLoadingNotifications, setIsLoadingNotifications] = useState(true);
 
-  // Active User Profile State from Global Context
-  const { draftProfile: profile, isLoading } = useProfile();
-
-  const router = useRouter();
-
   useEffect(() => {
-    setMounted(true);
+    started = true;
+  }, []);
+
+  // --sb drives the sidebar width and the content's left edge
+  useEffect(() => {
+    document.documentElement.style.setProperty("--sb", collapsed ? "72px" : "240px");
+    try {
+      localStorage.setItem(SIDEBAR_KEY, collapsed ? "1" : "0");
+    } catch {}
+  }, [collapsed]);
+
+  // Ctrl/Cmd + B toggles the sidebar; the "System" theme follows the OS live
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "b") {
+        e.preventDefault();
+        setCollapsed((c) => !c);
+      }
+    };
+    const mq = matchMedia("(prefers-color-scheme: dark)");
+    window.addEventListener("keydown", onKey);
+    mq.addEventListener("change", applyTheme);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      mq.removeEventListener("change", applyTheme);
+    };
   }, []);
 
   useEffect(() => {
-    if (mounted && user?.id) {
-      const loadNotifications = async () => {
-        try {
-          const [notifs, unread] = await Promise.all([
-            notificationService.getNotifications(),
-            notificationService.getUnreadCount()
-          ]);
-          setNotifications(notifs);
-          setUnreadCount(unread);
-        } catch (err) {
-          console.error("Failed to load notifications", err);
-        } finally {
-          setIsLoadingNotifications(false);
-        }
-      };
-
-      loadNotifications();
-
-      const unsubscribe = notificationService.subscribeToNotifications(user.id, (newNotification) => {
-        setNotifications((prev) => [newNotification, ...prev]);
-        setUnreadCount((prev) => prev + 1);
-      });
-
-      return () => {
-        unsubscribe();
-      };
-    }
+    if (!mounted || !user?.id) return;
+    (async () => {
+      try {
+        const [notifs, unread] = await Promise.all([
+          notificationService.getNotifications(),
+          notificationService.getUnreadCount(),
+        ]);
+        setNotifications(notifs);
+        setUnreadCount(unread);
+      } catch (err) {
+        console.error("Failed to load notifications", err);
+      } finally {
+        setIsLoadingNotifications(false);
+      }
+    })();
+    return notificationService.subscribeToNotifications(user.id, (n) => {
+      setNotifications((prev) => [n, ...prev]);
+      setUnreadCount((prev) => prev + 1);
+    });
   }, [mounted, user?.id]);
 
   const handleMarkAsRead = async (id: string) => {
     try {
       await notificationService.markAsRead(id);
-      setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
-      setUnreadCount(prev => Math.max(0, prev - 1));
+      setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)));
+      setUnreadCount((prev) => Math.max(0, prev - 1));
     } catch (err) {
       console.error("Failed to mark as read", err);
     }
@@ -96,267 +194,269 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const handleMarkAllAsRead = async () => {
     try {
       await notificationService.markAllAsRead();
-      setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+      setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
       setUnreadCount(0);
     } catch (err) {
       console.error("Failed to mark all as read", err);
     }
   };
 
-  // Onboarding is optional: authenticated users can access all dashboard and application features directly.
-
   const handleSignOut = async () => {
-    // 1. Clear Supabase auth session
     try {
-      const { supabase } = await import('@/lib/supabase/client');
+      const { supabase } = await import("@/lib/supabase/client");
       await supabase.auth.signOut();
     } catch (e) {
       console.warn("Supabase signOut error:", e);
     }
-
-    // 2. Clear API authentication
     try {
       await authApi.logout();
-    } catch (e) {}
-    
-    // 3. Clear authenticated cookies
-    if (typeof document !== "undefined") {
-      document.cookie = "auth-session=; path=/; max-age=0; SameSite=Lax";
-      document.cookie = "onboarding-complete=; path=/; max-age=0; SameSite=Lax";
-    }
-
-    // 4. Clear stored client-side caches and session
-    if (typeof window !== "undefined") {
-      localStorage.clear();
-      sessionStorage.clear();
-    }
-
-    // 5. Navigate cleanly to login
+    } catch {}
+    document.cookie = "auth-session=; path=/; max-age=0; SameSite=Lax";
+    document.cookie = "onboarding-complete=; path=/; max-age=0; SameSite=Lax";
+    localStorage.clear();
+    sessionStorage.clear();
     window.location.href = "/login";
   };
 
-  let displayName = "Learner";
-  if (!mounted || isLoading) {
-    displayName = "Loading...";
-  } else if (profile.identity?.fullName) {
-    displayName = profile.identity.fullName;
-  } else {
-    displayName = user?.email ? user.email.split("@")[0] : "Learner";
-  }
-  const displayRole = mounted 
-    ? (profile.identity?.targetRole || profile.careerTracks?.[0] || "Software Development Engineer")
-    : "Software Development Engineer";
-  const displayAvatar = mounted 
-    ? (profile.identity?.avatarUrl || "https://api.dicebear.com/9.x/avataaars/svg?seed=Felix")
-    : "https://api.dicebear.com/9.x/avataaars/svg?seed=Felix";
-
-  // If loading or unmounted, show clean loader
   if (!mounted || isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[var(--canvas)]">
-        <Loader2 className="w-8 h-8 text-[var(--accent)] animate-spin" />
+      <div className="flex min-h-screen items-center justify-center">
+        <Loader2 className="size-8 animate-spin text-accent" />
       </div>
     );
   }
 
-  // Check if current route is a dedicated lesson workspace (/learn/[subject]/[topic])
-  const isLessonWorkspace = Boolean(
-    pathname?.startsWith('/learn/') && 
-    pathname.split('/').filter(Boolean).length >= 3
+  const displayName = profile.identity?.fullName || (user?.email ? user.email.split("@")[0] : "Learner");
+  const displayRole = profile.identity?.targetRole || profile.careerTracks?.[0] || "Software Development Engineer";
+  const displayAvatar = profile.identity?.avatarUrl || "https://api.dicebear.com/9.x/avataaars/svg?seed=Felix";
+
+  // Lessons and editors fill the screen and scroll inside themselves
+  const isWorkspace =
+    // /learn/<subject>/<lesson>, but not the subject's own pages (test, review, …), which scroll normally
+    (/^\/learn\/[^/]+\/[^/]+$/.test(pathname) && !/\/(test|review|revise|reading-order)$/.test(pathname)) ||
+    pathname === "/practice/code" ||
+    pathname === "/practice/sql" ||
+    (pathname.startsWith("/practice/problems/") && pathname !== "/practice/problems");
+
+  const active = activeHref(pathname, allItems);
+  const activeTab = activeHref(pathname, tabs);
+
+  const navLink = ([href, label, Icon]: NavItem) => {
+    const on = active === href;
+    return (
+      <Link
+        key={href}
+        href={href}
+        title={collapsed ? label : undefined}
+        aria-label={collapsed ? label : undefined}
+        aria-current={on ? "page" : undefined}
+        className={clsx(
+          "label-cond flex h-10 items-center gap-3 rounded-xl text-[16px] transition-colors",
+          collapsed ? "justify-center" : "px-3",
+          on ? "bg-ink text-paper" : "text-ink/70 hover:bg-ink/[0.06] hover:text-ink"
+        )}
+      >
+        <Icon className={clsx("size-[18px] shrink-0", on ? "text-paper" : "text-accent")} />
+        {!collapsed && <span className="truncate">{label}</span>}
+      </Link>
+    );
+  };
+
+  const bell = (open: boolean, toggle: () => void) => (
+    <button
+      type="button"
+      onClick={toggle}
+      aria-label={unreadCount ? `Notifications, ${unreadCount} unread` : "Notifications"}
+      aria-expanded={open}
+      className={clsx(
+        "tap relative grid size-9 shrink-0 place-items-center rounded-xl transition-colors",
+        open ? "bg-ink/[0.08] text-ink" : "text-ink/70 hover:bg-ink/[0.06] hover:text-ink"
+      )}
+    >
+      <Bell className="size-[18px]" />
+      {unreadCount > 0 && (
+        <span className="absolute -right-0.5 -top-0.5 grid h-4 min-w-4 place-items-center rounded-full bg-accent px-1 font-mono text-[10px] font-bold text-paper">
+          {unreadCount > 99 ? "99+" : unreadCount}
+        </span>
+      )}
+    </button>
   );
 
-  const isPracticeWorkspace = Boolean(
-    pathname === '/practice/code' ||
-    pathname === '/practice/sql' ||
-    (pathname?.startsWith('/practice/problems/') && pathname !== '/practice/problems')
+  const notificationsMenu = (placement: string) => (
+    <NotificationDropdown
+      isOpen={notificationsOpen}
+      onClose={() => setNotificationsOpen(false)}
+      notifications={notifications}
+      isLoading={isLoadingNotifications}
+      onMarkAsRead={handleMarkAsRead}
+      onMarkAllAsRead={handleMarkAllAsRead}
+      onNavigate={(link) => router.push(link)}
+      placement={placement}
+    />
   );
-
-  const isWorkspace = isLessonWorkspace || isPracticeWorkspace;
 
   return (
-    <div className={clsx(
-      "flex flex-col bg-[var(--canvas)] selection:bg-[var(--accent-soft)] selection:text-[var(--accent-hover)] text-[var(--ink)] font-sans relative",
-      isWorkspace ? "h-screen overflow-hidden" : "min-h-screen grid-texture"
-    )}>
-      {/* TOP APP NAVIGATION BAR */}
-      <header className={clsx(
-        "shrink-0 z-40 w-full max-w-full bg-[var(--surface)]/90 backdrop-blur-md border-b border-[var(--border)]/80 shadow-[0_1px_2px_0_rgba(0,0,0,0.03)] box-border",
-        !isWorkspace && "sticky top-0"
-      )}>
-        <div className={clsx(
-          "h-16 flex items-center justify-between gap-3 sm:gap-4 w-full min-w-0 box-border",
-          isWorkspace ? "px-4 sm:px-6" : "max-w-7xl mx-auto px-4 sm:px-6"
-        )}>
-          {/* Brand & Primary Nav */}
-          <div className="flex items-center gap-3 xl:gap-6 min-w-0">
-            <StudyHubLogo href="/dashboard" size="md" showBadge={false} />
-
-            {/* Nav Links */}
-            <nav className="hidden xl:flex items-center gap-0.5 text-[13px]">
-              {navLinks.map((link) => {
-                const isActive = pathname === link.href || pathname?.startsWith(link.href + "/");
-                return (
-                  <Link
-                    key={link.name}
-                    href={link.href}
-                    className={clsx(
-                      "px-1.5 py-1.5 rounded-md transition-all flex items-center gap-1.5 whitespace-nowrap",
-                      isActive
-                        ? "font-semibold text-[var(--accent)] bg-[var(--accent-soft)] ring-1 ring-[var(--accent-soft-border)]"
-                        : "font-medium text-[var(--ink-secondary)] hover:text-[var(--ink)] hover:bg-[var(--surface-subdued)]/70"
-                    )}
-                  >
-                    {isActive && <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] shrink-0"></span>}
-                    {link.name}
-                  </Link>
-                );
-              })}
-            </nav>
-          </div>
-
-          {/* Right Utility Actions */}
-          <div className="flex items-center gap-2.5 sm:gap-3.5 shrink-0 pl-2">
-            <SearchLauncher />
-            {/* Notifications */}
-            <div className="relative shrink-0 flex items-center">
-              <button
-                className={clsx(
-                  "relative p-2 rounded-lg transition-colors shrink-0",
-                  notificationsOpen 
-                    ? "text-[var(--ink)] bg-[var(--surface-subdued)]" 
-                    : "text-[var(--ink-secondary)] hover:text-[var(--ink)] hover:bg-[var(--surface-subdued)]"
-                )}
-                type="button"
-                onClick={() => setNotificationsOpen(prev => !prev)}
-                aria-label="Notifications"
-                aria-expanded={notificationsOpen}
-              >
-                <Bell className="w-[19px] h-[19px] sm:w-[20px] sm:h-[20px]" />
-                {unreadCount > 0 && (
-                  <span className="absolute top-1 right-1 min-w-[16px] h-[16px] px-1 rounded-full bg-[var(--error)] text-white text-[10px] font-bold flex items-center justify-center ring-2 ring-[var(--surface)] shadow-sm">
-                    {unreadCount > 99 ? '99+' : unreadCount}
-                  </span>
-                )}
-              </button>
-              
-              <NotificationDropdown 
-                isOpen={notificationsOpen}
-                onClose={() => setNotificationsOpen(false)}
-                notifications={notifications}
-                isLoading={isLoadingNotifications}
-                onMarkAsRead={handleMarkAsRead}
-                onMarkAllAsRead={handleMarkAllAsRead}
-                onNavigate={(link) => router.push(link)}
-              />
-            </div>
-            
-            {/* Vertical Divider with clear margins */}
-            <div className="h-5 w-[1px] bg-slate-200 dark:bg-slate-700 hidden sm:block shrink-0 mx-1"></div>
-
-            {/* Profile Control with Anchored Dropdown */}
-            <div className="relative shrink-0">
-              <button 
-                type="button"
-                onClick={() => setProfileDropdownOpen((prev) => !prev)}
-                aria-expanded={profileDropdownOpen}
-                aria-haspopup="true"
-                title="Account & preferences"
-                className="flex items-center gap-2 sm:gap-2.5 pl-1.5 py-1 pr-2.5 rounded-full hover:bg-[var(--surface-subdued)]/70 transition-colors cursor-pointer border border-transparent hover:border-[var(--border)] select-none text-left focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/30 max-w-[180px] sm:max-w-[220px]"
-              >
-                <img
-                  alt={displayName}
-                  className="w-8 h-8 rounded-full object-cover ring-2 ring-[var(--border)] shrink-0"
-                  src={displayAvatar}
-                />
-                <div className="hidden sm:flex flex-col text-left min-w-0 flex-1">
-                  <span className="text-[13px] font-semibold text-[var(--ink)] leading-tight truncate">
-                    {displayName}
-                  </span>
-                  <span className="text-[11px] font-medium text-[var(--ink-secondary)] truncate">
-                    {displayRole}
-                  </span>
-                </div>
-                <ChevronDown 
-                  className={clsx(
-                    "w-4 h-4 text-[var(--ink-tertiary)] transition-transform duration-200 shrink-0", 
-                    profileDropdownOpen && "rotate-180 text-[var(--ink)]"
-                  )} 
-                />
-              </button>
-
-              {/* Anchored Dropdown Menu (Quick Launcher to Full-Page Routes) */}
-              <ProfileDropdown
-                isOpen={profileDropdownOpen}
-                onClose={() => setProfileDropdownOpen(false)}
-                profile={profile}
-                onSignOut={handleSignOut}
-                isLoading={isLoading}
-              />
-            </div>
-
-            {/* Mobile Menu Button */}
+    <div className={clsx("relative text-ink", isWorkspace ? "h-dvh overflow-hidden" : "min-h-dvh")}>
+      {/* ── Desktop sidebar ── */}
+      <aside
+        className="fixed inset-y-0 left-0 z-40 hidden w-[var(--sb)] flex-col border-r-[2.4px] border-line bg-paper transition-[width] duration-200 [view-transition-name:sidebar] md:flex"
+        aria-label="Main navigation"
+      >
+        <div className={clsx("flex h-16 shrink-0 items-center gap-2", collapsed ? "justify-center px-2" : "justify-between pl-4 pr-3")}>
+          <StudyHubLogo href="/dashboard" size="sm" iconOnly={collapsed} />
+          {!collapsed && (
             <button
-              className="xl:hidden p-2 text-[var(--ink-secondary)] hover:text-[var(--ink)] hover:bg-[var(--surface-subdued)] rounded-lg transition-colors shrink-0"
-              onClick={() => setMobileMenuOpen((v) => !v)}
-              aria-label="Toggle navigation menu"
+              type="button"
+              onClick={() => setCollapsed(true)}
+              aria-label="Collapse sidebar (Ctrl+B)"
+              title="Collapse sidebar (Ctrl+B)"
+              className="tap grid size-8 place-items-center rounded-lg text-ink/60 hover:bg-ink/[0.06] hover:text-ink"
             >
-              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              <PanelLeftClose className="size-[18px]" />
             </button>
-          </div>
+          )}
         </div>
 
-        {/* Mobile Navigation Dropdown */}
-        {mobileMenuOpen && (
-          <div className="xl:hidden bg-[var(--surface)] border-t border-[var(--border)] px-6 py-4 flex flex-col gap-2 shadow-md">
-            {navLinks.map((link) => {
-              const isActive = pathname === link.href || pathname?.startsWith(link.href + "/");
-              return (
-                <Link
-                  key={link.name}
-                  href={link.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={clsx(
-                    "px-3 py-2 rounded-md text-[14px] transition-all flex items-center justify-between",
-                    isActive
-                      ? "font-semibold text-[var(--accent)] bg-[var(--accent-soft)]"
-                      : "font-medium text-[var(--ink-secondary)] hover:text-[var(--ink)] hover:bg-[var(--surface-subdued)]"
-                  )}
-                >
-                  <span>{link.name}</span>
-                  {isActive && <span className="w-2 h-2 rounded-full bg-[var(--accent)]"></span>}
-                </Link>
-              );
-            })}
-          </div>
-        )}
+        <div className={clsx("relative flex shrink-0 items-center gap-1 pb-3", collapsed ? "flex-col px-2" : "px-3")}>
+          <SearchLauncher />
+          {bell(notificationsOpen, () => setNotificationsOpen((o) => !o))}
+          {notificationsMenu("left-3 top-full mt-2")}
+        </div>
+
+        <nav className={clsx("no-scrollbar flex-1 overflow-y-auto pb-4", collapsed ? "px-2" : "px-3")}>
+          {groups.map((g) => (
+            <div key={g.title} className="mb-4">
+              {collapsed ? (
+                <div className="mx-auto mb-2 h-px w-6 bg-hair" />
+              ) : (
+                <p className="eyebrow mb-1.5 px-3 !text-[11px] !text-mute">{g.title}</p>
+              )}
+              <div className="flex flex-col gap-0.5">{g.items.map(navLink)}</div>
+            </div>
+          ))}
+          <div className="flex flex-col gap-0.5 border-t-[1.5px] border-hair pt-3">{utility.map(navLink)}</div>
+        </nav>
+
+        <div className={clsx("relative shrink-0 border-t-[2.4px] border-line p-3", collapsed && "flex flex-col items-center gap-2")}>
+          <button
+            type="button"
+            onClick={() => setProfileOpen((o) => !o)}
+            aria-expanded={profileOpen}
+            aria-haspopup="true"
+            title="Account & preferences"
+            className={clsx(
+              "flex w-full items-center gap-2.5 rounded-xl text-left transition-colors hover:bg-ink/[0.06]",
+              collapsed ? "justify-center p-1" : "p-1.5"
+            )}
+          >
+            <img alt="" src={displayAvatar} className="size-9 shrink-0 rounded-full border-2 border-line bg-card object-cover" />
+            {!collapsed && (
+              <span className="min-w-0 flex-1">
+                <span className="block truncate text-[14px] font-semibold leading-tight">{displayName}</span>
+                <span className="block truncate font-mono text-[11px] text-mute">{displayRole}</span>
+              </span>
+            )}
+          </button>
+          <ProfileDropdown
+            isOpen={profileOpen}
+            onClose={() => setProfileOpen(false)}
+            profile={profile}
+            onSignOut={handleSignOut}
+            isLoading={isLoading}
+            placement="left-3 bottom-full mb-2"
+          />
+          {collapsed && (
+            <button
+              type="button"
+              onClick={() => setCollapsed(false)}
+              aria-label="Expand sidebar (Ctrl+B)"
+              title="Expand sidebar (Ctrl+B)"
+              className="tap grid size-8 place-items-center rounded-lg text-ink/60 hover:bg-ink/[0.06] hover:text-ink"
+            >
+              <PanelLeftOpen className="size-[18px]" />
+            </button>
+          )}
+        </div>
+      </aside>
+
+      {/* ── Phone top bar ── */}
+      <header className="sticky top-0 z-40 flex h-14 items-center justify-between gap-2 border-b-[2.4px] border-line bg-paper px-4 pt-[env(safe-area-inset-top)] md:hidden">
+        <StudyHubLogo href="/dashboard" size="sm" />
+        <div className="relative flex items-center gap-1">
+          <SearchLauncher />
+          {bell(notificationsOpen, () => setNotificationsOpen((o) => !o))}
+          {notificationsMenu("right-0 top-full mt-2")}
+          <button
+            type="button"
+            onClick={() => setMobileProfileOpen((o) => !o)}
+            aria-expanded={mobileProfileOpen}
+            aria-label="Account & preferences"
+            className="tap ml-1 shrink-0 rounded-full"
+          >
+            <img alt="" src={displayAvatar} className="size-8 rounded-full border-2 border-line bg-card object-cover" />
+          </button>
+          <ProfileDropdown
+            isOpen={mobileProfileOpen}
+            onClose={() => setMobileProfileOpen(false)}
+            profile={profile}
+            onSignOut={handleSignOut}
+            isLoading={isLoading}
+          />
+        </div>
       </header>
 
-      {/* MAIN PAGE CONTAINER */}
-      <main className={clsx(
-        "flex-1 w-full box-border min-w-0",
-        isWorkspace 
-          ? "h-[calc(100vh-4rem)] min-h-0 overflow-hidden p-0 m-0" 
-          : "max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8"
-      )}>
-        {children}
-      </main>
+      {/* ── Page ── */}
+      <div className={clsx("md:pl-[var(--sb)] md:transition-[padding] md:duration-200", isWorkspace && "h-[calc(100dvh-3.5rem)] md:h-dvh")}>
+        <main
+          className={clsx(
+            "min-w-0",
+            isWorkspace ? "h-full overflow-hidden" : "mx-auto max-w-[1200px] px-4 pb-28 pt-6 md:px-8 md:pb-16 md:pt-8"
+          )}
+        >
+          <ViewTransition key={pathname} enter={started ? "page-in" : "none"} exit="page-out" default="none">
+            <div className={clsx(isWorkspace && "h-full")}>{children}</div>
+          </ViewTransition>
+        </main>
+        {!isWorkspace && (
+          <footer className="mx-auto flex max-w-[1200px] flex-wrap items-center justify-between gap-3 border-t-[1.5px] border-hair px-4 py-6 pb-28 font-mono text-[11px] uppercase tracking-wider text-mute md:px-8 md:pb-6">
+            <span>StudyHub · placement prep, mapped</span>
+            <span className="flex gap-4">
+              <Link href="/ideas" className="text-accent-ink hover:underline">
+                Ideas board
+              </Link>
+              <Link href="/help" className="hover:text-ink">
+                Help
+              </Link>
+            </span>
+          </footer>
+        )}
+      </div>
 
-      {/* MINIMAL FOOTER */}
+      <AskDialog />
+
+      {/* ── Phone tab bar (hidden in full-screen workspaces) ── */}
       {!isWorkspace && (
-        <footer className="w-full max-w-full bg-[var(--surface)] border-t border-[var(--border)]/80 py-6 mt-16 box-border">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[var(--ink-secondary)] font-normal box-border min-w-0">
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-[var(--success)]"></span>
-              <span>STUDYHUB · Mapped Learning &amp; Placement Engine · Verified Cycle 2026</span>
-            </div>
-            <div className="flex flex-wrap justify-center items-center gap-x-4 gap-y-1 text-[var(--ink-tertiary)] [&>a]:whitespace-nowrap">
-              <Link className="font-medium text-[var(--accent)] hover:underline" href="/ideas">Ideas board</Link>
-              <a className="hover:text-[var(--ink-secondary)] transition-colors" href="#">Privacy</a>
-              <a className="hover:text-[var(--ink-secondary)] transition-colors" href="#">Terms of Verification</a>
-              <a className="hover:text-[var(--ink-secondary)] transition-colors" href="#">Campus Network</a>
-            </div>
-          </div>
-        </footer>
+        <nav
+          aria-label="Main navigation"
+          className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 border-t-[2.4px] border-line bg-paper pb-[env(safe-area-inset-bottom)] [view-transition-name:tabbar] md:hidden"
+        >
+          {tabs.map(([href, label, Icon]) => {
+            const on = activeTab === href;
+            return (
+              <Link
+                key={href}
+                href={href}
+                aria-current={on ? "page" : undefined}
+                className={clsx("label-cond flex h-16 flex-col items-center justify-center gap-1 text-[12px]", on ? "text-ink" : "text-ink/55")}
+              >
+                <span className={clsx("grid h-7 w-12 place-items-center rounded-full transition-colors", on && "bg-ink text-paper")}>
+                  <Icon className="size-[18px]" />
+                </span>
+                {label}
+              </Link>
+            );
+          })}
+        </nav>
       )}
     </div>
   );

@@ -30,9 +30,9 @@ export function SearchLauncher() {
         aria-label="Search lessons"
         aria-keyshortcuts="Control+K"
         title="Search lessons (Ctrl K)"
-        className="p-2 rounded-lg text-[var(--ink-secondary)] hover:text-[var(--ink)] hover:bg-[var(--surface-subdued)] transition-colors shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
+        className="tap grid size-9 shrink-0 place-items-center rounded-xl text-ink/70 transition-colors hover:bg-ink/[0.06] hover:text-ink"
       >
-        <Search aria-hidden="true" className="w-[19px] h-[19px] sm:w-[20px] sm:h-[20px]" />
+        <Search aria-hidden className="size-[18px]" />
       </button>
       {open && <SearchDialog onClose={() => setOpen(false)} />}
     </>

@@ -11,7 +11,7 @@ export default function Step1Identity({ data, update }: Step1IdentityProps) {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-1.5">
-        <h2 className="text-xl font-bold tracking-tight text-slate-900">Initialize Academic Profile</h2>
+        <h2 className="display text-[32px] md:text-[38px]">Initialize Academic Profile</h2>
         <p className="text-sm text-slate-500 leading-relaxed">
           We use this data to align your roadmap with typical campus placement timelines and difficulty levels.
         </p>

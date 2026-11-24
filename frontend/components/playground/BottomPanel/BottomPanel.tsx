@@ -27,10 +27,10 @@ interface BottomPanelProps {
 }
 
 const LEVEL_COLORS: Record<string, string> = {
-  log: "#d1fae5",
-  info: "#bfdbfe",
-  warn: "#fef3c7",
-  error: "#fee2e2",
+  log: "#bfe0db",
+  info: "#e2dbd0",
+  warn: "#f0d48e",
+  error: "#f2b8b5",
 };
 
 const LEVEL_ICONS: Record<string, string> = {

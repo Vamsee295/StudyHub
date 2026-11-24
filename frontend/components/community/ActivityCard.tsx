@@ -35,7 +35,7 @@ function Avatar({ author }: { author?: CommunityAuthor | null }) {
   }
   return (
     <div className="w-[38px] h-[38px] rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center shrink-0">
-      <span className="text-[13px] font-bold text-[#2563eb]">{initials}</span>
+      <span className="text-[13px] font-bold text-accent-ink">{initials}</span>
     </div>
   );
 }
@@ -101,7 +101,7 @@ export function ActivityCard({
 
   return (
     <article
-      className="bg-[#FFFFFF] rounded-[12px] border border-slate-200 p-[22px] transition-colors hover:border-slate-300"
+      className="bg-card rounded-[12px] border border-slate-200 p-[22px] transition-colors hover:border-slate-300"
       aria-label={`Post by ${post.author?.full_name || "a learner"}`}
     >
       {/* Header: Avatar + Author + Time */}
@@ -109,7 +109,7 @@ export function ActivityCard({
         <div className="flex items-center gap-3 min-w-0">
           <Avatar author={post.author} />
           <div className="min-w-0 flex flex-col justify-center">
-            <span className="text-[14px] font-medium text-[#0f172a] truncate leading-tight">
+            <span className="text-[14px] font-medium text-ink truncate leading-tight">
               {post.author?.full_name || "StudyHub Learner"}
             </span>
             {post.author?.university && (
@@ -133,7 +133,7 @@ export function ActivityCard({
 
       {/* Activity context line */}
       {activity && (
-        <p className="text-[16px] font-[500] text-[#0f172a] mb-2">
+        <p className="text-[16px] font-[500] text-ink mb-2">
           {activity.title}
         </p>
       )}

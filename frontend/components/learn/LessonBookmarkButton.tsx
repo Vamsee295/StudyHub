@@ -24,10 +24,8 @@ export function LessonBookmarkButton({ course, lesson }: { course: string; lesso
       aria-label={saved ? "Remove bookmark" : "Bookmark this lesson"}
       title={saved ? "Remove bookmark" : "Bookmark this lesson"}
       className={clsx(
-        "shrink-0 text-[12px] font-bold px-3 py-2 rounded-lg transition-colors flex items-center gap-1.5 border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]",
-        saved
-          ? "bg-[var(--accent-soft)] border-[var(--accent-soft-border)] text-[var(--accent)]"
-          : "bg-white border-[var(--border)] text-[var(--ink-secondary)] hover:text-[var(--ink)]"
+        "label-cond flex h-9 shrink-0 items-center gap-1.5 rounded-xl border-2 px-3 text-[14px] transition-colors",
+        saved ? "border-line bg-card-2 text-accent-ink" : "border-hair text-body hover:border-line hover:text-ink"
       )}
     >
       <Bookmark aria-hidden="true" className={clsx("w-4 h-4", saved && "fill-current")} />

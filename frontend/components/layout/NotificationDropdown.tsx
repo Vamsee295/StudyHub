@@ -24,6 +24,8 @@ interface NotificationDropdownProps {
   onMarkAsRead: (id: string) => void;
   onMarkAllAsRead: () => void;
   onNavigate?: (link: string) => void;
+  /** where the menu opens relative to its trigger */
+  placement?: string;
 }
 
 const getNotificationIcon = (type: NotificationType) => {
@@ -84,7 +86,8 @@ export function NotificationDropdown({
   isLoading,
   onMarkAsRead,
   onMarkAllAsRead,
-  onNavigate
+  onNavigate,
+  placement = "right-0 top-full mt-2.5"
 }: NotificationDropdownProps) {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -133,7 +136,7 @@ export function NotificationDropdown({
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 6, scale: 0.98 }}
           transition={{ duration: 0.16, ease: "easeOut" }}
-          className="absolute right-0 top-full mt-2.5 w-[360px] max-w-[calc(100vw-24px)] bg-white rounded-2xl border border-[var(--border)] shadow-xl shadow-[var(--ink)]/5 z-50 overflow-hidden font-sans"
+          className={`pop-in brut absolute ${placement} w-[360px] max-w-[calc(100vw-24px)] bg-card rounded-2xl z-50 overflow-hidden font-sans`}
         >
           {/* HEADER */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border)] bg-[var(--surface-subdued)]/50">

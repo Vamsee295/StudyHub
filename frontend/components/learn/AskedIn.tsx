@@ -9,13 +9,13 @@ export function AskedInChips({ course, module, compact = false }: { course: stri
   return (
     <div className="flex flex-wrap items-center gap-1.5" title={ASKED_IN_CAVEAT}>
       {!compact && (
-        <span className="inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-wider text-[var(--ink-tertiary)] mr-1">
+        <span className="mr-1 inline-flex items-center gap-1 font-mono text-[11px] uppercase tracking-wider text-mute">
           <Building2 aria-hidden="true" className="w-3.5 h-3.5" /> Reported in interviews at
         </span>
       )}
       {companies.map((c) => (
         <Link key={c.id} href={`/companies?company=${c.id}#asked-in`}
-          className="px-2 py-0.5 rounded-md border border-[var(--border)] bg-[var(--surface)] text-[11.5px] font-medium text-[var(--ink-secondary)] hover:border-[var(--accent)] hover:text-[var(--ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]">
+          className="rounded-full border-[1.5px] border-hair px-2.5 py-0.5 text-[12px] font-medium text-body hover:border-line hover:text-ink">
           {c.name}
         </Link>
       ))}

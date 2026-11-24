@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Play, RotateCcw, AlignLeft, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import dynamic from "next/dynamic";
+import { MONACO_THEME, defineMonacoTheme } from "@/lib/monacoTheme";
 
 // Monaco editor loaded dynamically to avoid SSR issues
 const MonacoEditor = dynamic(
@@ -141,7 +142,8 @@ export function SqlEditor({
         <MonacoEditor
           height="100%"
           defaultLanguage="sql"
-          theme="vs-dark"
+          theme={MONACO_THEME}
+          beforeMount={defineMonacoTheme}
           value={value}
           onChange={(val) => onChange(val ?? "")}
           onMount={handleEditorMount}

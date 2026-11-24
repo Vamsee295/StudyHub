@@ -22,6 +22,7 @@ import {
 import { UserProfile } from "@/types";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { useProfile } from "@/components/providers/ProfileProvider";
+import { AppearanceSettings } from "@/components/settings/AppearanceSettings";
 
 type TabType = "account" | "notifications" | "appearance" | "security" | "privacy" | "danger";
 
@@ -37,10 +38,6 @@ export default function SettingsPage() {
   const [companyAlerts, setCompanyAlerts] = useState(true);
   const [roadmapUpdates, setRoadmapUpdates] = useState(true);
   const [emailDigest, setEmailDigest] = useState(true);
-
-  // Appearance State
-  const [interfaceDensity, setInterfaceDensity] = useState("compact");
-  const [codeTheme, setCodeTheme] = useState("navy");
 
   // Privacy State
   const [profileVisibility, setProfileVisibility] = useState("campus");
@@ -357,97 +354,7 @@ export default function SettingsPage() {
           )}
 
           {/* TAB 3: APPEARANCE */}
-          {activeTab === "appearance" && (
-            <div className="space-y-6">
-              <div>
-                <h2 className="text-lg font-bold text-[var(--ink)]">Appearance &amp; Interface</h2>
-                <p className="text-xs text-[var(--ink-secondary)] mt-0.5">
-                  Customize the visual presentation and technical density of your workspace.
-                </p>
-              </div>
-
-              <div className="space-y-5 pt-2">
-                <div>
-                  <label className="block text-xs font-mono font-semibold text-[var(--ink-secondary)] uppercase tracking-wider mb-2">
-                    Visual Theme
-                  </label>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="p-4 rounded-xl border-2 border-[var(--accent)] bg-[var(--accent-soft)] flex items-center justify-between cursor-pointer">
-                      <div>
-                        <span className="text-xs font-bold text-[var(--ink)] block">Technical Light (Active)</span>
-                        <span className="text-[11px] text-[var(--ink-secondary)]">Optimized for high readability &amp; editorial focus</span>
-                      </div>
-                      <Check className="w-4 h-4 text-[var(--accent)]" />
-                    </div>
-                    <div className="p-4 rounded-xl border border-[var(--border)] opacity-60 bg-[var(--surface-subdued)] flex items-center justify-between">
-                      <div>
-                        <span className="text-xs font-bold text-[var(--ink)] block">Dark Grid (Pro)</span>
-                        <span className="text-[11px] text-[var(--ink-secondary)]">Scheduled for Cycle '26 Q4 release</span>
-                      </div>
-                      <span className="text-[10px] font-mono uppercase bg-slate-200 px-1.5 py-0.5 rounded text-slate-700">Soon</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-mono font-semibold text-[var(--ink-secondary)] uppercase tracking-wider mb-2">
-                    Interface Density
-                  </label>
-                  <div className="grid grid-cols-2 gap-4">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setInterfaceDensity("compact");
-                        handleSaveGeneral();
-                      }}
-                      className={`p-3.5 rounded-xl border text-left cursor-pointer transition-all ${
-                        interfaceDensity === "compact"
-                          ? "border-[var(--accent)] bg-[var(--accent-soft)]/50 font-bold"
-                          : "border-[var(--border)] hover:bg-[var(--surface-subdued)]"
-                      }`}
-                    >
-                      <span className="text-xs text-[var(--ink)] block font-semibold">Compact Technical</span>
-                      <span className="text-[11px] text-[var(--ink-secondary)]">Higher information density per viewport</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setInterfaceDensity("spacious");
-                        handleSaveGeneral();
-                      }}
-                      className={`p-3.5 rounded-xl border text-left cursor-pointer transition-all ${
-                        interfaceDensity === "spacious"
-                          ? "border-[var(--accent)] bg-[var(--accent-soft)]/50 font-bold"
-                          : "border-[var(--border)] hover:bg-[var(--surface-subdued)]"
-                      }`}
-                    >
-                      <span className="text-xs text-[var(--ink)] block font-semibold">Comfortable</span>
-                      <span className="text-[11px] text-[var(--ink-secondary)]">Expanded padding and generous margins</span>
-                    </button>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-mono font-semibold text-[var(--ink-secondary)] uppercase tracking-wider mb-2">
-                    Monospace Code Font
-                  </label>
-                  <select
-                    value={codeTheme}
-                    onChange={(e) => {
-                      setCodeTheme(e.target.value);
-                      handleSaveGeneral();
-                    }}
-                    className="field w-full cursor-pointer text-xs"
-                  >
-                    <option value="jetbrains">JetBrains Mono (Default Technical)</option>
-                    <option value="fira">Fira Code</option>
-                    <option value="system">System Monospace</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-          )}
+          {activeTab === "appearance" && <AppearanceSettings />}
 
           {/* TAB 4: SECURITY & PASSWORD */}
           {activeTab === "security" && (

@@ -15,11 +15,11 @@ export function PasswordField({ label, error, forgotHref, id, className, ...rest
   return (
     <div>
       <div className="flex items-center justify-between mb-1.5">
-        <label htmlFor={id} className="block text-xs tag-mono font-medium text-ink-secondary">
+        <label htmlFor={id} className="block font-mono text-[11px] uppercase tracking-wider text-mute">
           {label}
         </label>
         {forgotHref && (
-          <a href={forgotHref} className="text-xs text-accent hover:text-accent-hover font-medium transition-colors">
+          <a href={forgotHref} className="text-[13px] font-semibold text-accent-ink hover:underline">
             Forgot password?
           </a>
         )}
@@ -28,19 +28,19 @@ export function PasswordField({ label, error, forgotHref, id, className, ...rest
         <input
           id={id}
           type={visible ? "text" : "password"}
-          className={`field field-lg w-full pr-11 !bg-white !text-slate-900 border border-slate-200 placeholder:text-slate-400 focus:!bg-white focus:border-accent focus:ring-2 focus:ring-accent/15 shadow-2xs transition-colors ${error ? "field-error" : ""} ${className ?? ""}`}
+          className={`field field-lg w-full pr-11 ${error ? "field-error" : ""} ${className ?? ""}`}
           {...rest}
         />
         <button
           type="button"
           aria-label={visible ? "Hide password" : "Show password"}
           onClick={() => setVisible((v) => !v)}
-          className="absolute right-3.5 top-1/2 -translate-y-1/2 text-ink-tertiary hover:text-ink p-1 transition-colors"
+          className="tap absolute right-3 top-1/2 -translate-y-1/2 p-1 text-mute hover:text-ink"
         >
           {visible ? <EyeOff size={17} /> : <Eye size={17} />}
         </button>
       </div>
-      {error && <p className="text-[12px] text-error mt-1.5">{error}</p>}
+      {error && <p className="mt-1.5 text-[13px] text-danger">{error}</p>}
     </div>
   );
 }

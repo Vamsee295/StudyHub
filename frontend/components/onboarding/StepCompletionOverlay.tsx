@@ -36,7 +36,7 @@ export default function StepCompletionOverlay({ profile, onComplete, onEdit }: S
       </div>
 
       <div className="flex flex-col gap-1.5 max-w-lg mx-auto">
-        <h2 className="text-2xl font-bold text-slate-900 tracking-tight">
+        <h2 className="display text-[32px] md:text-[38px]">
           {generating ? 'Calibrating Roadmap Matrix...' : 'Profile Matrix Initialized'}
         </h2>
         <p className="text-sm text-slate-500 leading-relaxed">

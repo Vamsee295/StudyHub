@@ -7,24 +7,19 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
 }
 
 export const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, inputSize = "default", error, disabled, ...props }, ref) => {
-    return (
-      <input
-        ref={ref}
-        disabled={disabled}
-        className={clsx(
-          "w-full bg-[var(--surface)] text-[var(--ink)] border border-[var(--border)] transition-colors placeholder:text-[var(--ink-muted)]",
-          "rounded-[var(--radius-sm)] focus:outline-none focus:border-[var(--accent)]",
-          "disabled:opacity-50 disabled:bg-[var(--surface-subdued)] disabled:cursor-not-allowed",
-          inputSize === "default" && "h-10 px-3 text-[14px] leading-relaxed",
-          inputSize === "sm" && "h-9 px-2.5 text-[13px]",
-          error && "border-[var(--error)] focus:border-[var(--error)]",
-          className
-        )}
-        {...props}
-      />
-    );
-  }
+  ({ className, inputSize = "default", error, ...props }, ref) => (
+    <input
+      ref={ref}
+      className={clsx(
+        "w-full rounded-xl border-2 border-hair bg-card text-ink placeholder:text-mute transition-colors",
+        "focus:border-accent disabled:cursor-not-allowed disabled:opacity-50",
+        inputSize === "default" ? "h-[42px] px-3.5 text-[15px]" : "h-9 px-3 text-[14px]",
+        error && "border-danger focus:border-danger",
+        className
+      )}
+      {...props}
+    />
+  )
 );
 
 Input.displayName = "Input";

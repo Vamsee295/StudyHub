@@ -32,7 +32,7 @@ export function RecommendationsSection({ recommendations }: { recommendations: T
               {template.title}
             </h3>
 
-            <div className="bg-[#f8fafc] border border-[var(--border)] rounded-lg p-3 my-3">
+            <div className="bg-paper border border-[var(--border)] rounded-lg p-3 my-3">
               <p className="text-[13px] text-[var(--ink-secondary)] flex gap-2">
                 <Lightbulb className="w-4 h-4 text-[var(--accent)] shrink-0 mt-0.5" />
                 <span className="leading-relaxed">{template.description}</span>

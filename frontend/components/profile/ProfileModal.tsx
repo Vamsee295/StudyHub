@@ -134,7 +134,7 @@ export function ProfileModal({ isOpen, onClose, profile }: ProfileModalProps) {
             className="relative w-full max-w-2xl bg-white rounded-2xl border border-slate-200 shadow-2xl overflow-hidden z-10 max-h-[90vh] flex flex-col"
           >
             {/* Header */}
-            <div className="p-6 border-b border-slate-200 bg-[#fafaf8] flex items-start justify-between gap-4">
+            <div className="p-6 border-b border-slate-200 bg-paper flex items-start justify-between gap-4">
               <div className="flex items-center gap-4">
                 <div className="relative">
                   <img
@@ -427,7 +427,7 @@ export function ProfileModal({ isOpen, onClose, profile }: ProfileModalProps) {
             </div>
 
             {/* Footer */}
-            <div className="p-4 border-t border-slate-200 bg-[#fafaf8] flex items-center justify-between gap-4">
+            <div className="p-4 border-t border-slate-200 bg-paper flex items-center justify-between gap-4">
               <span className="text-xs text-slate-400 font-mono">
                 Last updated: {new Date(profile.updatedAt || Date.now()).toLocaleDateString()}
               </span>

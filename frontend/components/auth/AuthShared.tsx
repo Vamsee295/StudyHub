@@ -24,7 +24,7 @@ export function GoogleButton({ label = "Continue with Google" }: { label?: strin
     <button
       type="button"
       onClick={handleGoogleSignIn}
-      className="btn-secondary auth-btn text-[13.5px] !bg-white hover:!bg-slate-50 border border-slate-200 !text-slate-800 shadow-2xs transition-colors cursor-pointer"
+      className="btn-secondary auth-btn"
     >
       <svg width="16" height="16" viewBox="0 0 24 24" className="shrink-0">
         <path d="M12 5c1.6 0 3 .6 4.1 1.7l3.1-3.1C17.3 1.8 14.8 1 12 1 7.4 1 3.5 3.6 1.6 7.4l3.7 2.9C6.2 7.4 8.9 5 12 5z" fill="#EA4335" />
@@ -40,9 +40,9 @@ export function GoogleButton({ label = "Continue with Google" }: { label?: strin
 export function AuthDivider({ label }: { label: string }) {
   return (
     <div className="my-5 flex items-center gap-3">
-      <div className="h-px flex-1 bg-border" />
-      <span className="text-[11px] tag-mono uppercase tracking-wider text-ink-tertiary">{label}</span>
-      <div className="h-px flex-1 bg-border" />
+      <div className="h-[1.5px] flex-1 bg-hair" />
+      <span className="font-mono text-[11px] uppercase tracking-wider text-mute">{label}</span>
+      <div className="h-[1.5px] flex-1 bg-hair" />
     </div>
   );
 }

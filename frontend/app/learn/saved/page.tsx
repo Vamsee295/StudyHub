@@ -2,79 +2,75 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Bookmark, CheckCircle2, X } from "lucide-react";
+import { ArrowLeft, CheckCircle2, X } from "lucide-react";
 import { BOOKMARKS_EVENT, getBookmarks, LessonBookmark, toggleBookmark } from "@/lib/learn/bookmarks";
 import { lessonRef } from "@/lib/learn/lessonPrereqs";
 import { getStoredProgress } from "@/lib/services/learnService";
-
-const focusRing = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]";
+import { PageHeader } from "@/components/ui/Page";
+import { buttonClass } from "@/components/ui/Button";
 
 export default function SavedLessonsPage() {
-  const [items, setItems] = useState<LessonBookmark[] | null>(null);
-  const [done, setDone] = useState<Record<string, boolean>>({});
+  // client-only render (AppLayout), so local bookmarks are readable on first render
+  const [items, setItems] = useState<LessonBookmark[]>(getBookmarks);
 
   useEffect(() => {
-    const load = () => {
-      const list = getBookmarks();
-      const store = getStoredProgress();
-      setItems(list);
-      setDone(Object.fromEntries(list.map((b) => {
-        const ref = lessonRef(`${b.course}/${b.lesson}`);
-        return [`${b.course}/${b.lesson}`, !!ref && (store[ref.id]?.status === "completed" || store[b.lesson]?.status === "completed")];
-      })));
-    };
-    load();
-    window.addEventListener(BOOKMARKS_EVENT, load);
-    return () => window.removeEventListener(BOOKMARKS_EVENT, load);
+    const sync = () => setItems(getBookmarks());
+    window.addEventListener(BOOKMARKS_EVENT, sync);
+    return () => window.removeEventListener(BOOKMARKS_EVENT, sync);
   }, []);
 
-  if (items === null) return null;
-
+  const store = getStoredProgress();
   // Group by course, keeping the most recently saved course first.
-  const groups = new Map<string, { title: string; rows: { b: LessonBookmark; title: string }[] }>();
+  const groups = new Map<string, { title: string; rows: { b: LessonBookmark; title: string; done: boolean }[] }>();
   for (const b of items) {
     const ref = lessonRef(`${b.course}/${b.lesson}`);
     if (!ref) continue;
     if (!groups.has(b.course)) groups.set(b.course, { title: ref.courseTitle, rows: [] });
-    groups.get(b.course)!.rows.push({ b, title: ref.title });
+    const done = store[ref.id]?.status === "completed" || store[b.lesson]?.status === "completed";
+    groups.get(b.course)!.rows.push({ b, title: ref.title, done });
   }
 
   return (
-    <div className="flex flex-col gap-6 pb-16 w-full max-w-3xl">
-      <Link href="/learn" className={`inline-flex items-center gap-1.5 text-[13px] font-medium text-[var(--ink-secondary)] hover:text-[var(--ink)] self-start rounded ${focusRing}`}>
-        <ArrowLeft aria-hidden="true" className="w-3.5 h-3.5" /> Back to Learn
+    <div className="max-w-3xl">
+      <Link href="/learn" className="mb-6 inline-flex items-center gap-1.5 font-mono text-[12px] uppercase tracking-wider text-mute hover:text-ink">
+        <ArrowLeft aria-hidden className="size-3.5" /> Learn
       </Link>
-      <header className="flex flex-col gap-2">
-        <h1 className="font-newsreader text-3xl sm:text-4xl text-[var(--ink)] tracking-tight flex items-center gap-3">
-          <Bookmark aria-hidden="true" className="w-7 h-7 text-[var(--accent)]" /> Saved lessons
-        </h1>
-        <p className="text-[var(--ink-secondary)] text-[15px]">
-          Lessons you bookmarked, grouped by course. Saved in this browser. Press Ctrl K anywhere to search all lessons.
-        </p>
-      </header>
+      <PageHeader eyebrow="Saved in this browser" title="Saved" hl="lessons" />
 
       {groups.size === 0 ? (
-        <p className="p-6 rounded-xl border border-dashed border-[var(--border)] text-[14px] text-[var(--ink-secondary)]">
-          No saved lessons yet. Use the Save button at the top of any lesson to keep it here.
-        </p>
+        <div className="rounded-2xl border-[1.5px] border-dashed border-hair p-8 text-center">
+          <p className="note mb-2">nothing here yet</p>
+          <p className="text-[15px] text-body">Hit Save at the top of any lesson to keep it here.</p>
+          <Link href="/learn" className={`${buttonClass("secondary", "sm")} mt-5`}>
+            Browse lessons
+          </Link>
+        </div>
       ) : (
         [...groups.entries()].map(([course, g]) => (
-          <section key={course} aria-labelledby={`saved-${course}`} className="flex flex-col gap-2">
-            <h2 id={`saved-${course}`} className="text-[12px] font-bold uppercase tracking-wider text-[var(--ink-tertiary)]">
-              {g.title} <span className="tabular-nums">({g.rows.length})</span>
+          <section key={course} aria-labelledby={`saved-${course}`} className="mb-10">
+            <h2 id={`saved-${course}`} className="label-cond mb-2 flex items-baseline gap-2 text-[20px]">
+              {g.title} <span className="font-mono text-[12px] font-normal text-mute">{g.rows.length}</span>
             </h2>
-            <ul className="flex flex-col divide-y divide-[var(--border)] rounded-xl border border-[var(--border)] bg-[var(--surface)]">
-              {g.rows.map(({ b, title }) => {
+            <ul className="border-t-[1.5px] border-hair">
+              {g.rows.map(({ b, title, done }) => {
                 const key = `${b.course}/${b.lesson}`;
                 return (
-                  <li key={key} className="flex items-center gap-3 px-4 py-3">
-                    {done[key] && <CheckCircle2 aria-label="Completed" className="w-4 h-4 shrink-0 text-[var(--success)]" />}
-                    <Link href={`/learn/${key}`} className={`flex-1 min-w-0 truncate text-[14px] font-medium text-[var(--ink)] hover:text-[var(--accent)] rounded ${focusRing}`}>
+                  <li key={key} className="flex items-center gap-3 border-b-[1.5px] border-hair px-1 py-3">
+                    {done ? (
+                      <CheckCircle2 aria-label="Completed" className="size-[18px] shrink-0 text-note" />
+                    ) : (
+                      <span aria-hidden className="block size-[18px] shrink-0 rounded-full border-2 border-ink/25" />
+                    )}
+                    <Link href={`/learn/${key}`} className="min-w-0 flex-1 truncate text-[15px] font-medium hover:text-accent-ink">
                       {title}
                     </Link>
-                    <button type="button" onClick={() => toggleBookmark(b.course, b.lesson)} aria-label={`Remove ${title} from saved lessons`}
-                      className={`p-1.5 rounded text-[var(--ink-tertiary)] hover:text-[var(--ink)] ${focusRing}`}>
-                      <X aria-hidden="true" className="w-4 h-4" />
+                    <button
+                      type="button"
+                      onClick={() => toggleBookmark(b.course, b.lesson)}
+                      aria-label={`Remove ${title} from saved lessons`}
+                      className="tap rounded-lg p-1.5 text-mute hover:bg-card-2 hover:text-ink"
+                    >
+                      <X aria-hidden className="size-4" />
                     </button>
                   </li>
                 );

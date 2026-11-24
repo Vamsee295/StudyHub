@@ -75,7 +75,7 @@ export function HelpFeedbackModal({ isOpen, onClose }: HelpFeedbackModalProps) {
             className="relative w-full max-w-lg bg-white rounded-2xl border border-slate-200 shadow-2xl overflow-hidden z-10 flex flex-col"
           >
             {/* Header */}
-            <div className="px-6 py-4 border-b border-slate-200 bg-[#fafaf8] flex items-center justify-between">
+            <div className="px-6 py-4 border-b border-slate-200 bg-paper flex items-center justify-between">
               <div className="flex items-center gap-2.5">
                 <div className="w-7 h-7 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
                   <HelpCircle className="w-4 h-4" />

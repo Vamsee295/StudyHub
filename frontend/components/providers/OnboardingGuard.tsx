@@ -73,7 +73,7 @@ export function OnboardingGuard({ children }: { children: React.ReactNode }) {
   // Show loading state while checking
   if ((authLoading || profileLoading || isChecking) && user) {
     return (
-      <div className="min-h-screen bg-[#fafaf8] flex items-center justify-center">
+      <div className="min-h-screen bg-paper flex items-center justify-center">
         <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
       </div>
     );

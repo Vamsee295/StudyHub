@@ -24,6 +24,8 @@ interface ProfileDropdownProps {
   profile: UserProfile;
   onSignOut: () => void;
   isLoading?: boolean;
+  /** where the menu opens relative to its trigger */
+  placement?: string;
 }
 
 export function ProfileDropdown({
@@ -31,7 +33,8 @@ export function ProfileDropdown({
   onClose,
   profile,
   onSignOut,
-  isLoading = false
+  isLoading = false,
+  placement = "right-0 top-full mt-2.5"
 }: ProfileDropdownProps) {
   const router = useRouter();
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -91,7 +94,7 @@ export function ProfileDropdown({
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 6, scale: 0.98 }}
           transition={{ duration: 0.16, ease: "easeOut" }}
-          className="absolute right-0 top-full mt-2.5 w-[336px] max-w-[calc(100vw-24px)] bg-white rounded-2xl border border-slate-200 shadow-xl shadow-slate-900/10 z-50 overflow-hidden font-sans"
+          className={`pop-in brut absolute ${placement} w-[336px] max-w-[calc(100vw-24px)] bg-card rounded-2xl z-50 overflow-hidden font-sans`}
         >
           {/* PROFILE HEADER (Clickable to /profile/preferences) */}
           <button

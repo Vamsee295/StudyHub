@@ -56,8 +56,8 @@ export function MyTemplatesTable({ savedTemplates }: { savedTemplates: SavedTemp
                       <span
                         className={clsx(
                           "flex items-center gap-1.5 text-[12px] font-semibold px-2 py-0.5 rounded-full w-fit whitespace-nowrap",
-                          template.status === "Draft" && "text-[#ca8a04] bg-[#fef9c3] border border-[#fef08a]",
-                          template.status === "Ready" && "text-[#166534] bg-[#dcfce3] border border-[#bbf7d0]",
+                          template.status === "Draft" && "text-amber-600 bg-amber-100 border border-amber-200",
+                          template.status === "Ready" && "text-emerald-800 bg-emerald-100 border border-emerald-200",
                           template.status === "Archived" && "text-[var(--ink-tertiary)] bg-[var(--surface-subdued)] border border-[var(--border)]"
                         )}
                       >

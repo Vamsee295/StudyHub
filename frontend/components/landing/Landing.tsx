@@ -1,173 +1,185 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import {
-  AnimatePresence,
-  motion,
-  useMotionValue,
-  useReducedMotion,
-  useSpring,
-  useTransform,
-} from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ArrowLeft, ArrowRight, Check, Plus } from "lucide-react";
-import { featuredProblem, practiceCategories } from "@/lib/data/practice";
+import { featuredProblem } from "@/lib/data/practice";
 import { roadmap } from "@/lib/data/roadmap";
-import { companies } from "@/lib/data/companies";
+import { companies, lastVerified } from "@/lib/data/companies";
 import { paths } from "@/lib/data/paths";
-import { Motif } from "./Motif";
+import { StudyHubLogo } from "@/components/ui/StudyHubLogo";
+import { buttonClass } from "@/components/ui/Button";
+import { CountUp, Marked, Reveal, SpinSticker, Ticker, ease } from "./motion";
+
+export type LandingStats = { courses: number; lessons: number; quiz: number; problems: number; labs: number; companies: number; subjects: string[] };
 
 const SIGNUP = "/login?mode=signup";
-const ease = [0.16, 1, 0.3, 1] as const;
-const totalQuestions = practiceCategories.reduce((n, c) => n + c.questions, 0);
-
 // "TCS Digital / Prime" -> "TCS", matched against roadmap testedBy entries like "TCS NQT".
 const shortName = (name: string) => name.split(" ")[0];
-const stagesFor = (name: string) =>
-  roadmap.filter((s) => s.testedBy.some((t) => t.startsWith(shortName(name))));
+const stagesFor = (name: string) => roadmap.filter((s) => s.testedBy.some((t) => t.startsWith(shortName(name))));
+const wrap = "mx-auto w-full max-w-[1180px] px-4 md:px-8";
 
 /* ---------- Nav ---------- */
 
 function Nav() {
   return (
-    <header className="sticky top-0 z-30 border-b border-[var(--border-strong)] bg-[var(--x-paper)]/92 backdrop-blur">
-      <div className="x-wrap flex h-16 items-center gap-4">
-        <Link href="/" className="flex items-center gap-2.5 font-[800] text-[1.35rem] tracking-[-0.03em]">
-          <span className="grid h-8 w-8 place-items-center rounded-md bg-[var(--x-deep)] text-white text-[15px]">S</span>
-          StudyHub
-        </Link>
-        <nav className="ml-auto hidden md:flex items-center gap-7 text-[15px] font-semibold" aria-label="Sections">
-          <a href="#how" className="hover:text-[var(--x-deep)]">How it works</a>
-          <a href="#tracks" className="hover:text-[var(--x-deep)]">Tracks</a>
-          <a href="#tools" className="hover:text-[var(--x-deep)]">Tools</a>
-          <a href="#faq" className="hover:text-[var(--x-deep)]">FAQ</a>
+    <header className="sticky top-0 z-30 border-b-[2.4px] border-line bg-paper/95 backdrop-blur">
+      <div className={`${wrap} flex h-16 items-center gap-4`}>
+        <StudyHubLogo href="/" size="md" />
+        <span className="label-cond hidden -rotate-3 rounded-md border-2 border-line bg-gold px-2 py-0.5 text-[12px] text-[#191614] sm:inline">Free</span>
+        <nav aria-label="Sections" className="label-cond ml-auto hidden items-center gap-7 text-[16px] md:flex">
+          <a href="#how" className="hover:text-accent-ink">
+            How it works
+          </a>
+          <a href="#tools" className="hover:text-accent-ink">
+            Tools
+          </a>
+          <a href="#faq" className="hover:text-accent-ink">
+            FAQ
+          </a>
         </nav>
-        <Link href="/login" className="ml-auto md:ml-3 text-[15px] font-semibold whitespace-nowrap">Sign in</Link>
-        <Link href={SIGNUP} className="x-btn x-btn-sm whitespace-nowrap">Start free</Link>
+        <Link href="/login" className="label-cond ml-auto whitespace-nowrap text-[16px] hover:text-accent-ink md:ml-3">
+          Sign in
+        </Link>
+        <Link href={SIGNUP} className={buttonClass("primary", "sm")}>
+          Start free
+        </Link>
       </div>
     </header>
   );
 }
 
-/* ---------- Hero: pick a company, see its paper ---------- */
+/* ---------- Hero: pick a company, see its rounds ---------- */
 
-function CompanyPaper({ index }: { index: number }) {
+function CompanyCard({ index }: { index: number }) {
   const reduced = useReducedMotion();
-  const mx = useMotionValue(0);
-  const my = useMotionValue(0);
-  const rotY = useSpring(useTransform(mx, [-0.5, 0.5], [-9, 9]), { stiffness: 140, damping: 16 });
-  const rotX = useSpring(useTransform(my, [-0.5, 0.5], [7, -7]), { stiffness: 140, damping: 16 });
   const c = companies[index];
   const stages = stagesFor(c.name).slice(0, 4);
-
   return (
-    <div
-      className="relative [perspective:1400px]"
-      onPointerMove={(e) => {
-        if (reduced) return;
-        const r = e.currentTarget.getBoundingClientRect();
-        mx.set((e.clientX - r.left) / r.width - 0.5);
-        my.set((e.clientY - r.top) / r.height - 0.5);
-      }}
-      onPointerLeave={() => { mx.set(0); my.set(0); }}
-    >
-      <motion.div style={{ rotateX: rotX, rotateY: rotY, transformStyle: "preserve-3d" }} className="relative">
-        {/* sheet underneath, for paper depth */}
-        <div className="x-sheet absolute inset-0 translate-x-3 translate-y-3 rotate-[2.5deg] !bg-[var(--x-sky-soft)]" style={{ transform: "translateZ(-40px) rotate(2.5deg)" }} aria-hidden="true" />
-        <div className="x-sheet relative p-6 sm:p-8" aria-live="polite">
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.div
-              key={c.name}
-              initial={reduced ? false : { opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={reduced ? undefined : { opacity: 0, y: -8 }}
-              transition={{ duration: 0.25, ease }}
-            >
-              <div className="flex items-start justify-between gap-4 border-b border-dashed border-[var(--border-strong)]/40 pb-4">
-                <div>
-                  <p className="x-label">{c.segment} · {c.roleTag}</p>
-                  <h2 className="mt-1 text-[1.75rem] x-dhead">{c.name}</h2>
-                </div>
-                <span className="x-label shrink-0 border border-[var(--border-strong)] rounded px-2 py-1 !text-[var(--x-ink)]">
-                  {c.focus.length} rounds
-                </span>
+    <div className="relative mx-auto w-full max-w-[480px]">
+      {/* two sheets underneath for a hand-stacked deck */}
+      <div aria-hidden className="brut absolute inset-0 translate-x-4 translate-y-3 rotate-[4deg] rounded-2xl bg-paper-2" />
+      <div aria-hidden className="brut absolute inset-0 -translate-x-2 translate-y-2 -rotate-[3deg] rounded-2xl bg-card-2" />
+      <div className="brut relative -rotate-1 rounded-2xl bg-card p-6 sm:p-7" aria-live="polite">
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={c.name}
+            initial={reduced ? false : { opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={reduced ? undefined : { opacity: 0, y: -8 }}
+            transition={{ duration: 0.25, ease }}
+          >
+            <div className="flex items-start justify-between gap-4 border-b-[1.5px] border-dashed border-hair pb-4">
+              <div>
+                <p className="eyebrow">
+                  {c.segment} · {c.roleTag}
+                </p>
+                <h2 className="display mt-1 text-[38px]">{c.name}</h2>
               </div>
-              <p className="mt-4 text-[15.5px] leading-relaxed text-[var(--x-soft)]">{c.description}</p>
-
-              <p className="x-label mt-6">The rounds</p>
-              <ol className="mt-2 space-y-2">
-                {c.focus.map((f, i) => (
-                  <li key={f} className="flex gap-3 text-[15px] font-semibold">
-                    <span className="x-mono text-[var(--x-deep)]">{String(i + 1).padStart(2, "0")}</span>{f}
-                  </li>
-                ))}
-              </ol>
-
-              {stages.length > 0 && (
-                <>
-                  <p className="x-label mt-6">Study these stages first</p>
-                  <ul className="mt-2 flex flex-wrap gap-2">
-                    {stages.map((s) => (
-                      <li key={s.id} className="rounded border border-[var(--border-strong)] bg-[var(--x-sky-soft)] px-2.5 py-1 text-[13.5px] font-semibold">
-                        {s.title}
-                      </li>
-                    ))}
-                  </ul>
-                </>
-              )}
-            </motion.div>
-          </AnimatePresence>
-        </div>
-      </motion.div>
+              <span className="label-cond shrink-0 rounded-lg border-2 border-line px-2 py-0.5 text-[14px]">{c.focus.length} rounds</span>
+            </div>
+            <p className="mt-4 text-[15px] leading-relaxed text-body">{c.description}</p>
+            <p className="mt-5 font-mono text-[11px] uppercase tracking-wider text-mute">The rounds</p>
+            <ol className="mt-2 space-y-1.5">
+              {c.focus.map((f, i) => (
+                <li key={f} className="flex gap-3 text-[15px] font-semibold">
+                  <span className="font-mono text-accent-ink">{String(i + 1).padStart(2, "0")}</span>
+                  {f}
+                </li>
+              ))}
+            </ol>
+            {stages.length > 0 && (
+              <>
+                <p className="mt-5 font-mono text-[11px] uppercase tracking-wider text-mute">Study these first</p>
+                <ul className="mt-2 flex flex-wrap gap-2">
+                  {stages.map((s) => (
+                    <li key={s.id} className="rounded-full border-[1.5px] border-hair bg-paper-2 px-3 py-0.5 text-[13px] font-semibold">
+                      {s.title}
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+          </motion.div>
+        </AnimatePresence>
+      </div>
     </div>
   );
 }
 
 function Hero() {
-  const [picked, setPicked] = useState(2); // Amazon: the most-asked-about company
-
+  const [picked, setPicked] = useState(Math.min(2, companies.length - 1)); // Amazon: the most-asked-about company
   return (
-    <section className="x-wrap pt-14 md:pt-20 pb-28 grid gap-14 lg:grid-cols-[1.1fr_1fr] items-start">
+    <section className={`${wrap} grid items-center gap-16 pb-20 pt-12 md:pt-20 lg:grid-cols-[1.15fr_1fr]`}>
       <div>
-        <p className="x-pen rv -rotate-2">free placement prep for engineering students</p>
-        <h1 className="x-display rv d1 mt-4">
-          Know what <span className="x-mark">your company</span> will ask.
+        <p className="note -rotate-2">free placement prep for engineering students ↓</p>
+        <h1 className="display mt-3 text-[52px] sm:text-[76px] xl:text-[88px]">
+          Know what <br />
+          {/* static block, not <Marked>: the headline must read correctly before any animation runs */}
+          <span className="hl my-1 whitespace-nowrap">your company</span>
+          <br />
+          will ask.
         </h1>
-        <p className="x-lead rv d2 mt-6 max-w-[46ch]">
-          StudyHub shows you the hiring rounds at each company, the subjects those rounds test, and
-          the order to learn them in. Then you practise on the same kind of questions.
+        <p className="mt-6 max-w-[46ch] text-[18px] leading-relaxed text-body">
+          The hiring rounds at each company, the subjects those rounds test, and the order to learn them in. Then you practise on the same kind of questions.
         </p>
 
-        <div className="rv d3 mt-9">
-          <p className="text-[15px] font-semibold">Pick a company to see its rounds:</p>
-          <div className="mt-3 flex flex-wrap gap-2" role="group" aria-label="Companies">
-            {companies.map((c, i) => (
-              <button
-                key={c.name}
-                type="button"
-                className="x-chip"
-                aria-pressed={i === picked}
-                onClick={() => setPicked(i)}
-              >
-                {shortName(c.name)}
-              </button>
-            ))}
+        <p className="label-cond mt-8 text-[16px]">Pick a company:</p>
+        <div className="mt-2 flex flex-wrap gap-2" role="group" aria-label="Companies">
+          {companies.map((c, i) => (
+            <button
+              key={c.name}
+              type="button"
+              aria-pressed={i === picked}
+              onClick={() => setPicked(i)}
+              className={
+                "label-cond h-9 rounded-full border-2 px-4 text-[15px] transition-colors " +
+                (i === picked ? "border-ink bg-ink text-paper" : "border-hair hover:border-line")
+              }
+            >
+              {shortName(c.name)}
+            </button>
+          ))}
+        </div>
+
+        <div className="mt-9 flex flex-wrap items-center gap-4">
+          <Link href={SIGNUP} className={buttonClass("accent", "lg")}>
+            Prepare for {shortName(companies[picked].name)} <ArrowRight className="size-5" />
+          </Link>
+          <Link href="/companies" className={buttonClass("secondary", "lg")}>
+            All companies
+          </Link>
+        </div>
+      </div>
+      <CompanyCard index={picked} />
+    </section>
+  );
+}
+
+/* ---------- Real numbers ---------- */
+
+function Numbers({ stats }: { stats: LandingStats }) {
+  const items = [
+    { n: stats.courses, label: "courses" },
+    { n: stats.lessons, label: "lessons" },
+    { n: stats.quiz, label: "quiz questions" },
+    { n: stats.problems, label: "coding problems" },
+    { n: stats.labs, label: "interactive labs" },
+    { n: stats.companies, label: "company playbooks" },
+  ];
+  return (
+    <section aria-label="What's inside" className={`${wrap} py-16`}>
+      <dl className="grid grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-3 lg:grid-cols-6">
+        {items.map((it) => (
+          <div key={it.label}>
+            <dd className="display text-[52px] leading-none tabular-nums">
+              <CountUp to={it.n} />
+            </dd>
+            <dt className="mt-2 font-mono text-[12px] uppercase tracking-wider text-mute">{it.label}</dt>
           </div>
-        </div>
-
-        <div className="rv d3 mt-10 flex flex-wrap items-center gap-5">
-          <Link href={SIGNUP} className="x-btn">
-            Prepare for {shortName(companies[picked].name)} <ArrowRight size={19} />
-          </Link>
-          <Link href="/companies" className="font-semibold underline underline-offset-4 decoration-[1.5px] hover:text-[var(--x-deep)]">
-            See all companies
-          </Link>
-        </div>
-      </div>
-
-      <div className="rv d2">
-        <CompanyPaper index={picked} />
-      </div>
+        ))}
+      </dl>
     </section>
   );
 }
@@ -176,27 +188,29 @@ function Hero() {
 
 function Step({ n, title, children, aside }: { n: number; title: string; children: React.ReactNode; aside: React.ReactNode }) {
   return (
-    <div className="grid gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] items-start py-14 md:py-20 border-t-[1.5px] border-[var(--x-line-soft)]">
-      <div className="lg:sticky lg:top-28">
-        <span className="x-circle rv" aria-label={`Step ${n}`}>
-          0{n}
-          <svg viewBox="0 0 58 58" aria-hidden="true"><path pathLength="1" d="M29 4C14 3 4 14 5 29s12 25 26 24 24-11 23-26S40 3 25 6" /></svg>
-        </span>
-        <h3 className="x-head rv d1 mt-5 !text-[clamp(2rem,1.4rem+2vw,3.2rem)]">{title}</h3>
-        <div className="x-lead rv d2 mt-5 max-w-[46ch] space-y-4">{children}</div>
-      </div>
-      <div className="rv d2">{aside}</div>
+    <div className="grid items-start gap-10 border-t-[2.4px] border-line py-14 md:py-20 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
+      <Reveal className="lg:sticky lg:top-28">
+        <p className="display text-[72px] leading-none text-accent">0{n}</p>
+        <h3 className="display mt-3 text-[40px] md:text-[52px]">{title}</h3>
+        <div className="mt-5 max-w-[46ch] space-y-4 text-[17px] leading-relaxed text-body">{children}</div>
+      </Reveal>
+      <Reveal delay={0.1}>{aside}</Reveal>
     </div>
   );
 }
 
 function TrackList() {
   return (
-    <ul className="x-sheet divide-y-[1.5px] divide-[var(--x-ink)]/15">
+    <ul className="brut divide-y-[1.5px] divide-hair rounded-2xl bg-card">
       {paths.map((p) => (
-        <li key={p.slug} className="flex items-center justify-between gap-4 px-5 py-4">
-          <span className="font-semibold text-[15.5px]">{p.name}</span>
-          <span className="x-label shrink-0">{p.weeks.replace(" Prep", "")}</span>
+        <li key={p.slug}>
+          <Link href="/roadmaps" className="group flex items-center justify-between gap-4 px-5 py-4 hover:bg-card-2">
+            <span className="label-cond text-[19px]">{p.name}</span>
+            <span className="flex items-center gap-2 font-mono text-[12px] uppercase text-mute">
+              {p.weeks.replace(" Prep", "")}
+              <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" aria-hidden />
+            </span>
+          </Link>
         </li>
       ))}
     </ul>
@@ -209,23 +223,22 @@ function StageExplorer() {
   const [i, setI] = useState(0);
   const s = roadmap[i];
   const go = (n: number) => setI((n + roadmap.length) % roadmap.length);
-
   return (
-    <div className="x-sheet overflow-hidden">
-      <div className="flex items-center justify-between gap-3 border-b border-[var(--border-strong)] bg-[var(--x-paper-2)] px-5 py-3">
-        <span className="x-label !text-[var(--x-ink)]">Stage {i + 1} of {roadmap.length}</span>
+    <div className="brut overflow-hidden rounded-2xl bg-card">
+      <div className="flex items-center justify-between gap-3 border-b-[1.5px] border-hair bg-paper-2 px-5 py-3">
+        <span className="font-mono text-[12px] uppercase tracking-wider">
+          Stage {i + 1} of {roadmap.length}
+        </span>
         <span className="flex gap-1.5">
-          <button type="button" onClick={() => go(i - 1)} aria-label="Previous stage" className="grid h-8 w-8 place-items-center rounded-full border border-[var(--border-strong)] bg-[var(--x-card)] hover:bg-[var(--x-ink)] hover:text-[var(--x-paper)]">
-            <ArrowLeft size={15} strokeWidth={2.5} />
+          <button type="button" onClick={() => go(i - 1)} aria-label="Previous stage" className="tap grid size-8 place-items-center rounded-full border-2 border-line bg-card hover:bg-ink hover:text-paper">
+            <ArrowLeft className="size-4" />
           </button>
-          <button type="button" onClick={() => go(i + 1)} aria-label="Next stage" className="grid h-8 w-8 place-items-center rounded-full border border-[var(--border-strong)] bg-[var(--x-card)] hover:bg-[var(--x-ink)] hover:text-[var(--x-paper)]">
-            <ArrowRight size={15} strokeWidth={2.5} />
+          <button type="button" onClick={() => go(i + 1)} aria-label="Next stage" className="tap grid size-8 place-items-center rounded-full border-2 border-line bg-card hover:bg-ink hover:text-paper">
+            <ArrowRight className="size-4" />
           </button>
         </span>
       </div>
-
-      {/* stage rail: one numbered stop per stage */}
-      <ol className="flex gap-1.5 overflow-x-auto px-5 pt-4 pb-1" aria-label="Roadmap stages">
+      <ol className="no-scrollbar flex gap-1.5 overflow-x-auto px-5 pb-1 pt-4" aria-label="Roadmap stages">
         {roadmap.map((st, n) => (
           <li key={st.id}>
             <button
@@ -233,20 +246,16 @@ function StageExplorer() {
               onClick={() => setI(n)}
               aria-current={n === i ? "step" : undefined}
               title={st.title}
-              className={`x-mono grid h-8 min-w-8 place-items-center rounded-md border-[1.5px] px-1.5 text-[12.5px] font-bold transition-colors ${
-                n === i
-                  ? "border-[var(--x-ink)] bg-[var(--x-ink)] text-[var(--x-paper)]"
-                  : n < i
-                    ? "border-[var(--x-ink)] bg-[var(--x-paper-2)]"
-                    : "border-[var(--x-line-soft)] text-[var(--x-mute)] hover:border-[var(--x-ink)]"
-              }`}
+              className={
+                "no-press grid h-8 min-w-8 place-items-center rounded-lg border-2 px-1.5 font-mono text-[12px] font-bold transition-colors " +
+                (n === i ? "border-ink bg-ink text-paper" : n < i ? "border-line bg-paper-2" : "border-hair text-mute hover:border-line")
+              }
             >
               {String(n + 1).padStart(2, "0")}
             </button>
           </li>
         ))}
       </ol>
-
       <AnimatePresence mode="wait" initial={false}>
         <motion.div
           key={s.id}
@@ -254,65 +263,74 @@ function StageExplorer() {
           animate={{ opacity: 1, x: 0 }}
           exit={reduced ? undefined : { opacity: 0, x: -12 }}
           transition={{ duration: 0.22, ease }}
-          className="px-5 pt-4 pb-6"
+          className="px-5 pb-6 pt-4"
           aria-live="polite"
         >
-          <p className="x-label">{s.phase}</p>
-          <h4 className="x-dhead mt-1 text-[1.6rem]">{s.title}</h4>
-          <p className="mt-2 text-[15px] leading-relaxed text-[var(--x-soft)]">{s.description}</p>
-
-          <p className="x-label mt-5">What you&apos;ll learn</p>
-          <ul className="mt-2 grid gap-1.5 sm:grid-cols-2">
+          <p className="eyebrow">{s.phase}</p>
+          <h4 className="display mt-1 text-[32px]">{s.title}</h4>
+          <p className="mt-2 text-[15px] leading-relaxed text-body">{s.description}</p>
+          <ul className="mt-4 grid gap-1.5 sm:grid-cols-2">
             {s.topics.map((t) => (
-              <li key={t} className="flex gap-2 text-[14.5px] font-medium leading-snug">
-                <Check size={16} strokeWidth={3} className="mt-0.5 shrink-0" />{t}
+              <li key={t} className="flex gap-2 text-[14px] font-medium leading-snug">
+                <Check className="mt-0.5 size-4 shrink-0 text-note" aria-hidden />
+                {t}
               </li>
             ))}
           </ul>
-
-          <div className="mt-5 rounded-lg bg-[var(--x-night)] px-4 py-3.5 text-[var(--x-paper)]">
-            <p className="x-label !text-[rgba(245,239,230,0.55)]">Asked in interviews</p>
+          <div className="mt-5 rounded-xl bg-night px-4 py-3.5 text-[#f5efe6]">
+            <p className="font-mono text-[11px] uppercase tracking-wider text-[#f5efe6]/55">Asked in interviews</p>
             <p className="mt-1 text-[15px] font-semibold leading-snug">&ldquo;{s.sampleQuestion}&rdquo;</p>
           </div>
-
-          <div className="mt-5 flex flex-wrap items-center gap-2">
-            <span className="x-label mr-1">Tested by</span>
+          <div className="mt-4 flex flex-wrap items-center gap-2">
+            <span className="mr-1 font-mono text-[11px] uppercase tracking-wider text-mute">Tested by</span>
             {s.testedBy.map((c) => (
-              <span key={c} className="rounded-full border border-[var(--border-strong)] px-2.5 py-0.5 text-[13px] font-semibold">{c}</span>
+              <span key={c} className="rounded-full border-[1.5px] border-hair px-2.5 py-0.5 text-[13px] font-semibold">
+                {c}
+              </span>
             ))}
           </div>
-
-          <p className="mt-5 text-[14px] text-[var(--x-soft)]">
-            Start with <span className="font-semibold text-[var(--x-ink)]">{s.resourceHighlight.title}</span> · {s.resourceHighlight.detail}
-          </p>
         </motion.div>
       </AnimatePresence>
-
-      <Link href="/roadmaps" className="flex items-center justify-between border-t border-[var(--border-strong)] px-5 py-3.5 font-semibold hover:bg-[var(--x-paper-2)]">
-        Open the full roadmap <ArrowRight size={18} />
+      <Link href="/roadmaps" className="label-cond flex items-center justify-between border-t-[1.5px] border-hair px-5 py-3.5 text-[17px] hover:bg-card-2">
+        Open the full roadmap <ArrowRight className="size-4" />
       </Link>
     </div>
   );
 }
 
-function ProblemCard() {
+function ProblemCard({ stats }: { stats: LandingStats }) {
   return (
     <div className="space-y-5">
-      <div className="x-term">
-        <div className="x-term-bar x-mono"><i /><i /><i /><span className="ml-2">practice · {featuredProblem.difficulty}</span></div>
-        <div className="p-5 sm:p-6 x-mono text-[13.5px] leading-relaxed">
-          <p className="text-white font-bold text-[15.5px]">{featuredProblem.title}</p>
-          <p className="mt-2 text-[#a3a3a3]">{featuredProblem.statement}</p>
-          <p className="mt-4"><span className="text-[var(--x-sky)]">in  </span>{featuredProblem.example.input}</p>
-          <p><span className="text-[var(--x-sky)]">out </span>{featuredProblem.example.output}</p>
-          <p className="mt-4 text-[#8a8a8a]">seen at {featuredProblem.seenAt.join(", ")}</p>
+      <div className="brut overflow-hidden rounded-2xl bg-night text-[#f5efe6]">
+        <div className="flex items-center gap-1.5 border-b border-white/10 px-4 py-2.5 font-mono text-[12px] text-[#f5efe6]/60">
+          <i className="size-2.5 rounded-full bg-[#ff5f56]" />
+          <i className="size-2.5 rounded-full bg-[#ffbd2e]" />
+          <i className="size-2.5 rounded-full bg-[#27c93f]" />
+          <span className="ml-2">practice · {featuredProblem.difficulty}</span>
+        </div>
+        <div className="p-5 font-mono text-[13.5px] leading-relaxed sm:p-6">
+          <p className="text-[15.5px] font-bold">{featuredProblem.title}</p>
+          <p className="mt-2 text-[#f5efe6]/65">{featuredProblem.statement}</p>
+          <p className="mt-4">
+            <span className="text-[#e07a52]">in </span>
+            {featuredProblem.example.input}
+          </p>
+          <p>
+            <span className="text-[#e07a52]">out </span>
+            {featuredProblem.example.output}
+          </p>
+          <p className="mt-4 text-[#f5efe6]/50">seen at {featuredProblem.seenAt.join(", ")}</p>
         </div>
       </div>
-      <ul className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-        {practiceCategories.map((c) => (
-          <li key={c.name} className="x-sheet !shadow-none px-4 py-3">
-            <span className="block text-[1.5rem] x-dhead">{c.questions}</span>
-            <span className="text-[14px] text-[var(--x-soft)]">{c.name}</span>
+      <ul className="grid grid-cols-3 gap-3">
+        {[
+          { n: stats.problems, l: "coding problems" },
+          { n: stats.quiz, l: "quiz questions" },
+          { n: stats.labs, l: "labs" },
+        ].map((x) => (
+          <li key={x.l} className="rounded-2xl border-[1.5px] border-hair bg-card px-4 py-3">
+            <span className="display block text-[30px]">{x.n.toLocaleString("en-IN")}</span>
+            <span className="text-[13px] text-body">{x.l}</span>
           </li>
         ))}
       </ul>
@@ -320,113 +338,70 @@ function ProblemCard() {
   );
 }
 
-function HowItWorks() {
+function HowItWorks({ stats }: { stats: LandingStats }) {
   return (
-    <section id="how" className="x-wrap pb-12 scroll-mt-20">
-      <div className="flex flex-wrap items-end justify-between gap-6 mb-12">
-        <h2 className="x-head rv max-w-[16ch]">How StudyHub works</h2>
-        <p className="x-strike rv d1 text-[1.35rem] font-semibold text-[var(--x-soft)]">
-          Not <span>another random playlist<svg viewBox="0 0 400 28" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M4 18 C 80 8, 160 22, 240 12 S 360 10, 396 14" /></svg></span>. A plan.
-        </p>
-      </div>
+    <section id="how" className={`${wrap} scroll-mt-20 pb-12 pt-8`}>
+      <Reveal className="mb-12 flex flex-wrap items-end justify-between gap-6">
+        <h2 className="display text-[48px] md:text-[64px]">
+          How it <span className="hl">works</span>
+        </h2>
+        <p className="note -rotate-2 text-[1.5rem]">not another random playlist. a plan.</p>
+      </Reveal>
 
       <Step n={1} title="Choose the role you want." aside={<TrackList />}>
-        <p>
-          Each track is built for one job: software engineer, AI/ML, data, cloud, analytics or
-          security. It tells you how many weeks to plan for and which subjects matter for that role.
-        </p>
+        <p>Each track is built for one job and says how many weeks to plan for and which subjects matter for it.</p>
         <p>Not sure yet? Start with Software Engineer. Every track shares the same core CS stages, so switching later costs you nothing.</p>
       </Step>
-
       <Step n={2} title="Learn the stages in order." aside={<StageExplorer />}>
-        <p>
-          The roadmap breaks placement prep into {roadmap.length} stages, from programming basics to
-          system design. Finish one, and the next one builds on it.
-        </p>
-        <p>
-          Every stage has notes, a sample interview question and the list of companies that test
-          it, so you always know why you&apos;re studying something.
-        </p>
+        <p>Placement prep in {roadmap.length} stages, from programming basics to system design. Each one builds on the last.</p>
+        <p>Every stage has notes, a sample interview question and the companies that test it, so you know why you&apos;re studying it.</p>
       </Step>
-
-      <Step n={3} title="Practise what the rounds actually test." aside={<ProblemCard />}>
+      <Step n={3} title="Practise what the rounds test." aside={<ProblemCard stats={stats} />}>
         <p>
-          {totalQuestions.toLocaleString("en-IN")} practice questions across DSA, SQL, aptitude and
-          core CS. Each problem shows where it has been asked, with hints when you&apos;re stuck and a
-          review once you&apos;re done.
+          Coding problems with hints and a review, a quiz after every lesson, timed mock tests per subject, and labs where you can watch an algorithm run.
         </p>
-        <p>When you feel ready, run a full placement simulation for your target company.</p>
+        <p>Every question you miss goes into a review queue that brings it back until you know it.</p>
       </Step>
     </section>
   );
 }
 
-/* ---------- Tracks ---------- */
-
-function Tracks() {
-  return (
-    <section id="tracks" className="x-wrap py-24 md:py-28 scroll-mt-20 border-t border-[var(--border-strong)]">
-      <div className="grid gap-6 lg:grid-cols-12 items-end">
-        <h2 className="x-head rv lg:col-span-7">Six tracks, one for each role</h2>
-        <p className="x-lead rv d1 lg:col-span-5">Open a track to see every stage, the weeks it takes and the resources for each one.</p>
-      </div>
-      <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {paths.map((p) => (
-          <motion.div key={p.slug} whileHover={{ y: -5 }} transition={{ type: "spring", stiffness: 320, damping: 20 }}>
-            <Link href="/roadmaps" className="x-sheet group flex h-full flex-col p-6">
-              <div className="flex items-start justify-between gap-4">
-                <span className="x-label">{p.weeks} · {p.resourceCount}</span>
-                <span className="text-[var(--x-deep)]"><Motif slug={p.slug} /></span>
-              </div>
-              <h3 className="mt-4 text-[1.35rem] x-dhead leading-tight">{p.name}</h3>
-              <p className="mt-3 text-[15px] leading-relaxed text-[var(--x-soft)]">{p.description}</p>
-              <ul className="mt-5 flex flex-wrap gap-2">
-                {p.tags.slice(0, 3).map((t) => (
-                  <li key={t} className="rounded border border-[var(--x-ink)]/30 px-2.5 py-0.5 text-[13px] font-medium">{t}</li>
-                ))}
-              </ul>
-              <span className="mt-auto pt-6 flex items-center gap-2 font-semibold text-[var(--x-deep)]">
-                Open track <ArrowRight size={17} className="transition-transform group-hover:translate-x-1" />
-              </span>
-            </Link>
-          </motion.div>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-/* ---------- Tools ---------- */
+/* ---------- Tools (the one night section) ---------- */
 
 const tools = [
-  { t: "SQL playground", d: "Write and run real queries against sample databases. Nothing to install.", href: "/tools/sql-playground" },
-  { t: "Resume analyser", d: "Upload your resume and get specific fixes before you apply.", href: "/tools/resume-analyzer" },
-  { t: "Interview simulator", d: "Practise answering technical questions under interview conditions.", href: "/tools/interview-simulator" },
-  { t: "DSA visualiser", d: "Watch arrays, trees and graphs change step by step as an algorithm runs.", href: "/tools/dsa-visualizer" },
-  { t: "Subject notes", d: "Interview-focused notes for DSA, Java, Python, DBMS, OS and networks.", href: "/learn" },
-  { t: "Study with me", d: "Focused study sessions with a timer, so the hours actually add up.", href: "/study-with-me" },
+  { t: "SQL playground", d: "Run real queries against sample databases.", href: "/tools/sql-playground" },
+  { t: "Resume analyser", d: "Upload your resume, get specific fixes.", href: "/tools/resume-analyzer" },
+  { t: "Interview simulator", d: "Answer technical questions against the clock.", href: "/tools/interview-simulator" },
+  { t: "DSA visualiser", d: "Watch arrays, trees and graphs change step by step.", href: "/tools/dsa-visualizer" },
+  { t: "STAR builder", d: "Shape your behavioural answers before the HR round.", href: "/tools/star-builder" },
+  { t: "Study with me", d: "Timed focus sessions, so the hours add up.", href: "/study-with-me" },
 ];
 
 function Tools() {
   return (
-    <section id="tools" className="x-wrap py-24 md:py-28 scroll-mt-20 border-t border-[var(--border-strong)]">
-      <div className="flex flex-wrap items-end justify-between gap-6">
-        <h2 className="x-head rv max-w-[18ch]">Free tools that run in your browser</h2>
-        <p className="x-label rv d1">no setup needed</p>
+    <section id="tools" className="scroll-mt-16 bg-night py-24 text-[#f5efe6] md:py-28">
+      <div className={wrap}>
+        <Reveal className="flex flex-wrap items-end justify-between gap-6">
+          <h2 className="display text-[48px] md:text-[64px]">
+            Tools that run <br />
+            in your browser
+          </h2>
+          <p className="font-mono text-[12px] uppercase tracking-wider text-[#f5efe6]/55">nothing to install</p>
+        </Reveal>
+        <ul className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {tools.map((x, i) => (
+            <Reveal key={x.t} delay={i * 0.04}>
+              <Link href={x.href} className="group flex h-full flex-col rounded-2xl border-[2.4px] border-[#f5efe6]/20 p-6 transition-colors hover:border-[#e07a52]">
+                <span className="label-cond flex items-center justify-between text-[22px]">
+                  {x.t}
+                  <ArrowRight className="size-5 text-[#e07a52] transition-transform group-hover:translate-x-1" aria-hidden />
+                </span>
+                <span className="mt-2 text-[15px] leading-relaxed text-[#f5efe6]/70">{x.d}</span>
+              </Link>
+            </Reveal>
+          ))}
+        </ul>
       </div>
-      <ul className="rv d1 mt-12 grid gap-px bg-[var(--x-line-soft)] border border-[var(--x-line-soft)] rounded-xl overflow-hidden sm:grid-cols-2 lg:grid-cols-3">
-        {tools.map((x) => (
-          <li key={x.t} className="bg-[var(--x-card)]">
-            <Link href={x.href} className="group flex h-full flex-col p-6 hover:bg-[var(--x-sky-soft)] transition-colors">
-              <span className="flex items-center justify-between font-bold text-[1.1rem]">
-                {x.t}
-                <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
-              </span>
-              <span className="mt-2 text-[15px] leading-relaxed text-[var(--x-soft)]">{x.d}</span>
-            </Link>
-          </li>
-        ))}
-      </ul>
     </section>
   );
 }
@@ -436,25 +411,27 @@ function Tools() {
 const faqs = [
   { q: "Does StudyHub cost anything?", a: "No. Creating an account and following any track is free." },
   { q: "I'm in my first or second year. Is it too early?", a: "No, it's the best time. The roadmap starts at programming fundamentals, so you can begin at stage one and go at your own pace." },
-  { q: "Which track should I pick?", a: "Pick the role you plan to apply for. If you're unsure, start with Software Engineer. Every track shares the same core CS stages, so switching later doesn't throw away your progress." },
-  { q: "Do I need to install anything?", a: "No. Notes, practice, the SQL playground and every other tool run in the browser." },
-  { q: "Where does the company information come from?", a: "It's compiled from recent hiring rounds and reviewed periodically. Each company page shows when it was last checked." },
+  { q: "Which track should I pick?", a: "The role you plan to apply for. If you're unsure, start with Software Engineer: every track shares the same core CS stages." },
+  { q: "Do I need to install anything?", a: "No. Lessons, practice, the SQL playground and every other tool run in the browser." },
+  { q: "Where does the company information come from?", a: `It's compiled from recent hiring rounds and reviewed periodically. Last checked: ${lastVerified}.` },
 ];
 
 function Faq() {
   return (
-    <section id="faq" className="x-wrap py-24 md:py-28 scroll-mt-20 border-t border-[var(--border-strong)] grid gap-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
-      <h2 className="x-head rv">Questions</h2>
-      <div>
+    <section id="faq" className={`${wrap} grid scroll-mt-20 gap-10 py-24 md:py-28 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]`}>
+      <Reveal>
+        <h2 className="display text-[48px] md:text-[64px]">Questions</h2>
+      </Reveal>
+      <div className="border-t-[2.4px] border-line">
         {faqs.map((f) => (
-          <details key={f.q} className="x-faq x-row">
-            <summary className="flex items-center justify-between gap-6 py-5 text-[17px] sm:text-[18px] font-semibold">
+          <details key={f.q} className="group border-b-[1.5px] border-hair">
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-5 text-[18px] font-semibold [&::-webkit-details-marker]:hidden">
               {f.q}
-              <span className="x-plus grid h-8 w-8 shrink-0 place-items-center rounded-full border border-[var(--border-strong)] bg-[var(--x-card)]">
-                <Plus size={16} strokeWidth={2.5} />
+              <span className="grid size-8 shrink-0 place-items-center rounded-full border-2 border-line transition-transform group-open:rotate-45">
+                <Plus className="size-4" aria-hidden />
               </span>
             </summary>
-            <p className="pb-6 max-w-[62ch] text-[16px] leading-relaxed text-[var(--x-soft)]">{f.a}</p>
+            <p className="max-w-[62ch] pb-6 text-[16px] leading-relaxed text-body">{f.a}</p>
           </details>
         ))}
       </div>
@@ -466,69 +443,56 @@ function Faq() {
 
 function Closing() {
   return (
-    <footer className="x-night">
-      <div className="x-wrap py-24 md:py-32 grid gap-10 lg:grid-cols-12 items-end">
-        <div className="lg:col-span-8">
-          <p className="x-label rv !text-[#cfc6b8]">placement season comes faster than you think</p>
-          <h2 className="x-display rv d1 mt-4">Start with <span className="x-mark x-mark-paper">stage one</span> today.</h2>
-        </div>
-        <div className="lg:col-span-4">
-          <p className="text-[17px] leading-relaxed text-white/75">Free account. Pick a track and your first stage is ready in under a minute.</p>
-          <Link href={SIGNUP} className="x-btn x-btn-light mt-7 !shadow-[var(--x-shadow)]">
-            Create your free account <ArrowRight size={19} />
+    <footer className="border-t-[2.4px] border-line">
+      <div className={`${wrap} grid items-end gap-10 py-24 md:py-32 lg:grid-cols-[1fr_auto]`}>
+        <div>
+          <p className="note -rotate-1">placement season comes faster than you think</p>
+          <h2 className="display mt-3 text-[56px] md:text-[88px]">
+            Start with <Marked>stage one</Marked>
+            <br />
+            today.
+          </h2>
+          <p className="mt-6 max-w-[48ch] text-[17px] leading-relaxed text-body">Free account. Pick a track and your first lesson is ready in under a minute.</p>
+          <Link href={SIGNUP} className={`${buttonClass("accent", "lg")} mt-8`}>
+            Create your free account <ArrowRight className="size-5" />
           </Link>
         </div>
+        <Link href={SIGNUP} aria-label="Start free" className="hidden justify-self-end lg:block">
+          <SpinSticker text="START FREE · START FREE · " />
+        </Link>
       </div>
-      <div className="border-t border-white/15">
-        <div className="x-wrap flex flex-wrap items-center justify-between gap-4 py-6 text-[14px] text-white/70">
-          <span className="font-bold text-white">StudyHub</span>
-          <nav className="flex flex-wrap gap-6" aria-label="Footer">
-            <Link href="/learn" className="hover:text-white">Learn</Link>
-            <Link href="/practice" className="hover:text-white">Practice</Link>
-            <Link href="/companies" className="hover:text-white">Companies</Link>
-            <Link href="/help" className="hover:text-white">Help</Link>
-          </nav>
+      <div className="border-t-[1.5px] border-hair">
+        <div className={`${wrap} flex flex-wrap items-center justify-between gap-4 py-6 font-mono text-[12px] uppercase tracking-wider text-mute`}>
           <span>© {new Date().getFullYear()} StudyHub</span>
+          <nav className="flex flex-wrap gap-6" aria-label="Footer">
+            <Link href="/learn" className="hover:text-ink">
+              Learn
+            </Link>
+            <Link href="/practice" className="hover:text-ink">
+              Practice
+            </Link>
+            <Link href="/companies" className="hover:text-ink">
+              Companies
+            </Link>
+            <Link href="/help" className="hover:text-ink">
+              Help
+            </Link>
+          </nav>
         </div>
       </div>
     </footer>
   );
 }
 
-// Fade-and-rise each .rv block the first time it scrolls into view.
-// Blocks already on screen at mount are marked .in immediately so first paint is never blank.
-function useReveal() {
-  useEffect(() => {
-    const io = new IntersectionObserver(
-      (entries) =>
-        entries.forEach((e) => {
-          if (!e.isIntersecting) return;
-          e.target.classList.add("in");
-          io.unobserve(e.target);
-        }),
-      { rootMargin: "0px 0px 10% 0px" },
-    );
-    document.querySelectorAll(".x .rv").forEach((el) => {
-      if (el.getBoundingClientRect().top < innerHeight) el.classList.add("in");
-      else io.observe(el);
-    });
-    document.documentElement.classList.add("rv-on");
-    return () => {
-      io.disconnect();
-      document.documentElement.classList.remove("rv-on");
-    };
-  }, []);
-}
-
-export function Landing() {
-  useReveal();
+export function Landing({ stats }: { stats: LandingStats }) {
   return (
     <>
       <Nav />
-      <main>
+      <main className="overflow-x-clip">
         <Hero />
-        <HowItWorks />
-        <Tracks />
+        <Ticker items={stats.subjects} />
+        <Numbers stats={stats} />
+        <HowItWorks stats={stats} />
         <Tools />
         <Faq />
       </main>

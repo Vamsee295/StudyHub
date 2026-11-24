@@ -212,7 +212,7 @@ export default function TemplateWorkspacePage({ params }: { params: Promise<{ id
         )}>
           <div className="bg-white border border-[var(--border)] rounded-xl shadow-sm min-h-full">
             {/* Preview Toolbar */}
-            <div className="bg-[#f8fafc] border-b border-[var(--border)] px-4 py-3 flex items-center gap-2 rounded-t-xl">
+            <div className="bg-paper border-b border-[var(--border)] px-4 py-3 flex items-center gap-2 rounded-t-xl">
               <div className="flex gap-1.5">
                 <div className="w-2.5 h-2.5 rounded-full bg-[#ff5f56]"></div>
                 <div className="w-2.5 h-2.5 rounded-full bg-[#ffbd2e]"></div>

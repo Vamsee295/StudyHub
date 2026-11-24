@@ -15,8 +15,6 @@ export default function ForgotPasswordPage() {
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
 
-  const fade = (delay: number) =>
-    reduced ? {} : { initial: { opacity: 0, y: 10 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.35, delay } };
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -36,7 +34,7 @@ export default function ForgotPasswordPage() {
     <main className="w-full min-h-screen flex flex-col lg:flex-row flex-1">
       <BrandPanel />
       <AuthRightPanel>
-        <AnimatePresence mode="wait">
+        <AnimatePresence initial={false} mode="wait">
           {!sent ? (
             <motion.div
               key="form"
@@ -51,7 +49,7 @@ export default function ForgotPasswordPage() {
               />
 
               <form className="space-y-4" onSubmit={handleSubmit} noValidate>
-                <motion.div {...fade(0.1)}>
+                <motion.div>
                   <TextField
                     id="forgot-email"
                     label="Email address"
@@ -64,7 +62,7 @@ export default function ForgotPasswordPage() {
                   />
                 </motion.div>
 
-                <motion.div {...fade(0.16)}>
+                <motion.div>
                   <button type="submit" disabled={loading} className="btn-primary auth-btn mt-2 text-[14.5px]">
                     {loading ? (
                       <Loader2 size={16} className="animate-spin" />
@@ -77,10 +75,10 @@ export default function ForgotPasswordPage() {
                 </motion.div>
               </form>
 
-              <motion.div {...fade(0.22)} className="mt-6 text-center">
+              <motion.div className="mt-6 text-center">
                 <a
                   href="/login"
-                  className="inline-flex items-center gap-1.5 text-xs text-ink-secondary hover:text-ink transition-colors"
+                  className="inline-flex items-center gap-1.5 font-mono text-[12px] uppercase tracking-wider text-mute hover:text-ink"
                 >
                   <ArrowLeft size={13} /> Back to sign in
                 </a>
@@ -94,13 +92,13 @@ export default function ForgotPasswordPage() {
               transition={{ duration: 0.35 }}
               className="text-center"
             >
-              <div className="w-12 h-12 rounded-full bg-accent-soft border border-accent-soft-border flex items-center justify-center mx-auto mb-5">
-                <MailCheck size={20} className="text-accent" />
+              <div className="mx-auto mb-5 grid size-14 place-items-center rounded-full border-[2.4px] border-line bg-accent text-paper">
+                <MailCheck size={22} aria-hidden />
               </div>
-              <h2 className="font-display text-[30px] tracking-tight text-ink leading-[1.15] mb-2">
+              <h2 className="display mb-2 text-[40px]">
                 Check your email
               </h2>
-              <p className="text-[14.5px] text-ink-secondary max-w-sm mx-auto leading-relaxed mb-7">
+              <p className="mx-auto mb-7 max-w-sm text-[15px] leading-relaxed text-body">
                 If an account exists for <span className="text-ink font-medium">{email}</span>, we&rsquo;ve
                 sent a password reset link.
               </p>

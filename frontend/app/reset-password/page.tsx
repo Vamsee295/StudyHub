@@ -16,8 +16,6 @@ export default function ResetPasswordPage() {
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
 
-  const fade = (delay: number) =>
-    reduced ? {} : { initial: { opacity: 0, y: 10 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.35, delay } };
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -38,7 +36,7 @@ export default function ResetPasswordPage() {
     <main className="w-full min-h-screen flex flex-col lg:flex-row flex-1">
       <BrandPanel />
       <AuthRightPanel>
-        <AnimatePresence mode="wait">
+        <AnimatePresence initial={false} mode="wait">
           {!done ? (
             <motion.div
               key="form"
@@ -53,7 +51,7 @@ export default function ResetPasswordPage() {
               />
 
               <form className="space-y-4" onSubmit={handleSubmit} noValidate>
-                <motion.div {...fade(0.1)}>
+                <motion.div>
                   <PasswordField
                     id="reset-password"
                     label="New password"
@@ -65,7 +63,7 @@ export default function ResetPasswordPage() {
                   />
                 </motion.div>
 
-                <motion.div {...fade(0.16)}>
+                <motion.div>
                   <PasswordField
                     id="reset-confirm"
                     label="Confirm password"
@@ -77,7 +75,7 @@ export default function ResetPasswordPage() {
                   />
                 </motion.div>
 
-                <motion.div {...fade(0.22)}>
+                <motion.div>
                   <button type="submit" disabled={loading} className="btn-primary auth-btn mt-2 text-[14.5px]">
                     {loading ? (
                       <Loader2 size={16} className="animate-spin" />
@@ -98,13 +96,13 @@ export default function ResetPasswordPage() {
               transition={{ duration: 0.35 }}
               className="text-center"
             >
-              <div className="w-12 h-12 rounded-full bg-success-soft border border-success-soft-border flex items-center justify-center mx-auto mb-5">
-                <CheckCircle2 size={20} className="text-success" />
+              <div className="mx-auto mb-5 grid size-14 place-items-center rounded-full border-[2.4px] border-line bg-note text-paper">
+                <CheckCircle2 size={22} aria-hidden />
               </div>
-              <h2 className="font-display text-[30px] tracking-tight text-ink leading-[1.15] mb-2">
+              <h2 className="display mb-2 text-[40px]">
                 Password updated.
               </h2>
-              <p className="text-[14.5px] text-ink-secondary max-w-sm mx-auto leading-relaxed mb-7">
+              <p className="mx-auto mb-7 max-w-sm text-[15px] leading-relaxed text-body">
                 Your password has been changed successfully.
               </p>
               <a href="/login" className="btn-primary auth-btn max-w-[220px] mx-auto text-[14px]">

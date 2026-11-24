@@ -5,7 +5,7 @@ import CodeIDE from "@/components/playground/CodeIDE";
 
 export default function CodePlaygroundPage() {
   return (
-    <div style={{ height: "calc(100vh - 64px)", width: "100%", overflow: "hidden" }}>
+    <div className="h-full w-full overflow-hidden">
       <CodeIDE />
     </div>
   );

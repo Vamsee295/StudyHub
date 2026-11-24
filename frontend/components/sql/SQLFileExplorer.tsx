@@ -133,10 +133,10 @@ export default function SQLFileExplorer({
   }, [workspace.activeFileId, workspace.files, onDuplicateFile]);
 
   return (
-    <div className="flex flex-col flex-1 bg-[var(--surface)] border-b border-[var(--border)] overflow-hidden">
+    <div className="flex flex-col flex-1 bg-card border-b border-hair overflow-hidden">
       {/* Explorer Header */}
-      <div className="h-10 flex shrink-0 items-center justify-between px-4 border-b border-[var(--border)]">
-        <span className="text-xs font-semibold text-[var(--ink-secondary)] uppercase tracking-wider flex items-center gap-2">
+      <div className="h-10 flex shrink-0 items-center justify-between px-4 border-b border-hair">
+        <span className="text-xs font-semibold text-body uppercase tracking-wider flex items-center gap-2">
           <Folder className="w-3.5 h-3.5" /> Workspace
         </span>
 
@@ -144,7 +144,7 @@ export default function SQLFileExplorer({
           <button
             type="button"
             onClick={onNewFile}
-            className="p-1 rounded text-[var(--ink-secondary)] hover:text-[var(--ink)] hover:bg-[var(--surface-subdued)] transition-colors cursor-pointer"
+            className="p-1 rounded text-body hover:text-ink hover:bg-paper-2 transition-colors cursor-pointer"
             title="New SQL File"
             aria-label="New SQL File"
           >

@@ -55,11 +55,11 @@ export function CompanyDirectory({ companies, onSelect, searchQuery }: CompanyDi
 
                 {/* Details Grid */}
                 <div className="grid grid-cols-2 gap-3 mt-1">
-                  <div className="flex flex-col gap-1 bg-[#f8fafc] border border-[var(--border)] rounded-lg p-2.5">
+                  <div className="flex flex-col gap-1 bg-paper border border-[var(--border)] rounded-lg p-2.5">
                     <span className="text-[10px] font-semibold text-[var(--ink-tertiary)] uppercase tracking-wider">Packages</span>
                     <span className="text-[12px] font-mono font-semibold text-[var(--ink)]">{company.salaryRange}</span>
                   </div>
-                  <div className="flex flex-col gap-1 bg-[#f8fafc] border border-[var(--border)] rounded-lg p-2.5">
+                  <div className="flex flex-col gap-1 bg-paper border border-[var(--border)] rounded-lg p-2.5">
                     <span className="text-[10px] font-semibold text-[var(--ink-tertiary)] uppercase tracking-wider">Readiness</span>
                     <div className="flex items-center gap-1.5">
                       <div className="w-full h-1.5 bg-[var(--border)] rounded-full overflow-hidden">

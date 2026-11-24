@@ -12,13 +12,13 @@ interface StudyWithMeHeroProps {
 
 export function StudyWithMeHero({ stats, onShareClick }: StudyWithMeHeroProps) {
   return (
-    <div className="bg-[#FFFFFF] px-4 sm:px-8 pt-6 sm:pt-8 pb-[48px] border-b border-slate-200">
+    <div className="bg-card px-4 sm:px-8 pt-6 sm:pt-8 pb-[48px] border-b border-slate-200">
       <div className="max-w-[1050px] mx-auto flex flex-col items-center text-center">
         {/* Top bar with back button */}
         <div className="w-full flex items-center justify-start mb-6 sm:mb-8">
           <Link
             href="/dashboard"
-            className="inline-flex items-center gap-2 text-[13px] font-medium text-slate-500 hover:text-[#2563eb] transition-colors py-1.5 px-3 -ml-3 rounded-lg hover:bg-slate-100/80 border border-transparent hover:border-slate-200"
+            className="inline-flex items-center gap-2 text-[13px] font-medium text-slate-500 hover:text-accent-ink transition-colors py-1.5 px-3 -ml-3 rounded-lg hover:bg-slate-100/80 border border-transparent hover:border-slate-200"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>Back to Dashboard</span>
@@ -34,7 +34,7 @@ export function StudyWithMeHero({ stats, onShareClick }: StudyWithMeHeroProps) {
         </div>
 
         {/* Heading */}
-        <h1 className="text-[32px] sm:text-[42px] lg:text-[48px] font-[600] text-[#0f172a] leading-[1.08] mb-4">
+        <h1 className="text-[32px] sm:text-[42px] lg:text-[48px] font-[600] text-ink leading-[1.08] mb-4">
           See what students are learning today.
         </h1>
         <p className="text-[16px] text-slate-500 max-w-[650px] leading-[1.6] mb-8">
@@ -46,7 +46,7 @@ export function StudyWithMeHero({ stats, onShareClick }: StudyWithMeHeroProps) {
         <div className="flex flex-col items-center gap-4">
           <button
             onClick={onShareClick}
-            className="inline-flex items-center justify-center gap-2 px-6 h-[44px] rounded-[10px] bg-[#2563eb] text-white text-[14px] font-medium hover:bg-[#1d4ed8] transition-colors"
+            className="inline-flex items-center justify-center gap-2 px-6 h-[44px] rounded-[10px] bg-accent-ink text-white text-[14px] font-medium hover:bg-accent-ink transition-colors"
           >
             <BookOpen className="w-4 h-4" />
             Share your progress

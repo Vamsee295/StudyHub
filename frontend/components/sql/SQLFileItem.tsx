@@ -91,7 +91,7 @@ export default function SQLFileItem({
       className={`flex items-center justify-between px-3 py-1.5 cursor-pointer group transition-colors select-none ${
         isActive
           ? "bg-blue-500/10 text-blue-600 dark:text-blue-400 font-medium"
-          : "text-[var(--ink)] hover:bg-[var(--surface-subdued)]"
+          : "text-ink hover:bg-paper-2"
       }`}
       onContextMenu={handleContextMenu}
       {...longPressHandlers}
@@ -99,7 +99,7 @@ export default function SQLFileItem({
       <div className="flex items-center gap-2 overflow-hidden flex-1 mr-2 min-w-0">
         <FileCode2
           className={`w-4 h-4 shrink-0 ${
-            isActive ? "text-blue-500" : "text-[var(--ink-secondary)]"
+            isActive ? "text-blue-500" : "text-body"
           }`}
         />
 
@@ -111,7 +111,7 @@ export default function SQLFileItem({
             onChange={(e) => setEditName(e.target.value)}
             onBlur={() => onRenameSubmit(file.id, editName)}
             onKeyDown={handleKeyDown}
-            className="flex-1 bg-[var(--surface)] border border-blue-500 rounded px-1.5 py-0.5 text-xs text-[var(--ink)] outline-hidden w-full min-w-0 shadow-xs"
+            className="flex-1 bg-card border border-blue-500 rounded px-1.5 py-0.5 text-xs text-ink outline-hidden w-full min-w-0"
             onClick={(e) => e.stopPropagation()}
             onMouseDown={(e) => e.stopPropagation()}
             onTouchStart={(e) => e.stopPropagation()}
@@ -128,9 +128,9 @@ export default function SQLFileItem({
           ref={threeDotBtnRef}
           type="button"
           aria-label={`Options for ${file.name}`}
-          className={`p-1 rounded text-[var(--ink-tertiary)] hover:text-[var(--ink)] hover:bg-[var(--border)] transition-all cursor-pointer ${
+          className={`p-1 rounded text-mute hover:text-ink hover:bg-hair transition-all cursor-pointer ${
             isMenuOpen
-              ? "opacity-100 bg-[var(--border)] text-[var(--ink)]"
+              ? "opacity-100 bg-hair text-ink"
               : "opacity-0 group-hover:opacity-100 focus:opacity-100 md:opacity-0 md:group-hover:opacity-100 opacity-80"
           }`}
           onClick={handleThreeDotClick}

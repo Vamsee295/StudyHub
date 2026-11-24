@@ -1,22 +1,27 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, ZoomIn, ZoomOut, Maximize2, Search, List, Share2 } from "lucide-react";
+import { ArrowLeft, ZoomIn, ZoomOut, Maximize2, Search, List } from "lucide-react";
 import { clsx } from "clsx";
 import { buildConceptGraph, GraphNode } from "@/lib/learn/conceptGraph";
 import { forceLayout } from "@/lib/learn/forceLayout";
 import { getStoredProgress } from "@/lib/services/learnService";
+import { PageHeader } from "@/components/ui/Page";
+import { buttonClass } from "@/components/ui/Button";
+
+const chip = (on: boolean) =>
+  clsx(
+    "label-cond inline-flex h-8 items-center rounded-full border-2 px-3.5 text-[14px] transition-colors",
+    on ? "border-ink bg-ink text-paper" : "border-hair text-body hover:border-line hover:text-ink"
+  );
 
 const W = 1200, H = 900;
-const PALETTE = ["#6366f1", "#10b981", "#f59e0b", "#ef4444", "#0ea5e9", "#a855f7", "#14b8a6", "#f97316", "#84cc16", "#ec4899", "#64748b", "#06b6d4", "#d946ef"];
-const focusRing = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]";
 
 export default function ConceptMapPage() {
   const { nodes, edges } = useMemo(() => buildConceptGraph(), []);
   const pos = useMemo(() => forceLayout(nodes.map((n) => ({ id: n.id, group: n.course })), edges.map((e) => ({ ...e, weight: e.kind === "cross" ? 0.08 : 1 }))), [nodes, edges]);
   const courses = useMemo(() => [...new Map(nodes.map((n) => [n.course, n.courseTitle])).entries()], [nodes]);
-  const color = useMemo(() => new Map(courses.map(([c], i) => [c, PALETTE[i % PALETTE.length]])), [courses]);
   const byId = useMemo(() => new Map(nodes.map((n) => [n.id, n])), [nodes]);
 
   const [courseFilter, setCourseFilter] = useState<string | null>(null);
@@ -25,18 +30,18 @@ export default function ConceptMapPage() {
   const [hovered, setHovered] = useState<string | null>(null);
   const [view, setView] = useState({ x: 0, y: 0, w: W, h: H });
   const [listMode, setListMode] = useState(false);
-  const [progress, setProgress] = useState<Record<string, number>>({});
+  const [progress] = useState<Record<string, number>>(() => {
+    const store = getStoredProgress();
+    const done = (n: GraphNode) => n.lessons.filter((l) => store[l.id]?.status === "completed" || store[l.slug]?.status === "completed").length;
+    return Object.fromEntries(nodes.map((n) => [n.id, n.lessons.length ? done(n) / n.lessons.length : 0]));
+  });
   const drag = useRef<{ x: number; y: number; vx: number; vy: number } | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
 
-  // Completion per module from the learner's saved lesson progress (keyed by lesson id or slug).
-  useEffect(() => {
-    const store = getStoredProgress();
-    const done = (n: GraphNode) => n.lessons.filter((l) => store[l.id]?.status === "completed" || store[l.slug]?.status === "completed").length;
-    setProgress(Object.fromEntries(nodes.map((n) => [n.id, n.lessons.length ? done(n) / n.lessons.length : 0])));
-  }, [nodes]);
 
   const focus = selected ?? hovered;
+  const focusCourse = (focus && byId.get(focus)?.course) || courseFilter;
+  const color = (course: string) => (course === focusCourse ? "var(--accent)" : "var(--ink)");
   const neighbours = useMemo(() => {
     if (!focus) return null;
     const s = new Set([focus]);
@@ -62,47 +67,43 @@ export default function ConceptMapPage() {
   const showLabel = (n: GraphNode) => (neighbours ? neighbours.has(n.id) : (courseFilter === n.course || (!!q && matches(n))));
 
   return (
-    <div className="flex flex-col gap-5 pb-16 w-full">
-      <Link href="/learn" className={`inline-flex items-center gap-1.5 text-[13px] font-medium text-[var(--ink-secondary)] hover:text-[var(--ink)] self-start rounded ${focusRing}`}>
-        <ArrowLeft aria-hidden="true" className="w-3.5 h-3.5" /> Back to Learn
+    <div className="flex flex-col gap-5">
+      <Link href="/learn" className="mb-6 inline-flex items-center gap-1.5 font-mono text-[12px] uppercase tracking-wider text-mute hover:text-ink">
+        <ArrowLeft aria-hidden className="size-3.5" /> Learn
       </Link>
-      <header className="flex flex-col gap-2">
-        <h1 className="font-newsreader text-3xl sm:text-4xl text-[var(--ink)] tracking-tight flex items-center gap-3">
-          <Share2 aria-hidden="true" className="w-7 h-7 text-[var(--accent)]" /> Concept Map
-        </h1>
-        <p className="text-[var(--ink-secondary)] text-[15px] max-w-3xl">
-          Every module across all {courses.length} courses and how they build on each other. {nodes.length} modules, {edges.length} links, {edges.filter((e) => e.kind === "cross").length} of them across courses. Select a module to see what it needs and what it unlocks.
-        </p>
-      </header>
+      <PageHeader eyebrow={`${nodes.length} modules · ${edges.length} links`} title="Concept" hl="map" />
+      <p className="-mt-4 max-w-3xl text-[15px] leading-relaxed text-body">
+        Every module across all {courses.length} courses and how they build on each other, {edges.filter((e) => e.kind === "cross").length} links of them crossing courses. Pick a
+        module to see what it needs and what it unlocks.
+      </p>
 
       <div className="flex flex-col gap-3">
         <div className="flex flex-wrap items-center gap-2">
           <label className="relative">
             <span className="sr-only">Search modules</span>
-            <Search aria-hidden="true" className="w-4 h-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--ink-tertiary)]" />
+            <Search aria-hidden className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-mute" />
             <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search modules…" autoComplete="off"
-              className={`pl-8 pr-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--surface)] text-[13px] text-[var(--ink)] w-56 ${focusRing}`} />
+              className="field w-60 pl-9" />
           </label>
           <button type="button" aria-pressed={listMode} onClick={() => setListMode((m) => !m)}
-            className={clsx("inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-[13px]", focusRing, listMode ? "border-[var(--accent)] bg-[var(--accent)] text-white" : "border-[var(--border)] text-[var(--ink)]")}>
+            className={clsx("label-cond inline-flex h-[42px] items-center gap-1.5 rounded-xl border-2 px-3.5 text-[15px]", listMode ? "border-ink bg-ink text-paper" : "border-hair hover:border-line")}>
             <List aria-hidden="true" className="w-4 h-4" /> List view
           </button>
           {!listMode && (
             <div className="flex gap-1 ml-auto">
-              <button type="button" aria-label="Zoom in" onClick={() => zoom(0.8)} className={`p-2 rounded-lg border border-[var(--border)] text-[var(--ink)] ${focusRing}`}><ZoomIn aria-hidden="true" className="w-4 h-4" /></button>
-              <button type="button" aria-label="Zoom out" onClick={() => zoom(1.25)} className={`p-2 rounded-lg border border-[var(--border)] text-[var(--ink)] ${focusRing}`}><ZoomOut aria-hidden="true" className="w-4 h-4" /></button>
-              <button type="button" aria-label="Reset view" onClick={() => setView({ x: 0, y: 0, w: W, h: H })} className={`p-2 rounded-lg border border-[var(--border)] text-[var(--ink)] ${focusRing}`}><Maximize2 aria-hidden="true" className="w-4 h-4" /></button>
+              <button type="button" aria-label="Zoom in" onClick={() => zoom(0.8)} className="tap grid size-10 place-items-center rounded-xl border-2 border-hair hover:border-line"><ZoomIn aria-hidden="true" className="w-4 h-4" /></button>
+              <button type="button" aria-label="Zoom out" onClick={() => zoom(1.25)} className="tap grid size-10 place-items-center rounded-xl border-2 border-hair hover:border-line"><ZoomOut aria-hidden="true" className="w-4 h-4" /></button>
+              <button type="button" aria-label="Reset view" onClick={() => setView({ x: 0, y: 0, w: W, h: H })} className="tap grid size-10 place-items-center rounded-xl border-2 border-hair hover:border-line"><Maximize2 aria-hidden="true" className="w-4 h-4" /></button>
             </div>
           )}
         </div>
         <div className="flex flex-wrap gap-1.5" role="group" aria-label="Filter by course">
           <button type="button" aria-pressed={courseFilter === null} onClick={() => setCourseFilter(null)}
-            className={clsx("px-2.5 py-1 rounded-full border text-[12px]", focusRing, courseFilter === null ? "border-[var(--ink)] bg-[var(--ink)] text-white" : "border-[var(--border)] text-[var(--ink-secondary)]")}>All courses</button>
+            className={chip(courseFilter === null)}>All courses</button>
           {courses.map(([slug, title]) => (
             <button key={slug} type="button" aria-pressed={courseFilter === slug} onClick={() => setCourseFilter(courseFilter === slug ? null : slug)}
-              className={clsx("inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-[12px]", focusRing, courseFilter === slug ? "text-[var(--ink)] font-semibold" : "text-[var(--ink-secondary)]")}
-              style={{ borderColor: courseFilter === slug ? color.get(slug) : undefined }}>
-              <span aria-hidden="true" className="w-2 h-2 rounded-full" style={{ background: color.get(slug) }} />{title}
+              className={chip(courseFilter === slug)}>
+              {title}
             </button>
           ))}
         </div>
@@ -110,18 +111,18 @@ export default function ConceptMapPage() {
 
       <div className="grid lg:grid-cols-[1fr_320px] gap-4 items-start">
         {listMode ? (
-          <section className="p-5 rounded-xl border border-[var(--border)] bg-[var(--surface)] flex flex-col gap-5">
+          <section className="flex flex-col gap-6 rounded-2xl border-[1.5px] border-hair bg-card p-5">
             {courses.filter(([c]) => !courseFilter || c === courseFilter).map(([c, title]) => (
               <div key={c}>
-                <h2 className="text-[13px] font-bold text-[var(--ink)] mb-2">{title}</h2>
+                <h2 className="label-cond mb-2 text-[19px]">{title}</h2>
                 <ul className="flex flex-col gap-1.5">
                   {nodes.filter((n) => n.course === c && matches(n)).map((n) => {
                     const needs = edges.filter((e) => e.to === n.id && e.kind !== "sequence");
                     return (
                       <li key={n.id} className="text-[13px]">
-                        <button type="button" onClick={() => setSelected(n.id)} className={`font-medium text-[var(--ink)] hover:text-[var(--accent)] rounded ${focusRing}`}>{n.title}</button>
-                        <span className="text-[var(--ink-tertiary)] tabular-nums"> · {Math.round((progress[n.id] ?? 0) * 100)}% done</span>
-                        {needs.length > 0 && <span className="text-[var(--ink-secondary)]"> · builds on {needs.map((e) => byId.get(e.from)!.title).join(", ")}</span>}
+                        <button type="button" onClick={() => setSelected(n.id)} className={`font-medium text-ink hover:text-accent-ink rounded`}>{n.title}</button>
+                        <span className="text-mute tabular-nums"> · {Math.round((progress[n.id] ?? 0) * 100)}% done</span>
+                        {needs.length > 0 && <span className="text-body"> · builds on {needs.map((e) => byId.get(e.from)!.title).join(", ")}</span>}
                       </li>
                     );
                   })}
@@ -130,7 +131,7 @@ export default function ConceptMapPage() {
             ))}
           </section>
         ) : (
-          <section className="rounded-xl border border-[var(--border)] bg-[var(--surface)] overflow-hidden touch-none">
+          <section className="brut touch-none overflow-hidden rounded-2xl bg-card">
             <svg ref={svgRef} viewBox={`${view.x} ${view.y} ${view.w} ${view.h}`} className="w-full h-auto block cursor-grab active:cursor-grabbing select-none"
               role="img" aria-label="Concept map of all course modules. Use the list view for a text version."
               onPointerDown={(e) => { drag.current = { x: e.clientX, y: e.clientY, vx: view.x, vy: view.y }; }}
@@ -143,7 +144,7 @@ export default function ConceptMapPage() {
               onWheel={(e) => zoom(e.deltaY < 0 ? 0.9 : 1.1)}>
               <defs>
                 <marker id="arrow" viewBox="0 0 10 10" refX="16" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
-                  <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--ink-tertiary)" />
+                  <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--mute)" />
                 </marker>
               </defs>
               {edges.map((e, i) => {
@@ -151,7 +152,7 @@ export default function ConceptMapPage() {
                 const active = neighbours && neighbours.has(e.from) && neighbours.has(e.to) && (e.from === focus || e.to === focus);
                 return (
                   <line key={i} x1={a.x} y1={a.y} x2={b.x} y2={b.y} markerEnd="url(#arrow)"
-                    stroke={active ? "var(--accent)" : e.kind === "cross" ? "var(--ink-tertiary)" : "var(--border-strong, #cbd5e1)"}
+                    stroke={active ? "var(--accent)" : e.kind === "cross" ? "var(--mute)" : "var(--border-strong)"}
                     strokeWidth={active ? 2.2 : e.kind === "cross" ? 1.2 : 1}
                     strokeDasharray={e.kind === "cross" ? "4 3" : undefined}
                     opacity={neighbours ? (active ? 1 : 0.08) : (dim(e.from) && dim(e.to) ? 0.1 : 0.6)} />
@@ -166,10 +167,10 @@ export default function ConceptMapPage() {
                   <g key={n.id} transform={`translate(${p.x},${p.y})`} opacity={faded ? 0.15 : 1} className="cursor-pointer"
                     onPointerEnter={() => setHovered(n.id)} onPointerLeave={() => setHovered(null)}
                     onClick={(e) => { e.stopPropagation(); setSelected(selected === n.id ? null : n.id); }}>
-                    <circle r={r} fill="var(--surface)" stroke={color.get(n.course)} strokeWidth={selected === n.id ? 4 : 2.5} />
-                    {done > 0 && <circle r={r * Math.sqrt(done)} fill={color.get(n.course)} />}
+                    <circle r={r} fill="var(--card)" stroke={color(n.course)} strokeWidth={selected === n.id ? 4 : 2.4} />
+                    {done > 0 && <circle r={r * Math.sqrt(done)} fill="var(--note)" />}
                     {showLabel(n) && (
-                      <text y={-r - 5} textAnchor="middle" fontSize="12" fontWeight={selected === n.id ? 700 : 500} fill="var(--ink)" stroke="var(--surface)" strokeWidth="3" paintOrder="stroke">{n.title}</text>
+                      <text y={-r - 5} textAnchor="middle" fontSize="12" fontWeight={selected === n.id ? 700 : 500} fill="var(--ink)" stroke="var(--card)" strokeWidth="3" paintOrder="stroke">{n.title}</text>
                     )}
                     <title>{`${n.courseTitle}: ${n.title} (${n.lessons.length} lessons, ${Math.round(done * 100)}% done)`}</title>
                   </g>
@@ -178,37 +179,37 @@ export default function ConceptMapPage() {
               {!neighbours && !courseFilter && !q && courses.map(([c, title]) => {
                 const ps = nodes.filter((n) => n.course === c).map((n) => pos.get(n.id)!);
                 const x = ps.reduce((s, p) => s + p.x, 0) / ps.length, y = Math.min(...ps.map((p) => p.y)) - 18;
-                return <text key={c} x={x} y={y} textAnchor="middle" fontSize="13" fontWeight="700" fill={color.get(c)} stroke="var(--surface)" strokeWidth="4" paintOrder="stroke">{title}</text>;
+                return <text key={c} x={x} y={y} textAnchor="middle" fontSize="13" fontWeight="700" fill="var(--mute)" stroke="var(--card)" strokeWidth="4" paintOrder="stroke">{title}</text>;
               })}
             </svg>
-            <p className="px-4 py-2 text-[11.5px] text-[var(--ink-tertiary)] border-t border-[var(--border)]">
+            <p className="border-t-[1.5px] border-hair px-4 py-2 font-mono text-[11px] text-mute">
               Drag to pan, scroll to zoom. Solid lines follow each course&apos;s order; dashed lines link courses. Filled circles show your progress.
             </p>
           </section>
         )}
 
-        <aside className="p-5 rounded-xl border border-[var(--border)] bg-[var(--surface)] flex flex-col gap-4 lg:sticky lg:top-4" aria-live="polite">
+        <aside className="flex flex-col gap-4 rounded-2xl border-[1.5px] border-hair bg-card p-5 lg:sticky lg:top-4" aria-live="polite">
           {sel ? (
             <>
               <div className="flex flex-col gap-1">
-                <span className="text-[11px] font-mono font-bold uppercase tracking-wider" style={{ color: color.get(sel.course) }}>{sel.courseTitle}</span>
-                <h2 className="text-[18px] font-semibold text-[var(--ink)]">{sel.title}</h2>
-                <span className="text-[12px] text-[var(--ink-tertiary)] tabular-nums">{sel.lessons.length} lessons · {Math.round((progress[sel.id] ?? 0) * 100)}% done</span>
+                <span className="eyebrow">{sel.courseTitle}</span>
+                <h2 className="display text-[28px]">{sel.title}</h2>
+                <span className="text-[12px] text-mute tabular-nums">{sel.lessons.length} lessons · {Math.round((progress[sel.id] ?? 0) * 100)}% done</span>
               </div>
-              <Link href={`/learn/${sel.course}/${sel.lessons[0]?.slug ?? ""}`} className={`px-3 py-2 rounded-lg bg-[var(--accent)] text-white text-[13px] font-bold text-center ${focusRing}`}>Start this module</Link>
+              <Link href={`/learn/${sel.course}/${sel.lessons[0]?.slug ?? ""}`} className={buttonClass("primary", "sm")}>Start this module</Link>
               {[["Builds on", incoming, "from"], ["Unlocks", outgoing, "to"]].map(([label, list, end]) => (
                 <div key={label as string} className="flex flex-col gap-1.5">
-                  <h3 className="text-[11px] font-bold uppercase tracking-wider text-[var(--ink-tertiary)]">{label as string}</h3>
-                  {(list as typeof edges).length === 0 ? <p className="text-[13px] text-[var(--ink-tertiary)]">Nothing</p> : (
+                  <h3 className="font-mono text-[11px] uppercase tracking-wider text-mute">{label as string}</h3>
+                  {(list as typeof edges).length === 0 ? <p className="text-[13px] text-mute">Nothing</p> : (
                     <ul className="flex flex-col gap-1.5">
                       {(list as typeof edges).map((e) => {
                         const other = byId.get(e[end as "from" | "to"])!;
                         return (
                           <li key={other.id} className="text-[13px]">
-                            <button type="button" onClick={() => setSelected(other.id)} className={`font-medium text-[var(--ink)] hover:text-[var(--accent)] text-left rounded ${focusRing}`}>
-                              {other.course !== sel.course && <span className="text-[var(--ink-tertiary)]">{other.courseTitle}: </span>}{other.title}
+                            <button type="button" onClick={() => setSelected(other.id)} className={`font-medium text-ink hover:text-accent-ink text-left rounded`}>
+                              {other.course !== sel.course && <span className="text-mute">{other.courseTitle}: </span>}{other.title}
                             </button>
-                            {e.kind !== "sequence" && <p className="text-[12px] text-[var(--ink-secondary)]">{e.reason}</p>}
+                            {e.kind !== "sequence" && <p className="text-[12px] text-body">{e.reason}</p>}
                           </li>
                         );
                       })}
@@ -217,18 +218,18 @@ export default function ConceptMapPage() {
                 </div>
               ))}
               <div className="flex flex-col gap-1.5">
-                <h3 className="text-[11px] font-bold uppercase tracking-wider text-[var(--ink-tertiary)]">Lessons</h3>
+                <h3 className="font-mono text-[11px] uppercase tracking-wider text-mute">Lessons</h3>
                 <ol className="flex flex-col gap-1 list-decimal pl-5">
                   {sel.lessons.map((l) => (
                     <li key={l.slug} className="text-[13px]">
-                      <Link href={`/learn/${sel.course}/${l.slug}`} className={`text-[var(--ink-secondary)] hover:text-[var(--accent)] rounded ${focusRing}`}>{l.title}</Link>
+                      <Link href={`/learn/${sel.course}/${l.slug}`} className={`text-body hover:text-accent-ink rounded`}>{l.title}</Link>
                     </li>
                   ))}
                 </ol>
               </div>
             </>
           ) : (
-            <p className="text-[13px] text-[var(--ink-secondary)]">Select a module on the map or in the list to see its prerequisites, what it unlocks and its lessons.</p>
+            <p className="text-[13px] text-body">Select a module on the map or in the list to see its prerequisites, what it unlocks and its lessons.</p>
           )}
         </aside>
       </div>

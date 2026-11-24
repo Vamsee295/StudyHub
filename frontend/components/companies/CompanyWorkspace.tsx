@@ -37,7 +37,7 @@ export function CompanyWorkspace({ workspace }: CompanyWorkspaceProps) {
             </div>
             
             <div className="flex flex-wrap items-center gap-2 mt-1">
-              <span className="text-[11px] font-mono font-bold px-2 py-1 rounded bg-[#f8fafc] border border-[var(--border)] text-[var(--ink-secondary)] uppercase tracking-wider">
+              <span className="text-[11px] font-mono font-bold px-2 py-1 rounded bg-paper border border-[var(--border)] text-[var(--ink-secondary)] uppercase tracking-wider">
                 {workspace.recruitmentWindow}
               </span>
               <span className="flex items-center gap-1 text-[11px] font-semibold px-2 py-1 rounded bg-[var(--success-soft)] border border-[var(--success-soft-border)] text-[var(--success)]">
@@ -65,7 +65,7 @@ export function CompanyWorkspace({ workspace }: CompanyWorkspaceProps) {
       </div>
 
       {/* Readiness Diagnostic Strip */}
-      <div className="flex items-center gap-5 p-4 rounded-xl border border-[var(--border)] bg-[#f8fafc]">
+      <div className="flex items-center gap-5 p-4 rounded-xl border border-[var(--border)] bg-paper">
         <div className="relative w-14 h-14 shrink-0">
           <svg className="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
             <path

@@ -71,7 +71,7 @@ export function StudyHubEmblem({
   const px = iconSizes[size];
 
   const variantClasses = {
-    dark: "bg-black text-white shadow-black/25 shadow-sm ring-1 ring-white/10",
+    dark: "bg-ink text-paper",
     blue: "bg-gradient-to-br from-blue-600 via-indigo-600 to-blue-700 text-white shadow-blue-500/20 shadow-md",
   };
 
@@ -84,7 +84,7 @@ export function StudyHubEmblem({
         className
       )}
     >
-      <StudyHubLogoIcon size={px} className="relative z-10 text-white" />
+      <StudyHubLogoIcon size={px} className="relative z-10" />
     </div>
   );
 }
@@ -98,10 +98,10 @@ export function StudyHubLogo({
   iconOnly = false,
 }: StudyHubLogoProps) {
   const textSizes = {
-    sm: "text-[15px]",
-    md: "text-[16px] sm:text-[17px]",
-    lg: "text-[19px] sm:text-[20px]",
-    xl: "text-[22px] sm:text-[24px]",
+    sm: "text-[18px]",
+    md: "text-[22px]",
+    lg: "text-[26px]",
+    xl: "text-[30px]",
   };
 
   const badgeSizes = {
@@ -117,9 +117,8 @@ export function StudyHubLogo({
 
       {!iconOnly && (
         <div className="flex items-baseline gap-1.5">
-          <div className="flex items-baseline font-sans font-extrabold tracking-tight leading-none">
-            <span className="text-[var(--ink)]">STUDY</span>
-            <span className="text-blue-600 dark:text-blue-400">HUB</span>
+          <div className={clsx("display flex items-baseline text-ink", textSizes[size])}>
+            STUDY<span className="hl ml-0.5">HUB</span>
           </div>
 
           {showBadge && (

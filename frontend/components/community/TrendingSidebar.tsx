@@ -20,13 +20,13 @@ export function TrendingSidebar({ stats }: TrendingSidebarProps) {
         </h3>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <p className="text-[28px] font-semibold text-[#0f172a]">
+            <p className="text-[28px] font-semibold text-ink">
               {stats.active_today}
             </p>
             <p className="text-[13px] text-slate-500 mt-1">Active learners</p>
           </div>
           <div>
-            <p className="text-[28px] font-semibold text-[#0f172a]">
+            <p className="text-[28px] font-semibold text-ink">
               {stats.total_posts}
             </p>
             <p className="text-[13px] text-slate-500 mt-1">Total posts</p>
@@ -55,7 +55,7 @@ export function TrendingSidebar({ stats }: TrendingSidebarProps) {
 
       {/* Learning tip */}
       <div className="bg-blue-50/50 rounded-[10px] p-5">
-        <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-[#2563eb] mb-2">
+        <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-accent-ink mb-2">
           Tip
         </p>
         <p className="text-[14px] text-slate-700 leading-relaxed">

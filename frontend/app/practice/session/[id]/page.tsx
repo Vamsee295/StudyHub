@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { askConfirm } from "@/components/ui/AskDialog";
+import { buttonClass } from "@/components/ui/Button";
 import { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Layout, Check, Clock, MessageSquare } from "lucide-react";
@@ -65,7 +67,7 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ id: 
 
   const handleSubmit = async () => {
     if (!practiceSet) return;
-    if (answeredCount < questions.length && !window.confirm(`You answered ${answeredCount} of ${questions.length} questions. Submit anyway?`)) return;
+    if (answeredCount < questions.length && !(await askConfirm("Submit the sprint?", { body: `You've answered ${answeredCount} of ${questions.length} questions.`, ok: "Submit" }))) return;
     setIsSubmitting(true);
     setSubmitError(null);
     try {
@@ -82,31 +84,31 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ id: 
   const desc = practiceSet ? `${practiceSet.domain.toUpperCase()} · ${practiceSet.difficulty.toUpperCase()}` : "Interactive Workspace";
 
   return (
-    <div className="min-h-[80vh] flex flex-col bg-[var(--canvas)] -mt-8 -mx-6 rounded-t-xl overflow-hidden border-t border-[var(--border)]">
+    <div className="-mx-4 -mt-6 flex min-h-[80vh] flex-col overflow-hidden border-b-[1.5px] border-hair md:-mx-8 md:-mt-8">
       {/* Session Topbar */}
-      <header className="h-14 bg-[var(--surface)] border-b border-[var(--border)] flex items-center justify-between px-6 shrink-0 z-10">
+      <header className="h-14 bg-card border-b border-hair flex items-center justify-between px-6 shrink-0 z-10">
         <div className="flex items-center gap-4">
-          <Link href="/practice" className="text-[var(--ink-secondary)] hover:text-[var(--ink)] transition-colors" aria-label="Back to Practice">
+          <Link href="/practice" className="text-body hover:text-ink transition-colors" aria-label="Back to Practice">
             <ArrowLeft className="w-4 h-4" />
           </Link>
-          <div className="h-4 w-px bg-[var(--border)]"></div>
+          <div className="h-4 w-px bg-hair"></div>
           <div className="flex flex-col">
-            <span className="text-[10px] font-mono text-[var(--ink-tertiary)] uppercase tracking-wider">{desc}</span>
-            <span className="text-[13px] font-semibold text-[var(--ink)]">{title}</span>
+            <span className="text-[10px] font-mono text-mute uppercase tracking-wider">{desc}</span>
+            <span className="label-cond text-[17px]">{title}</span>
           </div>
         </div>
 
         <div className="flex items-center gap-4">
-          <span className="flex items-center gap-1.5 text-[12px] font-mono text-[var(--ink-secondary)]">
+          <span className="flex items-center gap-1.5 text-[12px] font-mono text-body">
             <Clock className="w-3.5 h-3.5" />
             {formatClock(elapsed)}
-            {practiceSet && <span className="text-[var(--ink-tertiary)]">/ {practiceSet.estimated_minutes}:00</span>}
+            {practiceSet && <span className="text-mute">/ {practiceSet.estimated_minutes}:00</span>}
           </span>
-          <span className="text-[12px] text-[var(--ink-secondary)]">{answeredCount}/{questions.length} answered</span>
+          <span className="text-[12px] text-body">{answeredCount}/{questions.length} answered</span>
           <button
             onClick={handleSubmit}
             disabled={isSubmitting || isLoading || questions.length === 0}
-            className="flex items-center gap-1.5 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white px-4 py-1.5 rounded-md text-[12px] font-semibold transition-colors disabled:opacity-50"
+            className={buttonClass("primary", "sm")}
           >
             {isSubmitting ? <span className="animate-pulse">Submitting...</span> : (
               <>
@@ -119,27 +121,27 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ id: 
       </header>
 
       {submitError && (
-        <div role="alert" className="px-6 py-2 text-[13px] bg-[var(--error-soft)] text-[var(--error)] border-b border-[var(--border)]">{submitError}</div>
+        <div role="alert" className="px-6 py-2 text-[13px] bg-[var(--error-soft)] text-danger border-b border-hair">{submitError}</div>
       )}
 
       {isLoading ? (
-        <div className="p-10 text-[var(--ink-tertiary)]">Loading questions...</div>
+        <div className="p-10 text-mute">Loading questions...</div>
       ) : loadError || questions.length === 0 ? (
         <div className="p-10 flex flex-col gap-3">
-          <p className="text-[var(--ink)]">{loadError ?? "This practice set has no questions yet."}</p>
-          <Link href="/practice" className="text-[13px] text-[var(--accent)]">Back to Practice</Link>
+          <p className="text-ink">{loadError ?? "This practice set has no questions yet."}</p>
+          <Link href="/practice" className="text-[13px] text-accent-ink">Back to Practice</Link>
         </div>
       ) : (
       <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
         {/* Left: Problem Statement & Tutor */}
-        <div className="w-full md:w-[45%] bg-[var(--surface)] border-r border-[var(--border)] flex flex-col h-full overflow-hidden">
-          <div className="flex border-b border-[var(--border)] bg-[var(--surface-subdued)]">
+        <div className="w-full md:w-[45%] bg-card border-r border-hair flex flex-col h-full overflow-hidden">
+          <div className="flex border-b border-hair bg-paper-2">
             <button
               onClick={() => setActiveTab("problem")}
               className={`flex-1 flex items-center justify-center gap-2 py-2.5 text-[12px] font-semibold transition-colors ${
                 activeTab === "problem"
-                  ? "text-[var(--ink)] bg-[var(--surface)] border-b-2 border-b-[var(--accent)]"
-                  : "text-[var(--ink-secondary)] hover:text-[var(--ink)] hover:bg-[var(--surface-hover)]"
+                  ? "text-ink bg-card border-b-2 border-b-[var(--accent)]"
+                  : "text-body hover:text-ink hover:bg-card-2"
               }`}
             >
               <Layout className="w-3.5 h-3.5" />
@@ -149,8 +151,8 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ id: 
               onClick={() => setActiveTab("tutor")}
               className={`flex-1 flex items-center justify-center gap-2 py-2.5 text-[12px] font-semibold transition-colors ${
                 activeTab === "tutor"
-                  ? "text-[var(--accent)] bg-[var(--surface)] border-b-2 border-b-[var(--accent)]"
-                  : "text-[var(--ink-secondary)] hover:text-[var(--ink)] hover:bg-[var(--surface-hover)]"
+                  ? "text-accent-ink bg-card border-b-2 border-b-[var(--accent)]"
+                  : "text-body hover:text-ink hover:bg-card-2"
               }`}
             >
               <MessageSquare className="w-3.5 h-3.5" />
@@ -161,11 +163,11 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ id: 
           <div className="flex-1 overflow-y-auto">
             {activeTab === "problem" ? (
               <div className="p-6">
-                <span className="text-[11px] font-mono uppercase tracking-wider text-[var(--ink-tertiary)]">
+                <span className="text-[11px] font-mono uppercase tracking-wider text-mute">
                   Question {current + 1} of {questions.length} · {question.difficulty}
                 </span>
-                <h1 className="text-xl font-bold text-[var(--ink)] mt-1 mb-4">{question.title}</h1>
-                <p className="text-[14px] leading-relaxed text-[var(--ink)] whitespace-pre-wrap">{question.problem_statement}</p>
+                <h1 className="display mb-4 mt-1 text-[32px]">{question.title}</h1>
+                <p className="whitespace-pre-wrap text-[16px] leading-relaxed">{question.problem_statement}</p>
               </div>
             ) : (
               <AITutorChat key={question.id} questionId={question.id} />
@@ -175,7 +177,7 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ id: 
 
         {/* Right: Answer */}
         <div className="w-full md:w-[55%] flex flex-col">
-          <div className="flex flex-wrap gap-2 p-4 border-b border-[var(--border)] bg-[var(--surface)]">
+          <div className="flex flex-wrap gap-2 p-4 border-b border-hair bg-card">
             {questions.map((q, i) => {
               const a = answers[q.id];
               const done = q.options.length > 0 ? !!a?.choice : !!a?.text?.trim() || !!a?.self_solved;
@@ -186,10 +188,10 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ id: 
                   aria-current={i === current}
                   className={`w-8 h-8 rounded-md text-[12px] font-semibold border transition-colors ${
                     i === current
-                      ? "border-[var(--accent)] text-[var(--accent)] bg-[var(--surface)]"
+                      ? "border-accent text-accent-ink bg-card"
                       : done
-                        ? "border-[var(--border)] bg-[var(--surface-subdued)] text-[var(--ink)]"
-                        : "border-[var(--border)] text-[var(--ink-tertiary)]"
+                        ? "border-hair bg-paper-2 text-ink"
+                        : "border-hair text-mute"
                   }`}
                 >
                   {i + 1}
@@ -201,12 +203,12 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ id: 
           <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-4">
             {isMcq ? (
               <fieldset className="flex flex-col gap-2">
-                <legend className="text-[13px] font-semibold text-[var(--ink)] mb-2">Choose one answer</legend>
+                <legend className="text-[13px] font-semibold text-ink mb-2">Choose one answer</legend>
                 {question.options.map((o) => (
                   <label
                     key={o.id}
                     className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
-                      answer.choice === o.id ? "border-[var(--accent)] bg-[var(--surface)]" : "border-[var(--border)] hover:bg-[var(--surface-subdued)]"
+                      answer.choice === o.id ? "border-accent bg-card" : "border-hair hover:bg-paper-2"
                     }`}
                   >
                     <input
@@ -215,14 +217,14 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ id: 
                       checked={answer.choice === o.id}
                       onChange={() => updateAnswer({ choice: o.id })}
                     />
-                    <span className="text-[14px] text-[var(--ink)]">{o.text}</span>
+                    <span className="text-[14px] text-ink">{o.text}</span>
                   </label>
                 ))}
               </fieldset>
             ) : (
               <>
                 <label className="flex flex-col gap-2">
-                  <span className="text-[13px] font-semibold text-[var(--ink)]">Your approach or solution</span>
+                  <span className="text-[13px] font-semibold text-ink">Your approach or solution</span>
                   <textarea
                     value={answer.text ?? ""}
                     onChange={(e) => updateAnswer({ text: e.target.value })}
@@ -230,32 +232,32 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ id: 
                     maxLength={5000}
                     spellCheck={false}
                     placeholder="Write your code, query, or reasoning here."
-                    className="w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] p-3 font-mono text-[13px] text-[var(--ink)] focus:outline-none focus:border-[var(--accent)]"
+                    className="w-full rounded-xl border-2 border-hair bg-card p-3 font-mono text-[14px] focus:border-accent"
                   />
                 </label>
-                <label className="flex items-center gap-2 text-[13px] text-[var(--ink)]">
+                <label className="flex items-center gap-2 text-[13px] text-ink">
                   <input type="checkbox" checked={!!answer.self_solved} onChange={(e) => updateAnswer({ self_solved: e.target.checked })} />
                   I solved this
                 </label>
-                <p className="text-[12px] text-[var(--ink-tertiary)]">
+                <p className="text-[12px] text-mute">
                   Open questions have no automatic tests yet, so they count your own verdict. You&apos;ll see the reference approach in the review.
                 </p>
               </>
             )}
           </div>
 
-          <div className="flex justify-between p-4 border-t border-[var(--border)] bg-[var(--surface)]">
+          <div className="flex justify-between p-4 border-t border-hair bg-card">
             <button
               onClick={() => setCurrent((c) => Math.max(0, c - 1))}
               disabled={current === 0}
-              className="px-4 py-1.5 rounded-md text-[12px] font-semibold border border-[var(--border)] text-[var(--ink)] disabled:opacity-40"
+              className="px-4 py-1.5 rounded-md text-[12px] font-semibold border border-hair text-ink disabled:opacity-40"
             >
               Previous
             </button>
             <button
               onClick={() => setCurrent((c) => Math.min(questions.length - 1, c + 1))}
               disabled={current === questions.length - 1}
-              className="px-4 py-1.5 rounded-md text-[12px] font-semibold border border-[var(--border)] text-[var(--ink)] disabled:opacity-40"
+              className="px-4 py-1.5 rounded-md text-[12px] font-semibold border border-hair text-ink disabled:opacity-40"
             >
               Next
             </button>

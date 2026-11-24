@@ -1,254 +1,225 @@
 "use client";
 
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo, useRef, type ReactNode } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { motion } from "framer-motion";
-import { 
-  ArrowLeft, 
-  CheckCircle2, 
-  BookOpen, 
-  Clock,
-  ChevronRight,
-  ChevronLeft,
-  Loader2,
-  Lightbulb,
-  AlertTriangle,
-  Code,
-  Save,
-  Check
-} from "lucide-react";
 import { clsx } from "clsx";
+import {
+  AlertTriangle,
+  ArrowLeft,
+  ArrowRight,
+  BookOpen,
+  Check,
+  CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
+  Clock,
+  Code,
+  FlaskConical,
+  Lightbulb,
+  ListChecks,
+  Loader2,
+} from "lucide-react";
 import { getProblem } from "@/lib/problems/problemRegistry";
 import { getCourseBySlug } from "@/lib/data/courses";
 import { learnService, SubjectDetails, TopicContent } from "@/lib/services/learnService";
-import MdxRenderer from "@/components/mdx/MdxRenderer";
-import { TheoryNotes, LessonSources } from "@/components/learn/TheoryNotes";
+import { TheoryNotes, LessonSources, LessonHeading, prose } from "@/components/learn/TheoryNotes";
 import { labForLesson } from "@/lib/labs/catalog";
 import { AskedInChips } from "@/components/learn/AskedIn";
 import { LessonBookmarkButton } from "@/components/learn/LessonBookmarkButton";
 import { LessonPrereqs } from "@/components/learn/LessonPrereqs";
+import { Badge } from "@/components/ui/Badge";
+import { optionClass } from "@/components/learn/optionClass";
+import { buttonClass } from "@/components/ui/Button";
+import { Progress } from "@/components/ui/Page";
 import { notificationService } from "@/lib/services/notificationService";
 import { useAuth } from "@/components/providers/AuthProvider";
 
+/* eslint-disable @typescript-eslint/no-explicit-any -- lesson content is authored JSON with many block shapes */
+
 // --- INTERACTIVE BLOCKS ---
 
-function QuickCheckBlock({ section }: { section: any }) {
-  const [selectedOption, setSelectedOption] = useState<number | null>(null);
-  const [showExplanation, setShowExplanation] = useState(false);
-
-  const handleQuickCheck = (index: number) => {
-    if (selectedOption !== null) return; // already answered
-    setSelectedOption(index);
-    setShowExplanation(true);
-  };
-
+/** Hairline card with a mono header row: the frame for every interactive lesson block. */
+function Block({ icon: Icon, title, aside, tone, children }: { icon: typeof Code; title: string; aside?: ReactNode; tone?: "danger"; children: ReactNode }) {
   return (
-    <section className="bg-white border border-[var(--border)] rounded-xl overflow-hidden shadow-sm">
-      <div className="bg-[#FAFAFA] border-b border-[var(--border)] px-6 py-4 flex items-center gap-2">
-        <CheckCircle2 className="w-4 h-4 text-[var(--accent)]" />
-        <h2 className="text-[12px] font-bold text-[var(--ink)] uppercase tracking-wider">{section.title || "Quick Check"}</h2>
+    <section className="overflow-hidden rounded-2xl border-[1.5px] border-hair bg-card">
+      <div className="flex items-center justify-between gap-3 border-b-[1.5px] border-hair bg-paper-2 px-5 py-3">
+        <h2 className={clsx("label-cond flex items-center gap-2 text-[17px]", tone === "danger" && "text-danger")}>
+          <Icon aria-hidden className={clsx("size-4", tone === "danger" ? "text-danger" : "text-accent")} /> {title}
+        </h2>
+        {aside}
       </div>
-      <div className="p-6 flex flex-col gap-4">
-        <p className="text-[15px] font-medium text-[var(--ink)]">{section.question}</p>
+      {children}
+    </section>
+  );
+}
+
+const inlineCode = (text: string) =>
+  text
+    ? text.split(/`([^`]+)`/g).map((part, i) =>
+        i % 2 ? (
+          <code key={i} className={prose.code}>
+            {part}
+          </code>
+        ) : (
+          part
+        )
+      )
+    : null;
+
+function QuickCheckBlock({ section }: { section: any }) {
+  const [picked, setPicked] = useState<number | null>(null);
+  const answer = section.answer ?? section.correctIndex; // older lessons use correctIndex
+  return (
+    <Block icon={CheckCircle2} title={section.title || "Quick check"}>
+      <div className="flex flex-col gap-4 p-5">
+        <p className="text-[16px] font-medium">{section.question}</p>
         <div className="flex flex-col gap-2">
           {section.options.map((opt: string, idx: number) => {
-            const isSelected = selectedOption === idx;
-            const isCorrect = idx === (section.answer ?? section.correctIndex); // older lessons use correctIndex
-            const showStatus = selectedOption !== null;
-            
+            const shown = picked !== null;
+            const right = idx === answer;
             return (
               <button
                 key={idx}
-                onClick={() => handleQuickCheck(idx)}
-                disabled={showStatus}
-                className={clsx(
-                  "text-left px-4 py-3 rounded-lg border text-[14px] font-medium transition-all",
-                  !showStatus && "hover:border-[var(--accent)] hover:bg-[var(--accent-soft)]/30 border-[var(--border)] bg-white",
-                  showStatus && isCorrect && "bg-[var(--success-soft)] border-[var(--success-soft-border)] text-[var(--success)]",
-                  showStatus && isSelected && !isCorrect && "bg-[var(--error-soft)] border-[var(--error-soft-border)] text-[var(--error)]",
-                  showStatus && !isSelected && !isCorrect && "border-[var(--border)] bg-[#FAFAFA] opacity-50"
-                )}
+                onClick={() => picked === null && setPicked(idx)}
+                disabled={shown}
+                className={optionClass(shown, right, picked === idx)}
               >
-                {opt}
+                <span className="font-mono text-[12px] text-mute">{String.fromCharCode(65 + idx)}</span>
+                <span className="flex-1">{opt}</span>
+                {shown && right && <Check aria-label="Correct answer" className="size-4" />}
               </button>
             );
           })}
         </div>
-        {showExplanation && (
-          <motion.div 
-            initial={{ opacity: 0, height: 0 }} 
-            animate={{ opacity: 1, height: 'auto' }} 
-            className="mt-2 text-[14px] text-[var(--ink-secondary)] p-4 bg-[#FAFAFA] rounded-lg border border-[var(--border)]"
-          >
-            <span className="font-bold text-[var(--ink)]">Explanation:</span> {section.explanation}
-          </motion.div>
+        {picked !== null && section.explanation && (
+          <p className="fade-in rounded-xl bg-paper-2 p-4 text-[15px] leading-relaxed text-body">
+            <span className="font-semibold text-ink">{picked === answer ? "Right. " : "Not quite. "}</span>
+            {section.explanation}
+          </p>
         )}
       </div>
-    </section>
+    </Block>
   );
 }
 
 function ThinkBlock({ section }: { section: any }) {
   const [revealed, setRevealed] = useState(false);
   return (
-    <section className="bg-[var(--accent-soft)]/20 border border-[var(--accent-soft-border)] rounded-xl p-6">
-      <div className="flex items-start gap-3">
-        <div className="bg-white p-2 rounded-full shadow-sm shrink-0 border border-[var(--accent-soft-border)]">
-          <Lightbulb className="w-5 h-5 text-[var(--accent)]" />
-        </div>
-        <div className="flex-1">
-          <h2 className="text-[14px] font-bold text-[var(--ink)] mb-2">{section.title || "Think About It"}</h2>
-          <p className="text-[15px] text-[var(--ink-secondary)] leading-relaxed mb-4">{section.question || section.content}</p>
-          
-          {!revealed ? (
-            <button 
-              onClick={() => setRevealed(true)}
-              className="text-[13px] font-bold text-[var(--accent)] bg-white border border-[var(--accent-soft-border)] px-4 py-2 rounded-lg hover:bg-[var(--accent-soft)] transition-colors"
-            >
-              Reveal Answer
-            </button>
-          ) : (
-            <motion.div 
-              initial={{ opacity: 0, y: -5 }} 
-              animate={{ opacity: 1, y: 0 }}
-              className="bg-white rounded-lg p-4 border border-[var(--border)] text-[14px] text-[var(--ink)] shadow-sm"
-            >
-              <div className="font-bold text-[var(--accent)] text-[12px] uppercase tracking-wider mb-2">Answer</div>
-              {section.answerReveal}
-            </motion.div>
-          )}
-        </div>
+    <Block icon={Lightbulb} title={section.title || "Think about it"}>
+      <div className="p-5">
+        <p className="text-[16px] leading-relaxed text-body">{section.question || section.content}</p>
+        {revealed ? (
+          <div className="fade-in mt-4 rounded-xl bg-paper-2 p-4 text-[15px] leading-relaxed">
+            <p className="eyebrow mb-1.5">Answer</p>
+            {section.answerReveal}
+          </div>
+        ) : (
+          <button onClick={() => setRevealed(true)} className={clsx(buttonClass("secondary", "sm"), "mt-4")}>
+            Reveal answer
+          </button>
+        )}
       </div>
-    </section>
+    </Block>
   );
 }
 
 function TryItBlock({ section }: { section: any }) {
   const [revealed, setRevealed] = useState(false);
   return (
-    <section className="border border-[var(--border)] rounded-xl overflow-hidden">
-      <div className="bg-[#FAFAFA] px-4 py-3 border-b border-[var(--border)] flex items-center justify-between">
-        <h2 className="text-[12px] font-bold text-[var(--ink)] uppercase tracking-wider flex items-center gap-2">
-          <Code className="w-4 h-4 text-[var(--accent)]" /> {section.title || "Try It / Predict Output"}
-        </h2>
-      </div>
-      <div className="p-4 bg-[#1E1E1E] overflow-x-auto">
-        <pre className="text-[13px] text-gray-300 font-mono">
+    <Block icon={Code} title={section.title || "Predict the output"}>
+      <div className="p-5">
+        <pre className={prose.pre}>
           <code>{section.code}</code>
         </pre>
-      </div>
-      <div className="p-4 bg-white">
-        {!revealed ? (
-          <button 
-            onClick={() => setRevealed(true)}
-            className="w-full py-2.5 rounded-lg border border-[var(--border)] bg-[#FAFAFA] hover:bg-white text-[13px] font-bold text-[var(--ink)] transition-colors flex items-center justify-center gap-2"
-          >
-            Predict Output & Reveal
-          </button>
-        ) : (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col gap-3">
-            <div className="bg-[var(--surface-subdued)] p-3 rounded border border-[var(--border)] font-mono text-[13px] text-[var(--ink)]">
-              <span className="text-[var(--ink-tertiary)] select-none mr-2">$</span>
+        {revealed ? (
+          <div className="fade-in mt-4 flex flex-col gap-3">
+            <div className="rounded-xl border-[1.5px] border-hair bg-paper-2 p-3 font-mono text-[14px]">
+              <span className="mr-2 select-none text-mute">$</span>
               {section.expectedOutput}
             </div>
-            {section.explanation && (
-              <p className="text-[14px] text-[var(--ink-secondary)] leading-relaxed">
-                {section.explanation}
-              </p>
-            )}
-          </motion.div>
+            {section.explanation && <p className="text-[15px] leading-relaxed text-body">{section.explanation}</p>}
+          </div>
+        ) : (
+          <button onClick={() => setRevealed(true)} className={clsx(buttonClass("secondary", "sm"), "mt-4 w-full")}>
+            I&apos;ve made my guess, show output
+          </button>
         )}
       </div>
-    </section>
+    </Block>
   );
 }
 
 function DryRunBlock({ section }: { section: any }) {
   const [step, setStep] = useState(0);
-  // Older lessons use steps: [{ step, explanation }] instead of iterations
+  // older lessons use steps: [{ step, explanation }] instead of iterations
   const iterations = section.iterations ?? section.steps?.map((s: any) => ({ step: s.step, variables: {}, description: s.explanation })) ?? [];
-  const totalSteps = iterations.length;
-  
-  if (totalSteps === 0) return null;
-  const currentIteration = iterations[step];
-  
+  if (!iterations.length) return null;
+  const cur = iterations[step];
   return (
-    <section className="border border-[var(--border)] rounded-xl overflow-hidden bg-white shadow-sm">
-      <div className="bg-[#FAFAFA] px-5 py-3.5 border-b border-[var(--border)] flex items-center justify-between">
-        <h2 className="text-[12px] font-bold text-[var(--ink)] uppercase tracking-wider flex items-center gap-2">
-          <Clock className="w-4 h-4 text-[var(--accent)]" /> {section.title || "Interactive Dry Run"}
-        </h2>
-        <span className="text-[12px] font-mono font-bold text-[var(--ink-secondary)] bg-[var(--surface-subdued)] px-2 py-0.5 rounded">
-          Step {step + 1} / {totalSteps}
+    <Block
+      icon={Clock}
+      title={section.title || "Dry run"}
+      aside={
+        <span className="font-mono text-[12px] text-mute">
+          Step {step + 1} / {iterations.length}
         </span>
-      </div>
-      
-      <div className="p-5 flex flex-col gap-5">
+      }
+    >
+      <div className="flex flex-col gap-4 p-5">
         {section.code && (
-          <pre className="bg-[#1E1E1E] rounded-lg p-4 overflow-x-auto text-[13px] text-gray-300 font-mono"><code>{section.code}</code></pre>
+          <pre className={prose.pre}>
+            <code>{section.code}</code>
+          </pre>
         )}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {Object.entries(currentIteration.variables ?? {}).map(([key, value]) => (
-            <div key={key} className="border border-[var(--border)] rounded-lg p-3 bg-[#FAFAFA] flex flex-col items-center justify-center text-center">
-              <span className="text-[11px] font-bold text-[var(--ink-tertiary)] uppercase">{key}</span>
-              <span className="text-[15px] font-mono text-[var(--ink)] mt-1">{String(value)}</span>
-            </div>
-          ))}
-        </div>
-        
-        {currentIteration.description && (
-          <div className="bg-[var(--accent-soft)]/20 border border-[var(--accent-soft-border)] rounded-lg p-4 text-[14px] text-[var(--ink)]">
-            <strong>Action:</strong> {currentIteration.description}
+        {Object.keys(cur.variables ?? {}).length > 0 && (
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            {Object.entries(cur.variables).map(([k, v]) => (
+              <div key={k} className="rounded-xl border-[1.5px] border-hair bg-paper-2 p-3 text-center">
+                <span className="block font-mono text-[11px] uppercase text-mute">{k}</span>
+                <span className="mt-1 block font-mono text-[16px]">{String(v)}</span>
+              </div>
+            ))}
           </div>
         )}
+        {cur.description && <p className={prose.callout}>{cur.description}</p>}
+        <Progress value={((step + 1) / iterations.length) * 100} />
+        <div className="flex justify-between gap-2">
+          <button onClick={() => setStep((s) => Math.max(0, s - 1))} disabled={step === 0} className={buttonClass("ghost", "sm")}>
+            <ChevronLeft className="size-4" /> Back
+          </button>
+          <button
+            onClick={() => setStep((s) => Math.min(iterations.length - 1, s + 1))}
+            disabled={step === iterations.length - 1}
+            className={buttonClass("primary", "sm")}
+          >
+            Next step <ChevronRight className="size-4" />
+          </button>
+        </div>
       </div>
-      
-      <div className="bg-[#FAFAFA] border-t border-[var(--border)] p-3 flex gap-2 justify-between">
-        <button 
-          onClick={() => setStep(s => Math.max(0, s - 1))}
-          disabled={step === 0}
-          className="px-4 py-2 rounded-lg text-[13px] font-bold flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[var(--border)] transition-colors"
-        >
-          <ChevronLeft className="w-4 h-4" /> Prev Step
-        </button>
-        <button 
-          onClick={() => setStep(s => Math.min(totalSteps - 1, s + 1))}
-          disabled={step === totalSteps - 1}
-          className="px-4 py-2 rounded-lg text-[13px] font-bold bg-[var(--accent)] text-white hover:bg-[var(--accent-hover)] flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-        >
-          Next Step <ChevronRight className="w-4 h-4" />
-        </button>
-      </div>
-    </section>
+    </Block>
   );
 }
 
 function InterviewTrapsBlock({ section }: { section: any }) {
   return (
-    <section className="bg-white border border-[var(--border)] rounded-xl overflow-hidden shadow-sm">
-      <div className="bg-[var(--error-soft)]/30 border-b border-[var(--border)] px-6 py-4 flex items-center gap-2">
-        <AlertTriangle className="w-4 h-4 text-[var(--error)]" />
-        <h2 className="text-[12px] font-bold text-[var(--ink)] uppercase tracking-wider">{section.title || "Interview Traps & Edge Cases"}</h2>
-      </div>
-      <div className="divide-y divide-[var(--border)]">
+    <Block icon={AlertTriangle} title={section.title || "Interview traps"} tone="danger">
+      <div className="divide-y-[1.5px] divide-hair">
         {section.traps?.map((trap: any, idx: number) => (
-          <div key={idx} className="p-6 flex flex-col gap-3">
-            <div className="font-bold text-[15px] text-[var(--ink)]">Q: {trap.question}</div>
-            <div className="flex flex-col gap-2">
-              <div className="text-[14px] text-[var(--error)] bg-[var(--error-soft)]/50 p-3 rounded-lg border border-[var(--error-soft-border)]">
-                <strong className="text-[12px] uppercase tracking-wider mb-1 block">The Trap:</strong>
-                {trap.trap}
-              </div>
-              <div className="text-[14px] text-[var(--success)] bg-[var(--success-soft)]/30 p-3 rounded-lg border border-[var(--success-soft-border)]">
-                <strong className="text-[12px] uppercase tracking-wider mb-1 block">The Solution:</strong>
-                {trap.solution}
-              </div>
-            </div>
+          <div key={idx} className="flex flex-col gap-3 p-5">
+            <p className="text-[16px] font-semibold">{trap.question}</p>
+            <p className="rounded-xl border-[1.5px] border-[var(--error-soft-border)] bg-[var(--error-soft)] px-4 py-3 text-[15px] leading-relaxed">
+              <span className="mb-1 block font-mono text-[11px] uppercase tracking-wider text-danger">The trap</span>
+              {trap.trap}
+            </p>
+            <p className="rounded-xl border-[1.5px] border-[var(--success-soft-border)] bg-[var(--success-soft)] px-4 py-3 text-[15px] leading-relaxed">
+              <span className="mb-1 block font-mono text-[11px] uppercase tracking-wider text-note">What to say</span>
+              {trap.solution}
+            </p>
           </div>
         ))}
       </div>
-    </section>
+    </Block>
   );
 }
 
@@ -256,107 +227,75 @@ function InterviewTrapsBlock({ section }: { section: any }) {
 function prerequisiteHref(slug: string, subjectSlug: string): string {
   if (getCourseBySlug(slug)) return `/learn/${slug}`;
   const course = getCourseBySlug(subjectSlug);
-  const module = course?.modules.find((m) => m.slug === slug);
-  if (module?.lessons[0]) return `/learn/${subjectSlug}/${module.lessons[0].slug}`;
+  const mod = course?.modules.find((m) => m.slug === slug);
+  if (mod?.lessons[0]) return `/learn/${subjectSlug}/${mod.lessons[0].slug}`;
   return `/learn/${subjectSlug}/${slug}`;
 }
 
-function SectionRenderer({ section, subjectSlug }: { section: any; subjectSlug: string }) {
-  const renderInlineCode = (text: string) => {
-    if (!text) return null;
-    return text.split(/`([^`]+)`/g).map((part, i) => {
-      if (i % 2 === 1) return <code key={i} className="bg-[var(--surface-subdued)] px-1.5 py-0.5 rounded text-[13px] text-[var(--ink)] font-mono">{part}</code>;
-      return part;
-    });
-  };
+const difficultyVariant = (d: string) => (d === "Easy" ? "success" : d === "Medium" ? "warning" : "danger");
 
+function SectionRenderer({ section, subjectSlug }: { section: any; subjectSlug: string }) {
   switch (section.type) {
-    case 'text':
-      let Icon = BookOpen;
-      if (section.title?.toLowerCase().includes('concept')) Icon = BookOpen;
-      else if (section.title?.toLowerCase().includes('how')) Icon = Code;
-      
+    case "text":
       return (
         <section>
-          {section.title && (
-            <h2 className="text-[12px] font-bold uppercase tracking-wider mb-3 flex items-center gap-2 text-[var(--ink)]">
-              <Icon className="w-4 h-4 text-[var(--accent)]" /> 
-              {section.title}
-            </h2>
-          )}
-          <div className="prose prose-sm sm:prose-base max-w-none text-[var(--ink-secondary)] whitespace-pre-wrap leading-relaxed overflow-x-auto">
-            {section.content}
-          </div>
+          {section.title && <LessonHeading>{section.title}</LessonHeading>}
+          <div className={clsx(prose.p, "whitespace-pre-wrap")}>{section.content}</div>
         </section>
       );
-    case 'callout':
+    case "callout":
       return (
-        <section className="bg-[var(--accent-soft)]/30 border border-[var(--accent-soft-border)] rounded-xl p-6">
-          <h2 className="text-[12px] font-bold text-[var(--accent)] uppercase tracking-wider mb-2 flex items-center gap-2">
-            <Lightbulb className="w-4 h-4" /> {section.title || "Important"}
-          </h2>
-          <p className="text-[14px] text-[var(--ink)] leading-relaxed">
-            {section.content}
+        <aside className={prose.callout}>
+          <p className="eyebrow mb-1.5 flex items-center gap-1.5">
+            <Lightbulb aria-hidden className="size-3.5" /> {section.title || "Important"}
           </p>
-        </section>
+          {section.content}
+        </aside>
       );
-    case 'code':
+    case "code":
       return (
         <section>
-          {section.title && (
-            <h2 className="text-[12px] font-bold text-[var(--ink)] uppercase tracking-wider mb-3 flex items-center gap-2">
-              <Code className="w-4 h-4 text-[var(--accent)]" /> {section.title}
-            </h2>
-          )}
-          <div className="bg-[#1E1E1E] rounded-xl p-5 overflow-x-auto shadow-inner mb-3">
-            <pre className="text-[13px] text-gray-300 font-mono">
-              <code>{section.code}</code>
-            </pre>
-          </div>
-          {section.explanation && (
-            <p className="text-[14px] text-[var(--ink-secondary)] leading-relaxed italic">
-              {renderInlineCode(section.explanation)}
-            </p>
-          )}
+          {section.title && <LessonHeading icon={Code}>{section.title}</LessonHeading>}
+          <pre className={prose.pre}>
+            <code>{section.code}</code>
+          </pre>
+          {section.explanation && <p className="mt-3 text-[15px] leading-relaxed text-body">{inlineCode(section.explanation)}</p>}
         </section>
       );
-    case 'list':
+    case "list":
       return (
-        <section className="bg-[var(--surface-subdued)]/50 border border-[var(--border)] rounded-xl p-6">
-          {section.title && (
-            <h2 className="text-[12px] font-bold text-[var(--ink)] uppercase tracking-wider mb-3 flex items-center gap-2">
-              <BookOpen className="w-4 h-4 text-[var(--accent)]" /> {section.title}
-            </h2>
-          )}
-          <ul className="list-disc pl-5 space-y-2 text-[14px] text-[var(--ink)] leading-relaxed">
+        <section>
+          {section.title && <LessonHeading>{section.title}</LessonHeading>}
+          <ul className={clsx(prose.list, "list-disc")}>
             {section.items?.map((item: string, idx: number) => (
-              <li key={idx} dangerouslySetInnerHTML={{ __html: item.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') }} />
+              // authored lesson content: only **bold** is converted
+              <li key={idx} dangerouslySetInnerHTML={{ __html: item.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>") }} />
             ))}
           </ul>
         </section>
       );
-    case 'table':
+    case "table":
       return (
         <section>
-          {section.title && (
-            <h2 className="text-[12px] font-bold text-[var(--ink)] uppercase tracking-wider mb-3 flex items-center gap-2">
-              <BookOpen className="w-4 h-4 text-[var(--accent)]" /> {section.title}
-            </h2>
-          )}
-          <div className="overflow-x-auto border border-[var(--border)] rounded-xl">
-            <table className="w-full text-left text-[14px]">
-              <thead className="bg-[#FAFAFA] border-b border-[var(--border)]">
+          {section.title && <LessonHeading>{section.title}</LessonHeading>}
+          <div className="overflow-x-auto rounded-xl border-[1.5px] border-hair">
+            <table className="w-full text-left">
+              <thead className="border-b-[1.5px] border-hair bg-paper-2">
                 <tr>
                   {section.headers?.map((h: string, i: number) => (
-                    <th key={i} className="px-5 py-3 font-semibold text-[var(--ink)]">{h}</th>
+                    <th key={i} className="px-4 py-2.5 font-mono text-[12px] font-medium uppercase tracking-wider">
+                      {h}
+                    </th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[var(--border)]">
+              <tbody className="divide-y-[1.5px] divide-hair">
                 {section.rows?.map((row: string[], i: number) => (
-                  <tr key={i} className="bg-white">
-                    {row.map((cell: string, j: number) => (
-                      <td key={j} className="px-5 py-3 text-[var(--ink-secondary)]">{renderInlineCode(cell)}</td>
+                  <tr key={i}>
+                    {row.map((cell, j) => (
+                      <td key={j} className="px-4 py-2.5 align-top text-[15px] text-body">
+                        {inlineCode(cell)}
+                      </td>
                     ))}
                   </tr>
                 ))}
@@ -365,101 +304,105 @@ function SectionRenderer({ section, subjectSlug }: { section: any; subjectSlug: 
           </div>
         </section>
       );
-    case 'warning':
+    case "warning":
       return (
-        <section className="bg-[var(--error-soft)]/30 border border-[var(--error-soft-border)] rounded-xl p-6">
-          <h2 className="text-[12px] font-bold text-[var(--error)] uppercase tracking-wider mb-3 flex items-center gap-2">
-            <AlertTriangle className="w-4 h-4" /> {section.title || "Common Mistakes"}
-          </h2>
-          {section.content && <p className="text-[14px] text-[var(--ink)] leading-relaxed">{renderInlineCode(section.content)}</p>}
-          <ul className="list-disc pl-5 space-y-2 text-[14px] text-[var(--ink)]">
-            {section.items?.map((mistake: string, idx: number) => (
-              <li key={idx}>{renderInlineCode(mistake)}</li>
-            ))}
-          </ul>
-        </section>
+        <aside className="rounded-xl border-[1.5px] border-[var(--error-soft-border)] bg-[var(--error-soft)] px-5 py-4">
+          <p className="mb-2 flex items-center gap-1.5 font-mono text-[12px] uppercase tracking-[0.08em] text-danger">
+            <AlertTriangle aria-hidden className="size-3.5" /> {section.title || "Common mistakes"}
+          </p>
+          {section.content && <p className="text-[16px] leading-relaxed">{inlineCode(section.content)}</p>}
+          {section.items?.length > 0 && (
+            <ul className="mt-1 list-disc space-y-1.5 pl-5 text-[16px] leading-relaxed">
+              {section.items.map((m: string, idx: number) => (
+                <li key={idx}>{inlineCode(m)}</li>
+              ))}
+            </ul>
+          )}
+        </aside>
       );
-    case 'takeaways':
+    case "takeaways":
       return (
-        <section className="bg-[var(--accent-soft)]/20 border border-[var(--accent-soft-border)] rounded-xl p-6">
-          <h2 className="text-[12px] font-bold text-[var(--accent)] uppercase tracking-wider mb-3 flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4" /> {section.title || "Key Takeaways"}
-          </h2>
-          <ul className="list-none space-y-2 text-[14.5px] font-medium text-[var(--ink)]">
+        <section className="brut rounded-2xl bg-card p-6">
+          <p className="eyebrow mb-3">{section.title || "Key takeaways"}</p>
+          <ul className="space-y-2.5">
             {section.items?.map((item: string, idx: number) => (
-              <li key={idx} className="flex gap-2">
-                <span className="text-[var(--accent)] font-bold mt-0.5">•</span>
-                <span>{renderInlineCode(item)}</span>
+              <li key={idx} className="flex gap-3 text-[16px] leading-relaxed">
+                <CheckCircle2 aria-hidden className="mt-1 size-4 shrink-0 text-note" />
+                <span>{inlineCode(item)}</span>
               </li>
             ))}
           </ul>
         </section>
       );
-    case 'practice':
+    case "practice":
       return (
-        <section className="border-2 border-[var(--accent-soft-border)] rounded-xl overflow-hidden bg-white">
-          <div className="bg-[var(--accent-soft)] px-6 py-4 flex items-center justify-between border-b border-[var(--accent-soft-border)]">
-            <div className="flex items-center gap-2">
-              <Code className="w-5 h-5 text-[var(--accent)]" />
-              <h2 className="text-[14px] font-bold text-[var(--ink)]">{section.title || "Practice Problems"}</h2>
-            </div>
-          </div>
-          <div className="p-4 flex flex-col gap-2">
+        <Block icon={ListChecks} title={section.title || "Practice problems"}>
+          <ul className="divide-y-[1.5px] divide-hair">
             {section.problems?.map((prob: any) => {
-              // Problems missing from the registry render as plain exercises instead of dead links
-              const Row: any = getProblem(prob.id) ? Link : "div";
+              // problems missing from the registry render as plain exercises instead of dead links
+              const linked = !!getProblem(prob.id);
+              const body = (
+                <>
+                  <span className="flex-1 text-[15px] font-medium group-hover:text-accent-ink">{prob.title}</span>
+                  <Badge variant={difficultyVariant(prob.difficulty)}>{prob.difficulty}</Badge>
+                  {linked && <ChevronRight aria-hidden className="size-4 text-mute" />}
+                </>
+              );
               return (
-              <Row 
-                key={prob.id} 
-                {...(Row === Link ? { href: `/practice/problems/${prob.id}` } : {})}
-                className="flex items-center justify-between p-3 rounded-lg hover:bg-[#FAFAFA] border border-transparent hover:border-[var(--border)] transition-all group"
-              >
-                <span className="font-semibold text-[14px] text-[var(--ink)] group-hover:text-[var(--accent)] transition-colors">{prob.title}</span>
-                <div className="flex items-center gap-3">
-                  <span className={clsx(
-                    "text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded",
-                    prob.difficulty === 'Easy' ? "bg-[var(--success-soft)] text-[var(--success)]" :
-                    prob.difficulty === 'Medium' ? "bg-[var(--warning-soft)] text-[var(--warning)]" :
-                    "bg-[var(--error-soft)] text-[var(--error)]"
-                  )}>
-                    {prob.difficulty}
-                  </span>
-                  {Row === Link && <ChevronRight className="w-4 h-4 text-[var(--ink-tertiary)] group-hover:text-[var(--accent)] transition-colors" />}
-                </div>
-              </Row>
+                <li key={prob.id}>
+                  {linked ? (
+                    <Link href={`/practice/problems/${prob.id}`} className="group flex items-center gap-3 px-5 py-3 hover:bg-card-2">
+                      {body}
+                    </Link>
+                  ) : (
+                    <div className="flex items-center gap-3 px-5 py-3">{body}</div>
+                  )}
+                </li>
               );
             })}
-          </div>
-        </section>
+          </ul>
+        </Block>
       );
-    case 'prerequisites':
+    case "prerequisites":
       return (
-        <section className="mb-6 flex gap-2 flex-wrap items-center text-[13px] text-[var(--ink-secondary)]">
-          <span className="font-bold text-[var(--ink)]">Prerequisites:</span>
+        <section className="flex flex-wrap items-center gap-2 text-[14px]">
+          <span className="font-mono text-[12px] uppercase tracking-wider text-mute">Before this:</span>
           {section.links?.map((link: any, idx: number) => (
-            <Link 
-              key={idx} 
+            <Link
+              key={idx}
               href={prerequisiteHref(link.slug, subjectSlug)}
-              className="bg-[#FAFAFA] border border-[var(--border)] px-3 py-1 rounded-full hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors"
+              className="rounded-full border-[1.5px] border-hair px-3 py-1 font-medium hover:border-line hover:text-accent-ink"
             >
               {link.title}
             </Link>
           ))}
         </section>
       );
-    case 'quickCheck':
+    case "quickCheck":
       return <QuickCheckBlock section={section} />;
-    case 'think':
+    case "think":
       return <ThinkBlock section={section} />;
-    case 'tryIt':
+    case "tryIt":
       return <TryItBlock section={section} />;
-    case 'dryRun':
+    case "dryRun":
       return <DryRunBlock section={section} />;
-    case 'interviewTraps':
+    case "interviewTraps":
       return <InterviewTrapsBlock section={section} />;
     default:
       return null;
   }
+}
+
+/** Older lessons store fixed fields instead of a `sections` list; express them as sections so one renderer handles both. */
+function legacySections(c: any): any[] {
+  return [
+    c.concept && { type: "text", title: "Concept", content: c.concept },
+    c.whyItMatters && { type: "callout", title: "Why it matters", content: c.whyItMatters },
+    c.howItWorks && { type: "text", title: "How it works", content: c.howItWorks },
+    c.javaExample && { type: "code", title: "Code example", code: c.javaExample },
+    c.commonMistakes?.length && { type: "warning", title: "Common mistakes", items: c.commonMistakes },
+    c.quickCheck && { type: "quickCheck", ...c.quickCheck },
+  ].filter(Boolean);
 }
 
 export default function TopicPage() {
@@ -473,163 +416,110 @@ export default function TopicPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [updating, setUpdating] = useState(false);
-  
-  // Quick Check state
-  const [selectedOption, setSelectedOption] = useState<number | null>(null);
-  const [showExplanation, setShowExplanation] = useState(false);
-
-  // Notes state
   const [notes, setNotes] = useState("");
   const [savingNotes, setSavingNotes] = useState(false);
   const [notesSaved, setNotesSaved] = useState(false);
   const notesTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
   const lessonScrollRef = useRef<HTMLDivElement>(null);
 
-  // When active topic changes or finishes loading, reset scroll to top of lesson container
+  // new lesson: back to the top of the reading pane
   useEffect(() => {
-    if (!loading && lessonScrollRef.current) {
-      lessonScrollRef.current.scrollTop = 0;
-    }
+    if (!loading && lessonScrollRef.current) lessonScrollRef.current.scrollTop = 0;
   }, [topicSlug, loading]);
 
   useEffect(() => {
-    async function loadData() {
-      try {
-        setLoading(true);
-        const [subjectData, topicData] = await Promise.all([
-          learnService.getSubjectDetails(subjectSlug),
-          learnService.getTopicContent(subjectSlug, topicSlug)
-        ]);
-        setSubject(subjectData);
-        setTopic(topicData);
-        if (topicData.notes) {
-          setNotes(topicData.notes);
-        }
-      } catch (err: any) {
+    let live = true;
+    Promise.all([learnService.getSubjectDetails(subjectSlug), learnService.getTopicContent(subjectSlug, topicSlug)])
+      .then(([s, t]) => {
+        if (!live) return;
+        setSubject(s);
+        setTopic(t);
+        setNotes(t.notes || "");
+        setError(null);
+      })
+      .catch((err: Error) => {
         console.error("Failed to load topic details:", err);
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    }
-    loadData();
+        if (live) setError(err.message);
+      })
+      .finally(() => live && setLoading(false));
+    return () => {
+      live = false;
+    };
   }, [subjectSlug, topicSlug]);
 
-  const { currentModule, nextTopic, prevTopic, allTopicsList } = useMemo(() => {
-    if (!subject || !topic) return { currentModule: null, nextTopic: null, prevTopic: null, allTopicsList: [] };
-    
-    let currentModule = null;
-    let allTopics = [];
-    
-    for (const m of subject.modules) {
-      for (const t of m.topics) {
-        allTopics.push({ ...t, moduleId: m.id, moduleTitle: m.title });
-        if (t.id === topic.id || t.slug === topic.slug) {
-          currentModule = m;
-        }
-      }
-    }
-    
-    const currentIndex = allTopics.findIndex(t => t.id === topic.id || t.slug === topic.slug);
-    const prevTopic = currentIndex > 0 ? allTopics[currentIndex - 1] : null;
-    const nextTopic = currentIndex < allTopics.length - 1 ? allTopics[currentIndex + 1] : null;
-
-    return { currentModule, nextTopic, prevTopic, allTopicsList: allTopics };
+  const { currentModule, nextTopic, prevTopic, position, total } = useMemo(() => {
+    if (!subject || !topic) return { currentModule: null, nextTopic: null, prevTopic: null, position: 0, total: 0 };
+    const all = subject.modules.flatMap((m) => m.topics.map((t) => ({ ...t, module: m })));
+    const i = all.findIndex((t) => t.id === topic.id || t.slug === topic.slug);
+    return {
+      currentModule: all[i]?.module ?? null,
+      prevTopic: i > 0 ? all[i - 1] : null,
+      nextTopic: i >= 0 && i < all.length - 1 ? all[i + 1] : null,
+      position: i + 1,
+      total: all.length,
+    };
   }, [subject, topic]);
 
-  const parsedContent = useMemo(() => {
-    if (!topic || !topic.content) return null;
-    // If content is already an object (old format), return it directly
-    if (typeof topic.content !== 'string') {
-      return topic.content;
-    }
-    // Try to parse as JSON (old format)
+  const content = useMemo(() => {
+    if (!topic?.content) return null;
+    if (typeof topic.content !== "string") return topic.content;
     try {
       return JSON.parse(topic.content);
-    } catch (e) {
-      // If not JSON, treat as MDX content
-      return {
-        isMdx: true,
-        mdxSource: topic.content
-      };
+    } catch {
+      // MDX lessons (public/content/learn/**/index.mdx) are plain markdown: drop the frontmatter and the
+      // "# Title" line (the page already shows the title) and render the rest as theory.
+      // ponytail: JSX components inside MDX would print as text; wire up MdxRenderer if a lesson ever needs them.
+      const body = topic.content.replace(/^---[\s\S]*?\n---\s*/, "").replace(/^#\s.*\n/, "");
+      return body.trim() ? { theory: body } : null;
     }
   }, [topic]);
 
   if (loading) {
     return (
-      <div className="flex flex-col h-full w-full items-center justify-center bg-white">
-        <Loader2 className="w-8 h-8 text-[var(--accent)] animate-spin mb-4" />
-        <p className="text-[var(--ink-secondary)] text-[13px] font-mono">Loading learning environment...</p>
+      <div className="flex h-full flex-col items-center justify-center gap-3">
+        <Loader2 className="size-8 animate-spin text-accent" />
+        <p className="font-mono text-[13px] text-mute">Opening lesson…</p>
       </div>
     );
   }
 
   if (error || !topic || !subject || !currentModule) {
-    const isNotFound = error?.toLowerCase().includes('not found') || (!topic && !error);
     return (
-      <div className="flex flex-col h-full w-full items-center justify-center bg-white p-8">
-        <div className="flex flex-col items-center gap-5 max-w-md text-center">
-          <div className="w-12 h-12 rounded-full bg-[var(--error-soft)] border border-[var(--error-soft-border)] flex items-center justify-center">
-            <AlertTriangle className="w-6 h-6 text-[var(--error)]" />
-          </div>
-          <div className="flex flex-col gap-2">
-            <h2 className="text-[20px] font-bold text-[var(--ink)]">Lesson Not Found</h2>
-            <p className="text-[14px] text-[var(--ink-secondary)] leading-relaxed">
-              This lesson doesn&apos;t exist in the course catalogue.
-            </p>
-          </div>
-          <div className="w-full bg-[#FAFAFA] border border-[var(--border)] rounded-xl p-4 text-left flex flex-col gap-2 text-[13px] font-mono">
-            <div className="flex gap-2">
-              <span className="text-[var(--ink-tertiary)] min-w-[80px]">Course:</span>
-              <span className="text-[var(--ink)] font-semibold">{subjectSlug}</span>
-            </div>
-            <div className="flex gap-2">
-              <span className="text-[var(--ink-tertiary)] min-w-[80px]">Lesson:</span>
-              <span className="text-[var(--error)] font-semibold break-all">{topicSlug}</span>
-            </div>
-          </div>
-          <Link
-            href={`/learn/${subjectSlug}`}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--accent)] text-white text-[13px] font-bold hover:bg-[var(--accent-hover)] transition-colors shadow-sm"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Course
+      <div className="flex h-full items-center justify-center p-8">
+        <div className="max-w-md text-center">
+          <p className="eyebrow mb-2">Not found</p>
+          <h1 className="display text-[44px]">No such lesson</h1>
+          <p className="mt-3 text-body">
+            <span className="font-mono text-[14px]">{topicSlug}</span> isn&apos;t in the {subjectSlug} course.
+          </p>
+          <Link href={`/learn/${subjectSlug}`} className={clsx(buttonClass("secondary"), "mt-6")}>
+            <ArrowLeft className="size-4" /> Back to course
           </Link>
         </div>
       </div>
     );
   }
 
-  const isCompleted = topic.status === 'completed';
+  const isCompleted = topic.status === "completed";
 
-  const toggleComplete = async () => {
+  const markComplete = async () => {
     try {
       setUpdating(true);
-      const newStatus = isCompleted ? 'in_progress' : 'completed';
-      await learnService.updateTopicProgress(topic.id, newStatus);
-      
-      if (newStatus === 'completed' && user?.id) {
+      await learnService.updateTopicProgress(topic.id, "completed");
+      if (user?.id) {
         notificationService.createNotification({
           userId: user.id,
           title: "Lesson Completed",
           message: `You completed "${topic.title}".`,
           type: "LESSON_COMPLETED",
-          link: `/learn/${subjectSlug}/${topicSlug}`
+          link: `/learn/${subjectSlug}/${topicSlug}`,
         });
       }
-      
-      setTopic({ ...topic, status: newStatus });
-      
-      const updatedSubject = { ...subject };
-      for (const m of updatedSubject.modules) {
-        for (const t of m.topics) {
-          if (t.id === topic.id) {
-            t.status = newStatus;
-          }
-        }
-      }
-      setSubject(updatedSubject);
+      setTopic({ ...topic, status: "completed" });
+      setSubject({
+        ...subject,
+        modules: subject.modules.map((m) => ({ ...m, topics: m.topics.map((t) => (t.id === topic.id ? { ...t, status: "completed" } : t)) })),
+      });
     } catch (err) {
       console.error("Failed to update progress:", err);
     } finally {
@@ -637,17 +527,12 @@ export default function TopicPage() {
     }
   };
 
-  const handleNotesChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const onNotes = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const val = e.target.value;
     setNotes(val);
-    
-    if (notesTimeoutRef.current) {
-      clearTimeout(notesTimeoutRef.current);
-    }
-    
+    if (notesTimeoutRef.current) clearTimeout(notesTimeoutRef.current);
     setNotesSaved(false);
     setSavingNotes(true);
-    
     notesTimeoutRef.current = setTimeout(async () => {
       try {
         await learnService.updateTopicProgress(topic.id, topic.status as any, val);
@@ -661,331 +546,152 @@ export default function TopicPage() {
     }, 1000);
   };
 
-  const handleQuickCheck = (index: number) => {
-    if (selectedOption !== null) return; // already answered
-    setSelectedOption(index);
-    setShowExplanation(true);
-  };
+  const sections: any[] = content ? (content.sections ?? legacySections(content)) : [];
 
   return (
-    <div className="flex w-full h-full min-w-0 overflow-hidden bg-white">
-      
-      {/* LEFT SIDEBAR: CURRICULUM NAVIGATION */}
-      <aside className="w-80 shrink-0 border-r border-[var(--border)] flex flex-col h-full bg-[#FAFAFA] hidden md:flex min-w-0">
-        <div className="p-5 border-b border-[var(--border)] shrink-0 bg-white">
-          <Link 
-            href={`/learn/${subject.slug}`} 
-            className="inline-flex items-center gap-1.5 text-[12px] font-semibold text-[var(--ink-secondary)] hover:text-[var(--accent)] transition-colors mb-3"
-          >
-            <ArrowLeft className="w-3 h-3" />
-            Back to {subject.name}
+    <div className="flex h-full min-w-0 overflow-hidden">
+      {/* course outline */}
+      <aside aria-label="Course outline" className="hidden h-full w-[300px] shrink-0 flex-col border-r-[2.4px] border-line bg-paper lg:flex">
+        <div className="shrink-0 border-b-[1.5px] border-hair p-5">
+          <Link href={`/learn/${subject.slug}`} className="mb-2 inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-wider text-mute hover:text-ink">
+            <ArrowLeft className="size-3" /> Course
           </Link>
-          <h2 className="font-bold text-[16px] text-[var(--ink)] leading-tight">{subject.name}</h2>
-          <div className="mt-2 w-full bg-[var(--border)] h-1.5 rounded-full overflow-hidden">
-            <div className="h-full bg-[var(--accent)]" style={{ width: `${subject.progress_percentage || 0}%` }}></div>
-          </div>
-          <p className="text-[11px] font-mono text-[var(--ink-tertiary)] mt-1.5">
-            {subject.progress_percentage || 0}% Complete
-          </p>
+          <p className="display text-[26px]">{subject.name}</p>
+          <Progress value={subject.progress_percentage || 0} label="Complete" className="mt-3" />
         </div>
-        
-        <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden">
+        <nav className="no-scrollbar min-h-0 flex-1 overflow-y-auto pb-6">
           {subject.modules.map((m, mIdx) => (
-            <div key={m.id} className="border-b border-[var(--border)]/40 last:border-b-0">
-              <div className="px-5 py-3.5 bg-white/50 text-[11px] font-bold text-[var(--ink-secondary)] uppercase tracking-wider sticky top-0 backdrop-blur-sm z-10">
-                Module {mIdx + 1}: {m.title}
-              </div>
-              <div className="flex flex-col">
-                {m.topics.map((t, tIdx) => {
-                  const isActive = t.id === topic.id;
-                  const isDone = t.status === 'completed';
-                  return (
-                    <Link 
-                      key={t.id}
-                      href={`/learn/${subject.slug}/${t.slug}`}
-                      className={clsx(
-                        "px-5 py-3 border-l-2 flex items-start gap-3 transition-colors",
-                        isActive 
-                          ? "bg-[var(--accent-soft)]/40 border-[var(--accent)]" 
-                          : "border-transparent hover:bg-black/[0.02]"
-                      )}
-                    >
-                      <div className={clsx(
-                        "w-4 h-4 rounded-full flex items-center justify-center shrink-0 mt-0.5",
-                        isDone 
-                          ? "text-[var(--success)]" 
-                          : isActive ? "text-[var(--accent)] border-2 border-[var(--accent)]" : "border-2 border-[var(--border-strong)]"
-                      )}>
-                        {isDone && <CheckCircle2 className="w-4 h-4" />}
-                      </div>
-                      <div className="flex flex-col min-w-0">
-                        <span className={clsx(
-                          "text-[13px] leading-snug truncate",
-                          isActive ? "font-bold text-[var(--accent)]" : "font-medium text-[var(--ink)]"
-                        )}>
-                          {t.title}
-                        </span>
-                        <span className="text-[11px] font-mono text-[var(--ink-tertiary)] mt-0.5">
-                          {t.estimated_minutes}m
-                        </span>
-                      </div>
-                    </Link>
-                  );
-                })}
-              </div>
+            <div key={m.id}>
+              <p className="sticky top-0 z-10 bg-paper px-5 pb-1.5 pt-4 font-mono text-[11px] uppercase tracking-wider text-mute">
+                {String(mIdx + 1).padStart(2, "0")} · {m.title}
+              </p>
+              {m.topics.map((t) => {
+                const active = t.id === topic.id;
+                const done = t.status === "completed";
+                return (
+                  <Link
+                    key={t.id}
+                    href={`/learn/${subject.slug}/${t.slug}`}
+                    aria-current={active ? "page" : undefined}
+                    className={clsx(
+                      "mx-2 flex items-start gap-2.5 rounded-lg px-3 py-2 text-[14px] leading-snug transition-colors",
+                      active ? "bg-ink text-paper" : "hover:bg-card-2"
+                    )}
+                  >
+                    {done ? (
+                      <CheckCircle2 aria-label="Completed" className={clsx("mt-px size-4 shrink-0", active ? "text-paper" : "text-note")} />
+                    ) : (
+                      <span aria-hidden className={clsx("mt-px block size-4 shrink-0 rounded-full border-2", active ? "border-paper" : "border-ink/25")} />
+                    )}
+                    <span className={clsx("min-w-0 flex-1", active && "font-semibold")}>{t.title}</span>
+                    <span className={clsx("font-mono text-[11px]", active ? "text-paper/70" : "text-mute")}>{t.estimated_minutes}m</span>
+                  </Link>
+                );
+              })}
             </div>
           ))}
-        </div>
+        </nav>
       </aside>
 
-      {/* RIGHT MAIN CONTENT AREA */}
-      <main className="flex-1 flex flex-col h-full overflow-hidden bg-white relative min-w-0">
-        {/* TOP HEADER */}
-        <header className="shrink-0 min-h-[4rem] py-3 border-b border-[var(--border)] px-6 md:px-10 flex flex-wrap items-center justify-between bg-white z-10 gap-4 w-full min-w-0 box-border">
-          <div className="flex items-center gap-3 min-w-0">
-            <span className="text-[11px] font-mono text-[var(--ink-tertiary)] uppercase tracking-wider font-semibold border border-[var(--border)] px-2 py-0.5 rounded truncate">
-              {currentModule.title}
-            </span>
-          </div>
-          
-          <div className="flex items-center gap-2 shrink-0">
-          <LessonBookmarkButton course={subjectSlug} lesson={topicSlug} />
-          <button
-            onClick={toggleComplete}
-            disabled={updating || isCompleted}
-            className={clsx(
-              "shrink-0 text-[12px] font-bold px-4 py-2 rounded-lg transition-all flex items-center gap-2 border shadow-sm",
-              isCompleted 
-                ? "bg-[var(--success-soft)] text-[var(--success)] border-[var(--success-soft-border)] cursor-default"
-                : "bg-[var(--accent)] text-white border-[var(--accent)] hover:bg-[var(--accent-hover)]",
-              updating && "opacity-50 cursor-not-allowed"
-            )}
-          >
-            {updating ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : isCompleted ? (
-              <CheckCircle2 className="w-4 h-4" />
+      <div className="flex min-w-0 flex-1 flex-col overflow-hidden bg-card">
+        <header className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-b-[1.5px] border-hair px-5 py-3 md:px-10">
+          <Link href={`/learn/${subject.slug}`} className="min-w-0 truncate font-mono text-[12px] uppercase tracking-wider text-mute hover:text-ink lg:pointer-events-none">
+            <span className="lg:hidden">← </span>
+            {currentModule.title} · {position}/{total}
+          </Link>
+          <div className="flex shrink-0 items-center gap-2">
+            <LessonBookmarkButton course={subjectSlug} lesson={topicSlug} />
+            {isCompleted ? (
+              <span className="label-cond flex h-9 items-center gap-1.5 rounded-xl bg-[var(--success-soft)] px-3 text-[14px] text-note">
+                <CheckCircle2 className="size-4" /> Completed
+              </span>
             ) : (
-              <Check className="w-4 h-4" />
+              <button onClick={markComplete} disabled={updating} className={buttonClass("primary", "sm")}>
+                {updating ? <Loader2 className="size-4 animate-spin" /> : <Check className="size-4" />}
+                Mark complete
+              </button>
             )}
-            {isCompleted ? "Completed" : "Mark as Complete"}
-          </button>
           </div>
         </header>
 
-        {/* ONE CLEAR SCROLLABLE CONTENT REGION */}
-        <div ref={lessonScrollRef} className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden">
-          <article className="w-full max-w-[900px] mx-auto px-6 md:px-10 py-10 flex flex-col gap-10 box-border min-w-0">
-            
-            {/* TITLE & META */}
-            <div className="flex flex-col gap-4">
-              <h1 className="font-newsreader text-4xl sm:text-5xl text-[var(--ink)] font-normal tracking-tight">
-                {topic.title}
-              </h1>
-              <p className="text-[16px] text-[var(--ink-secondary)] leading-relaxed">
-                {topic.description}
+        <div ref={lessonScrollRef} className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden">
+          <article className="mx-auto flex w-full max-w-[760px] flex-col gap-10 px-5 py-10 md:px-10">
+            <header>
+              <p className="eyebrow mb-3">
+                {subject.name} · {topic.estimated_minutes} min
               </p>
-            </div>
-
-            {/* DYNAMIC CONTENT RENDERING */}
-            {parsedContent ? (
-              <div className="flex flex-col gap-10">
-                {currentModule && <AskedInChips course={subjectSlug} module={currentModule.slug} />}
+              <h1 className="display text-[44px] md:text-[60px]">{topic.title}</h1>
+              {topic.description && <p className="mt-4 text-[18px] leading-relaxed text-body">{topic.description}</p>}
+              <div className="mt-5 flex flex-col gap-3">
+                <AskedInChips course={subjectSlug} module={currentModule.slug} />
                 <LessonPrereqs course={subjectSlug} lesson={topicSlug} />
-                {parsedContent.theory && <TheoryNotes markdown={parsedContent.theory} />}
+              </div>
+            </header>
+
+            {content ? (
+              <>
+                {content.theory && <TheoryNotes markdown={content.theory} />}
                 {labForLesson(subjectSlug, topicSlug).map((lab) => (
-                  <Link key={lab.slug} href={`/labs/${lab.slug}`}
-                    className="flex items-center justify-between gap-4 p-4 rounded-xl border border-[var(--accent)]/40 bg-[var(--accent-soft)]/20 hover:border-[var(--accent)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]">
-                    <span className="flex flex-col gap-0.5">
-                      <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-[var(--accent)]">Try it in the lab</span>
-                      <span className="text-[14px] font-semibold text-[var(--ink)]">{lab.title}</span>
+                  <Link key={lab.slug} href={`/labs/${lab.slug}`} className="brut brut-hover no-press flex items-center gap-4 rounded-2xl bg-card p-5">
+                    <FlaskConical aria-hidden className="size-6 shrink-0 text-accent" />
+                    <span className="min-w-0 flex-1">
+                      <span className="eyebrow block">Try it in the lab</span>
+                      <span className="label-cond block text-[19px]">{lab.title}</span>
                     </span>
-                    <ChevronRight aria-hidden="true" className="w-5 h-5 text-[var(--accent)] shrink-0" />
+                    <ArrowRight aria-hidden className="size-5 shrink-0" />
                   </Link>
                 ))}
-
-                {parsedContent.sections ? (
-                  parsedContent.sections.map((section: any, idx: number) => (
-                    <SectionRenderer 
-                      key={idx} 
-                      section={section} 
-                      subjectSlug={subjectSlug}
-                    />
-                  ))
-                ) : (
-                  <>
-                    {/* BACKWARD COMPATIBILITY: OLD HARDCODED JSON STRUCTURE */}
-                    {parsedContent.concept && (
-                      <section>
-                        <h2 className="text-[12px] font-bold text-[var(--ink)] uppercase tracking-wider mb-3 flex items-center gap-2">
-                          <BookOpen className="w-4 h-4 text-[var(--accent)]" /> Concept
-                        </h2>
-                        <div className="prose prose-sm sm:prose-base max-w-none text-[var(--ink-secondary)]">
-                          <p>{parsedContent.concept}</p>
-                        </div>
-                      </section>
-                    )}
-
-                    {parsedContent.whyItMatters && (
-                      <section className="bg-[var(--accent-soft)]/30 border border-[var(--accent-soft-border)] rounded-xl p-6">
-                        <h2 className="text-[12px] font-bold text-[var(--accent)] uppercase tracking-wider mb-2 flex items-center gap-2">
-                          <Lightbulb className="w-4 h-4" /> Why It Matters
-                        </h2>
-                        <p className="text-[14px] text-[var(--ink)] leading-relaxed">
-                          {parsedContent.whyItMatters}
-                        </p>
-                      </section>
-                    )}
-
-                    {parsedContent.howItWorks && (
-                      <section>
-                        <h2 className="text-[12px] font-bold text-[var(--ink)] uppercase tracking-wider mb-3">
-                          How It Works
-                        </h2>
-                        <div className="prose prose-sm sm:prose-base max-w-none text-[var(--ink-secondary)] whitespace-pre-wrap">
-                          <p>{parsedContent.howItWorks}</p>
-                        </div>
-                      </section>
-                    )}
-
-                    {parsedContent.javaExample && (
-                      <section>
-                        <h2 className="text-[12px] font-bold text-[var(--ink)] uppercase tracking-wider mb-3 flex items-center gap-2">
-                          <Code className="w-4 h-4 text-[var(--accent)]" /> Code Example
-                        </h2>
-                        <div className="bg-[#1E1E1E] rounded-xl p-5 overflow-x-auto shadow-inner">
-                          <pre className="text-[13px] text-gray-300 font-mono">
-                            <code>{parsedContent.javaExample}</code>
-                          </pre>
-                        </div>
-                      </section>
-                    )}
-
-                    {parsedContent.commonMistakes && parsedContent.commonMistakes.length > 0 && (
-                      <section className="bg-[var(--error-soft)]/30 border border-[var(--error-soft-border)] rounded-xl p-6">
-                        <h2 className="text-[12px] font-bold text-[var(--error)] uppercase tracking-wider mb-3 flex items-center gap-2">
-                          <AlertTriangle className="w-4 h-4" /> Common Mistakes
-                        </h2>
-                        <ul className="list-disc pl-5 space-y-1 text-[14px] text-[var(--ink)]">
-                          {parsedContent.commonMistakes.map((mistake: string, idx: number) => (
-                            <li key={idx}>{mistake}</li>
-                          ))}
-                        </ul>
-                      </section>
-                    )}
-
-                    {parsedContent.quickCheck && (
-                      <section className="bg-white border border-[var(--border)] rounded-xl overflow-hidden shadow-sm">
-                        <div className="bg-[#FAFAFA] border-b border-[var(--border)] px-6 py-4 flex items-center gap-2">
-                          <CheckCircle2 className="w-4 h-4 text-[var(--accent)]" />
-                          <h2 className="text-[12px] font-bold text-[var(--ink)] uppercase tracking-wider">Quick Check</h2>
-                        </div>
-                        <div className="p-6 flex flex-col gap-4">
-                          <p className="text-[15px] font-medium text-[var(--ink)]">
-                            {parsedContent.quickCheck.question}
-                          </p>
-                          <div className="flex flex-col gap-2">
-                            {parsedContent.quickCheck.options.map((opt: string, idx: number) => {
-                              const isSelected = selectedOption === idx;
-                              const isCorrect = idx === parsedContent.quickCheck.answer;
-                              const showStatus = selectedOption !== null;
-                              
-                              return (
-                                <button
-                                  key={idx}
-                                  onClick={() => handleQuickCheck(idx)}
-                                  disabled={showStatus}
-                                  className={clsx(
-                                    "text-left px-4 py-3 rounded-lg border text-[14px] font-medium transition-all",
-                                    !showStatus && "hover:border-[var(--accent)] hover:bg-[var(--accent-soft)]/30 border-[var(--border)] bg-white",
-                                    showStatus && isCorrect && "bg-[var(--success-soft)] border-[var(--success-soft-border)] text-[var(--success)]",
-                                    showStatus && isSelected && !isCorrect && "bg-[var(--error-soft)] border-[var(--error-soft-border)] text-[var(--error)]",
-                                    showStatus && !isSelected && !isCorrect && "border-[var(--border)] bg-[#FAFAFA] opacity-50"
-                                  )}
-                                >
-                                  {opt}
-                                </button>
-                              );
-                            })}
-                          </div>
-                          {showExplanation && (
-                            <motion.div 
-                              initial={{ opacity: 0, height: 0 }} 
-                              animate={{ opacity: 1, height: 'auto' }} 
-                              className="mt-2 text-[14px] text-[var(--ink-secondary)] p-4 bg-[#FAFAFA] rounded-lg border border-[var(--border)]"
-                            >
-                              <span className="font-bold text-[var(--ink)]">Explanation:</span> {parsedContent.quickCheck.explanation}
-                            </motion.div>
-                          )}
-                        </div>
-                      </section>
-                    )}
-                  </>
-                )}
-
-                {parsedContent.sources?.length > 0 && <LessonSources sources={parsedContent.sources} />}
-              </div>
+                {sections.map((section, idx) => (
+                  <SectionRenderer key={idx} section={section} subjectSlug={subjectSlug} />
+                ))}
+                {content.sources?.length > 0 && <LessonSources sources={content.sources} />}
+              </>
             ) : (
-              <div className="text-[var(--ink-secondary)]">No content available.</div>
+              <p className="text-body">This lesson has no content yet.</p>
             )}
 
-            {/* MY NOTES SECTION */}
-            <section className="mt-4 border-t border-[var(--border)] pt-10">
-              <div className="flex items-center justify-between mb-3">
-                <h2 className="text-[14px] font-bold text-[var(--ink)] uppercase tracking-wider">
-                  My Notes
-                </h2>
-                <div className="text-[11px] font-mono text-[var(--ink-tertiary)] flex items-center gap-1.5">
-                  {savingNotes && <Loader2 className="w-3 h-3 animate-spin" />}
-                  {notesSaved && <Check className="w-3 h-3 text-[var(--success)]" />}
-                  {savingNotes ? "Saving..." : notesSaved ? "Saved" : "Auto-saves"}
-                </div>
+            <section className="border-t-[1.5px] border-hair pt-8">
+              <div className="mb-3 flex items-center justify-between">
+                <LessonHeading icon={BookOpen}>My notes</LessonHeading>
+                <span className="flex items-center gap-1.5 font-mono text-[11px] text-mute" aria-live="polite">
+                  {savingNotes && <Loader2 className="size-3 animate-spin" />}
+                  {notesSaved && <Check className="size-3 text-note" />}
+                  {savingNotes ? "Saving…" : notesSaved ? "Saved" : "Saves as you type"}
+                </span>
               </div>
               <textarea
                 value={notes}
-                onChange={handleNotesChange}
-                placeholder="Jot down important takeaways, code snippets, or ideas here..."
-                className="w-full min-h-[160px] bg-[#FAFAFA] border border-[var(--border)] rounded-xl p-4 text-[14px] text-[var(--ink)] placeholder-[var(--ink-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:border-transparent resize-y transition-all"
+                onChange={onNotes}
+                aria-label="My notes"
+                placeholder="Key ideas, a snippet, a question for later…"
+                className="min-h-[160px] w-full resize-y rounded-xl border-2 border-hair bg-paper p-4 text-[15px] leading-relaxed placeholder:text-mute focus:border-accent"
               />
             </section>
 
-            {/* LESSON IN-FLOW NAVIGATION */}
-            <div className="pt-8 border-t border-[var(--border)] flex items-center justify-between gap-4 mt-2">
-              <div className="flex-1 flex justify-start min-w-0">
-                {prevTopic && (
-                  <Link 
-                    href={`/learn/${subject.slug}/${prevTopic.slug}`}
-                    className="inline-flex items-center gap-2 text-[13.5px] font-bold text-[var(--ink-secondary)] hover:text-[var(--ink)] transition-colors truncate group"
-                  >
-                    <ChevronLeft className="w-4 h-4 shrink-0 transition-transform group-hover:-translate-x-0.5" />
-                    <span className="truncate">Previous: {prevTopic.title}</span>
-                  </Link>
-                )}
-              </div>
-
-              <div className="flex-1 flex justify-end min-w-0 text-right">
-                {nextTopic ? (
-                  <Link 
-                    href={`/learn/${subject.slug}/${nextTopic.slug}`}
-                    className="inline-flex items-center gap-2 text-[13.5px] font-bold text-[var(--ink)] hover:text-[var(--accent)] transition-colors truncate ml-auto group"
-                  >
-                    <span className="truncate">Next: {nextTopic.title}</span>
-                    <ChevronRight className="w-4 h-4 shrink-0 transition-transform group-hover:translate-x-0.5" />
-                  </Link>
-                ) : (
-                  <Link 
-                    href={`/learn/${subject.slug}`}
-                    className="inline-flex items-center gap-2 text-[13.5px] font-bold text-[var(--accent)] hover:underline transition-colors truncate ml-auto"
-                  >
-                    <span className="truncate">Course Completed</span>
-                    <CheckCircle2 className="w-4 h-4 shrink-0" />
-                  </Link>
-                )}
-              </div>
-            </div>
+            <nav aria-label="Lesson navigation" className="grid gap-4 border-t-[1.5px] border-hair pt-8 sm:grid-cols-2">
+              {prevTopic ? (
+                <Link href={`/learn/${subject.slug}/${prevTopic.slug}`} className="brut brut-hover no-press group rounded-2xl bg-card p-4">
+                  <span className="flex items-center gap-1 font-mono text-[11px] uppercase tracking-wider text-mute">
+                    <ChevronLeft className="size-3.5" /> Previous
+                  </span>
+                  <span className="label-cond mt-1 block truncate text-[18px]">{prevTopic.title}</span>
+                </Link>
+              ) : (
+                <span />
+              )}
+              <Link
+                href={nextTopic ? `/learn/${subject.slug}/${nextTopic.slug}` : `/learn/${subject.slug}`}
+                className="brut brut-hover no-press group rounded-2xl bg-ink p-4 text-right text-paper"
+              >
+                <span className="flex items-center justify-end gap-1 font-mono text-[11px] uppercase tracking-wider text-paper/70">
+                  {nextTopic ? "Next" : "Finished the course"} <ChevronRight className="size-3.5" />
+                </span>
+                <span className="label-cond mt-1 block truncate text-[18px]">{nextTopic ? nextTopic.title : "Back to course"}</span>
+              </Link>
+            </nav>
           </article>
         </div>
-      </main>
+      </div>
     </div>
   );
 }

@@ -23,6 +23,7 @@ import {
 import SQLFileExplorer from "./SQLFileExplorer";
 import SQLSchemaExplorer from "./SQLSchemaExplorer";
 import SQLResults from "./SQLResults";
+import { MONACO_THEME, defineMonacoTheme } from "@/lib/monacoTheme";
 import "../playground/WebIDE.css"; // Reuse IDE layout classes if possible, or we define custom styles
 
 // Helper to generate IDs
@@ -313,8 +314,8 @@ export default function SQLLab() {
 
   if (!mounted || isInitializing || !workspace) {
     return (
-      <div className="flex-1 flex items-center justify-center bg-[var(--surface-subdued)]">
-        <span className="w-6 h-6 border-2 border-[var(--border)] border-t-[var(--ink)] rounded-full animate-spin"></span>
+      <div className="flex-1 flex items-center justify-center bg-paper-2">
+        <span className="w-6 h-6 border-2 border-hair border-t-[var(--ink)] rounded-full animate-spin"></span>
       </div>
     );
   }
@@ -322,25 +323,25 @@ export default function SQLLab() {
   const activeFile = workspace.activeFileId ? workspace.files[workspace.activeFileId] : null;
 
   return (
-    <div className="flex flex-col h-[calc(100vh-64px)] w-full bg-[var(--surface-subdued)]">
+    <div className="flex h-full w-full flex-col bg-paper-2">
       
       {/* TOOLBAR */}
-      <div className="h-14 border-b border-[var(--border)] bg-[var(--surface)] flex items-center justify-between px-4 shrink-0">
+      <div className="h-14 border-b border-hair bg-card flex items-center justify-between px-4 shrink-0">
         <div className="flex items-center gap-3">
           <button
             type="button"
-            className="md:hidden p-1.5 rounded-lg text-[var(--ink-secondary)] hover:text-[var(--ink)] hover:bg-[var(--surface-subdued)] transition-colors cursor-pointer"
+            className="md:hidden p-1.5 rounded-lg text-body hover:text-ink hover:bg-paper-2 transition-colors cursor-pointer"
             onClick={() => setIsMobileSidebarOpen(prev => !prev)}
             aria-label="Toggle SQL Explorer"
           >
             <PanelLeft className="w-4 h-4" />
           </button>
           
-          <Link href="/practice" className="text-[var(--ink-secondary)] hover:text-[var(--ink)] font-medium text-sm">
+          <Link href="/practice" className="text-body hover:text-ink font-medium text-sm">
             Practice
           </Link>
           <span className="text-[var(--border-strong)]">/</span>
-          <div className="flex items-center gap-2 text-[var(--ink)] font-bold text-sm">
+          <div className="flex items-center gap-2 text-ink font-bold text-sm">
             <Database className="w-4 h-4 text-emerald-600" /> SQL Lab
           </div>
         </div>
@@ -348,7 +349,7 @@ export default function SQLLab() {
         <div className="flex items-center gap-3">
           <button 
             onClick={handleResetDatabase} 
-            className="text-[var(--ink-secondary)] hover:text-[var(--ink)] bg-[var(--surface-subdued)] hover:bg-[var(--border)] h-8 px-3 rounded text-xs font-medium flex items-center gap-1.5 transition-colors cursor-pointer"
+            className="text-body hover:text-ink bg-paper-2 hover:bg-hair h-8 px-3 rounded text-xs font-medium flex items-center gap-1.5 transition-colors cursor-pointer"
           >
             <RotateCcw className="w-3.5 h-3.5" /> Reset DB
           </button>
@@ -377,15 +378,15 @@ export default function SQLLab() {
             onClick={() => setIsMobileSidebarOpen(false)}
           >
             <div 
-              className="w-72 h-full bg-[var(--surface)] border-r border-[var(--border)] flex flex-col shadow-2xl animate-in slide-in-from-left duration-200"
+              className="w-72 h-full bg-card border-r border-hair flex flex-col shadow-2xl animate-in slide-in-from-left duration-200"
               onClick={e => e.stopPropagation()}
             >
-              <div className="h-12 border-b border-[var(--border)] px-4 flex items-center justify-between">
-                <span className="text-xs font-bold text-[var(--ink)] uppercase tracking-wider">Explorer & Schema</span>
+              <div className="h-12 border-b border-hair px-4 flex items-center justify-between">
+                <span className="text-xs font-bold text-ink uppercase tracking-wider">Explorer & Schema</span>
                 <button
                   type="button"
                   onClick={() => setIsMobileSidebarOpen(false)}
-                  className="p-1 rounded text-[var(--ink-secondary)] hover:text-[var(--ink)]"
+                  className="p-1 rounded text-body hover:text-ink"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -417,7 +418,7 @@ export default function SQLLab() {
 
         {/* LEFT: Explorer & Schema (Desktop) */}
         <div 
-          className="border-r border-[var(--border)] bg-[var(--surface)] shrink-0 hidden md:flex flex-col" 
+          className="border-r border-hair bg-card shrink-0 hidden md:flex flex-col" 
           style={{ width: schemaWidth }}
         >
           <SQLFileExplorer 
@@ -441,10 +442,10 @@ export default function SQLLab() {
         />
 
         {/* RIGHT: Editor + Results */}
-        <div className="flex-1 flex flex-col min-w-0 bg-[#1e1e1e]">
+        <div className="flex-1 flex flex-col min-w-0 bg-[#151311]">
           
           {/* TABS */}
-          <div className="flex items-center bg-[#181818] overflow-x-auto overflow-y-hidden border-b border-[#2d2d2d] shrink-0">
+          <div className="flex items-center bg-[#151311] overflow-x-auto overflow-y-hidden border-b border-[#2b2723] shrink-0">
             {workspace.openTabIds.map(id => {
               const file = workspace.files[id];
               if (!file) return null;
@@ -453,7 +454,7 @@ export default function SQLLab() {
                 <div 
                   key={id}
                   onClick={() => switchTab(id)}
-                  className={`flex items-center h-9 px-4 gap-2 text-xs cursor-pointer border-r border-[#2d2d2d] select-none ${isActive ? 'bg-[#1e1e1e] text-blue-400 border-t-2 border-t-blue-500' : 'text-gray-400 hover:bg-[#252525] border-t-2 border-t-transparent'}`}
+                  className={`flex items-center h-9 px-4 gap-2 text-xs cursor-pointer border-r border-[#2b2723] select-none ${isActive ? 'bg-[#151311] text-blue-400 border-t-2 border-t-blue-500' : 'text-gray-400 hover:bg-[#221f1c] border-t-2 border-t-transparent'}`}
                 >
                   <FileCode2 className="w-3.5 h-3.5" />
                   <span>{file.name}</span>
@@ -468,7 +469,7 @@ export default function SQLLab() {
             })}
             <button 
               onClick={createNewFile}
-              className="h-9 px-3 flex items-center justify-center text-gray-400 hover:text-white hover:bg-[#252525] transition-colors"
+              className="h-9 px-3 flex items-center justify-center text-gray-400 hover:text-white hover:bg-[#221f1c] transition-colors"
               title="New SQL File"
             >
               <Plus className="w-4 h-4" />
@@ -481,7 +482,8 @@ export default function SQLLab() {
               <Editor
                 height="100%"
                 language="sql"
-                theme="vs-dark"
+                theme={MONACO_THEME}
+                beforeMount={defineMonacoTheme}
                 value={activeFile.content}
                 onChange={handleEditorChange}
                 onMount={(editor) => { editorRef.current = editor; }}
@@ -510,24 +512,24 @@ export default function SQLLab() {
 
           {/* BOTTOM RESULTS DRAG HANDLE */}
           <div 
-            className="h-1 cursor-row-resize bg-[#2d2d2d] hover:bg-blue-500/50 active:bg-blue-500 transition-colors z-20 shrink-0" 
+            className="h-1 cursor-row-resize bg-[#2b2723] hover:bg-blue-500/50 active:bg-blue-500 transition-colors z-20 shrink-0" 
             onMouseDown={handleBottomDragStart}
           />
 
           {/* BOTTOM RESULTS PANEL */}
           <div 
-            className="bg-[var(--surface)] flex flex-col shrink-0"
+            className="bg-card flex flex-col shrink-0"
             style={{ height: bottomHeight }}
           >
-            <div className="h-9 border-b border-[var(--border)] bg-[var(--surface-subdued)] flex items-center justify-between px-4 shrink-0">
-              <div className="flex items-center gap-4 text-xs font-semibold uppercase tracking-wider text-[var(--ink-secondary)]">
-                <span className="flex items-center gap-1.5 text-[var(--ink)] border-b-2 border-blue-500 h-9">
+            <div className="h-9 border-b border-hair bg-paper-2 flex items-center justify-between px-4 shrink-0">
+              <div className="flex items-center gap-4 text-xs font-semibold uppercase tracking-wider text-body">
+                <span className="flex items-center gap-1.5 text-ink border-b-2 border-blue-500 h-9">
                   <Terminal className="w-3.5 h-3.5" /> Results
                 </span>
               </div>
               
               {execResult && !execResult.error && (
-                <div className="text-[10px] text-[var(--ink-tertiary)] flex gap-3">
+                <div className="text-[10px] text-mute flex gap-3">
                   <span>{execResult.results.reduce((acc, r) => acc + r.values.length, 0)} rows</span>
                   <span>{execResult.executionTime} ms</span>
                 </div>

@@ -71,7 +71,7 @@ export function TargetCompaniesSection({
                   {target.roles.map((role) => (
                     <span
                       key={role}
-                      className="text-[11px] bg-[#f8fafc] border border-[var(--border)] px-1.5 py-0.5 rounded text-[var(--ink-tertiary)]"
+                      className="text-[11px] bg-paper border border-[var(--border)] px-1.5 py-0.5 rounded text-[var(--ink-tertiary)]"
                     >
                       {role}
                     </span>

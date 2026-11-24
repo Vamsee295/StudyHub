@@ -55,17 +55,17 @@ export default function SearchDialog({ onClose }: { onClose: () => void }) {
   }, [active]);
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-start justify-center bg-black/30 px-4 pt-[10vh]" onMouseDown={onClose}>
+    <div className="fixed inset-0 z-[100] flex items-start justify-center bg-black/50 px-4 pt-[10vh] backdrop-blur-sm" onMouseDown={onClose}>
       <div
         role="dialog"
         aria-modal="true"
         aria-label="Search lessons"
         onMouseDown={(e) => e.stopPropagation()}
         onKeyDown={onKeyDown}
-        className="w-full max-w-2xl rounded-xl bg-[var(--surface)] border border-[var(--border)] shadow-2xl overflow-hidden flex flex-col max-h-[75vh]"
+        className="pop-in brut flex max-h-[75vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl bg-card"
       >
-        <div className="flex items-center gap-2 px-4 border-b border-[var(--border)]">
-          <Search aria-hidden="true" className="w-4 h-4 text-[var(--ink-tertiary)] shrink-0" />
+        <div className="flex items-center gap-2 border-b-[1.5px] border-hair px-4">
+          <Search aria-hidden="true" className="size-4 shrink-0 text-accent" />
           <input
             ref={inputRef}
             value={query}
@@ -76,24 +76,24 @@ export default function SearchDialog({ onClose }: { onClose: () => void }) {
             aria-activedescendant={rows.length ? `search-row-${active}` : undefined}
             autoComplete="off"
             spellCheck={false}
-            className="flex-1 min-w-0 py-3.5 bg-transparent text-[15px] text-[var(--ink)] placeholder:text-[var(--ink-tertiary)] outline-none"
+            className="min-w-0 flex-1 bg-transparent py-4 text-[16px] outline-none placeholder:text-mute"
           />
-          <button type="button" onClick={onClose} aria-label="Close search" className="p-1.5 rounded text-[var(--ink-tertiary)] hover:text-[var(--ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]">
+          <button type="button" onClick={onClose} aria-label="Close search" className="tap rounded-lg p-1.5 text-mute hover:bg-card-2 hover:text-ink">
             <X aria-hidden="true" className="w-4 h-4" />
           </button>
         </div>
 
         <div id="search-results" role="listbox" aria-label="Results" className="overflow-y-auto">
           {!query.trim() && (
-            <p className="px-4 pt-3 pb-1 text-[11px] font-bold uppercase tracking-wider text-[var(--ink-tertiary)] flex items-center gap-1.5">
+            <p className="flex items-center gap-1.5 px-4 pb-1 pt-3 font-mono text-[11px] uppercase tracking-wider text-mute">
               <Bookmark aria-hidden="true" className="w-3.5 h-3.5" /> {bookmarks.length ? "Saved lessons" : "No saved lessons yet"}
             </p>
           )}
           {!query.trim() && !bookmarks.length && (
-            <p className="px-4 pb-4 text-[13px] text-[var(--ink-secondary)]">Type to search 400+ lessons, or bookmark lessons to see them here.</p>
+            <p className="px-4 pb-4 text-[14px] text-body">Type to search 400+ lessons, or bookmark lessons to see them here.</p>
           )}
           {query.trim() && !results.length && (
-            <p className="px-4 py-6 text-[13px] text-[var(--ink-secondary)]">No lessons match “{query}”. Try fewer or different words.</p>
+            <p className="px-4 py-6 text-[14px] text-body">No lessons match “{query}”. Try fewer or different words.</p>
           )}
           {rows.map((r, i) => (
             <div
@@ -103,20 +103,19 @@ export default function SearchDialog({ onClose }: { onClose: () => void }) {
               aria-selected={i === active}
               onMouseEnter={() => setActive(i)}
               onClick={() => go(r)}
-              className={clsx("px-4 py-2.5 cursor-pointer flex flex-col gap-0.5 border-l-2",
-                i === active ? "bg-[var(--accent-soft)]/50 border-[var(--accent)]" : "border-transparent")}
+              className={clsx("flex cursor-pointer flex-col gap-0.5 px-4 py-2.5", i === active && "bg-card-2")}
             >
-              <span className="flex items-center gap-2 text-[14px] font-medium text-[var(--ink)]">
+              <span className="flex items-center gap-2 text-[15px] font-medium">
                 <span className="truncate">{r.title}</span>
-                <span className="ml-auto shrink-0 text-[11.5px] font-normal text-[var(--ink-tertiary)]">{r.meta}</span>
+                <span className="ml-auto shrink-0 font-mono text-[11px] font-normal text-mute">{r.meta}</span>
               </span>
-              {r.heading && <span className="text-[12px] text-[var(--accent)] truncate">§ {r.heading}</span>}
-              {r.snippet && <span className="text-[12.5px] text-[var(--ink-secondary)] line-clamp-2">{r.snippet}</span>}
+              {r.heading && <span className="truncate text-[12px] text-accent-ink">§ {r.heading}</span>}
+              {r.snippet && <span className="line-clamp-2 text-[13px] text-body">{r.snippet}</span>}
             </div>
           ))}
         </div>
 
-        <div className="px-4 py-2 border-t border-[var(--border)] text-[11px] text-[var(--ink-tertiary)] flex items-center gap-3">
+        <div className="flex items-center gap-3 border-t-[1.5px] border-hair px-4 py-2 font-mono text-[11px] text-mute">
           <span className="inline-flex items-center gap-1"><CornerDownLeft aria-hidden="true" className="w-3 h-3" /> open</span>
           <span>↑ ↓ move</span>
           <span>Esc close</span>

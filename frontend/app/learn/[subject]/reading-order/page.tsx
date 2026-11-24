@@ -1,79 +1,83 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { ArrowLeft, ExternalLink, BookOpen, CheckCircle2, Route } from "lucide-react";
 import { clsx } from "clsx";
+import { ArrowLeft, BookOpen, CheckCircle2, ExternalLink } from "lucide-react";
 import { getCourseBySlug } from "@/lib/data/courses/index";
 import { readingOrderFor } from "@/lib/data/readingOrder";
 import { CROSS_LINKS } from "@/lib/learn/conceptGraph";
 import { getStoredProgress } from "@/lib/services/learnService";
-
-const focusRing = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]";
+import { PageHeader, Progress } from "@/components/ui/Page";
 
 export default function ReadingOrderPage() {
   const subjectSlug = useParams().subject as string;
   const course = getCourseBySlug(subjectSlug);
   const order = readingOrderFor(subjectSlug);
-  const [done, setDone] = useState<Record<string, number>>({});
-
-  // Module completion from saved lesson progress (keyed by lesson id or slug).
-  useEffect(() => {
-    if (!course) return;
+  // Module completion from saved lesson progress (client-only render via AppLayout, so localStorage is readable here)
+  const [done] = useState<Record<string, number>>(() => {
+    if (!course) return {};
     const store = getStoredProgress();
-    setDone(Object.fromEntries(course.modules.map((m) => {
-      const n = m.lessons.filter((l) => store[l.id]?.status === "completed" || store[l.slug]?.status === "completed").length;
-      return [m.slug, m.lessons.length ? n / m.lessons.length : 0];
-    })));
-  }, [course]);
+    return Object.fromEntries(
+      course.modules.map((m) => {
+        const n = m.lessons.filter((l) => store[l.id]?.status === "completed" || store[l.slug]?.status === "completed").length;
+        return [m.slug, m.lessons.length ? n / m.lessons.length : 0];
+      })
+    );
+  });
 
   if (!course || !order) {
-    return <p className="text-[var(--ink-secondary)]">No reading order for this course yet. <Link href="/learn" className="text-[var(--accent)] underline">Back to Learn</Link></p>;
+    return (
+      <p className="text-body">
+        No reading order for this course yet.{" "}
+        <Link href="/learn" className="text-accent-ink underline">
+          Back to Learn
+        </Link>
+      </p>
+    );
   }
 
   // "Before you start": modules in other courses that this course builds on (from the concept map).
-  const before = [...new Map(CROSS_LINKS
-    .filter(([from, to]) => to.startsWith(`${subjectSlug}:`) && !from.startsWith(`${subjectSlug}:`))
-    .map(([from, , reason]) => {
-      const [c, mod] = from.split(":");
-      const other = getCourseBySlug(c);
-      const module = other?.modules.find((x) => x.slug === mod);
-      return [from, { course: other, module, reason }] as const;
-    })).values()].filter((b) => b.course && b.module);
+  const before = [
+    ...new Map(
+      CROSS_LINKS.filter(([from, to]) => to.startsWith(`${subjectSlug}:`) && !from.startsWith(`${subjectSlug}:`)).map(([from, , reason]) => {
+        const [c, mod] = from.split(":");
+        const other = getCourseBySlug(c);
+        const otherModule = other?.modules.find((x) => x.slug === mod);
+        return [from, { course: other, module: otherModule, reason }] as const;
+      })
+    ).values(),
+  ].filter((b) => b.course && b.module);
 
   let moduleNo = 0;
 
   return (
-    <div className="flex flex-col gap-6 pb-16 w-full max-w-3xl">
-      <Link href={`/learn/${subjectSlug}`} className={`inline-flex items-center gap-1.5 text-[13px] font-medium text-[var(--ink-secondary)] hover:text-[var(--ink)] self-start rounded ${focusRing}`}>
-        <ArrowLeft aria-hidden="true" className="w-3.5 h-3.5" /> Back to {course.title}
+    <div className="max-w-3xl">
+      <Link href={`/learn/${subjectSlug}`} className="mb-6 inline-flex items-center gap-1.5 font-mono text-[12px] uppercase tracking-wider text-mute hover:text-ink">
+        <ArrowLeft aria-hidden className="size-3.5" /> {course.title}
       </Link>
-      <header className="flex flex-col gap-2">
-        <h1 className="font-newsreader text-3xl sm:text-4xl text-[var(--ink)] tracking-tight flex items-center gap-3">
-          <Route aria-hidden="true" className="w-7 h-7 text-[var(--accent)]" /> {course.title}: Reading Order
-        </h1>
-        <p className="text-[var(--ink-secondary)] text-[15px]">{order.intro}</p>
-        <p className="text-[12.5px] text-[var(--ink-tertiary)]">Every external resource listed here is free to read, watch or practise.</p>
-      </header>
+      <PageHeader eyebrow={course.title} title="Reading" hl="order" />
+      <p className="-mt-4 max-w-2xl text-[15px] leading-relaxed text-body">{order.intro}</p>
+      <p className="mb-8 mt-2 font-mono text-[12px] text-mute">Every outside resource here is free to read, watch or practise.</p>
 
       {before.length > 0 && (
-        <section className="p-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] flex flex-col gap-2">
-          <h2 className="text-[12px] font-bold uppercase tracking-wider text-[var(--ink)]">Before you start</h2>
-          <ul className="flex flex-col gap-1.5">
+        <section className="mb-10 rounded-2xl border-[1.5px] border-hair bg-card p-5">
+          <h2 className="eyebrow mb-3">Before you start</h2>
+          <ul className="flex flex-col gap-2">
             {before.map((b) => (
-              <li key={`${b.course!.slug}-${b.module!.slug}`} className="text-[13px]">
-                <Link href={`/learn/${b.course!.slug}/${b.module!.lessons[0]?.slug ?? ""}`} className={`font-medium text-[var(--ink)] hover:text-[var(--accent)] rounded ${focusRing}`}>
+              <li key={`${b.course!.slug}-${b.module!.slug}`} className="text-[15px]">
+                <Link href={`/learn/${b.course!.slug}/${b.module!.lessons[0]?.slug ?? ""}`} className="font-semibold hover:text-accent-ink">
                   {b.course!.title}: {b.module!.title}
                 </Link>
-                <span className="text-[var(--ink-secondary)]"> · {b.reason}</span>
+                <span className="text-body"> · {b.reason}</span>
               </li>
             ))}
           </ul>
         </section>
       )}
 
-      <ol className="relative flex flex-col gap-3 border-l-2 border-[var(--border)] ml-3 pl-6">
+      <ol className="relative ml-4 flex flex-col gap-4 border-l-[2.4px] border-line pl-8">
         {order.steps.map((step, i) => {
           if ("module" in step) {
             const mod = course.modules.find((x) => x.slug === step.module)!;
@@ -81,16 +85,20 @@ export default function ReadingOrderPage() {
             moduleNo++;
             return (
               <li key={i} className="relative">
-                <span className={clsx("absolute -left-[37px] top-3 w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-mono font-bold",
-                  pct === 1 ? "bg-[var(--success)] text-white" : "bg-[var(--accent)] text-white")} aria-hidden="true">
-                  {pct === 1 ? <CheckCircle2 className="w-4 h-4" /> : moduleNo}
+                <span
+                  aria-hidden
+                  className={clsx(
+                    "absolute -left-[49px] top-4 grid size-8 place-items-center rounded-full border-[2.4px] border-line font-mono text-[12px] font-bold",
+                    pct === 1 ? "bg-note text-paper" : "bg-ink text-paper"
+                  )}
+                >
+                  {pct === 1 ? <CheckCircle2 className="size-4" /> : moduleNo}
                 </span>
-                <Link href={`/learn/${course.slug}/${mod.lessons[0]?.slug ?? ""}`}
-                  className={`flex flex-col gap-1 p-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] hover:border-[var(--accent)] transition-colors ${focusRing}`}>
-                  <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-[var(--accent)]">StudyHub module {moduleNo}</span>
-                  <span className="text-[15px] font-semibold text-[var(--ink)]">{mod.title}</span>
-                  <span className="text-[13px] text-[var(--ink-secondary)]">{mod.description}</span>
-                  <span className="text-[12px] text-[var(--ink-tertiary)] tabular-nums">{mod.lessons.length} lessons · {Math.round(pct * 100)}% done</span>
+                <Link href={`/learn/${course.slug}/${mod.lessons[0]?.slug ?? ""}`} className="brut brut-hover no-press block rounded-2xl bg-card p-5">
+                  <span className="eyebrow block">Module {moduleNo}</span>
+                  <span className="label-cond mt-1 block text-[21px]">{mod.title}</span>
+                  {mod.description && <span className="mt-1 block text-[14px] text-body">{mod.description}</span>}
+                  <Progress value={pct * 100} label={`${mod.lessons.length} lessons`} className="mt-4" />
                 </Link>
               </li>
             );
@@ -98,16 +106,23 @@ export default function ReadingOrderPage() {
           const res = step.resource;
           return (
             <li key={i} className="relative">
-              <span className="absolute -left-[35px] top-3.5 w-5 h-5 rounded-full border-2 border-[var(--border)] bg-[var(--surface)] flex items-center justify-center" aria-hidden="true">
-                <BookOpen className="w-3 h-3 text-[var(--ink-tertiary)]" />
+              <span aria-hidden className="absolute -left-[45px] top-4 grid size-6 place-items-center rounded-full border-2 border-hair bg-paper">
+                <BookOpen className="size-3 text-mute" />
               </span>
-              <a href={res.url} target="_blank" rel="noopener noreferrer"
-                className={`flex flex-col gap-1 p-4 rounded-xl border border-dashed border-[var(--border)] hover:border-[var(--accent)] transition-colors ${focusRing}`}>
-                <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-[var(--ink-tertiary)]">Free {res.format.toLowerCase()} · {res.by}</span>
-                <span className="text-[15px] font-semibold text-[var(--ink)] inline-flex items-center gap-1.5">
-                  {res.title} <ExternalLink aria-hidden="true" className="w-3.5 h-3.5 text-[var(--ink-tertiary)]" /><span className="sr-only">(opens in a new tab)</span>
+              <a
+                href={res.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block rounded-2xl border-[1.5px] border-dashed border-hair p-5 transition-colors hover:border-line"
+              >
+                <span className="block font-mono text-[11px] uppercase tracking-wider text-mute">
+                  Free {res.format.toLowerCase()} · {res.by}
                 </span>
-                <span className="text-[13px] text-[var(--ink-secondary)]">{res.why}</span>
+                <span className="mt-1 inline-flex items-center gap-1.5 text-[16px] font-semibold">
+                  {res.title} <ExternalLink aria-hidden className="size-3.5 text-mute" />
+                  <span className="sr-only">(opens in a new tab)</span>
+                </span>
+                <span className="mt-1 block text-[14px] text-body">{res.why}</span>
               </a>
             </li>
           );

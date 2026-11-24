@@ -1,10 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion, useReducedMotion, Variants } from "framer-motion";
 import Link from "next/link";
-import { Code2, Database, Laptop, ArrowRight, Clock, CheckCircle2 } from "lucide-react";
-import { PracticeHeader } from "@/components/practice/PracticeHeader";
+import { ArrowRight, Clock, Code2, Database, ListChecks, type LucideIcon } from "lucide-react";
+import { PageHeader, Section } from "@/components/ui/Page";
 import { practiceApi, PracticeSet } from "@/lib/api/practice";
 import { problemStorage } from "@/lib/problems/problemStorage";
 import { problems } from "@/lib/problems/problemRegistry";
@@ -25,219 +24,157 @@ function streakFrom(dates: Date[]) {
   return n;
 }
 
-type MappedSession = {
-  id: string;
-  title: string;
-  score: number;
-  totalQuestions: number;
-  accuracy: number;
-  durationStr: string;
-  completedDate: string;
-  track: string;
-  type: string;
-};
+type MappedSession = { id: string; title: string; score: number; totalQuestions: number; durationStr: string; completedDate: string; track: string };
+
+const totalProblems = Object.keys(problems).length;
+
+const spaces: { href: string; title: string; body: string; tags: string[]; icon: LucideIcon; cta: string }[] = [
+  {
+    href: "/practice/problems",
+    title: "Problems",
+    body: `${totalProblems} interview problems with tests, hints and a review after you submit.`,
+    tags: ["Arrays", "Linked lists", "DP"],
+    icon: ListChecks,
+    cta: "Browse problems",
+  },
+  {
+    href: "/practice/sql",
+    title: "SQL lab",
+    body: "Write queries against practice databases, with the schema beside you and real results.",
+    tags: ["Editor", "Schema", "Results"],
+    icon: Database,
+    cta: "Open SQL lab",
+  },
+  {
+    href: "/practice/code",
+    title: "Code playground",
+    body: "A multi-file editor with tabs, a file explorer and real execution.",
+    tags: ["Python", "Java", "C", "C++"],
+    icon: Code2,
+    cta: "Open playground",
+  },
+];
 
 export default function PracticeHubPage() {
-  const reduced = useReducedMotion();
-  const [mounted, setMounted] = useState(false);
-  const [recentSessions, setRecentSessions] = useState<MappedSession[]>([]);
+  // client-only render (AppLayout), so local problem progress is readable on first render
+  const [solved] = useState(() => Object.values(problemStorage.getAllStatuses()).filter((s) => s === "solved").length);
+  const [recent, setRecent] = useState<MappedSession[]>([]);
   const [sprints, setSprints] = useState<PracticeSet[]>([]);
   const [streakDays, setStreakDays] = useState(0);
-  const [solved, setSolved] = useState(0);
 
   useEffect(() => {
-    setMounted(true);
-    setSolved(Object.values(problemStorage.getAllStatuses()).filter((s) => s === "solved").length);
     practiceApi
       .getPracticeSets()
       .then((res) => setSprints(res.sets ?? []))
       .catch((err) => console.error("Failed to load practice sets", err));
-    async function loadData() {
-      try {
-        const res = await practiceApi.getLedger();
-        if (res.ledger) {
-          setStreakDays(streakFrom(res.ledger.map((l) => parseUtc(l.completed_at))));
-          const ledger: MappedSession[] = res.ledger.map(l => ({
+    practiceApi
+      .getLedger()
+      .then((res) => {
+        if (!res.ledger) return;
+        setStreakDays(streakFrom(res.ledger.map((l) => parseUtc(l.completed_at))));
+        setRecent(
+          res.ledger.slice(0, 5).map((l) => ({
             id: l.id,
             title: l.title,
             score: l.score,
             totalQuestions: l.total_questions,
-            accuracy: l.total_questions > 0 ? Math.round((l.score / l.total_questions) * 100) : 0,
             durationStr: `${Math.round(l.duration_seconds / 60)}m ${l.duration_seconds % 60}s`,
             completedDate: parseUtc(l.completed_at).toLocaleDateString(),
             track: l.domain,
-            type: "Sprint"
-          }));
-          setRecentSessions(ledger.slice(0, 5)); // Just take the 5 most recent
-        }
-      } catch (err) {
-        console.error("Failed to load practice ledger", err);
-      }
-    }
-    loadData();
+          }))
+        );
+      })
+      .catch((err) => console.error("Failed to load practice ledger", err));
   }, []);
 
-  const container: Variants = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: { staggerChildren: 0.1 }
-    }
-  };
-
-  const item: Variants = {
-    hidden: { opacity: 0, y: 15 },
-    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
-  };
-
-  if (!mounted) return null;
-
   return (
-    <div className="flex flex-col gap-10 pb-24 w-full relative">
-      <PracticeHeader streakDays={streakDays} solved={solved} totalProblems={Object.keys(problems).length} />
-
-      <motion.div 
-        className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4"
-        variants={reduced ? undefined : container}
-        initial="hidden"
-        animate="show"
-      >
-        {/* CARD 1: CODE PLAYGROUND */}
-        <motion.div variants={reduced ? undefined : item} className="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-6 flex flex-col justify-between shadow-xs hover:border-[var(--accent)] hover:shadow-md transition-all group">
+    <>
+      <PageHeader eyebrow="Practice" title="Write the" hl="code">
+        <dl className="flex gap-8 text-right max-md:text-left">
           <div>
-            <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mb-5">
-              <Code2 className="w-6 h-6" />
-            </div>
-            <h2 className="text-xl font-bold text-[var(--ink)] tracking-tight mb-2">Code Playground</h2>
-            <p className="text-[14px] text-[var(--ink-secondary)] mb-6">
-              VS Code-style multi-file environment with real execution, full file explorer, tabs, and output console.
-            </p>
-            <div className="flex flex-wrap gap-2 mb-8">
-              <span className="px-2.5 py-1 rounded-md bg-[var(--surface-subdued)] text-xs font-mono text-[var(--ink-secondary)]">Python</span>
-              <span className="px-2.5 py-1 rounded-md bg-[var(--surface-subdued)] text-xs font-mono text-[var(--ink-secondary)]">Java</span>
-              <span className="px-2.5 py-1 rounded-md bg-[var(--surface-subdued)] text-xs font-mono text-[var(--ink-secondary)]">C</span>
-              <span className="px-2.5 py-1 rounded-md bg-[var(--surface-subdued)] text-xs font-mono text-[var(--ink-secondary)]">C++</span>
-            </div>
+            <dd className="display text-[44px] leading-none tabular-nums">
+              {solved}
+              <span className="text-[24px] text-mute">/{totalProblems}</span>
+            </dd>
+            <dt className="mt-1 font-mono text-[11px] uppercase tracking-wider text-mute">Solved</dt>
           </div>
-          <Link href="/practice/code" className="btn-primary w-full flex items-center justify-center gap-2 group-hover:bg-[var(--accent-hover)] transition-colors">
-            Open Code Playground <ArrowRight className="w-4 h-4" />
-          </Link>
-        </motion.div>
-
-        {/* CARD 2: SQL LAB */}
-        <motion.div variants={reduced ? undefined : item} className="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-6 flex flex-col justify-between shadow-xs hover:border-[var(--accent)] hover:shadow-md transition-all group">
           <div>
-            <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center mb-5">
-              <Database className="w-6 h-6" />
-            </div>
-            <h2 className="text-xl font-bold text-[var(--ink)] tracking-tight mb-2">SQL Lab</h2>
-            <p className="text-[14px] text-[var(--ink-secondary)] mb-6">
-              Write SQL queries against interactive practice databases with live schema exploration and real execution.
-            </p>
-            <div className="flex flex-wrap gap-2 mb-8">
-              <span className="px-2.5 py-1 rounded-md bg-[var(--surface-subdued)] text-xs font-mono text-[var(--ink-secondary)]">SQL Editor</span>
-              <span className="px-2.5 py-1 rounded-md bg-[var(--surface-subdued)] text-xs font-mono text-[var(--ink-secondary)]">Schema Explorer</span>
-              <span className="px-2.5 py-1 rounded-md bg-[var(--surface-subdued)] text-xs font-mono text-[var(--ink-secondary)]">Query Results</span>
-            </div>
+            <dd className="display text-[44px] leading-none tabular-nums">{streakDays}</dd>
+            <dt className="mt-1 font-mono text-[11px] uppercase tracking-wider text-mute">Sprint streak</dt>
           </div>
-          <Link href="/practice/sql" className="btn-primary w-full flex items-center justify-center gap-2 group-hover:bg-[var(--accent-hover)] transition-colors">
-            Open SQL Lab <ArrowRight className="w-4 h-4" />
-          </Link>
-        </motion.div>
+        </dl>
+      </PageHeader>
 
-        {/* CARD 3: DSA PROBLEMS / CODING SPRINTS */}
-        <motion.div variants={reduced ? undefined : item} className="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-6 flex flex-col justify-between shadow-xs hover:border-[var(--accent)] hover:shadow-md transition-all group">
-          <div>
-            <div className="w-12 h-12 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center mb-5">
-              <Laptop className="w-6 h-6" />
-            </div>
-            <h2 className="text-xl font-bold text-[var(--ink)] tracking-tight mb-2">Coding Sprints &amp; DSA</h2>
-            <p className="text-[14px] text-[var(--ink-secondary)] mb-6">
-              Targeted timed sprints to sharpen placement algorithms, data structures recall, and coding speed.
-            </p>
-            <div className="flex flex-wrap gap-2 mb-8">
-              <span className="px-2.5 py-1 rounded-md bg-[var(--surface-subdued)] text-xs font-mono text-[var(--ink-secondary)]">Algorithms</span>
-              <span className="px-2.5 py-1 rounded-md bg-[var(--surface-subdued)] text-xs font-mono text-[var(--ink-secondary)]">Data Structures</span>
-              <span className="px-2.5 py-1 rounded-md bg-[var(--surface-subdued)] text-xs font-mono text-[var(--ink-secondary)]">Timed Sprints</span>
-            </div>
-          </div>
-          <Link href="/practice/problems" className="btn-primary w-full flex items-center justify-center gap-2 group-hover:bg-[var(--accent-hover)] transition-colors">
-            Start Coding Sprint <ArrowRight className="w-4 h-4" />
+      <div className="mb-12 grid gap-5 md:grid-cols-3">
+        {spaces.map(({ href, title, body, tags, icon: Icon, cta }) => (
+          <Link key={href} href={href} className="brut brut-hover no-press group flex flex-col rounded-2xl bg-card p-6">
+            <Icon className="size-7 text-accent" aria-hidden />
+            <h2 className="display mt-5 text-[34px]">{title}</h2>
+            <p className="mt-2 flex-1 text-[15px] leading-relaxed text-body">{body}</p>
+            <ul className="mt-4 flex flex-wrap gap-1.5">
+              {tags.map((t) => (
+                <li key={t} className="rounded-full border-[1.5px] border-hair px-2.5 py-0.5 font-mono text-[11px] text-body">
+                  {t}
+                </li>
+              ))}
+            </ul>
+            <span className="label-cond mt-5 flex items-center gap-1 text-[17px]">
+              {cta} <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+            </span>
           </Link>
-        </motion.div>
-      </motion.div>
+        ))}
+      </div>
 
-      {/* TIMED SPRINTS */}
       {sprints.length > 0 && (
-        <section className="mt-6">
-          <h3 className="text-lg font-bold text-[var(--ink)] mb-4">Timed Sprints</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <Section title="Timed sprints" kicker="Against the clock">
+          <ul className="border-t-[1.5px] border-hair">
             {sprints.map((s) => (
-              <Link
-                key={s.id}
-                href={`/practice/session/${s.id}`}
-                className="bg-[var(--surface)] border border-[var(--border)] rounded-xl p-4 flex flex-col gap-2 hover:border-[var(--accent)] transition-colors"
-              >
-                <span className="text-[11px] font-mono uppercase tracking-wider text-[var(--ink-tertiary)]">
-                  {s.domain} · {s.difficulty}
-                </span>
-                <span className="text-[14px] font-semibold text-[var(--ink)]">{s.title}</span>
-                <span className="text-xs text-[var(--ink-secondary)] flex items-center gap-1">
-                  <Clock className="w-3 h-3" /> {s.estimated_minutes} min
-                </span>
-              </Link>
+              <li key={s.id} className="border-b-[1.5px] border-hair">
+                <Link href={`/practice/session/${s.id}`} className="group flex items-center gap-4 px-1 py-3 hover:bg-card-2 md:px-2">
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-[15px] font-medium group-hover:text-accent-ink">{s.title}</span>
+                    <span className="font-mono text-[11px] uppercase tracking-wider text-mute">
+                      {s.domain} · {s.difficulty}
+                    </span>
+                  </span>
+                  <span className="flex items-center gap-1 font-mono text-[12px] text-mute">
+                    <Clock className="size-3.5" aria-hidden /> {s.estimated_minutes} min
+                  </span>
+                  <ArrowRight className="size-4 text-mute transition-transform group-hover:translate-x-0.5" aria-hidden />
+                </Link>
+              </li>
             ))}
-          </div>
-        </section>
+          </ul>
+        </Section>
       )}
 
-      {/* RECENT SESSIONS */}
-      <motion.div 
-        className="mt-6"
-        initial={{ opacity: 0, y: 15 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
-      >
-        <h3 className="text-lg font-bold text-[var(--ink)] mb-4">Recent Practice Sessions</h3>
-        {recentSessions.length > 0 ? (
-          <div className="bg-[var(--surface)] border border-[var(--border)] rounded-2xl overflow-hidden shadow-xs">
-            <div className="divide-y divide-[var(--border)]">
-              {recentSessions.map((session) => (
-                <Link key={session.id} href={`/practice/review/${session.id}`} className="flex items-center justify-between p-4 hover:bg-[var(--surface-subdued)] transition-colors">
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-lg bg-[var(--surface-subdued)] border border-[var(--border)] flex items-center justify-center text-[var(--ink-secondary)]">
-                      {session.track === 'dsa' ? <Code2 className="w-5 h-5" /> : 
-                       session.track === 'sql' ? <Database className="w-5 h-5" /> : 
-                       <Laptop className="w-5 h-5" />}
-                    </div>
-                    <div>
-                      <h4 className="text-[14px] font-semibold text-[var(--ink)]">{session.title}</h4>
-                      <div className="flex items-center gap-2 text-xs text-[var(--ink-tertiary)] mt-1">
-                        <span className="uppercase font-mono">{session.track}</span>
-                        <span>•</span>
-                        <span>{session.completedDate}</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex flex-col items-end">
-                    <span className="text-sm font-semibold text-[var(--success)] flex items-center gap-1">
-                      <CheckCircle2 className="w-4 h-4" /> {session.score} / {session.totalQuestions}
+      <Section title="Recent sessions" kicker="History">
+        {recent.length > 0 ? (
+          <ul className="border-t-[1.5px] border-hair">
+            {recent.map((s) => (
+              <li key={s.id} className="border-b-[1.5px] border-hair">
+                <Link href={`/practice/review/${s.id}`} className="group flex items-center gap-4 px-1 py-3 hover:bg-card-2 md:px-2">
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-[15px] font-medium group-hover:text-accent-ink">{s.title}</span>
+                    <span className="font-mono text-[11px] uppercase tracking-wider text-mute">
+                      {s.track} · {s.completedDate} · {s.durationStr}
                     </span>
-                    <span className="text-xs text-[var(--ink-tertiary)] flex items-center gap-1 mt-1">
-                      <Clock className="w-3 h-3" /> {session.durationStr}
-                    </span>
-                  </div>
+                  </span>
+                  <span className="display text-[26px] tabular-nums">
+                    {s.score}
+                    <span className="text-[16px] text-mute">/{s.totalQuestions}</span>
+                  </span>
                 </Link>
-              ))}
-            </div>
-          </div>
+              </li>
+            ))}
+          </ul>
         ) : (
-          <div className="bg-[var(--surface-subdued)] border border-[var(--border)] rounded-2xl p-8 text-center">
-            <p className="text-[var(--ink-secondary)]">You haven't completed any practice sessions yet.</p>
-            <p className="text-sm text-[var(--ink-tertiary)] mt-1">Select one of the playgrounds above to get started.</p>
+          <div className="rounded-2xl border-[1.5px] border-dashed border-hair p-8 text-center">
+            <p className="note mb-1">nothing yet</p>
+            <p className="text-[15px] text-body">Finished sprints show up here with their score.</p>
           </div>
         )}
-      </motion.div>
-    </div>
+      </Section>
+    </>
   );
 }

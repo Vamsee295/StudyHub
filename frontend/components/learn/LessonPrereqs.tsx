@@ -23,10 +23,10 @@ export function LessonPrereqs({ course, lesson }: { course: string; lesson: stri
   const remaining = items.filter((p) => !done.has(`${p.course}/${p.lesson}`)).length;
 
   return (
-    <section aria-labelledby="prereq-heading" className="p-4 rounded-xl border border-[var(--border)] bg-[var(--surface-subdued)]/40 flex flex-col gap-3">
-      <h2 id="prereq-heading" className="flex items-center gap-2 text-[12px] font-bold uppercase tracking-wider text-[var(--ink)]">
-        <ListChecks aria-hidden="true" className="w-4 h-4 text-[var(--accent)]" /> Before this lesson
-        <span className="ml-auto normal-case font-medium tracking-normal text-[var(--ink-tertiary)] tabular-nums">
+    <section aria-labelledby="prereq-heading" className="flex flex-col gap-3 rounded-2xl border-[1.5px] border-hair bg-paper-2 p-4">
+      <h2 id="prereq-heading" className="label-cond flex items-center gap-2 text-[17px]">
+        <ListChecks aria-hidden className="size-4 text-accent" /> Before this lesson
+        <span className="ml-auto font-mono text-[11px] font-normal normal-case tracking-normal tabular-nums text-mute">
           {remaining === 0 ? "All done" : `${remaining} of ${items.length} not completed`}
         </span>
       </h2>
@@ -34,16 +34,16 @@ export function LessonPrereqs({ course, lesson }: { course: string; lesson: stri
         {items.map((p) => {
           const complete = done.has(`${p.course}/${p.lesson}`);
           return (
-            <li key={`${p.course}/${p.lesson}`} className="flex items-start gap-2 text-[13px]">
+            <li key={`${p.course}/${p.lesson}`} className="flex items-start gap-2 text-[14px]">
               {complete
-                ? <CheckCircle2 aria-label="Completed" className="w-4 h-4 mt-0.5 shrink-0 text-[var(--success)]" />
-                : <Circle aria-label="Not completed" className="w-4 h-4 mt-0.5 shrink-0 text-[var(--ink-tertiary)]" />}
+                ? <CheckCircle2 aria-label="Completed" className="mt-0.5 size-4 shrink-0 text-note" />
+                : <Circle aria-label="Not completed" className="mt-0.5 size-4 shrink-0 text-mute" />}
               <span className="min-w-0">
-                <Link href={`/learn/${p.course}/${p.lesson}`} className="font-medium text-[var(--ink)] hover:text-[var(--accent)] underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] rounded">
+                <Link href={`/learn/${p.course}/${p.lesson}`} className="font-semibold underline-offset-2 hover:text-accent-ink hover:underline">
                   {p.title}
                 </Link>
-                {p.course !== course && <span className="text-[var(--ink-tertiary)]"> · {p.courseTitle}</span>}
-                <span className="block text-[12.5px] text-[var(--ink-secondary)]">{p.reason}</span>
+                {p.course !== course && <span className="text-mute"> · {p.courseTitle}</span>}
+                <span className="block text-[13px] text-body">{p.reason}</span>
               </span>
             </li>
           );

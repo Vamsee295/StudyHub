@@ -21,7 +21,7 @@ export default function Step3Baseline({ data, update }: Step3BaselineProps) {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-1.5">
-        <h2 className="text-xl font-bold tracking-tight text-slate-900">Skill Baseline Diagnostics</h2>
+        <h2 className="display text-[32px] md:text-[38px]">Skill Baseline Diagnostics</h2>
         <p className="text-sm text-slate-500 leading-relaxed">
           Rate your current proficiency truthfully. We use this to bypass redundant introductory content.
         </p>

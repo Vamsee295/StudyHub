@@ -1,43 +1,21 @@
-import { ScrollProgress } from "@/components/layout/ScrollProgress";
-import { Navbar } from "@/components/layout/Navbar";
-import { Footer } from "@/components/layout/Footer";
-import { Hero } from "@/components/landing/Hero";
-import { TopicStrip } from "@/components/landing/TopicStrip";
-import { LearningPaths } from "@/components/landing/LearningPaths";
-import { Roadmap } from "@/components/landing/Roadmap";
-import { Resources } from "@/components/landing/Resources";
-import { Companies } from "@/components/landing/Companies";
-import { Practice } from "@/components/landing/Practice";
-import { Labs } from "@/components/landing/Labs";
-import { ConceptDecoder } from "@/components/landing/ConceptDecoder";
-import { Templates } from "@/components/landing/Templates";
-import { KnowledgeMap } from "@/components/landing/KnowledgeMap";
-import { AICopilot } from "@/components/landing/AICopilot";
-import { Dashboard } from "@/components/landing/Dashboard";
-import { FinalCTA } from "@/components/landing/FinalCTA";
+import { Landing, type LandingStats } from "@/components/landing/Landing";
+import { ALL_COURSES } from "@/lib/data/courses";
+import { questionBank } from "@/lib/learn/study";
+import { problems } from "@/lib/problems/problemRegistry";
+import { LABS } from "@/lib/labs/catalog";
+import { companies } from "@/lib/data/companies";
 
+// Every number on the landing page is counted from the real content, here on the server,
+// so the course data never ships to the browser just to count it.
 export default function Home() {
-  return (
-    <>
-      <ScrollProgress />
-      <Navbar />
-      <main>
-        <Hero />
-        <TopicStrip />
-        <LearningPaths />
-        <Roadmap />
-        <Resources />
-        <Companies />
-        <Practice />
-        <Labs />
-        <ConceptDecoder />
-        <Templates />
-        <KnowledgeMap />
-        <AICopilot />
-        <Dashboard />
-        <FinalCTA />
-      </main>
-      <Footer />
-    </>
-  );
+  const stats: LandingStats = {
+    courses: ALL_COURSES.length,
+    lessons: ALL_COURSES.reduce((n, c) => n + c.modules.reduce((m, mod) => m + mod.lessons.length, 0), 0),
+    quiz: ALL_COURSES.reduce((n, c) => n + questionBank(c.slug).length, 0),
+    problems: Object.keys(problems).length,
+    labs: LABS.length,
+    companies: companies.length,
+    subjects: ALL_COURSES.map((c) => c.title),
+  };
+  return <Landing stats={stats} />;
 }

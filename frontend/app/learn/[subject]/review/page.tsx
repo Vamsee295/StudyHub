@@ -1,33 +1,41 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { ArrowLeft, CheckCircle2, XCircle } from "lucide-react";
 import { clsx } from "clsx";
+import { ArrowLeft, ArrowRight, CheckCircle2, XCircle } from "lucide-react";
 import { getCourseBySlug } from "@/lib/data/courses/index";
-import { BankQuestion, dueItems, getReviewItems, questionBank, recordAnswers, ReviewItem } from "@/lib/learn/study";
-
-const focusRing = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]";
+import { BankQuestion, dueItems, getReviewItems, questionBank, recordAnswers } from "@/lib/learn/study";
+import { PageHeader } from "@/components/ui/Page";
+import { buttonClass } from "@/components/ui/Button";
+import { optionClass } from "@/components/learn/optionClass";
 
 export default function ReviewPage() {
   const subjectSlug = useParams().subject as string;
   const course = getCourseBySlug(subjectSlug);
   const bank = useMemo(() => new Map(questionBank(subjectSlug).map((q) => [q.id, q])), [subjectSlug]);
 
-  const [items, setItems] = useState<ReviewItem[] | null>(null);
-  const [queue, setQueue] = useState<BankQuestion[]>([]);
+  // client-only render (AppLayout), so the local review queue is readable on first render
+  const [items] = useState(() => getReviewItems(subjectSlug));
+  const [queue, setQueue] = useState<BankQuestion[]>(() =>
+    dueItems(items)
+      .map((x) => bank.get(x.id))
+      .filter((q): q is BankQuestion => !!q)
+  );
   const [pick, setPick] = useState<number | null>(null);
   const [done, setDone] = useState({ right: 0, wrong: 0 });
-
-  useEffect(() => {
-    const all = getReviewItems(subjectSlug);
-    setItems(all);
-    setQueue(dueItems(all).map((x) => bank.get(x.id)).filter((q): q is BankQuestion => !!q));
-  }, [subjectSlug, bank]);
+  const [now] = useState(Date.now);
 
   if (!course) {
-    return <p className="text-[var(--ink-secondary)]">Course not found. <Link href="/learn" className="text-[var(--accent)] underline">Back to Learn</Link></p>;
+    return (
+      <p className="text-body">
+        Course not found.{" "}
+        <Link href="/learn" className="text-accent-ink underline">
+          Back to Learn
+        </Link>
+      </p>
+    );
   }
 
   const q = queue[0];
@@ -42,27 +50,25 @@ export default function ReviewPage() {
     setPick(null);
   }
 
-  const upcoming = (items ?? []).filter((x) => x.due > Date.now()).sort((a, b) => a.due - b.due);
+  const upcoming = items.filter((x) => x.due > now).sort((a, b) => a.due - b.due);
 
   return (
-    <div className="flex flex-col gap-6 pb-16 w-full max-w-3xl">
-      <Link href={`/learn/${subjectSlug}`} className={clsx("inline-flex items-center gap-1.5 text-[13px] font-medium text-[var(--ink-secondary)] hover:text-[var(--ink)] self-start rounded", focusRing)}>
-        <ArrowLeft aria-hidden="true" className="w-3.5 h-3.5" /> Back to {course.title}
+    <div className="max-w-3xl">
+      <Link href={`/learn/${subjectSlug}`} className="mb-6 inline-flex items-center gap-1.5 font-mono text-[12px] uppercase tracking-wider text-mute hover:text-ink">
+        <ArrowLeft aria-hidden className="size-3.5" /> {course.title}
       </Link>
-      <header className="flex flex-col gap-2">
-        <h1 className="font-newsreader text-3xl sm:text-4xl text-[var(--ink)] tracking-tight">{course.title}: Review</h1>
-        <p className="text-[var(--ink-secondary)] text-[15px]">
-          Questions you miss are due straight away. Each time you get one right it waits longer: 1, 3, 7, 14, then 30 days. Miss it and it starts over.
-        </p>
-      </header>
+      <PageHeader eyebrow={course.title} title="Review" hl="queue" />
+      <p className="-mt-4 mb-8 max-w-2xl text-[15px] leading-relaxed text-body">
+        Missed questions are due straight away. Each right answer pushes one further out: 1, 3, 7, 14, then 30 days. A miss starts it over.
+      </p>
 
-      {items === null ? (
-        <p className="text-[13px] font-mono text-[var(--ink-secondary)]">Loading review queue…</p>
-      ) : q ? (
-        <section className="flex flex-col gap-4 p-5 rounded-xl border border-[var(--border)] bg-[var(--surface)]">
-          <span className="text-[12px] font-mono text-[var(--ink-tertiary)] tabular-nums">{queue.length} due · {q.moduleTitle}</span>
-          <h2 className="text-[17px] font-semibold text-[var(--ink)] leading-snug">{q.question}</h2>
-          <div role="radiogroup" aria-label="Answer options" className="flex flex-col gap-2">
+      {q ? (
+        <section className="brut rounded-2xl bg-card p-6 md:p-8">
+          <p className="eyebrow mb-3">
+            {queue.length} due · {q.moduleTitle}
+          </p>
+          <h2 className="text-[20px] font-semibold leading-snug">{q.question}</h2>
+          <div role="radiogroup" aria-label="Answer options" className="mt-5 flex flex-col gap-2">
             {q.options.map((opt, i) => (
               <button
                 key={i}
@@ -71,42 +77,51 @@ export default function ReviewPage() {
                 aria-checked={pick === i}
                 disabled={answered}
                 onClick={() => setPick(i)}
-                className={clsx("text-left px-4 py-3 rounded-lg border text-[15px]", focusRing,
-                  answered && i === q.answer ? "border-[var(--success)] bg-[var(--success-soft)] text-[var(--ink)]"
-                    : answered && i === pick ? "border-[var(--error)] bg-[var(--error-soft)] text-[var(--ink)]"
-                      : "border-[var(--border)] text-[var(--ink)] hover:border-[var(--accent)] disabled:hover:border-[var(--border)]")}
+                className={optionClass(answered, i === q.answer, i === pick)}
               >
-                <span className="font-mono text-[var(--ink-tertiary)] mr-2">{String.fromCharCode(65 + i)}.</span>{opt}
+                <span className="font-mono text-[12px] text-mute">{String.fromCharCode(65 + i)}</span>
+                {opt}
               </button>
             ))}
           </div>
           {answered && (
-            <div aria-live="polite" className="flex flex-col gap-2">
-              <p className={clsx("inline-flex items-center gap-1.5 font-bold text-[14px]", correct ? "text-[var(--success)]" : "text-[var(--error)]")}>
-                {correct ? <CheckCircle2 aria-hidden="true" className="w-4 h-4" /> : <XCircle aria-hidden="true" className="w-4 h-4" />}
-                {correct ? "Correct. It will come back later." : "Not quite. It stays in your queue."}
+            <div aria-live="polite" className="fade-in mt-5 flex flex-col gap-3 rounded-xl bg-paper-2 p-4">
+              <p className={clsx("inline-flex items-center gap-1.5 text-[15px] font-semibold", correct ? "text-note" : "text-danger")}>
+                {correct ? <CheckCircle2 aria-hidden className="size-4" /> : <XCircle aria-hidden className="size-4" />}
+                {correct ? "Correct. It'll come back later." : "Not quite. It stays in your queue."}
               </p>
-              {q.explanation && <p className="text-[14px] text-[var(--ink-secondary)]">{q.explanation}</p>}
-              <div className="flex flex-wrap items-center gap-3">
-                <button type="button" onClick={next} className={clsx("px-4 py-2 rounded-lg bg-[var(--accent)] text-white text-[13px] font-bold", focusRing)}>
-                  {queue.length > 1 ? "Next Question" : "Finish"}
+              {q.explanation && <p className="text-[15px] leading-relaxed text-body">{q.explanation}</p>}
+              <div className="flex flex-wrap items-center gap-4">
+                <button type="button" onClick={next} className={buttonClass("primary", "sm")}>
+                  {queue.length > 1 ? "Next question" : "Finish"} <ArrowRight className="size-4" />
                 </button>
-                <Link href={`/learn/${subjectSlug}/${q.lessonSlug}`} className={clsx("text-[12px] text-[var(--accent)] underline rounded", focusRing)}>Lesson: {q.lessonTitle}</Link>
+                <Link href={`/learn/${subjectSlug}/${q.lessonSlug}`} className="text-[14px] font-semibold text-accent-ink underline underline-offset-2">
+                  Lesson: {q.lessonTitle}
+                </Link>
               </div>
             </div>
           )}
         </section>
       ) : (
-        <section className="flex flex-col gap-3 p-5 rounded-xl border border-[var(--border)] bg-[var(--surface)]">
-          <p className="text-[15px] font-medium text-[var(--ink)]">
-            {done.right + done.wrong > 0 ? `Session done: ${done.right} right, ${done.wrong} still to practise.` : "Nothing is due right now."}
-          </p>
-          <p className="text-[14px] text-[var(--ink-secondary)]">
+        <section className="rounded-2xl border-[1.5px] border-hair bg-card p-6 md:p-8">
+          {done.right + done.wrong > 0 ? (
+            <>
+              <p className="eyebrow mb-2">Session done</p>
+              <p className="display text-[44px]">
+                {done.right} right <span className="text-mute">·</span> {done.wrong} to practise
+              </p>
+            </>
+          ) : (
+            <p className="display text-[36px]">Nothing due right now.</p>
+          )}
+          <p className="mt-3 text-[15px] text-body">
             {upcoming.length > 0
-              ? `${upcoming.length} question${upcoming.length === 1 ? "" : "s"} scheduled. Next one is due ${new Intl.DateTimeFormat(undefined, { dateStyle: "medium" }).format(upcoming[0].due)}.`
-              : "Take a mock test; any question you miss will show up here."}
+              ? `${upcoming.length} question${upcoming.length === 1 ? "" : "s"} scheduled. The next is due ${new Intl.DateTimeFormat(undefined, { dateStyle: "medium" }).format(upcoming[0].due)}.`
+              : "Take a mock test: any question you miss lands here."}
           </p>
-          <Link href={`/learn/${subjectSlug}/test`} className={clsx("self-start px-4 py-2 rounded-lg bg-[var(--accent)] text-white text-[13px] font-bold", focusRing)}>Take a Mock Test</Link>
+          <Link href={`/learn/${subjectSlug}/test`} className={`${buttonClass("secondary")} mt-5`}>
+            Take a mock test <ArrowRight className="size-4" />
+          </Link>
         </section>
       )}
     </div>

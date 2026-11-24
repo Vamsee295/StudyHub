@@ -3,15 +3,23 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { ArrowLeft, Clock, Flag, CheckCircle2, XCircle, RotateCcw } from "lucide-react";
 import { clsx } from "clsx";
+import { ArrowLeft, ArrowRight, CheckCircle2, Clock, Flag, RotateCcw, XCircle } from "lucide-react";
 import { getCourseBySlug } from "@/lib/data/courses/index";
 import { BankQuestion, getAttempts, questionBank, recordAnswers, saveAttempt, shuffle, TestAttempt } from "@/lib/learn/study";
+import { PageHeader, Section, Progress } from "@/components/ui/Page";
+import { buttonClass } from "@/components/ui/Button";
+import { askConfirm } from "@/components/ui/AskDialog";
+import { optionClass } from "@/components/learn/optionClass";
 
 const SECONDS_PER_QUESTION = 60;
-const focusRing = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]";
-
 type Phase = "setup" | "running" | "done";
+
+const chip = (on: boolean) =>
+  clsx(
+    "label-cond inline-flex h-9 items-center rounded-full border-2 px-4 text-[15px] transition-colors",
+    on ? "border-ink bg-ink text-paper" : "border-hair text-body hover:border-line hover:text-ink"
+  );
 
 export default function MockTestPage() {
   const subjectSlug = useParams().subject as string;
@@ -27,9 +35,6 @@ export default function MockTestPage() {
   const [current, setCurrent] = useState(0);
   const [secondsLeft, setSecondsLeft] = useState(0);
   const [startedAt, setStartedAt] = useState(0);
-  const [history, setHistory] = useState<TestAttempt[]>([]);
-
-  useEffect(() => setHistory(getAttempts(subjectSlug)), [subjectSlug, phase]);
 
   const pool = bank.filter((q) => selectedModules.includes(q.moduleSlug));
   const finalCount = Math.min(count, pool.length);
@@ -68,100 +73,109 @@ export default function MockTestPage() {
   // Timer: counts down while running and submits when it reaches zero.
   useEffect(() => {
     if (phase !== "running") return;
-    if (secondsLeft <= 0) { submit(); return; }
+    if (secondsLeft <= 0) {
+      // time's up: submitting from this render keeps the latest answers (a timeout callback would see stale ones)
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      submit();
+      return;
+    }
     const t = setTimeout(() => setSecondsLeft((s) => s - 1), 1000);
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase, secondsLeft]);
 
   if (!course) {
-    return <p className="text-[var(--ink-secondary)]">Course not found. <Link href="/learn" className="text-[var(--accent)] underline">Back to Learn</Link></p>;
+    return (
+      <p className="text-body">
+        Course not found.{" "}
+        <Link href="/learn" className="text-accent-ink underline">
+          Back to Learn
+        </Link>
+      </p>
+    );
   }
 
   const back = (
-    <Link href={`/learn/${subjectSlug}`} className={clsx("inline-flex items-center gap-1.5 text-[13px] font-medium text-[var(--ink-secondary)] hover:text-[var(--ink)] self-start rounded", focusRing)}>
-      <ArrowLeft aria-hidden="true" className="w-3.5 h-3.5" /> Back to {course.title}
+    <Link href={`/learn/${subjectSlug}`} className="mb-6 inline-flex items-center gap-1.5 font-mono text-[12px] uppercase tracking-wider text-mute hover:text-ink">
+      <ArrowLeft aria-hidden className="size-3.5" /> {course.title}
     </Link>
   );
 
   if (phase === "setup") {
+    const history = getAttempts(subjectSlug); // local, cheap; re-read each time setup shows
     return (
-      <div className="flex flex-col gap-6 pb-16 w-full max-w-3xl">
+      <div className="max-w-3xl">
         {back}
-        <header className="flex flex-col gap-2">
-          <h1 className="font-newsreader text-3xl sm:text-4xl text-[var(--ink)] tracking-tight">{course.title}: Mock Test</h1>
-          <p className="text-[var(--ink-secondary)] text-[15px]">
-            Timed test drawn from the course’s lesson questions. You get {SECONDS_PER_QUESTION} seconds per question. Questions you miss go into your review queue.
-          </p>
-        </header>
+        <PageHeader eyebrow={course.title} title="Mock" hl="test" />
+        <p className="-mt-4 mb-8 max-w-2xl text-[15px] leading-relaxed text-body">
+          Timed, drawn from the course&apos;s lesson questions: {SECONDS_PER_QUESTION} seconds each. Anything you miss goes to your review queue.
+        </p>
 
-        <fieldset className="flex flex-col gap-3 p-5 rounded-xl border border-[var(--border)] bg-[var(--surface)]">
-          <legend className="px-1 text-[12px] font-bold uppercase tracking-wider text-[var(--ink)]">Modules</legend>
-          <div className="flex gap-3 text-[12px]">
-            <button type="button" className={clsx("text-[var(--accent)] underline rounded", focusRing)} onClick={() => setSelectedModules(course.modules.map((m) => m.slug))}>Select all</button>
-            <button type="button" className={clsx("text-[var(--accent)] underline rounded", focusRing)} onClick={() => setSelectedModules([])}>Clear</button>
+        <fieldset className="mb-8">
+          <div className="mb-3 flex items-baseline justify-between gap-4">
+            <legend className="label-cond text-[20px]">Modules</legend>
+            <span className="flex gap-4 font-mono text-[12px] uppercase tracking-wider">
+              <button type="button" className="text-accent-ink hover:underline" onClick={() => setSelectedModules(course.modules.map((m) => m.slug))}>
+                All
+              </button>
+              <button type="button" className="text-mute hover:text-ink" onClick={() => setSelectedModules([])}>
+                None
+              </button>
+            </span>
           </div>
-          <div className="grid sm:grid-cols-2 gap-2">
+          <div className="grid border-t-[1.5px] border-hair sm:grid-cols-2 sm:gap-x-6">
             {course.modules.map((m) => {
               const n = bank.filter((q) => q.moduleSlug === m.slug).length;
               return (
-                <label key={m.slug} className="flex items-center gap-2 text-[14px] text-[var(--ink)] cursor-pointer">
+                <label key={m.slug} className="flex cursor-pointer items-center gap-3 border-b-[1.5px] border-hair px-1 py-2.5 text-[15px] hover:bg-card-2">
                   <input
                     type="checkbox"
                     checked={selectedModules.includes(m.slug)}
                     onChange={(e) => setSelectedModules((s) => (e.target.checked ? [...s, m.slug] : s.filter((x) => x !== m.slug)))}
-                    className="accent-[var(--accent)]"
+                    className="size-4 accent-[var(--ink)]"
                   />
-                  <span className="truncate">{m.title}</span>
-                  <span className="text-[11px] font-mono text-[var(--ink-tertiary)] tabular-nums">{n}</span>
+                  <span className="min-w-0 flex-1 truncate">{m.title}</span>
+                  <span className="font-mono text-[11px] tabular-nums text-mute">{n}</span>
                 </label>
               );
             })}
           </div>
         </fieldset>
 
-        <fieldset className="flex flex-col gap-3 p-5 rounded-xl border border-[var(--border)] bg-[var(--surface)]">
-          <legend className="px-1 text-[12px] font-bold uppercase tracking-wider text-[var(--ink)]">Questions</legend>
+        <fieldset className="mb-8">
+          <legend className="label-cond mb-3 text-[20px]">Questions</legend>
           <div className="flex flex-wrap gap-2">
             {[10, 20, 30, 1000].map((n) => (
-              <button
-                key={n}
-                type="button"
-                onClick={() => setCount(n)}
-                aria-pressed={count === n}
-                className={clsx("px-3 py-1.5 rounded-lg border text-[13px] font-medium", focusRing,
-                  count === n ? "border-[var(--accent)] bg-[var(--accent)] text-white" : "border-[var(--border)] text-[var(--ink)] hover:border-[var(--accent)]")}
-              >
+              <button key={n} type="button" onClick={() => setCount(n)} aria-pressed={count === n} className={chip(count === n)}>
                 {n === 1000 ? "All" : n}
               </button>
             ))}
           </div>
-          <p className="text-[13px] text-[var(--ink-secondary)]">
-            {finalCount} questions · {Math.ceil((finalCount * SECONDS_PER_QUESTION) / 60)} minutes
-          </p>
         </fieldset>
 
-        <button
-          type="button"
-          onClick={start}
-          disabled={finalCount === 0}
-          className={clsx("self-start px-5 py-2.5 rounded-lg bg-[var(--accent)] text-white font-bold text-[14px] disabled:opacity-50", focusRing)}
-        >
-          Start Test
-        </button>
+        <div className="brut mb-12 flex flex-wrap items-center justify-between gap-4 rounded-2xl bg-card p-5">
+          <p>
+            <span className="display text-[36px]">{finalCount}</span> <span className="text-body">questions ·</span>{" "}
+            <span className="display text-[36px]">{Math.ceil((finalCount * SECONDS_PER_QUESTION) / 60)}</span> <span className="text-body">min</span>
+          </p>
+          <button type="button" onClick={start} disabled={finalCount === 0} className={buttonClass("accent", "lg")}>
+            Start test <ArrowRight className="size-5" />
+          </button>
+        </div>
 
         {history.length > 0 && (
-          <section className="flex flex-col gap-2">
-            <h2 className="text-[12px] font-bold uppercase tracking-wider text-[var(--ink)]">Past attempts</h2>
-            <ul className="flex flex-col gap-1 text-[13px] text-[var(--ink-secondary)]">
+          <Section title="Past attempts" kicker="History">
+            <ul className="border-t-[1.5px] border-hair">
               {history.slice(0, 5).map((a) => (
-                <li key={a.at} className="flex justify-between gap-4 tabular-nums">
-                  <span>{new Intl.DateTimeFormat(undefined, { dateStyle: "medium", timeStyle: "short" }).format(a.at)}</span>
-                  <span className="font-mono">{a.correct}/{a.total} ({Math.round((100 * a.correct) / a.total)}%)</span>
+                <li key={a.at} className="flex items-center justify-between gap-4 border-b-[1.5px] border-hair px-1 py-2.5 text-[14px] tabular-nums">
+                  <span className="text-body">{new Intl.DateTimeFormat(undefined, { dateStyle: "medium", timeStyle: "short" }).format(a.at)}</span>
+                  <span className="font-mono">
+                    {a.correct}/{a.total} · {Math.round((100 * a.correct) / a.total)}%
+                  </span>
                 </li>
               ))}
             </ul>
-          </section>
+          </Section>
         )}
       </div>
     );
@@ -172,21 +186,31 @@ export default function MockTestPage() {
     const answered = answers.filter((a) => a !== null).length;
     const mm = String(Math.floor(secondsLeft / 60)).padStart(2, "0");
     const ss = String(secondsLeft % 60).padStart(2, "0");
+    const finish = async () => {
+      const left = questions.length - answered;
+      if (!left || (await askConfirm("Submit the test?", { body: `${left} question${left === 1 ? " is" : "s are"} still unanswered.`, ok: "Submit" }))) submit();
+    };
     return (
-      <div className="flex flex-col gap-5 pb-16 w-full max-w-3xl">
-        <div className="flex items-center justify-between gap-4 sticky top-0 z-10 bg-[var(--bg,var(--surface))] py-3 border-b border-[var(--border)]">
-          <span className="text-[13px] font-mono text-[var(--ink-secondary)] tabular-nums">Question {current + 1} of {questions.length} · {answered} answered</span>
-          <span className={clsx("inline-flex items-center gap-1.5 font-mono font-bold tabular-nums text-[15px]", secondsLeft < 60 ? "text-[var(--error)]" : "text-[var(--ink)]")} aria-live={secondsLeft < 60 ? "polite" : "off"}>
-            <Clock aria-hidden="true" className="w-4 h-4" /> {mm}:{ss}
-          </span>
+      <div className="max-w-3xl">
+        <div className="sticky top-14 z-10 -mx-4 mb-6 border-b-[1.5px] border-hair bg-paper px-4 py-3 md:top-0 md:-mx-8 md:px-8">
+          <div className="flex items-center justify-between gap-4">
+            <span className="font-mono text-[13px] tabular-nums text-body">
+              {current + 1} / {questions.length} · {answered} answered
+            </span>
+            <span
+              className={clsx("inline-flex items-center gap-1.5 font-mono text-[18px] font-bold tabular-nums", secondsLeft < 60 ? "text-danger" : "text-ink")}
+              aria-live={secondsLeft < 60 ? "polite" : "off"}
+            >
+              <Clock aria-hidden className="size-4" /> {mm}:{ss}
+            </span>
+          </div>
+          <Progress value={(answered / questions.length) * 100} className="mt-2" />
         </div>
 
-        <div className="flex flex-col gap-1">
-          <span className="text-[11px] font-mono uppercase tracking-wider text-[var(--ink-tertiary)]">{q.moduleTitle}</span>
-          <h1 className="text-[18px] font-semibold text-[var(--ink)] leading-snug">{q.question}</h1>
-        </div>
+        <p className="eyebrow mb-2">{q.moduleTitle}</p>
+        <h1 className="text-[22px] font-semibold leading-snug">{q.question}</h1>
 
-        <div role="radiogroup" aria-label="Answer options" className="flex flex-col gap-2">
+        <div role="radiogroup" aria-label="Answer options" className="mt-6 flex flex-col gap-2">
           {q.options.map((opt, i) => {
             const chosen = answers[current] === i;
             return (
@@ -196,42 +220,46 @@ export default function MockTestPage() {
                 role="radio"
                 aria-checked={chosen}
                 onClick={() => setAnswers((a) => a.map((v, k) => (k === current ? i : v)))}
-                className={clsx("text-left px-4 py-3 rounded-lg border text-[15px]", focusRing,
-                  chosen ? "border-[var(--accent)] bg-[var(--accent-soft)]/40 text-[var(--ink)] font-medium" : "border-[var(--border)] bg-[var(--surface)] text-[var(--ink)] hover:border-[var(--accent)]")}
+                className={clsx(optionClass(false, false, false), chosen && "!border-ink bg-card-2")}
               >
-                <span className="font-mono text-[var(--ink-tertiary)] mr-2">{String.fromCharCode(65 + i)}.</span>{opt}
+                <span className={clsx("grid size-6 shrink-0 place-items-center rounded-full font-mono text-[12px]", chosen ? "bg-ink text-paper" : "text-mute")}>
+                  {String.fromCharCode(65 + i)}
+                </span>
+                {opt}
               </button>
             );
           })}
         </div>
 
-        <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
           <button
             type="button"
             onClick={() => setFlags((f) => f.map((v, k) => (k === current ? !v : v)))}
             aria-pressed={flags[current]}
-            className={clsx("inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border text-[13px]", focusRing,
-              flags[current] ? "border-[var(--warning,#d97706)] text-[var(--warning,#d97706)]" : "border-[var(--border)] text-[var(--ink-secondary)]")}
+            className={clsx(
+              "label-cond inline-flex h-9 items-center gap-1.5 rounded-xl border-2 px-3 text-[14px]",
+              flags[current] ? "border-gold bg-[var(--warning-soft)] text-[var(--warning)]" : "border-hair text-body hover:border-line"
+            )}
           >
-            <Flag aria-hidden="true" className="w-4 h-4" /> {flags[current] ? "Flagged" : "Flag for Review"}
+            <Flag aria-hidden className="size-4" /> {flags[current] ? "Flagged" : "Flag"}
           </button>
           <div className="flex gap-2">
-            <button type="button" disabled={current === 0} onClick={() => setCurrent((c) => c - 1)} className={clsx("px-4 py-2 rounded-lg border border-[var(--border)] text-[13px] disabled:opacity-40", focusRing)}>Previous</button>
+            <button type="button" disabled={current === 0} onClick={() => setCurrent((c) => c - 1)} className={buttonClass("secondary", "sm")}>
+              Previous
+            </button>
             {current < questions.length - 1 ? (
-              <button type="button" onClick={() => setCurrent((c) => c + 1)} className={clsx("px-4 py-2 rounded-lg bg-[var(--accent)] text-white text-[13px] font-bold", focusRing)}>Next</button>
+              <button type="button" onClick={() => setCurrent((c) => c + 1)} className={buttonClass("primary", "sm")}>
+                Next <ArrowRight className="size-4" />
+              </button>
             ) : (
-              <button
-                type="button"
-                onClick={() => { if (answered === questions.length || confirm(`${questions.length - answered} questions are unanswered. Submit anyway?`)) submit(); }}
-                className={clsx("px-4 py-2 rounded-lg bg-[var(--accent)] text-white text-[13px] font-bold", focusRing)}
-              >
-                Submit Test
+              <button type="button" onClick={finish} className={buttonClass("accent", "sm")}>
+                Submit test
               </button>
             )}
           </div>
         </div>
 
-        <nav aria-label="Jump to question" className="flex flex-wrap gap-1.5 pt-2 border-t border-[var(--border)]">
+        <nav aria-label="Jump to question" className="mt-8 flex flex-wrap gap-1.5 border-t-[1.5px] border-hair pt-5">
           {questions.map((_, i) => (
             <button
               key={i}
@@ -239,9 +267,11 @@ export default function MockTestPage() {
               onClick={() => setCurrent(i)}
               aria-label={`Question ${i + 1}${answers[i] !== null ? ", answered" : ""}${flags[i] ? ", flagged" : ""}`}
               aria-current={i === current ? "step" : undefined}
-              className={clsx("w-8 h-8 rounded-md text-[12px] font-mono tabular-nums border", focusRing,
-                i === current ? "border-[var(--accent)] ring-1 ring-[var(--accent)]" : "border-[var(--border)]",
-                flags[i] ? "bg-[var(--warning-soft,#fef3c7)] text-[var(--ink)]" : answers[i] !== null ? "bg-[var(--surface-subdued)] text-[var(--ink)]" : "bg-[var(--surface)] text-[var(--ink-tertiary)]")}
+              className={clsx(
+                "no-press size-9 rounded-lg border-2 font-mono text-[12px] tabular-nums",
+                i === current ? "border-ink" : "border-hair",
+                flags[i] ? "bg-[var(--warning-soft)]" : answers[i] !== null ? "bg-ink/10 text-ink" : "text-mute"
+              )}
             >
               {i + 1}
             </button>
@@ -265,60 +295,75 @@ export default function MockTestPage() {
   const missed = questions.length - correct;
 
   return (
-    <div className="flex flex-col gap-6 pb-16 w-full max-w-3xl">
+    <div className="max-w-3xl">
       {back}
-      <header className="flex flex-col gap-2 p-5 rounded-xl border border-[var(--border)] bg-[var(--surface)]">
-        <span className="text-[12px] font-bold uppercase tracking-wider text-[var(--ink-secondary)]">Your score</span>
-        <span className="font-newsreader text-5xl text-[var(--ink)] tabular-nums">{pct}%</span>
-        <span className="text-[14px] text-[var(--ink-secondary)] tabular-nums">{correct} of {questions.length} correct · {missed} added to your review queue</span>
-        <div className="flex flex-wrap gap-2 mt-2">
-          <button type="button" onClick={() => setPhase("setup")} className={clsx("inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[var(--accent)] text-white text-[13px] font-bold", focusRing)}>
-            <RotateCcw aria-hidden="true" className="w-4 h-4" /> New Test
+      <header className="brut mb-12 rounded-2xl bg-card p-6 md:p-8">
+        <p className="eyebrow">Your score</p>
+        <p className="display mt-2 text-[96px] leading-none tabular-nums">{pct}%</p>
+        <p className="mt-3 text-[15px] tabular-nums text-body">
+          {correct} of {questions.length} correct · {missed} added to your review queue
+        </p>
+        <div className="mt-5 flex flex-wrap gap-2">
+          <button type="button" onClick={() => setPhase("setup")} className={buttonClass("primary", "sm")}>
+            <RotateCcw aria-hidden className="size-4" /> New test
           </button>
-          {missed > 0 && <Link href={`/learn/${subjectSlug}/review`} className={clsx("px-4 py-2 rounded-lg border border-[var(--border)] text-[13px] font-medium text-[var(--ink)]", focusRing)}>Review Missed Questions</Link>}
-          <Link href={`/learn/${subjectSlug}/revise`} className={clsx("px-4 py-2 rounded-lg border border-[var(--border)] text-[13px] font-medium text-[var(--ink)]", focusRing)}>Open Revision Sheet</Link>
+          {missed > 0 && (
+            <Link href={`/learn/${subjectSlug}/review`} className={buttonClass("secondary", "sm")}>
+              Review misses
+            </Link>
+          )}
+          <Link href={`/learn/${subjectSlug}/revise`} className={buttonClass("secondary", "sm")}>
+            Revision sheet
+          </Link>
         </div>
       </header>
 
-      <section className="flex flex-col gap-2">
-        <h2 className="text-[12px] font-bold uppercase tracking-wider text-[var(--ink)]">By module (weakest first)</h2>
-        <ul className="flex flex-col gap-2">
+      <Section title="By module" kicker="Weakest first">
+        <ul className="border-t-[1.5px] border-hair">
           {modules.map((m) => {
             const mp = Math.round((100 * m.correct) / m.total);
             return (
-              <li key={m.slug} className="flex items-center gap-3 text-[13px]">
-                <span className="w-44 sm:w-60 truncate text-[var(--ink)]">{m.title}</span>
-                <div className="flex-1 h-1.5 rounded-full bg-[var(--border-strong)]/30 overflow-hidden" role="progressbar" aria-label={`${m.title} score`} aria-valuemin={0} aria-valuemax={100} aria-valuenow={mp}>
-                  <div className={clsx("h-full rounded-full", mp >= 70 ? "bg-[var(--success)]" : mp >= 40 ? "bg-[var(--accent)]" : "bg-[var(--error)]")} style={{ width: `${mp}%` }} />
-                </div>
-                <span className="w-12 text-right font-mono tabular-nums text-[var(--ink-tertiary)]">{m.correct}/{m.total}</span>
-                <Link href={`/learn/${subjectSlug}/revise?module=${m.slug}`} className={clsx("text-[12px] text-[var(--accent)] underline rounded", focusRing)}>Revise</Link>
+              <li key={m.slug} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-1.5 border-b-[1.5px] border-hair px-1 py-3 sm:grid-cols-[14rem_minmax(0,1fr)_auto_auto]">
+                <span className="truncate text-[15px] font-medium">{m.title}</span>
+                <Progress value={mp} className="col-span-2 row-start-2 sm:col-span-1 sm:row-start-auto" />
+                <span className="font-mono text-[12px] tabular-nums text-mute">
+                  {m.correct}/{m.total}
+                </span>
+                <Link href={`/learn/${subjectSlug}/revise?module=${m.slug}`} className="hidden text-[13px] font-semibold text-accent-ink hover:underline sm:inline">
+                  Revise
+                </Link>
               </li>
             );
           })}
         </ul>
-      </section>
+      </Section>
 
-      <section className="flex flex-col gap-3">
-        <h2 className="text-[12px] font-bold uppercase tracking-wider text-[var(--ink)]">Answers</h2>
-        {questions.map((q, i) => {
-          const ok = answers[i] === q.answer;
-          return (
-            <article key={q.id} className="flex flex-col gap-2 p-4 rounded-xl border border-[var(--border)] bg-[var(--surface)]">
-              <div className="flex items-start gap-2">
-                {ok ? <CheckCircle2 aria-label="Correct" className="w-5 h-5 text-[var(--success)] shrink-0" /> : <XCircle aria-label="Incorrect" className="w-5 h-5 text-[var(--error)] shrink-0" />}
-                <p className="text-[15px] font-medium text-[var(--ink)]">{i + 1}. {q.question}</p>
-              </div>
-              <p className="text-[14px] text-[var(--ink-secondary)] pl-7">
-                {answers[i] === null ? "Not answered. " : !ok ? <>Your answer: {q.options[answers[i]!]}. </> : null}
-                Correct: <strong className="text-[var(--ink)]">{q.options[q.answer]}</strong>
-              </p>
-              {q.explanation && <p className="text-[14px] text-[var(--ink-secondary)] pl-7">{q.explanation}</p>}
-              <Link href={`/learn/${subjectSlug}/${q.lessonSlug}`} className={clsx("pl-7 text-[12px] text-[var(--accent)] underline self-start rounded", focusRing)}>Lesson: {q.lessonTitle}</Link>
-            </article>
-          );
-        })}
-      </section>
+      <Section title="Answers" kicker={`${questions.length} questions`}>
+        <ol className="flex flex-col gap-3">
+          {questions.map((q, i) => {
+            const ok = answers[i] === q.answer;
+            return (
+              <li key={q.id} className="rounded-2xl border-[1.5px] border-hair bg-card p-5">
+                <p className="flex items-start gap-2.5 text-[16px] font-medium">
+                  {ok ? <CheckCircle2 aria-label="Correct" className="mt-0.5 size-5 shrink-0 text-note" /> : <XCircle aria-label="Incorrect" className="mt-0.5 size-5 shrink-0 text-danger" />}
+                  <span>
+                    <span className="mr-1.5 font-mono text-[13px] text-mute">{i + 1}.</span>
+                    {q.question}
+                  </span>
+                </p>
+                <p className="mt-2 pl-[30px] text-[15px] text-body">
+                  {answers[i] === null ? "Not answered. " : !ok ? <>You picked: {q.options[answers[i]!]}. </> : null}
+                  Correct: <strong className="text-ink">{q.options[q.answer]}</strong>
+                </p>
+                {q.explanation && <p className="mt-1.5 pl-[30px] text-[15px] leading-relaxed text-body">{q.explanation}</p>}
+                <Link href={`/learn/${subjectSlug}/${q.lessonSlug}`} className="mt-2 inline-block pl-[30px] text-[13px] font-semibold text-accent-ink hover:underline">
+                  Lesson: {q.lessonTitle}
+                </Link>
+              </li>
+            );
+          })}
+        </ol>
+      </Section>
     </div>
   );
 }

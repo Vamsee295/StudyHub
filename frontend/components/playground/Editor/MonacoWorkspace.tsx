@@ -3,6 +3,7 @@
 import React, { useRef, useMemo } from "react";
 import Editor from "@monaco-editor/react";
 import type { ProjectFile } from "@/types/playground";
+import { MONACO_THEME, defineMonacoTheme } from "@/lib/monacoTheme";
 
 interface MonacoWorkspaceProps {
   files: ProjectFile[];
@@ -52,7 +53,8 @@ export default function MonacoWorkspace({
         defaultValue={activeFile.content}
         value={activeFile.content}
         onChange={handleChange}
-        theme="vs-dark"
+        theme={MONACO_THEME}
+        beforeMount={defineMonacoTheme}
         options={{
           fontSize: 14,
           fontFamily: "'Fira Code', 'Cascadia Code', Consolas, monospace",
@@ -77,8 +79,8 @@ export default function MonacoWorkspace({
               alignItems: "center",
               justifyContent: "center",
               height: "100%",
-              color: "#888",
-              background: "#1e1e1e",
+              color: "#8a8178",
+              background: "#151311",
               fontSize: "13px",
             }}
           >

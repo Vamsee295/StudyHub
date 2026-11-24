@@ -1,5 +1,25 @@
 import { Fragment, ReactNode } from "react";
-import { BookOpen, Library } from "lucide-react";
+import { BookOpen, Library, type LucideIcon } from "lucide-react";
+
+/** Reading typography shared by lesson theory and lesson blocks (DESIGN §3: 17px / 1.75, max ~68ch). */
+export const prose = {
+  p: "text-[17px] leading-[1.75] text-body",
+  list: "space-y-2 pl-6 text-[17px] leading-[1.75] text-body marker:text-accent",
+  code: "rounded bg-paper-2 px-1.5 py-0.5 font-mono text-[0.88em] text-ink break-words",
+  // code stays a dark island in both themes, so its colours are fixed
+  pre: "overflow-x-auto rounded-xl border-[2.4px] border-line bg-night p-5 font-mono text-[13.5px] leading-relaxed text-[#f5efe6]",
+  callout: "rounded-xl border-[1.5px] border-hair bg-paper-2 px-5 py-4 text-[16px] leading-relaxed text-ink",
+  link: "text-accent-ink underline underline-offset-2",
+};
+
+/** Lesson section heading: condensed label with a rust icon. */
+export function LessonHeading({ icon: Icon = BookOpen, children }: { icon?: LucideIcon; children: ReactNode }) {
+  return (
+    <h2 className="label-cond mb-3 flex items-center gap-2 text-[20px]">
+      <Icon aria-hidden className="size-[18px] text-accent" /> {children}
+    </h2>
+  );
+}
 
 // Renders the markdown subset used by lesson theory: ## / ### headings, paragraphs,
 // - and 1. lists, > callouts, | tables |, ``` or ~~~ code fences, **bold**, `code`, [links](url).
@@ -14,14 +34,14 @@ function inline(text: string): ReactNode[] {
     if (m.index > last) out.push(text.slice(last, m.index));
     const tok = m[0];
     if (tok.startsWith("`")) {
-      out.push(<code key={m.index} className="bg-[var(--surface-subdued)] px-1.5 py-0.5 rounded text-[13px] font-mono text-[var(--ink)] break-words">{tok.slice(1, -1)}</code>);
+      out.push(<code key={m.index} className={prose.code}>{tok.slice(1, -1)}</code>);
     } else if (tok.startsWith("**")) {
-      out.push(<strong key={m.index} className="font-semibold text-[var(--ink)]">{tok.slice(2, -2)}</strong>);
+      out.push(<strong key={m.index} className="font-semibold text-ink">{tok.slice(2, -2)}</strong>);
     } else {
       const [, label, href] = tok.match(/\[([^\]]+)\]\(([^)]+)\)/)!;
       const external = /^https?:\/\//.test(href);
       out.push(
-        <a key={m.index} href={href} className="text-[var(--accent)] underline underline-offset-2"
+        <a key={m.index} href={href} className={prose.link}
            {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}>{label}</a>
       );
     }
@@ -49,16 +69,16 @@ function blocks(md: string): ReactNode[] {
       while (i < lines.length && !lines[i].startsWith(fence)) code.push(lines[i++]);
       i++;
       out.push(
-        <pre key={key} tabIndex={0} className="bg-[#1E1E1E] rounded-xl p-5 overflow-x-auto text-[13px] text-gray-300 font-mono leading-relaxed"><code>{code.join("\n")}</code></pre>
+        <pre key={key} tabIndex={0} className={prose.pre}><code>{code.join("\n")}</code></pre>
       );
       continue;
     }
     if (line.startsWith("### ")) {
-      out.push(<h4 key={key} className="text-[15px] font-semibold text-[var(--ink)] mt-2">{inline(line.slice(4))}</h4>);
+      out.push(<h4 key={key} className="label-cond mt-2 text-[19px]">{inline(line.slice(4))}</h4>);
       i++; continue;
     }
     if (line.startsWith("## ")) {
-      out.push(<h3 key={key} className="text-[18px] font-bold text-[var(--ink)] mt-4 tracking-tight">{inline(line.slice(3))}</h3>);
+      out.push(<h3 key={key} className="display mt-6 text-[28px]">{inline(line.slice(3))}</h3>);
       i++; continue;
     }
     if (line.startsWith("|")) {
@@ -66,14 +86,14 @@ function blocks(md: string): ReactNode[] {
       while (i < lines.length && lines[i].startsWith("|")) rows.push(lines[i++]);
       const [head, , ...body] = rows;                 // second row is the |---| separator
       out.push(
-        <div key={key} tabIndex={0} className="overflow-x-auto border border-[var(--border)] rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]">
+        <div key={key} tabIndex={0} className="overflow-x-auto rounded-xl border-[1.5px] border-hair">
           <table className="w-full text-left text-[14px]">
-            <thead className="bg-[var(--surface-subdued)] border-b border-[var(--border)]">
-              <tr>{cells(head).map((c, j) => <th key={j} className="px-4 py-2.5 font-semibold text-[var(--ink)]">{inline(c)}</th>)}</tr>
+            <thead className="border-b-[1.5px] border-hair bg-paper-2">
+              <tr>{cells(head).map((c, j) => <th key={j} className="px-4 py-2.5 font-mono text-[12px] font-medium uppercase tracking-wider text-ink">{inline(c)}</th>)}</tr>
             </thead>
-            <tbody className="divide-y divide-[var(--border)]">
+            <tbody className="divide-y-[1.5px] divide-hair">
               {body.map((r, k) => (
-                <tr key={k} className="bg-[var(--surface)]">{cells(r).map((c, j) => <td key={j} className="px-4 py-2.5 text-[var(--ink-secondary)] align-top">{inline(c)}</td>)}</tr>
+                <tr key={k}>{cells(r).map((c, j) => <td key={j} className="px-4 py-2.5 align-top text-[15px] text-body">{inline(c)}</td>)}</tr>
               ))}
             </tbody>
           </table>
@@ -85,7 +105,7 @@ function blocks(md: string): ReactNode[] {
       const quote: string[] = [];
       while (i < lines.length && lines[i].startsWith("> ")) quote.push(lines[i++].slice(2));
       out.push(
-        <div key={key} className="bg-[var(--accent-soft)]/30 border-l-4 border-[var(--accent)] rounded-r-lg px-5 py-4 text-[15px] text-[var(--ink)] leading-relaxed">{inline(quote.join(" "))}</div>
+        <div key={key} className={prose.callout}>{inline(quote.join(" "))}</div>
       );
       continue;
     }
@@ -97,7 +117,7 @@ function blocks(md: string): ReactNode[] {
       }
       const List = ordered ? "ol" : "ul";
       out.push(
-        <List key={key} className={`${ordered ? "list-decimal" : "list-disc"} pl-6 space-y-1.5 text-[15px] text-[var(--ink-secondary)] leading-relaxed`}>
+        <List key={key} className={`${ordered ? "list-decimal" : "list-disc"} ${prose.list}`}>
           {items.map((it, k) => <li key={k}>{inline(it)}</li>)}
         </List>
       );
@@ -105,7 +125,7 @@ function blocks(md: string): ReactNode[] {
     }
     const para: string[] = [];
     while (i < lines.length && lines[i].trim() && !/^(#{2,3} |```|~~~|\||> |- |\d+\. )/.test(lines[i])) para.push(lines[i++]);
-    out.push(<p key={key} className="text-[15px] text-[var(--ink-secondary)] leading-[1.75]">{inline(para.join(" "))}</p>);
+    out.push(<p key={key} className={prose.p}>{inline(para.join(" "))}</p>);
   }
   return out;
 }
@@ -113,9 +133,7 @@ function blocks(md: string): ReactNode[] {
 export function TheoryNotes({ markdown }: { markdown: string }) {
   return (
     <section className="flex flex-col gap-4">
-      <h2 className="text-[12px] font-bold uppercase tracking-wider flex items-center gap-2 text-[var(--ink)]">
-        <BookOpen aria-hidden="true" className="w-4 h-4 text-[var(--accent)]" /> Theory
-      </h2>
+      <LessonHeading>Theory</LessonHeading>
       {blocks(markdown).map((b, i) => <Fragment key={i}>{b}</Fragment>)}
     </section>
   );
@@ -123,15 +141,13 @@ export function TheoryNotes({ markdown }: { markdown: string }) {
 
 export function LessonSources({ sources }: { sources: { title: string; url: string; license?: string }[] }) {
   return (
-    <section className="border-t border-[var(--border)] pt-6">
-      <h2 className="text-[12px] font-bold uppercase tracking-wider mb-3 flex items-center gap-2 text-[var(--ink)]">
-        <Library aria-hidden="true" className="w-4 h-4 text-[var(--accent)]" /> Sources & further reading
-      </h2>
-      <ul className="space-y-1.5 text-[14px]">
+    <section className="border-t-[1.5px] border-hair pt-6">
+      <LessonHeading icon={Library}>Sources &amp; further reading</LessonHeading>
+      <ul className="space-y-1.5 text-[15px]">
         {sources.map((s) => (
           <li key={s.url}>
-            <a href={s.url} target="_blank" rel="noopener noreferrer" className="text-[var(--accent)] underline underline-offset-2">{s.title}</a>
-            {s.license && <span className="text-[var(--ink-tertiary)] text-[12px] ml-2">({s.license})</span>}
+            <a href={s.url} target="_blank" rel="noopener noreferrer" className={prose.link}>{s.title}</a>
+            {s.license && <span className="ml-2 font-mono text-[12px] text-mute">({s.license})</span>}
           </li>
         ))}
       </ul>

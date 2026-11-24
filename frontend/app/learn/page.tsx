@@ -2,279 +2,140 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { DailyCard } from "@/components/learn/DailyCard";
-import { motion, useReducedMotion } from "framer-motion";
-import { 
-  PlayCircle, 
-  BookOpen, 
-  Terminal, 
-  ChevronRight,
-  TrendingUp,
-  Clock,
-  Briefcase,
-  Code,
-  Share2,
-  Bookmark,
-} from "lucide-react";
-import { clsx } from "clsx";
 import { useRouter } from "next/navigation";
-import { learnPaths, aptitudeLearningPaths } from "@/lib/data/learnData";
+import { clsx } from "clsx";
+import { ArrowRight, Bookmark, BookOpen, Briefcase, Code, Share2, Terminal } from "lucide-react";
+import { DailyCard } from "@/components/learn/DailyCard";
+import { PageHeader, Section, Progress } from "@/components/ui/Page";
+import { buttonClass } from "@/components/ui/Button";
 import { learnService, LearningSubject } from "@/lib/services/learnService";
 
+const tabs = ["All subjects", "Technical", "Placement", "Core CS", "Aptitude"];
+const categoryIcon = (c: string) => (c === "Core CS" ? Terminal : c === "Technical" ? Code : c === "Placement" ? Briefcase : BookOpen);
+
 export default function LearnPage() {
-  const reduced = useReducedMotion();
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState("All subjects");
-  
-  const tabs = ["All subjects", "Technical", "Placement", "Core CS", "Aptitude"];
-  
+  // client-only render (see AppLayout), so the URL is readable on first render
+  const [activeTab, setActiveTab] = useState(() => {
+    const cat = new URLSearchParams(window.location.search).get("category");
+    return (cat && tabs.find((t) => t.toLowerCase() === cat.toLowerCase())) || "All subjects";
+  });
   const [subjects, setSubjects] = useState<LearningSubject[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function loadData() {
-      try {
-        const data = await learnService.getSubjects();
-        setSubjects(data);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    }
-    loadData();
-
-    // Sync tab with URL
-    const params = new URLSearchParams(window.location.search);
-    const cat = params.get('category');
-    if (cat) {
-      const formatted = cat.charAt(0).toUpperCase() + cat.slice(1);
-      if (tabs.includes(formatted)) {
-        setActiveTab(formatted);
-      }
-    }
+    learnService
+      .getSubjects()
+      .then(setSubjects)
+      .catch(console.error)
+      .finally(() => setLoading(false));
   }, []);
 
-  const handleTabClick = (tab: string) => {
+  const pickTab = (tab: string) => {
     setActiveTab(tab);
-    if (tab === "All subjects") {
-      router.push('/learn', { scroll: false });
-    } else {
-      router.push(`/learn?category=${tab.toLowerCase()}`, { scroll: false });
-    }
+    router.push(tab === "All subjects" ? "/learn" : `/learn?category=${tab.toLowerCase()}`, { scroll: false });
   };
 
-  const currentLearningPaths = activeTab === "Aptitude" ? aptitudeLearningPaths : learnPaths;
-
-  const filteredSubjects = activeTab === "All subjects" 
-    ? subjects 
-    : subjects.filter(s => s.category === activeTab);
-
-  // For continue learning, typically fetched from a separate endpoint, but we'll use the first active one or just the first one
-  const continueSubject = subjects.find(s => s.progress_percentage > 0 && s.progress_percentage < 100) || subjects[0];
-
-  const getCategoryIcon = (category: string) => {
-    switch (category) {
-      case 'Core CS': return <Terminal className="w-5 h-5" />;
-      case 'Technical': return <Code className="w-5 h-5" />;
-      case 'Placement': return <Briefcase className="w-5 h-5" />;
-      default: return <BookOpen className="w-5 h-5" />;
-    }
-  };
+  const shown = activeTab === "All subjects" ? subjects : subjects.filter((s) => s.category === activeTab);
+  const current = subjects.find((s) => s.progress_percentage > 0 && s.progress_percentage < 100);
 
   return (
-    <div className="flex flex-col gap-10 pb-16 w-full">
-      {/* PAGE HEADER */}
-      <motion.section 
-        initial={reduced ? undefined : { opacity: 0, y: 12 }}
-        animate={reduced ? undefined : { opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        className="flex flex-col gap-4"
-      >
-        <div>
-          <h1 className="font-newsreader text-3xl sm:text-4xl text-[var(--ink)] font-normal tracking-tight leading-tight">
-            Learn
-          </h1>
-          <p className="text-[var(--ink-secondary)] text-[15px] mt-1.5 max-w-2xl font-normal leading-relaxed">
-            Build the technical foundation you need for your placement journey.
-          </p>
-          <div className="flex flex-wrap gap-2 mt-3">
-            <Link href="/learn/map" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--surface)] text-[13px] font-medium text-[var(--ink)] hover:border-[var(--accent)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]">
-              <Share2 aria-hidden="true" className="w-4 h-4 text-[var(--accent)]" /> Concept map: see how every topic connects
-            </Link>
-            <Link href="/learn/saved" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--surface)] text-[13px] font-medium text-[var(--ink)] hover:border-[var(--accent)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]">
-              <Bookmark aria-hidden="true" className="w-4 h-4 text-[var(--accent)]" /> Saved lessons
-            </Link>
-          </div>
-          <div className="mt-3 max-w-2xl"><DailyCard /></div>
-        </div>
+    <>
+      <PageHeader eyebrow={`${subjects.length || "–"} subjects`} title="Pick a" hl="subject" note="one topic a day adds up ↓">
+        <Link href="/learn/map" className={buttonClass("secondary", "sm")}>
+          <Share2 className="size-4" aria-hidden /> Concept map
+        </Link>
+        <Link href="/learn/saved" className={buttonClass("secondary", "sm")}>
+          <Bookmark className="size-4" aria-hidden /> Saved
+        </Link>
+      </PageHeader>
 
-        {/* Sub-navigation Tabs */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide border-b border-[var(--border)]/80">
+      <div className="mb-12 grid items-stretch gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
+        {current ? (
+          <Link href={`/learn/${current.slug}`} className="brut brut-hover no-press group flex flex-col rounded-2xl bg-card p-6 md:p-8">
+            <p className="eyebrow mb-3">
+              Continue · {current.completed_topics} of {current.total_topics} topics
+            </p>
+            <h2 className="display text-[34px] md:text-[44px]">{current.name}</h2>
+            <p className="mt-2 line-clamp-2 max-w-2xl text-[15px] text-body">{current.description}</p>
+            <div className="mt-auto flex items-end gap-6 pt-6">
+              <Progress value={current.progress_percentage} label="Course progress" className="flex-1" />
+              <span className={clsx(buttonClass("accent"), "shrink-0")}>
+                Resume <ArrowRight className="size-4" />
+              </span>
+            </div>
+          </Link>
+        ) : (
+          <div className="flex flex-col justify-center rounded-2xl border-[1.5px] border-dashed border-hair p-6">
+            <p className="eyebrow mb-2">Start here</p>
+            <p className="text-[15px] text-body">Pick any subject below. Your place is saved as you go.</p>
+          </div>
+        )}
+        <DailyCard />
+      </div>
+
+      <Section title="The catalogue" kicker="Subjects">
+        <div role="tablist" aria-label="Filter subjects" className="no-scrollbar -mx-4 mb-5 flex gap-2 overflow-x-auto px-4 md:mx-0 md:px-0">
           {tabs.map((tab) => (
             <button
               key={tab}
-              onClick={() => handleTabClick(tab)}
+              role="tab"
+              aria-selected={activeTab === tab}
+              onClick={() => pickTab(tab)}
               className={clsx(
-                "whitespace-nowrap px-3.5 py-1.5 rounded-full text-[13px] font-medium transition-all border",
-                activeTab === tab
-                  ? "bg-[var(--ink)] text-[var(--surface)] border-[var(--ink)] shadow-sm"
-                  : "bg-[var(--surface)] text-[var(--ink-secondary)] border-[var(--border)] hover:border-[var(--border-strong)] hover:text-[var(--ink)]"
+                "label-cond h-9 shrink-0 rounded-full border-2 px-4 text-[15px] transition-colors",
+                activeTab === tab ? "border-ink bg-ink text-paper" : "border-hair text-body hover:border-line hover:text-ink"
               )}
             >
               {tab}
             </button>
           ))}
         </div>
-      </motion.section>
 
-      {/* CONTINUE LEARNING */}
-      {continueSubject && (
-        <motion.section
-          initial={reduced ? undefined : { opacity: 0, y: 16 }}
-          animate={reduced ? undefined : { opacity: 1, y: 0 }}
-          transition={{ duration: 0.45, delay: 0.1 }}
-          className="flex flex-col gap-4"
-        >
-          <h2 className="text-[13px] font-bold text-[var(--ink)] uppercase tracking-wider font-sans">
-            Continue Learning
-          </h2>
-          
-          <Link href={`/learn/${continueSubject.slug}`} className="group block">
-            <div className="bg-[var(--surface)] p-5 sm:p-7 rounded-2xl border border-[var(--border)] hover:border-[var(--accent)] transition-all shadow-sm hover:shadow-md flex flex-col md:flex-row md:items-center justify-between gap-6 relative overflow-hidden">
-              {/* Subtle background decoration */}
-              <div className="absolute -right-10 -top-10 w-40 h-40 bg-[var(--accent-soft)] rounded-full blur-3xl opacity-30 group-hover:opacity-60 transition-opacity"></div>
-              
-              <div className="flex flex-col gap-2.5 flex-1 relative z-10">
-                <div className="flex items-center gap-2 text-[11px] font-mono text-[var(--ink-tertiary)] uppercase tracking-wider font-bold">
-                  <span>{continueSubject.category}</span>
-                  <span>•</span>
-                  <span className="text-[var(--accent)] bg-[var(--accent-soft)] border border-[var(--accent-soft-border)] px-2 py-0.5 rounded">
-                    {continueSubject.progress_percentage}% Complete
-                  </span>
-                </div>
-                <h3 className="text-xl sm:text-[22px] font-bold text-[var(--ink)] group-hover:text-[var(--accent)] transition-colors leading-tight">
-                  {continueSubject.name}
+        {loading ? (
+          <p className="py-12 text-center font-mono text-[13px] text-mute">Loading subjects…</p>
+        ) : shown.length === 0 ? (
+          <p className="rounded-2xl border-[1.5px] border-dashed border-hair py-12 text-center text-mute">No subjects in this category yet.</p>
+        ) : activeTab === "All subjects" ? (
+          tabs.slice(1).map((cat) => {
+            const list = subjects.filter((s) => s.category === cat);
+            return list.length ? (
+              <div key={cat} className="mb-10">
+                <h3 className="label-cond mb-3 flex items-baseline gap-2 text-[20px]">
+                  {cat} <span className="font-mono text-[12px] font-normal text-mute">{list.length}</span>
                 </h3>
-                <p className="text-[14px] text-[var(--ink-secondary)] line-clamp-2 max-w-2xl">
-                  {continueSubject.description}
-                </p>
+                <SubjectGrid subjects={list} />
               </div>
-              
-              <div className="flex items-center gap-5 shrink-0 relative z-10 border-t md:border-t-0 md:border-l border-[var(--border)]/60 pt-4 md:pt-0 md:pl-6">
-                <div className="flex flex-col">
-                  <span className="text-[13px] font-semibold text-[var(--ink)]">
-                    Resume module
-                  </span>
-                  <span className="text-[11.5px] font-mono text-[var(--ink-tertiary)] mt-0.5">
-                    {continueSubject.completed_topics} of {continueSubject.total_topics} topics completed
-                  </span>
-                </div>
-                <div className="w-11 h-11 rounded-full bg-[var(--accent)] text-white flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-sm">
-                  <PlayCircle className="w-5 h-5 fill-white text-[var(--accent)]" />
-                </div>
-              </div>
-            </div>
-          </Link>
-        </motion.section>
-      )}
+            ) : null;
+          })
+        ) : (
+          <SubjectGrid subjects={shown} />
+        )}
+      </Section>
+    </>
+  );
+}
 
-      {/* SUBJECTS GRID */}
-      <motion.section
-        initial={reduced ? undefined : { opacity: 0, y: 16 }}
-        animate={reduced ? undefined : { opacity: 1, y: 0 }}
-        transition={{ duration: 0.45, delay: 0.15 }}
-        className="flex flex-col gap-4"
-      >
-        <div className="flex items-center justify-between">
-          <h2 className="text-[13px] font-bold text-[var(--ink)] uppercase tracking-wider font-sans flex items-center gap-2">
-            <BookOpen className="w-4 h-4 text-[var(--accent)]" />
-            Subjects
-          </h2>
-          {activeTab !== "All subjects" && (
-            <span className="text-[11px] font-mono text-[var(--ink-tertiary)]">
-              Showing {filteredSubjects.length} results
+function SubjectGrid({ subjects }: { subjects: LearningSubject[] }) {
+  return (
+    <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      {subjects.map((s) => {
+        const Icon = categoryIcon(s.category);
+        return (
+          <Link key={s.id} href={`/learn/${s.slug}`} className="brut brut-hover no-press group flex flex-col rounded-2xl bg-card p-5">
+            <span className="flex items-center justify-between font-mono text-[11px] uppercase tracking-wider text-mute">
+              <Icon className="size-4 text-accent" aria-hidden />
+              <span>
+                {s.completed_topics ? `${s.completed_topics}/` : ""}
+                {s.total_topics} topics
+              </span>
             </span>
-          )}
-        </div>
-        
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {loading ? (
-            <div className="col-span-full py-12 text-center text-[var(--ink-tertiary)]">
-              Loading subjects...
-            </div>
-          ) : filteredSubjects.map((subject) => (
-            <Link key={subject.id} href={`/learn/${subject.slug}`} className="group flex flex-col h-full">
-              <div className="bg-[var(--surface)] p-5 rounded-xl border border-[var(--border)] group-hover:border-[var(--accent)] transition-all shadow-sm group-hover:shadow-md flex flex-col gap-3 flex-1 relative">
-                <div className="flex items-start justify-between gap-2">
-                  <div className="w-10 h-10 rounded-lg bg-[var(--surface-subdued)] flex items-center justify-center border border-[var(--border)] text-[var(--ink-secondary)] group-hover:text-[var(--accent)] group-hover:bg-[var(--accent-soft)] group-hover:border-[var(--accent-soft-border)] transition-colors shadow-sm">
-                    {getCategoryIcon(subject.category)}
-                  </div>
-                  {subject.progress_percentage > 0 && (
-                    <span className="text-[10px] font-mono font-bold text-[var(--accent)] bg-[var(--accent-soft)] px-2 py-0.5 rounded border border-[var(--accent-soft-border)]">
-                      {subject.progress_percentage}%
-                    </span>
-                  )}
-                </div>
-                
-                <h3 className="text-[15.5px] font-bold text-[var(--ink)] mt-1.5 group-hover:text-[var(--accent)] transition-colors">
-                  {subject.name}
-                </h3>
-                
-                <p className="text-[13px] text-[var(--ink-secondary)] line-clamp-2 flex-1 leading-relaxed">
-                  {subject.description}
-                </p>
-                
-                <div className="pt-3.5 mt-2 border-t border-[var(--border)]/60 flex items-center justify-between text-[11px] font-mono text-[var(--ink-tertiary)]">
-                  <span className="flex items-center gap-1.5">
-                    <Clock className="w-3.5 h-3.5" />
-                    {subject.total_topics} topics
-                  </span>
-                  <span className="group-hover:text-[var(--accent)] transition-colors font-medium">View Course →</span>
-                </div>
-              </div>
-            </Link>
-          ))}
-          {!loading && filteredSubjects.length === 0 && (
-            <div className="col-span-full py-12 text-center text-[var(--ink-tertiary)] border border-dashed border-[var(--border)] rounded-xl">
-              No subjects found in this category.
-            </div>
-          )}
-        </div>
-      </motion.section>
-
-      {/* LEARNING PATHS */}
-      <motion.section
-        initial={reduced ? undefined : { opacity: 0, y: 16 }}
-        animate={reduced ? undefined : { opacity: 1, y: 0 }}
-        transition={{ duration: 0.45, delay: 0.2 }}
-        className="flex flex-col gap-4"
-      >
-        <h2 className="text-[13px] font-bold text-[var(--ink)] uppercase tracking-wider font-sans flex items-center gap-2">
-          <TrendingUp className="w-4 h-4 text-[var(--accent)]" />
-          Learning Paths
-        </h2>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {currentLearningPaths.map((path) => (
-            <div key={path.id} className="bg-[var(--surface)] p-5 rounded-xl border border-[var(--border)] hover:border-[var(--border-strong)] transition-all cursor-pointer flex flex-col gap-3 group shadow-sm hover:shadow">
-              <h3 className="text-[15px] font-bold text-[var(--ink)] group-hover:text-[var(--accent)] transition-colors">
-                {path.title}
-              </h3>
-              <p className="text-[13px] text-[var(--ink-secondary)]">
-                {path.description}
-              </p>
-              <div className="flex items-center gap-2 mt-auto pt-3 border-t border-[var(--border)]/40">
-                <span className="text-[11px] font-mono font-medium text-[var(--ink-tertiary)]">
-                  {path.subjects.length} Subjects
-                </span>
-                <ChevronRight className="w-4 h-4 text-[var(--ink-tertiary)] group-hover:text-[var(--accent)] transition-colors ml-auto" />
-              </div>
-            </div>
-          ))}
-        </div>
-      </motion.section>
-
+            <h3 className="display mt-4 text-[26px] group-hover:text-accent-ink">{s.name}</h3>
+            <p className="mt-2 line-clamp-2 flex-1 text-[14px] leading-relaxed text-body">{s.description}</p>
+            <Progress value={s.progress_percentage} className="mt-5" />
+          </Link>
+        );
+      })}
     </div>
   );
 }

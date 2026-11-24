@@ -48,7 +48,7 @@ export default function Step4Targets({ data, update }: Step4TargetsProps) {
   return (
     <div className="flex flex-col gap-7">
       <div className="flex flex-col gap-1.5">
-        <h2 className="text-xl font-bold tracking-tight text-slate-900">Target Placement Matrix</h2>
+        <h2 className="display text-[32px] md:text-[38px]">Target Placement Matrix</h2>
         <p className="text-sm text-slate-500 leading-relaxed">
           What are your immediate goals and target employers? We'll tailor the interview practice modules based on this.
         </p>

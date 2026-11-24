@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { FormEvent, useState, Suspense, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import { ArrowRight, ArrowLeft, Loader2 } from "lucide-react";
 import { BrandPanel } from "@/components/auth/BrandPanel";
 import { AuthRightPanel } from "@/components/auth/AuthRightPanel";
@@ -16,15 +16,15 @@ import { supabase } from "@/lib/supabase/client";
 
 function AuthTabs({ active, onChange }: { active: "login" | "signup", onChange: (mode: "login" | "signup") => void }) {
   return (
-    <div className="w-full max-w-[440px] mb-8 flex items-center justify-between relative z-10">
-      <div className="inline-flex p-1 bg-slate-100/90 rounded-lg border border-slate-200/90">
+    <div className="mb-8 flex w-full max-w-[440px] items-center justify-between">
+      <div className="inline-flex rounded-xl border-2 border-line bg-paper p-1">
         <button 
           type="button" 
           onClick={() => onChange("login")}
-          className={`px-5 py-1.5 rounded-md text-[13px] font-medium transition-all cursor-pointer ${
+          className={`label-cond cursor-pointer rounded-lg px-5 py-1.5 text-[15px] transition-colors ${
             active === "login" 
-              ? "!bg-white !text-slate-900 border border-slate-200/80 shadow-xs font-semibold" 
-              : "text-slate-500 hover:text-slate-900 bg-transparent"
+              ? "bg-ink text-paper"
+              : "text-body hover:text-ink"
           }`}
         >
           Sign in
@@ -32,16 +32,16 @@ function AuthTabs({ active, onChange }: { active: "login" | "signup", onChange: 
         <button 
           type="button" 
           onClick={() => onChange("signup")}
-          className={`px-5 py-1.5 rounded-md text-[13px] font-medium transition-all cursor-pointer ${
+          className={`label-cond cursor-pointer rounded-lg px-5 py-1.5 text-[15px] transition-colors ${
             active === "signup" 
-              ? "!bg-white !text-slate-900 border border-slate-200/80 shadow-xs font-semibold" 
-              : "text-slate-500 hover:text-slate-900 bg-transparent"
+              ? "bg-ink text-paper"
+              : "text-body hover:text-ink"
           }`}
         >
           Sign up
         </button>
       </div>
-      <span className="text-[11px] tag-mono text-ink-tertiary tracking-wider uppercase">StudyHub ID</span>
+      
     </div>
   );
 }
@@ -49,7 +49,6 @@ function AuthTabs({ active, onChange }: { active: "login" | "signup", onChange: 
 function AuthForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const reduced = useReducedMotion();
 
   const [mode, setMode] = useState<"login" | "signup">("login");
 
@@ -88,8 +87,6 @@ function AuthForm() {
     checkAuth();
   }, []);
 
-  const fade = (delay: number) =>
-    reduced ? {} : { initial: { opacity: 0, y: 10 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.35, delay } };
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -214,28 +211,28 @@ function AuthForm() {
       <main className="w-full min-h-screen flex flex-col lg:flex-row flex-1">
         <BrandPanel />
         <AuthRightPanel>
-          <div className="lg:hidden flex items-center justify-between w-full mb-6 pb-3 border-b border-border">
+          <div className="mb-6 flex w-full items-center justify-between border-b-[1.5px] border-hair pb-3 lg:hidden">
             <StudyHubLogo href="/" size="sm" />
             <Link
               href="/"
-              className="inline-flex items-center gap-1.5 text-xs font-medium text-ink-secondary hover:text-ink transition-colors px-2.5 py-1 rounded-md border border-border bg-white shadow-2xs"
+              className="inline-flex items-center gap-1.5 font-mono text-[12px] uppercase tracking-wider text-mute hover:text-ink"
             >
-              <ArrowLeft size={12} className="text-accent" />
+              <ArrowLeft size={13} />
               Home
             </Link>
           </div>
 
           <div className="w-full max-w-[440px] flex flex-col items-center gap-6 text-center">
-            <div className="w-16 h-16 rounded-full bg-accent/10 flex items-center justify-center">
-              <div className="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center text-accent font-bold text-xl">
+            <div className="grid size-16 place-items-center rounded-full border-[2.4px] border-line bg-accent">
+              <div className="display text-[28px] text-paper">
                 {existingUser.email?.[0].toUpperCase() || "U"}
               </div>
             </div>
 
             <div>
-              <h2 className="text-2xl font-bold text-ink mb-2">You're already signed in</h2>
-              <p className="text-sm text-ink-secondary">
-                Signed in as <span className="font-medium text-ink">{existingUser.email}</span>
+              <h2 className="display mb-2 text-[40px]">You&apos;re signed in</h2>
+              <p className="text-[15px] text-body">
+                Signed in as <span className="font-semibold text-ink">{existingUser.email}</span>
               </p>
             </div>
 
@@ -250,7 +247,7 @@ function AuthForm() {
               <button
                 onClick={handleLogout}
                 disabled={loading}
-                className="w-full px-4 py-2.5 text-sm font-medium text-ink-secondary hover:text-ink border border-border rounded-lg hover:bg-surface-subdued transition-colors"
+                className="btn-secondary auth-btn"
               >
                 {loading ? <Loader2 size={16} className="animate-spin mx-auto" /> : "Switch Account / Logout"}
               </button>
@@ -266,13 +263,13 @@ function AuthForm() {
       <BrandPanel />
       <AuthRightPanel>
         {/* Mobile Header (Brand Logo & Back to Home) */}
-        <div className="lg:hidden flex items-center justify-between w-full mb-6 pb-3 border-b border-border">
+        <div className="mb-6 flex w-full items-center justify-between border-b-[1.5px] border-hair pb-3 lg:hidden">
           <StudyHubLogo href="/" size="sm" />
           <Link
             href="/"
-            className="inline-flex items-center gap-1.5 text-xs font-medium text-ink-secondary hover:text-ink transition-colors px-2.5 py-1 rounded-md border border-border bg-white shadow-2xs"
+            className="inline-flex items-center gap-1.5 font-mono text-[12px] uppercase tracking-wider text-mute hover:text-ink"
           >
-            <ArrowLeft size={12} className="text-accent" />
+            <ArrowLeft size={13} />
             Home
           </Link>
         </div>
@@ -285,23 +282,23 @@ function AuthForm() {
           <AuthHeading title="Start preparing." subtitle="Create your account and build your preparation path." />
         )}
 
-        <motion.div {...fade(0.12)}>
+        <motion.div>
           <GoogleButton />
         </motion.div>
 
-        <motion.div {...fade(0.16)}>
+        <motion.div>
           <AuthDivider label={mode === "login" ? "or email" : "or register email"} />
         </motion.div>
 
         {message && (
-          <motion.div {...fade(0.18)} className="p-3 mb-4 text-[13px] text-accent bg-accent-soft border border-accent-soft-border rounded-lg text-center font-medium">
+          <motion.div className="mb-4 rounded-xl border-[1.5px] border-[var(--accent-soft-border)] bg-[var(--accent-soft)] p-3 text-center text-[14px] font-medium text-accent-ink">
             {message}
           </motion.div>
         )}
 
         <form className="space-y-4" onSubmit={handleSubmit} noValidate>
           {mode === "signup" && (
-            <motion.div {...fade(0.2)}>
+            <motion.div>
               <TextField
                 id="signup-name"
                 label="Full name"
@@ -315,7 +312,7 @@ function AuthForm() {
             </motion.div>
           )}
           
-          <motion.div {...fade(0.2)}>
+          <motion.div>
             <TextField
               id="login-email"
               label="Email address"
@@ -328,7 +325,7 @@ function AuthForm() {
             />
           </motion.div>
 
-          <motion.div {...fade(0.26)}>
+          <motion.div>
             <PasswordField
               id="login-password"
               label="Password"
@@ -342,7 +339,7 @@ function AuthForm() {
           </motion.div>
 
           {mode === "signup" && (
-            <motion.div {...fade(0.28)}>
+            <motion.div>
               <PasswordField
                 id="signup-confirm"
                 label="Confirm password"
@@ -356,57 +353,49 @@ function AuthForm() {
           )}
 
           {mode === "login" ? (
-            <motion.div {...fade(0.3)} className="flex items-center gap-2 pt-0.5">
+            <motion.div className="flex items-center gap-2 pt-0.5">
               <input
                 id="remember"
                 type="checkbox"
                 checked={remember}
                 onChange={(e) => setRemember(e.target.checked)}
-                className="w-4 h-4 rounded border-border accent-accent"
+                className="size-4 accent-[var(--ink)]"
               />
-              <label htmlFor="remember" className="text-xs text-ink-secondary select-none">
+              <label htmlFor="remember" className="select-none text-[14px] text-body">
                 Remember this device for 30 days
               </label>
             </motion.div>
-          ) : (
-            <motion.p {...fade(0.36)} className="text-[11px] text-ink-tertiary leading-tight pt-1">
-              By creating an account, you agree to StudyHub&rsquo;s{" "}
-              <a href="#" className="underline hover:text-ink">
-                Terms of Study
-              </a>{" "}
-              and <a href="#" className="underline hover:text-ink">Honor Code</a>.
-            </motion.p>
-          )}
+          ) : null}
 
-          <motion.div {...fade(mode === "login" ? 0.34 : 0.4)}>
+          <motion.div>
             <button
               type="submit"
               disabled={loading}
-              className="w-full h-[50px] mt-2 inline-flex items-center justify-center gap-2 rounded-md bg-slate-950 hover:bg-slate-900 text-white font-medium text-[14.5px] shadow-xs active:translate-y-px transition-all disabled:opacity-60 cursor-pointer"
+              className="btn-primary auth-btn mt-2"
             >
               {loading ? (
                 <Loader2 size={16} className="animate-spin" />
               ) : (
                 <>
-                  {mode === "login" ? "Sign in" : "Create account"} <ArrowRight size={15} className="arrow" />
+                  {mode === "login" ? "Sign in" : "Create account"} <ArrowRight size={16} className="arrow" />
                 </>
               )}
             </button>
           </motion.div>
         </form>
 
-        <motion.p {...fade(0.4)} className="mt-6 text-center text-xs text-ink-secondary">
+        <motion.p className="mt-6 text-center text-[14px] text-body">
           {mode === "login" ? (
             <>
               Don&rsquo;t have an account?{" "}
-              <button onClick={() => setMode("signup")} type="button" className="text-accent hover:text-accent-hover font-semibold transition-colors">
+              <button onClick={() => setMode("signup")} type="button" className="font-semibold text-accent-ink hover:underline">
                 Create account
               </button>
             </>
           ) : (
             <>
               Already have an account?{" "}
-              <button onClick={() => setMode("login")} type="button" className="text-accent hover:text-accent-hover font-semibold transition-colors">
+              <button onClick={() => setMode("login")} type="button" className="font-semibold text-accent-ink hover:underline">
                 Sign in
               </button>
             </>
@@ -421,7 +410,7 @@ export default function LoginPage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-[var(--accent)]" />
+        <Loader2 className="size-8 animate-spin text-accent" />
       </div>
     }>
       <AuthForm />

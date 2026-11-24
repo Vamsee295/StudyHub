@@ -5,7 +5,7 @@ import { useState, useRef, useCallback, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import {
-  ArrowLeft, Bookmark, Building, Target, Lightbulb, History, MessageSquare,
+  ArrowLeft, Building, Target, Lightbulb,
   Play, UploadCloud, ChevronDown, RotateCcw, CheckCircle2, XCircle, ListChecks,
   Terminal, Loader2, AlertTriangle, Clock, MemoryStick
 } from "lucide-react";
@@ -14,6 +14,9 @@ import Editor from "@monaco-editor/react";
 import { getProblem, generateStarterCode } from "@/lib/problems/problemRegistry";
 import { problemStorage } from "@/lib/problems/problemStorage";
 import { executeCode, explainError } from "@/lib/execution/executionClient";
+import { MONACO_THEME, defineMonacoTheme } from "@/lib/monacoTheme";
+import { Badge } from "@/components/ui/Badge";
+import { buttonClass } from "@/components/ui/Button";
 import type { ExecutionResult, TestCaseResult } from "@/lib/execution/executionTypes";
 
 // ─── Status helpers ───────────────────────────────────────────────────────────
@@ -172,13 +175,13 @@ function TestCaseDetail({ tc }: { tc: TestCaseResult }) {
     <div className="space-y-3 text-xs font-mono">
       {/* Input */}
       <div>
-        <div className="text-[10px] font-semibold uppercase text-[var(--ink-tertiary)] mb-1 tracking-wider">
+        <div className="text-[10px] font-semibold uppercase text-mute mb-1 tracking-wider">
           Input
         </div>
-        <div className="bg-[var(--surface-subdued)] border border-[var(--border)] rounded-lg p-3 space-y-1 text-[var(--ink)]">
+        <div className="bg-paper-2 border border-hair rounded-lg p-3 space-y-1 text-ink">
           {Object.entries(tc.input).map(([key, val]) => (
             <div key={key}>
-              <span className="text-[var(--ink-secondary)] font-semibold">{key} = </span>
+              <span className="text-body font-semibold">{key} = </span>
               {JSON.stringify(val)}
             </div>
           ))}
@@ -188,18 +191,18 @@ function TestCaseDetail({ tc }: { tc: TestCaseResult }) {
       {/* Expected vs Actual */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
-          <div className="text-[10px] font-semibold uppercase text-[var(--ink-tertiary)] mb-1 tracking-wider">
+          <div className="text-[10px] font-semibold uppercase text-mute mb-1 tracking-wider">
             Expected Output
           </div>
-          <div className="bg-[var(--surface-subdued)] border border-[var(--border)] rounded-lg p-3 text-[var(--ink)]">
+          <div className="bg-paper-2 border border-hair rounded-lg p-3 text-ink">
             {JSON.stringify(tc.expectedOutput)}
           </div>
         </div>
         <div>
-          <div className="text-[10px] font-semibold uppercase text-[var(--ink-tertiary)] mb-1 tracking-wider flex items-center justify-between">
+          <div className="text-[10px] font-semibold uppercase text-mute mb-1 tracking-wider flex items-center justify-between">
             <span>Your Output</span>
             {tc.runtimeMs !== undefined && (
-              <span className="normal-case text-[var(--ink-tertiary)]">{tc.runtimeMs}ms</span>
+              <span className="normal-case text-mute">{tc.runtimeMs}ms</span>
             )}
           </div>
           <div className={clsx(
@@ -214,7 +217,7 @@ function TestCaseDetail({ tc }: { tc: TestCaseResult }) {
               ? JSON.stringify(tc.actualOutput)
               : tc.error
               ? <span className="italic">{tc.error}</span>
-              : <span className="text-[var(--ink-tertiary)] italic">No output</span>
+              : <span className="text-mute italic">No output</span>
             }
           </div>
         </div>
@@ -415,12 +418,12 @@ export default function ProblemWorkspace() {
 
   if (!problem) {
     return (
-      <div className="flex items-center justify-center h-full text-[var(--ink-secondary)]">
+      <div className="flex items-center justify-center h-full text-body">
         <div className="text-center space-y-2">
-          <AlertTriangle className="w-8 h-8 mx-auto text-amber-500" />
-          <p className="font-semibold">Problem #{problemId} not found.</p>
-          <Link href="/practice/problems" className="text-[var(--accent)] text-sm hover:underline">
-            ← Return to Problem Bank
+          <p className="eyebrow">Not found</p>
+          <p className="display text-[40px]">No problem #{problemId}</p>
+          <Link href="/practice/problems" className="text-[14px] font-semibold text-accent-ink hover:underline">
+            ← All problems
           </Link>
         </div>
       </div>
@@ -433,32 +436,14 @@ export default function ProblemWorkspace() {
   const isExecuting = isRunning || isSubmitting;
 
   return (
-    <div className="flex flex-col h-full bg-[var(--surface-subdued)]">
-      {/* Breadcrumb Bar */}
-      <div className="w-full bg-[var(--surface)] shadow-xs z-30 shrink-0 border-b border-[var(--border)]">
-        <div className="w-full px-4 sm:px-6 py-2 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3 flex-wrap text-sm">
-            <Link
-              className="flex items-center gap-1.5 text-[var(--accent)] font-medium hover:text-[var(--accent-hover)] transition-colors"
-              href="/practice/problems"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              <span>Problem Bank</span>
-            </Link>
-            <span className="text-[var(--border-strong)]">/</span>
-            <span className="font-mono text-xs px-2 py-0.5 rounded bg-[var(--surface-subdued)] text-[var(--ink)] font-semibold border border-[var(--border)]">
-              #{problem.id}
-            </span>
-            <span className="text-[var(--ink)] font-semibold truncate max-w-[200px] sm:max-w-md">
-              {problem.title}
-            </span>
-          </div>
-
-          <div className="flex items-center gap-2 shrink-0 text-xs font-medium text-emerald-700 bg-emerald-50 border border-emerald-100 px-3 py-1 rounded-md hidden sm:flex">
-            <CheckCircle2 className="w-3.5 h-3.5" />
-            Practice Sandbox (Streak Safe)
-          </div>
-        </div>
+    <div className="flex h-full flex-col bg-paper">
+      <div className="flex shrink-0 items-center gap-3 border-b-[1.5px] border-hair bg-paper px-4 py-2.5 sm:px-6">
+        <Link className="inline-flex items-center gap-1.5 font-mono text-[12px] uppercase tracking-wider text-mute hover:text-ink" href="/practice/problems">
+          <ArrowLeft className="size-3.5" />
+          Problems
+        </Link>
+        <span className="text-mute">/</span>
+        <span className="truncate text-[14px] font-semibold">{problem.title}</span>
       </div>
 
       {/* Main Canvas */}
@@ -466,76 +451,37 @@ export default function ProblemWorkspace() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-4 h-full">
 
           {/* LEFT: Problem Spec */}
-          <section className="lg:col-span-5 flex flex-col h-full overflow-y-auto rounded-xl bg-[var(--surface)] border border-[var(--border)] shadow-xs p-5 sm:p-6 space-y-6">
+          <section className="flex h-full flex-col space-y-6 overflow-y-auto rounded-2xl border-[1.5px] border-hair bg-card p-5 sm:p-6 lg:col-span-5">
 
-            {/* Header */}
-            <div className="flex flex-col gap-3 pb-4 border-b border-[var(--border)]">
-              <div className="flex items-center justify-between gap-3">
-                <h1 className="text-xl font-bold text-[var(--ink)] font-display">
-                  {problem.id}. {problem.title}
-                </h1>
-                <button
-                  className="text-[var(--ink-secondary)] hover:text-[var(--accent)] p-1.5 rounded hover:bg-[var(--surface-subdued)] transition-colors"
-                  title="Bookmark problem"
-                >
-                  <Bookmark className="w-5 h-5" />
-                </button>
-              </div>
-
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className={clsx(
-                  "px-2.5 py-1 rounded-md text-xs font-semibold border",
-                  problem.difficulty === "Easy" ? "bg-emerald-50 text-emerald-700 border-emerald-100"
-                    : problem.difficulty === "Medium" ? "bg-amber-50 text-amber-700 border-amber-100"
-                    : "bg-rose-50 text-rose-700 border-rose-100"
-                )}>
-                  {problem.difficulty}
-                </span>
+            <header className="flex flex-col gap-3 border-b-[1.5px] border-hair pb-5">
+              <p className="eyebrow">Problem {String(problem.id).padStart(2, "0")}</p>
+              <h1 className="display text-[34px] md:text-[40px]">{problem.title}</h1>
+              <div className="flex flex-wrap items-center gap-2">
+                <Badge variant={problem.difficulty === "Easy" ? "success" : problem.difficulty === "Medium" ? "warning" : "danger"}>{problem.difficulty}</Badge>
                 {problem.topics?.map((topic) => (
-                  <span
-                    key={topic}
-                    className="px-2.5 py-1 rounded-md bg-[var(--surface-subdued)] text-[var(--ink-secondary)] text-xs font-medium border border-[var(--border)]"
-                  >
-                    {topic}
-                  </span>
+                  <Badge key={topic}>{topic}</Badge>
                 ))}
-                {problem.acceptance && (
-                  <span className="ml-auto font-mono text-[11px] text-[var(--ink-tertiary)]">
-                    Acceptance: <strong className="text-[var(--ink)]">{problem.acceptance}</strong>
-                  </span>
-                )}
               </div>
-
               {problem.companies && problem.companies.length > 0 && (
-                <div className="flex items-center gap-2 text-[var(--ink-secondary)] text-xs font-medium flex-wrap">
-                  <Building className="w-4 h-4 shrink-0" />
-                  <span title={ASKED_IN_CAVEAT}>Topic reported in interviews at:</span>
-                  {problem.companies.map((comp) => (
-                    <span
-                      key={comp}
-                      title={ASKED_IN_CAVEAT}
-                      className="px-1.5 py-0.5 rounded bg-[var(--surface-subdued)] font-mono text-[var(--ink)] border border-[var(--border)]"
-                    >
-                      {comp}
-                    </span>
-                  ))}
-                </div>
+                <p className="flex flex-wrap items-center gap-1.5 text-[13px] text-mute" title={ASKED_IN_CAVEAT}>
+                  <Building className="size-4 shrink-0" />
+                  Topic reported at {problem.companies.join(", ")}
+                </p>
               )}
-            </div>
+            </header>
 
             {/* Problem Body */}
-            <article className="space-y-5 text-[var(--ink)] text-[14px] leading-relaxed">
+            <article className="space-y-5 text-[16px] leading-relaxed">
               {problem.description?.map((p, idx) => (
                 <p key={idx}>{p}</p>
               ))}
 
               {problem.objective && (
-                <div className="rounded-lg bg-[var(--accent-soft)] p-4 space-y-2 border border-[var(--accent-soft-border)]">
-                  <div className="flex items-center gap-2 text-[var(--accent)] text-sm font-semibold">
-                    <Target className="w-4 h-4" />
-                    <span>Algorithmic Objective</span>
-                  </div>
-                  <p className="text-sm text-[var(--ink-secondary)] font-mono">
+                <div className="space-y-1.5 rounded-xl border-[1.5px] border-hair bg-paper-2 p-4">
+                  <p className="eyebrow flex items-center gap-1.5">
+                    <Target className="size-3.5" /> Goal
+                  </p>
+                  <p className="font-mono text-[13px] text-ink">
                     {problem.objective}
                   </p>
                 </div>
@@ -543,14 +489,14 @@ export default function ProblemWorkspace() {
 
               {problem.visibleTests && problem.visibleTests.length > 0 && (
                 <div className="space-y-3 pt-2">
-                  <h4 className="text-[11px] uppercase tracking-wider text-[var(--ink-secondary)] font-bold">Examples</h4>
+                  <h4 className="text-[11px] uppercase tracking-wider text-body font-bold">Examples</h4>
                   {problem.visibleTests.map((tc, i) => (
-                    <div key={tc.id} className="bg-[var(--surface-subdued)] rounded-lg p-3 font-mono text-xs space-y-1.5 border border-[var(--border)]">
-                      <div className="text-[10px] text-[var(--ink-secondary)] uppercase font-semibold">Example {i + 1}</div>
-                      <div><span className="text-[var(--ink-secondary)] font-semibold">Input:</span>{" "}
+                    <div key={tc.id} className="bg-paper-2 rounded-lg p-3 font-mono text-xs space-y-1.5 border border-hair">
+                      <div className="text-[10px] text-body uppercase font-semibold">Example {i + 1}</div>
+                      <div><span className="text-body font-semibold">Input:</span>{" "}
                         {Object.entries(tc.input).map(([k, v]) => `${k} = ${JSON.stringify(v)}`).join(", ")}
                       </div>
-                      <div><span className="text-[var(--ink-secondary)] font-semibold">Output:</span> {JSON.stringify(tc.expectedOutput)}</div>
+                      <div><span className="text-body font-semibold">Output:</span> {JSON.stringify(tc.expectedOutput)}</div>
                     </div>
                   ))}
                 </div>
@@ -558,10 +504,10 @@ export default function ProblemWorkspace() {
 
               {problem.constraints && problem.constraints.length > 0 && (
                 <div className="space-y-2 pt-2">
-                  <h4 className="text-[11px] uppercase tracking-wider text-[var(--ink-secondary)] font-bold">Constraints</h4>
-                  <ul className="space-y-1 font-mono text-xs text-[var(--ink-secondary)] list-disc pl-5">
+                  <h4 className="text-[11px] uppercase tracking-wider text-body font-bold">Constraints</h4>
+                  <ul className="space-y-1 font-mono text-xs text-body list-disc pl-5">
                     {problem.constraints.map((c, idx) => (
-                      <li key={idx}><code className="text-[var(--ink)]">{c}</code></li>
+                      <li key={idx}><code className="text-ink">{c}</code></li>
                     ))}
                   </ul>
                 </div>
@@ -570,61 +516,49 @@ export default function ProblemWorkspace() {
 
             {/* Hint */}
             {hintOpen && problem.hint && (
-              <div className="p-4 bg-amber-50 rounded-lg border border-amber-200 text-sm space-y-2">
-                <div className="font-semibold text-amber-800 flex items-center gap-2">
-                  <Lightbulb className="w-4 h-4" />Pattern Clue:
-                </div>
-                <p className="text-amber-900/80 leading-relaxed font-sans">
+              <div className="fade-in space-y-1.5 rounded-xl border-[1.5px] border-[var(--warning-soft-border)] bg-[var(--warning-soft)] p-4">
+                <p className="flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-wider text-[var(--warning)]">
+                  <Lightbulb className="size-3.5" /> Hint
+                </p>
+                <p className="text-[15px] leading-relaxed">
                   {problem.hint}
                 </p>
               </div>
             )}
 
-            {/* Footer actions */}
-            <div className="mt-auto pt-4">
-              <div className="flex flex-wrap items-center justify-between gap-2 bg-[var(--surface-subdued)] border border-[var(--border)] p-3 rounded-xl">
-                <div className="flex items-center gap-2">
-                  {problem.hint && (
-                    <button
-                      onClick={() => setHintOpen(!hintOpen)}
-                      className="px-3 py-1.5 rounded-lg bg-[var(--surface)] border border-[var(--border)] hover:bg-gray-50 text-[var(--ink)] text-xs font-semibold flex items-center gap-1.5 transition-colors"
-                    >
-                      <Lightbulb className="w-4 h-4 text-amber-500" />{hintOpen ? "Hide Hint" : "View Hint"}
-                    </button>
-                  )}
-                  <button className="px-3 py-1.5 rounded-lg bg-[var(--surface)] border border-[var(--border)] hover:bg-gray-50 text-[var(--ink)] text-xs font-semibold flex items-center gap-1.5 transition-colors">
-                    <History className="w-4 h-4 text-[var(--ink-tertiary)]" />Submissions
-                  </button>
-                </div>
-                <button className="text-[var(--ink-secondary)] hover:text-[var(--ink)] text-xs font-medium flex items-center gap-1.5 transition-colors px-2">
-                  <MessageSquare className="w-4 h-4" />Discussion
+            {problem.hint && (
+              <div className="mt-auto pt-2">
+                <button onClick={() => setHintOpen(!hintOpen)} className={buttonClass("secondary", "sm")} aria-expanded={hintOpen}>
+                  <Lightbulb className="size-4" />
+                  {hintOpen ? "Hide hint" : "Show hint"}
                 </button>
               </div>
-            </div>
+            )}
           </section>
 
           {/* RIGHT: Monaco + Console */}
-          <section className="lg:col-span-7 flex flex-col h-full rounded-xl bg-[var(--surface)] border border-[var(--border)] shadow-xs overflow-hidden">
+          <section className="brut flex h-full flex-col overflow-hidden rounded-2xl bg-card lg:col-span-7">
 
             {/* Editor Toolbar */}
-            <div className="h-12 px-4 bg-[var(--surface-subdued)] border-b border-[var(--border)] flex items-center justify-between gap-4 select-none shrink-0">
+            <div className="h-14 px-3 bg-paper-2 border-b-[1.5px] border-hair flex items-center justify-between gap-4 select-none shrink-0">
               <div className="relative">
                 <select
                   value={language}
                   onChange={(e) => setLanguage(e.target.value)}
-                  className="appearance-none h-8 pl-3 pr-8 bg-[var(--surface)] border border-[var(--border)] rounded-md font-mono text-xs font-medium text-[var(--ink)] cursor-pointer focus:outline-none focus:border-[var(--accent)] hover:bg-gray-50 transition-colors"
+                  aria-label="Language"
+                  className="h-9 cursor-pointer appearance-none rounded-xl border-2 border-hair bg-card pl-3 pr-8 font-mono text-[12px] focus:border-accent"
                 >
                   <option value="java">Java (OpenJDK 21)</option>
                   <option value="python">Python 3.12</option>
                   <option value="cpp">C++ 17</option>
                 </select>
-                <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--ink-tertiary)] pointer-events-none" />
+                <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-mute pointer-events-none" />
               </div>
 
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setCode(getInitialCode())}
-                  className="h-8 px-2.5 rounded-md hover:bg-gray-200 text-[var(--ink-secondary)] hover:text-[var(--ink)] text-xs font-medium flex items-center gap-1.5 transition-colors"
+                  className={buttonClass("ghost", "sm")}
                   title="Reset to starter code"
                 >
                   <RotateCcw className="w-3.5 h-3.5" />
@@ -633,30 +567,31 @@ export default function ProblemWorkspace() {
                 <button
                   onClick={handleRun}
                   disabled={isExecuting}
-                  className="h-8 px-3 rounded-md bg-[var(--surface)] border border-[var(--border)] hover:bg-gray-50 text-[var(--ink)] text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                  className={buttonClass("secondary", "sm")}
                 >
-                  {isRunning ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Play className="w-3.5 h-3.5 text-[var(--success)]" />}
+                  {isRunning ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Play className="size-3.5" />}
                   <span>{isRunning ? "Running…" : "Run"}</span>
-                  <kbd className="font-mono text-[10px] text-[var(--ink-tertiary)] ml-1 hidden md:inline">⌘↵</kbd>
+                  <kbd className="ml-1 hidden font-mono text-[10px] normal-case opacity-60 md:inline">⌘↵</kbd>
                 </button>
                 <button
                   onClick={handleSubmit}
                   disabled={isExecuting}
-                  className="h-8 px-4 rounded-md bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white text-xs font-semibold flex items-center gap-1.5 transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                  className={buttonClass("primary", "sm")}
                 >
                   {isSubmitting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <UploadCloud className="w-3.5 h-3.5" />}
                   <span>{isSubmitting ? "Submitting…" : "Submit"}</span>
-                  <kbd className="font-mono text-[10px] text-white/70 ml-1 hidden md:inline">⌘⇧↵</kbd>
+                  <kbd className="ml-1 hidden font-mono text-[10px] normal-case opacity-60 md:inline">⌘⇧↵</kbd>
                 </button>
               </div>
             </div>
 
             {/* Monaco */}
-            <div className="flex-1 bg-[#0F172A] min-h-0">
+            <div className="min-h-0 flex-1 bg-night">
               <Editor
                 height="100%"
                 language={language}
-                theme="vs-dark"
+                theme={MONACO_THEME}
+                beforeMount={defineMonacoTheme}
                 value={code}
                 onChange={(val) => setCode(val || "")}
                 onMount={handleEditorDidMount}
@@ -674,13 +609,13 @@ export default function ProblemWorkspace() {
             </div>
 
             {/* Execution Console */}
-            <div className="h-72 flex flex-col bg-[var(--surface)] shrink-0 border-t border-[var(--border)]">
+            <div className="h-72 flex flex-col bg-card shrink-0 border-t border-hair">
 
               {/* Console Tabs */}
-              <div className="h-10 px-4 bg-[var(--surface-subdued)] border-b border-[var(--border)] flex items-center justify-between shrink-0 overflow-x-auto scrollbar-none">
+              <div className="h-11 px-3 bg-paper-2 border-b-[1.5px] border-hair flex items-center justify-between shrink-0 overflow-x-auto scrollbar-none">
                 <div className="flex items-center gap-0.5 h-full">
                   {(["testCases", "testResult", "stdout"] as const).map((tab) => {
-                    const labels = { testCases: "Test Cases", testResult: "Test Result", stdout: "Stdout" };
+                    const labels = { testCases: "Test cases", testResult: "Result", stdout: "Output" };
                     const icons = {
                       testCases: <ListChecks className="w-3.5 h-3.5" />,
                       testResult: execResult
@@ -695,10 +630,8 @@ export default function ProblemWorkspace() {
                         key={tab}
                         onClick={() => setConsoleTab(tab)}
                         className={clsx(
-                          "h-full px-3 text-xs font-semibold flex items-center gap-1.5 transition-colors border-b-2 whitespace-nowrap",
-                          consoleTab === tab
-                            ? "text-[var(--ink)] border-[var(--accent)] bg-[var(--surface)]"
-                            : "text-[var(--ink-secondary)] border-transparent hover:text-[var(--ink)] hover:bg-gray-50"
+                          "label-cond flex h-full items-center gap-1.5 whitespace-nowrap border-b-2 px-3 text-[14px] transition-colors",
+                          consoleTab === tab ? "border-accent bg-card text-ink" : "border-transparent text-body hover:text-ink"
                         )}
                       >
                         {icons[tab]}
@@ -754,8 +687,8 @@ export default function ProblemWorkspace() {
                             className={clsx(
                               "px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 border transition-colors",
                               selectedCase === i
-                                ? "bg-[var(--surface-subdued)] border-[var(--border-strong)] text-[var(--ink)]"
-                                : "border-transparent text-[var(--ink-secondary)] hover:bg-[var(--surface-subdued)] hover:text-[var(--ink)]"
+                                ? "bg-paper-2 border-[var(--border-strong)] text-ink"
+                                : "border-transparent text-body hover:bg-paper-2 hover:text-ink"
                             )}
                           >
                             Case {i + 1}
@@ -771,24 +704,24 @@ export default function ProblemWorkspace() {
                     ) : selectedTestCase ? (
                       <div className="font-mono text-xs space-y-3">
                         <div>
-                          <div className="text-[10px] font-semibold uppercase text-[var(--ink-tertiary)] mb-1 tracking-wider">Input</div>
-                          <div className="bg-[var(--surface-subdued)] border border-[var(--border)] rounded-lg p-3 space-y-1 text-[var(--ink)]">
+                          <div className="text-[10px] font-semibold uppercase text-mute mb-1 tracking-wider">Input</div>
+                          <div className="bg-paper-2 border border-hair rounded-lg p-3 space-y-1 text-ink">
                             {Object.entries(selectedTestCase.input).map(([key, val]) => (
                               <div key={key}>
-                                <span className="text-[var(--ink-secondary)] font-semibold">{key} = </span>
+                                <span className="text-body font-semibold">{key} = </span>
                                 {JSON.stringify(val)}
                               </div>
                             ))}
                           </div>
                         </div>
                         <div>
-                          <div className="text-[10px] font-semibold uppercase text-[var(--ink-tertiary)] mb-1 tracking-wider">Expected Output</div>
-                          <div className="bg-[var(--surface-subdued)] border border-[var(--border)] rounded-lg p-3 text-[var(--ink)]">
+                          <div className="text-[10px] font-semibold uppercase text-mute mb-1 tracking-wider">Expected Output</div>
+                          <div className="bg-paper-2 border border-hair rounded-lg p-3 text-ink">
                             {JSON.stringify(selectedTestCase.expectedOutput)}
                           </div>
                         </div>
                         {isExecuting && (
-                          <div className="flex items-center gap-2 text-[var(--ink-secondary)] text-xs">
+                          <div className="flex items-center gap-2 text-body text-xs">
                             <Loader2 className="w-4 h-4 animate-spin" />
                             <span>Executing…</span>
                           </div>
@@ -802,7 +735,7 @@ export default function ProblemWorkspace() {
                 {consoleTab === "testResult" && !execError && (
                   <div className="space-y-4">
                     {isExecuting ? (
-                      <div className="flex items-center gap-3 text-[var(--ink-secondary)] text-sm py-4">
+                      <div className="flex items-center gap-3 text-body text-sm py-4">
                         <Loader2 className="w-5 h-5 animate-spin" />
                         <span>Compiling and running your code…</span>
                       </div>
@@ -843,7 +776,7 @@ export default function ProblemWorkspace() {
                               const failedCase = execResult.testResults.find(r => r.status !== "passed");
                               return failedCase ? (
                                 <div className="pt-1">
-                                  <div className="text-[11px] font-semibold uppercase text-[var(--ink-tertiary)] tracking-wider mb-2">
+                                  <div className="text-[11px] font-semibold uppercase text-mute tracking-wider mb-2">
                                     First Failing Test Case
                                   </div>
                                   <TestCaseDetail tc={failedCase} />
@@ -854,8 +787,8 @@ export default function ProblemWorkspace() {
                         )}
                       </>
                     ) : (
-                      <div className="text-[var(--ink-tertiary)] text-sm py-4">
-                        Click <strong className="text-[var(--ink)]">Run</strong> to see test results here.
+                      <div className="text-mute text-sm py-4">
+                        Click <strong className="text-ink">Run</strong> to see test results here.
                       </div>
                     )}
                   </div>
@@ -863,7 +796,7 @@ export default function ProblemWorkspace() {
 
                 {/* ── STDOUT TAB ── */}
                 {consoleTab === "stdout" && !execError && (
-                  <div className="font-mono text-xs text-[var(--ink-secondary)]">
+                  <div className="font-mono text-xs text-body">
                     {isExecuting ? (
                       <span className="flex items-center gap-2">
                         <Loader2 className="w-4 h-4 animate-spin" />Running…

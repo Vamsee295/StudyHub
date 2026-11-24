@@ -9,7 +9,7 @@ export function PreviewSnapshotSection() {
         
         {/* Left Side: Preview Image / Mock Document */}
         <div className="flex-1 rounded-xl bg-white border border-[var(--border)] shadow-sm overflow-hidden flex flex-col relative">
-          <div className="bg-[#f8fafc] border-b border-[var(--border)] px-4 py-2.5 flex items-center gap-2">
+          <div className="bg-paper border-b border-[var(--border)] px-4 py-2.5 flex items-center gap-2">
             <div className="flex gap-1.5">
               <div className="w-2.5 h-2.5 rounded-full bg-[#ff5f56]"></div>
               <div className="w-2.5 h-2.5 rounded-full bg-[#ffbd2e]"></div>
@@ -25,13 +25,13 @@ export function PreviewSnapshotSection() {
               "Tell me about yourself"
             </h4>
             <p className="mb-4">
-              I am a <span className="bg-[#fef9c3] text-[#ca8a04] px-1 py-0.5 rounded border border-[#fef08a]">[YEAR]</span> student at <span className="bg-[#fef9c3] text-[#ca8a04] px-1 py-0.5 rounded border border-[#fef08a]">[UNIVERSITY]</span>. Over the last year, I’ve specialized in <span className="bg-[#fef9c3] text-[#ca8a04] px-1 py-0.5 rounded border border-[#fef08a]">[TECH STACK]</span>. 
+              I am a <span className="bg-amber-100 text-amber-600 px-1 py-0.5 rounded border border-amber-200">[YEAR]</span> student at <span className="bg-amber-100 text-amber-600 px-1 py-0.5 rounded border border-amber-200">[UNIVERSITY]</span>. Over the last year, I’ve specialized in <span className="bg-amber-100 text-amber-600 px-1 py-0.5 rounded border border-amber-200">[TECH STACK]</span>. 
             </p>
             <p className="mb-4">
-              My most significant project was <span className="bg-[#fef9c3] text-[#ca8a04] px-1 py-0.5 rounded border border-[#fef08a]">[PROJECT NAME]</span> where I solved <span className="bg-[#fef9c3] text-[#ca8a04] px-1 py-0.5 rounded border border-[#fef08a]">[PROBLEM]</span>. This taught me how to scale systems for real users. 
+              My most significant project was <span className="bg-amber-100 text-amber-600 px-1 py-0.5 rounded border border-amber-200">[PROJECT NAME]</span> where I solved <span className="bg-amber-100 text-amber-600 px-1 py-0.5 rounded border border-amber-200">[PROBLEM]</span>. This taught me how to scale systems for real users. 
             </p>
             <p>
-              I’m interviewing for this role because <span className="bg-[#fef9c3] text-[#ca8a04] px-1 py-0.5 rounded border border-[#fef08a]">[COMPANY MISSION]</span> aligns with my engineering goals.
+              I’m interviewing for this role because <span className="bg-amber-100 text-amber-600 px-1 py-0.5 rounded border border-amber-200">[COMPANY MISSION]</span> aligns with my engineering goals.
             </p>
 
             <div className="absolute inset-0 bg-gradient-to-t from-white via-white/40 to-transparent"></div>

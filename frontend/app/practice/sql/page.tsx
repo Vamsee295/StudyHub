@@ -7,8 +7,8 @@ import { Database } from "lucide-react";
 const SQLLab = dynamic(() => import("@/components/sql/SQLLab"), {
   ssr: false,
   loading: () => (
-    <div className="flex flex-col h-[calc(100vh-64px)] w-full bg-[var(--surface-subdued)] items-center justify-center text-[var(--ink-secondary)] gap-4">
-      <Database className="w-8 h-8 animate-pulse text-emerald-500 opacity-50" />
+    <div className="flex h-full w-full flex-col bg-paper-2 items-center justify-center text-body gap-4">
+      <Database className="w-8 h-8 animate-pulse text-accent" />
       <div className="text-sm">Initializing SQL Engine...</div>
     </div>
   )

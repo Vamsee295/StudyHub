@@ -23,6 +23,7 @@ import Step4Targets from '@/components/onboarding/Step4Targets';
 import StepCompletionOverlay from '@/components/onboarding/StepCompletionOverlay';
 import WizardNav from '@/components/onboarding/WizardNav';
 import { StudyHubLogo } from '@/components/ui/StudyHubLogo';
+import { buttonClass } from '@/components/ui/Button';
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -67,8 +68,8 @@ export default function OnboardingPage() {
 
   if (!isClient || profileLoading) {
     return (
-      <div className="min-h-screen bg-[#fafaf8] grid-texture flex items-center justify-center">
-        <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
+      <div className="flex min-h-screen items-center justify-center">
+        <Loader2 className="size-8 animate-spin text-accent" />
       </div>
     );
   }
@@ -171,172 +172,73 @@ export default function OnboardingPage() {
     return true;
   };
 
-  const stepLabels = [
-    { num: '01', title: 'IDENTITY' },
-    { num: '02', title: 'CAREER' },
-    { num: '03', title: 'SKILLS' },
-    { num: '04', title: 'GOALS' },
-  ];
+  const stepLabels = ['About you', 'Career', 'Skills', 'Goals'];
 
   return (
-    <div className="min-h-screen bg-[#fafaf8] grid-texture text-slate-900 flex flex-col justify-between">
-      {/* Header */}
-      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-          <StudyHubLogo href="/onboarding" size="md" showBadge={false} />
-
-          <div className="flex items-center gap-4 sm:gap-6">
-            <div className="hidden sm:flex items-center gap-2 text-xs font-mono text-slate-500">
-              <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>
-              <span>Profile Setup // First-Time Initialization</span>
-            </div>
-
-            <div className="flex items-center gap-2.5">
-              <button 
-                onClick={handleSkipForNow} 
-                className="inline-flex items-center gap-1.5 text-xs font-mono font-semibold text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100/80 border border-blue-200 px-3.5 py-1.5 rounded-lg transition-colors cursor-pointer shadow-2xs"
-                title="Skip onboarding and go directly to dashboard"
-              >
-                <span>Skip for now</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-
-              <button 
-                onClick={handleSaveAndExit} 
-                className="text-xs font-mono font-medium text-slate-600 hover:text-slate-900 px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-100 transition-colors"
-              >
-                Save &amp; Exit
-              </button>
-              
-              <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center shrink-0">
-                <User className="w-4 h-4" />
-              </div>
-            </div>
+    <div className="flex min-h-screen flex-col">
+      <header className="sticky top-0 z-50 border-b-[2.4px] border-line bg-paper/95 backdrop-blur">
+        <div className="mx-auto flex h-16 max-w-5xl items-center justify-between gap-3 px-4 sm:px-6">
+          <StudyHubLogo href="/onboarding" size="md" />
+          <div className="flex items-center gap-2">
+            <button onClick={handleSaveAndExit} className={buttonClass('ghost', 'sm')} title="Save what you've entered and go to the dashboard">
+              Save &amp; exit
+            </button>
+            <button onClick={handleSkipForNow} className={buttonClass('secondary', 'sm')} title="Skip setup and go straight to the dashboard">
+              Skip for now <ArrowRight className="size-4" />
+            </button>
           </div>
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="w-full flex-1 flex flex-col items-center px-4 sm:px-6 py-8 md:py-10">
-        <div className="w-full max-w-3xl flex flex-col gap-6">
-          
-          {/* Progress Ribbon */}
-          <div className="flex flex-col gap-3">
-            <div className="flex items-center justify-between text-xs font-mono text-slate-500">
-              <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-blue-600"></span>
-                <span className="font-semibold uppercase tracking-wider">PATHWARD PROFILE SETUP // STEP-BY-STEP</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <span className="px-2.5 py-0.5 rounded-md bg-white border border-slate-200 text-slate-800 font-bold">
-                  {currentStep <= 4 ? `STEP 0${currentStep} OF 04 • ${Math.round((currentStep / 4) * 100)}%` : 'CALIBRATION 100%'}
-                </span>
-                <span className="hidden md:inline text-slate-300">|</span>
-                <span className="hidden md:inline text-slate-500">CYCLE 2026</span>
-              </div>
-            </div>
-            
-            {/* Steps Navigator */}
-            <nav className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 w-full">
-              {stepLabels.map((step, idx) => {
-                const stepNum = idx + 1;
-                const isActive = currentStep === stepNum;
-                const isCompleted = currentStep > stepNum;
-                
-                return (
-                  <button 
-                    key={stepNum}
-                    onClick={() => handleJump(stepNum)}
-                    type="button"
-                    className={`flex flex-col gap-2 p-3 rounded-xl text-left border transition-all ${
-                      isActive 
-                        ? 'bg-blue-50/70 border-blue-400 shadow-xs' 
-                        : isCompleted
-                        ? 'bg-white border-slate-200 hover:border-slate-300'
-                        : 'bg-slate-50/80 border-slate-200/80 hover:bg-white text-slate-400'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className={`text-xs font-mono font-bold tracking-wider ${
-                        isActive ? 'text-blue-700' : isCompleted ? 'text-slate-800' : 'text-slate-400'
-                      }`}>
-                        {step.num}. {step.title}
-                      </span>
-                      {isCompleted ? (
-                        <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                      ) : isActive ? (
-                        <CircleDot className="w-4 h-4 text-blue-600 shrink-0" />
-                      ) : (
-                        <Circle className="w-4 h-4 text-slate-300 shrink-0" />
-                      )}
-                    </div>
-                    
-                    {/* Tiny Progress Bar per step */}
-                    <div className="h-1 w-full rounded-full bg-slate-100 overflow-hidden">
-                      <div 
-                        className={`h-full rounded-full transition-all duration-300 ${
-                          isCompleted ? 'w-full bg-emerald-500' : isActive ? 'w-full bg-blue-600' : 'w-0'
-                        }`}
-                      />
-                    </div>
-                  </button>
-                );
-              })}
-            </nav>
+      <main className="flex w-full flex-1 flex-col items-center px-4 py-8 sm:px-6 md:py-12">
+        <div className="flex w-full max-w-3xl flex-col gap-6">
+          <div>
+            <p className="eyebrow mb-2">{currentStep <= 4 ? `Step ${currentStep} of 4` : 'All set'}</p>
+            <h1 className="display text-[44px] md:text-[60px]">
+              Set up your <span className="hl">plan</span>
+            </h1>
+            <p className="note mt-2 -rotate-1">takes about two minutes</p>
           </div>
 
-          {/* Form Container Card */}
-          <div className="w-full bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-xs flex flex-col gap-6">
-            {currentStep === 1 && (
-              <Step1Identity data={profile.identity!} update={updateIdentity} />
-            )}
-            {currentStep === 2 && (
-              <Step2Career data={profile.careerTracks!} update={updateCareerTracks} />
-            )}
-            {currentStep === 3 && (
-              <Step3Baseline data={profile.skillBaseline!} update={updateSkillBaseline} />
-            )}
-            {currentStep === 4 && (
-              <Step4Targets data={profile.targets!} update={updateTargets} />
-            )}
+          <nav aria-label="Setup steps" className="grid grid-cols-4 gap-2">
+            {stepLabels.map((label, idx) => {
+              const stepNum = idx + 1;
+              const isActive = currentStep === stepNum;
+              const isCompleted = currentStep > stepNum;
+              return (
+                <button
+                  key={label}
+                  onClick={() => handleJump(stepNum)}
+                  type="button"
+                  aria-current={isActive ? 'step' : undefined}
+                  className="no-press group flex flex-col gap-2 text-left"
+                >
+                  <span className={`h-1.5 w-full rounded-full ${isCompleted ? 'bg-note' : isActive ? 'bg-accent' : 'bg-ink/10'}`} />
+                  <span className={`flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-wider ${isActive ? 'text-ink' : 'text-mute group-hover:text-ink'}`}>
+                    {isCompleted && <CheckCircle2 className="size-3.5 text-note" aria-label="Done" />}
+                    <span className="hidden sm:inline">0{stepNum} ·</span> {label}
+                  </span>
+                </button>
+              );
+            })}
+          </nav>
+
+          <div className="brut flex w-full flex-col gap-6 rounded-2xl bg-card p-6 sm:p-8">
+            {currentStep === 1 && <Step1Identity data={profile.identity!} update={updateIdentity} />}
+            {currentStep === 2 && <Step2Career data={profile.careerTracks!} update={updateCareerTracks} />}
+            {currentStep === 3 && <Step3Baseline data={profile.skillBaseline!} update={updateSkillBaseline} />}
+            {currentStep === 4 && <Step4Targets data={profile.targets!} update={updateTargets} />}
             {currentStep === 5 && (
               <StepCompletionOverlay profile={profile as UserProfile} onComplete={handleComplete} onEdit={() => handleJump(1)} />
             )}
-            
-            {/* Bottom Navigation */}
             {currentStep <= 4 && (
-              <WizardNav 
-                currentStep={currentStep} 
-                handleNext={handleNext} 
-                handleBack={handleBack} 
-                handleSkip={handleSkipForNow}
-                isValid={isStepValid()} 
-              />
+              <WizardNav currentStep={currentStep} handleNext={handleNext} handleBack={handleBack} isValid={isStepValid()} />
             )}
           </div>
-          
-          {/* Metadata Footer */}
-          <div className="flex flex-col sm:flex-row items-center justify-between text-xs font-mono text-slate-400 gap-2 px-1">
-            <div className="flex items-center gap-1.5">
-              <Lock className="w-3.5 h-3.5 text-blue-600" />
-              <span>Profile synchronization active • Data encrypted</span>
-            </div>
-            <div>PATHWARD ONBOARDING // 2026-27 PLACEMENTS</div>
-          </div>
 
+          <p className="text-center font-mono text-[12px] text-mute">You can change any of this later in your profile.</p>
         </div>
       </main>
-
-      {/* Footer */}
-      <footer className="w-full bg-white border-t border-slate-200 py-4 px-4 sm:px-6">
-        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-mono text-slate-500">
-          <div>PATHWARD Placement Engine • System Calibration Cycle v2.4 (Verified)</div>
-          <div className="flex items-center gap-6">
-            <a className="hover:text-slate-900 transition-colors" href="#">Privacy &amp; Data Ethics</a>
-            <a className="hover:text-slate-900 transition-colors" href="#">Diagnostic Telemetry</a>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }

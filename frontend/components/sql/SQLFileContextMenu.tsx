@@ -89,64 +89,64 @@ export default function SQLFileContextMenu({
       >
         <div 
           ref={menuRef}
-          className="bg-[var(--surface)] border-t border-[var(--border)] rounded-t-2xl p-4 w-full max-w-lg mx-auto shadow-2xl animate-in slide-in-from-bottom duration-200"
+          className="bg-card border-t border-hair rounded-t-2xl p-4 w-full max-w-lg mx-auto shadow-2xl animate-in slide-in-from-bottom duration-200"
           onClick={e => e.stopPropagation()}
         >
           {/* Header handle & file name */}
           <div className="w-10 h-1 bg-[var(--border-strong)] rounded-full mx-auto mb-3" />
-          <div className="flex items-center gap-2 px-2 pb-3 border-b border-[var(--border)] mb-2">
+          <div className="flex items-center gap-2 px-2 pb-3 border-b border-hair mb-2">
             <FileCode2 className="w-4 h-4 text-blue-500" />
-            <span className="text-sm font-semibold text-[var(--ink)] truncate">{file.name}</span>
+            <span className="text-sm font-semibold text-ink truncate">{file.name}</span>
           </div>
 
           <div className="flex flex-col gap-1">
             <button
               type="button"
-              className="w-full text-left px-3 py-2.5 text-sm rounded-lg text-[var(--ink)] active:bg-[var(--surface-subdued)] flex items-center justify-between"
+              className="w-full text-left px-3 py-2.5 text-sm rounded-lg text-ink active:bg-paper-2 flex items-center justify-between"
               onClick={() => {
                 onRename(file);
                 onClose();
               }}
             >
               <div className="flex items-center gap-2.5">
-                <Edit2 className="w-4 h-4 text-[var(--ink-secondary)]" />
+                <Edit2 className="w-4 h-4 text-body" />
                 <span>Rename</span>
               </div>
-              <span className="text-xs text-[var(--ink-tertiary)] font-mono">F2</span>
+              <span className="text-xs text-mute font-mono">F2</span>
             </button>
 
             <button
               type="button"
-              className="w-full text-left px-3 py-2.5 text-sm rounded-lg text-[var(--ink)] active:bg-[var(--surface-subdued)] flex items-center justify-between"
+              className="w-full text-left px-3 py-2.5 text-sm rounded-lg text-ink active:bg-paper-2 flex items-center justify-between"
               onClick={() => {
                 onDuplicate(file);
                 onClose();
               }}
             >
               <div className="flex items-center gap-2.5">
-                <Copy className="w-4 h-4 text-[var(--ink-secondary)]" />
+                <Copy className="w-4 h-4 text-body" />
                 <span>Duplicate</span>
               </div>
-              <span className="text-xs text-[var(--ink-tertiary)] font-mono">Ctrl+D</span>
+              <span className="text-xs text-mute font-mono">Ctrl+D</span>
             </button>
 
             {isTabOpen && (
               <button
                 type="button"
-                className="w-full text-left px-3 py-2.5 text-sm rounded-lg text-[var(--ink)] active:bg-[var(--surface-subdued)] flex items-center justify-between"
+                className="w-full text-left px-3 py-2.5 text-sm rounded-lg text-ink active:bg-paper-2 flex items-center justify-between"
                 onClick={() => {
                   onCloseTab(file);
                   onClose();
                 }}
               >
                 <div className="flex items-center gap-2.5">
-                  <X className="w-4 h-4 text-[var(--ink-secondary)]" />
+                  <X className="w-4 h-4 text-body" />
                   <span>Close Tab</span>
                 </div>
               </button>
             )}
 
-            <div className="h-px bg-[var(--border)] my-1" />
+            <div className="h-px bg-hair my-1" />
 
             <button
               type="button"
@@ -174,7 +174,7 @@ export default function SQLFileContextMenu({
       ref={menuRef}
       role="menu"
       aria-label={`Options for ${file.name}`}
-      className="fixed z-50 bg-[var(--surface)] border border-[var(--border)] shadow-xl rounded-lg py-1.5 w-48 text-sm animate-in fade-in zoom-in-95 duration-100 select-none"
+      className="fixed z-50 bg-card border border-hair shadow-xl rounded-lg py-1.5 w-48 text-sm animate-in fade-in zoom-in-95 duration-100 select-none"
       style={{
         top: posY,
         left: posX
@@ -184,53 +184,53 @@ export default function SQLFileContextMenu({
       <button
         type="button"
         role="menuitem"
-        className="w-full text-left px-3 py-1.5 text-xs text-[var(--ink)] hover:bg-[var(--surface-subdued)] focus:bg-[var(--surface-subdued)] focus:outline-hidden flex items-center justify-between transition-colors group cursor-pointer"
+        className="w-full text-left px-3 py-1.5 text-xs text-ink hover:bg-paper-2 focus:bg-paper-2 focus:outline-hidden flex items-center justify-between transition-colors group cursor-pointer"
         onClick={() => {
           onRename(file);
           onClose();
         }}
       >
         <div className="flex items-center gap-2">
-          <Edit2 className="w-3.5 h-3.5 text-[var(--ink-secondary)] group-hover:text-[var(--ink)]" />
+          <Edit2 className="w-3.5 h-3.5 text-body group-hover:text-ink" />
           <span>Rename</span>
         </div>
-        <span className="text-[10px] text-[var(--ink-tertiary)] font-mono">F2</span>
+        <span className="text-[10px] text-mute font-mono">F2</span>
       </button>
 
       <button
         type="button"
         role="menuitem"
-        className="w-full text-left px-3 py-1.5 text-xs text-[var(--ink)] hover:bg-[var(--surface-subdued)] focus:bg-[var(--surface-subdued)] focus:outline-hidden flex items-center justify-between transition-colors group cursor-pointer"
+        className="w-full text-left px-3 py-1.5 text-xs text-ink hover:bg-paper-2 focus:bg-paper-2 focus:outline-hidden flex items-center justify-between transition-colors group cursor-pointer"
         onClick={() => {
           onDuplicate(file);
           onClose();
         }}
       >
         <div className="flex items-center gap-2">
-          <Copy className="w-3.5 h-3.5 text-[var(--ink-secondary)] group-hover:text-[var(--ink)]" />
+          <Copy className="w-3.5 h-3.5 text-body group-hover:text-ink" />
           <span>Duplicate</span>
         </div>
-        <span className="text-[10px] text-[var(--ink-tertiary)] font-mono">Ctrl+D</span>
+        <span className="text-[10px] text-mute font-mono">Ctrl+D</span>
       </button>
 
       {isTabOpen && (
         <button
           type="button"
           role="menuitem"
-          className="w-full text-left px-3 py-1.5 text-xs text-[var(--ink)] hover:bg-[var(--surface-subdued)] focus:bg-[var(--surface-subdued)] focus:outline-hidden flex items-center justify-between transition-colors group cursor-pointer"
+          className="w-full text-left px-3 py-1.5 text-xs text-ink hover:bg-paper-2 focus:bg-paper-2 focus:outline-hidden flex items-center justify-between transition-colors group cursor-pointer"
           onClick={() => {
             onCloseTab(file);
             onClose();
           }}
         >
           <div className="flex items-center gap-2">
-            <X className="w-3.5 h-3.5 text-[var(--ink-secondary)] group-hover:text-[var(--ink)]" />
+            <X className="w-3.5 h-3.5 text-body group-hover:text-ink" />
             <span>Close Tab</span>
           </div>
         </button>
       )}
 
-      <div className="h-px bg-[var(--border)] my-1" />
+      <div className="h-px bg-hair my-1" />
 
       <button
         type="button"

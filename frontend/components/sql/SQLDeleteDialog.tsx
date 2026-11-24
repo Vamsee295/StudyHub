@@ -45,7 +45,7 @@ export default function SQLDeleteDialog({
       onClick={onCancel}
     >
       <div 
-        className="bg-[var(--surface)] border border-[var(--border)] rounded-xl shadow-2xl max-w-sm w-full p-5 animate-in zoom-in-95 duration-150"
+        className="bg-card border border-hair rounded-xl shadow-2xl max-w-sm w-full p-5 animate-in zoom-in-95 duration-150"
         onClick={e => e.stopPropagation()}
         role="alertdialog"
         aria-modal="true"
@@ -57,10 +57,10 @@ export default function SQLDeleteDialog({
             <AlertTriangle className="w-5 h-5" />
           </div>
           <div className="flex-1 min-w-0">
-            <h3 id="delete-dialog-title" className="text-sm font-semibold text-[var(--ink)] truncate">
+            <h3 id="delete-dialog-title" className="text-sm font-semibold text-ink truncate">
               Delete &ldquo;{file.name}&rdquo;?
             </h3>
-            <p id="delete-dialog-desc" className="text-xs text-[var(--ink-secondary)] mt-1.5 leading-relaxed">
+            <p id="delete-dialog-desc" className="text-xs text-body mt-1.5 leading-relaxed">
               This will permanently remove the file from your SQL workspace. This action cannot be undone.
             </p>
           </div>
@@ -69,7 +69,7 @@ export default function SQLDeleteDialog({
         <div className="mt-5 flex items-center justify-end gap-2.5">
           <button
             type="button"
-            className="px-3 py-1.5 text-xs font-medium text-[var(--ink)] bg-[var(--surface-subdued)] hover:bg-[var(--border)] rounded-lg transition-colors cursor-pointer"
+            className="px-3 py-1.5 text-xs font-medium text-ink bg-paper-2 hover:bg-hair rounded-lg transition-colors cursor-pointer"
             onClick={onCancel}
           >
             Cancel
@@ -77,7 +77,7 @@ export default function SQLDeleteDialog({
           <button
             ref={confirmBtnRef}
             type="button"
-            className="px-3.5 py-1.5 text-xs font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg shadow-xs transition-colors cursor-pointer"
+            className="px-3.5 py-1.5 text-xs font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors cursor-pointer"
             onClick={() => onConfirm(file.id)}
           >
             Delete File

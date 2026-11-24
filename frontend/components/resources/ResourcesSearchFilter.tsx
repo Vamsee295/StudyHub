@@ -41,7 +41,7 @@ export function ResourcesSearchFilter({
   const sortOptions: SortOption[] = ["Relevant", "A-Z", "Category", "Difficulty"];
 
   return (
-    <section className="flex flex-col gap-4 sticky top-16 z-30 bg-[var(--canvas)]/90 backdrop-blur-xl py-4 -mx-6 px-6 border-b border-[var(--border)] shadow-[0_4px_20px_-10px_rgba(0,0,0,0.05)]">
+    <section className="flex flex-col gap-4 sticky top-14 md:top-0 z-30 bg-[var(--canvas)]/90 backdrop-blur-xl py-4 -mx-6 px-6 border-b border-[var(--border)] shadow-[0_4px_20px_-10px_rgba(0,0,0,0.05)]">
       <div className="flex flex-col md:flex-row md:items-center gap-3 md:gap-4">
         {/* Search Input */}
         <div className="relative flex-1 group">

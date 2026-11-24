@@ -1,17 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import { ArrowLeft, MailCheck } from "lucide-react";
 import { BrandPanel } from "@/components/auth/BrandPanel";
 import { AuthRightPanel } from "@/components/auth/AuthRightPanel";
 
 export default function VerifyEmailPage() {
-  const reduced = useReducedMotion();
   const [resent, setResent] = useState(false);
 
-  const fade = (delay: number) =>
-    reduced ? {} : { initial: { opacity: 0, y: 10 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.35, delay } };
 
   return (
     <main className="w-full min-h-screen flex flex-col lg:flex-row flex-1">
@@ -19,31 +16,31 @@ export default function VerifyEmailPage() {
       <AuthRightPanel>
         <div className="text-center">
           <motion.div
-            {...fade(0)}
-            className="w-12 h-12 rounded-full bg-accent-soft border border-accent-soft-border flex items-center justify-center mx-auto mb-5"
+           
+            className="mx-auto mb-5 grid size-14 place-items-center rounded-full border-[2.4px] border-line bg-accent text-paper"
           >
-            <MailCheck size={20} className="text-accent" />
+            <MailCheck size={22} aria-hidden />
           </motion.div>
-          <motion.h2 {...fade(0.06)} className="font-display text-[30px] tracking-tight text-ink leading-[1.15] mb-2">
+          <motion.h2 className="display mb-2 text-[40px]">
             Verify your email
           </motion.h2>
-          <motion.p {...fade(0.12)} className="text-[14.5px] text-ink-secondary max-w-sm mx-auto leading-relaxed mb-7">
+          <motion.p className="mx-auto mb-7 max-w-sm text-[15px] leading-relaxed text-body">
             We&rsquo;ve sent a verification link to your inbox. Click it to activate your StudyHub
             account and begin your placement journey.
           </motion.p>
 
           <motion.button
-            {...fade(0.18)}
+           
             onClick={() => setResent(true)}
             className="btn-secondary auth-btn max-w-[260px] mx-auto text-[14px]"
           >
             {resent ? "Verification email sent" : "Resend verification email"}
           </motion.button>
 
-          <motion.div {...fade(0.24)} className="mt-6">
+          <motion.div className="mt-6">
             <a
               href="/login"
-              className="inline-flex items-center gap-1.5 text-xs text-ink-secondary hover:text-ink transition-colors"
+              className="inline-flex items-center gap-1.5 font-mono text-[12px] uppercase tracking-wider text-mute hover:text-ink"
             >
               <ArrowLeft size={13} /> Back to sign in
             </a>
