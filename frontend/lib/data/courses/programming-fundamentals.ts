@@ -1,4 +1,6 @@
 import { Course } from './types';
+import { withTheory } from './utils';
+import { pfTheory } from './pf-theory';
 import { programmingBasicsLessons } from './programming-fundamentals-content-basics';
 import { variablesDataTypesLessons } from './programming-fundamentals-content';
 import { operatorsExpressionsLessons } from './programming-fundamentals-content-operators';
@@ -23,7 +25,7 @@ function extractLessonDescription(content: any): string {
   return '';
 }
 
-export const programmingFundamentalsCourse: Course = {
+const rawProgrammingFundamentalsCourse: Course = {
   id: "course-pf",
   slug: "programming-fundamentals",
   title: "Programming Fundamentals",
@@ -193,4 +195,8 @@ export const programmingFundamentalsCourse: Course = {
       }))
     }
   ]
+};
+export const programmingFundamentalsCourse: Course = {
+  ...rawProgrammingFundamentalsCourse,
+  modules: rawProgrammingFundamentalsCourse.modules.map((m) => ({ ...m, lessons: withTheory(m.lessons, pfTheory) })),
 };
