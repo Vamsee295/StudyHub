@@ -7,6 +7,7 @@ import { ActivityFeed } from "@/components/community/ActivityFeed";
 import { ShareProgressModal } from "@/components/community/ShareProgressModal";
 import { CommentPanel } from "@/components/community/CommentPanel";
 import { TrendingSidebar } from "@/components/community/TrendingSidebar";
+import { DailyLogs } from "@/components/community/DailyLogs";
 import { communityApi } from "@/lib/api/community";
 import type {
   FeedResponse,
@@ -47,6 +48,16 @@ export default function StudyWithMePage() {
   const [shareOpen, setShareOpen] = useState(false);
   const [commentPostId, setCommentPostId] = useState<string | null>(null);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [view, setView] = useState<"feed" | "logs">("feed");
+
+  // ?view=logs opens the daily logs directly (shareable link).
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get("view") === "logs") setView("logs");
+  }, []);
+  const switchView = (v: "feed" | "logs") => {
+    setView(v);
+    window.history.replaceState(null, "", v === "logs" ? "?view=logs" : window.location.pathname);
+  };
 
   const { user } = useAuth();
 
@@ -136,6 +147,24 @@ export default function StudyWithMePage() {
         {/* Hero */}
         <StudyWithMeHero stats={stats} onShareClick={() => setShareOpen(true)} />
 
+        {/* View switch: activity feed or daily logs */}
+        <div className="max-w-[1050px] mx-auto px-4 sm:px-8 pt-4">
+          <div role="tablist" aria-label="Study With Me views" className="inline-flex p-1 rounded-lg border border-[var(--border)] bg-[var(--surface)]">
+            {([["feed", "Activity feed"], ["logs", "Daily logs"]] as const).map(([id, label]) => (
+              <button key={id} role="tab" type="button" aria-selected={view === id} onClick={() => switchView(id)}
+                className={`px-4 py-1.5 rounded-md text-[13px] font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] ${view === id ? "bg-[var(--accent)] text-white" : "text-[var(--ink-secondary)] hover:text-[var(--ink)]"}`}>
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {view === "logs" ? (
+          <div className="max-w-[760px] mx-auto px-4 sm:px-8 py-6">
+            <DailyLogs />
+          </div>
+        ) : (
+        <>
         {/* Filter bar */}
         <ActivityFilterBar active={activeFilter} onChange={handleFilterChange} />
 
@@ -160,6 +189,8 @@ export default function StudyWithMePage() {
             </div>
           </div>
         </div>
+        </>
+        )}
       </div>
 
       {/* Modals */}
