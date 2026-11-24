@@ -147,6 +147,7 @@ export default function SubjectPage() {
                 { href: `/learn/${subject.slug}/test`, label: "Take Mock Test" },
                 { href: `/learn/${subject.slug}/revise`, label: "Revision Sheet" },
                 { href: `/learn/${subject.slug}/review`, label: dueCount > 0 ? `Review (${dueCount} due)` : "Review Queue" },
+                { href: `/learn/${subject.slug}/reading-order`, label: "Reading Order" },
               ].map((a) => (
                 <Link key={a.href} href={a.href}
                   className="px-3.5 py-2 rounded-lg border border-[var(--border)] bg-[var(--surface)] text-[13px] font-medium text-[var(--ink)] hover:border-[var(--accent)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]">
