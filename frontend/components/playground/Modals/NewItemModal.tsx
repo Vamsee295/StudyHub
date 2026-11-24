@@ -21,13 +21,20 @@ export default function NewItemModal({
   const [error, setError] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    if (visible) {
-      const prefix = contextPath ? contextPath + "/" : "";
-      setValue(prefix);
+  // Opens with the folder path filled in
+  const [openedFor, setOpenedFor] = useState<string | null>(null);
+  const openKey = visible ? contextPath ?? "" : null;
+  if (openKey !== openedFor) {
+    setOpenedFor(openKey);
+    if (openKey !== null) {
+      setValue(openKey ? openKey + "/" : "");
       setError("");
-      setTimeout(() => inputRef.current?.focus(), 50);
     }
+  }
+  useEffect(() => {
+    if (!visible) return;
+    const t = setTimeout(() => inputRef.current?.focus(), 50);
+    return () => clearTimeout(t);
   }, [visible, contextPath]);
 
   const handleConfirm = () => {
@@ -119,10 +126,18 @@ export function RenameModal({
   const [error, setError] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // Opens with the current name filled in
+  const [openedWith, setOpenedWith] = useState<string | null>(null);
+  const renameKey = visible ? currentName : null;
+  if (renameKey !== openedWith) {
+    setOpenedWith(renameKey);
+    if (renameKey !== null) {
+      setValue(renameKey);
+      setError("");
+    }
+  }
   useEffect(() => {
     if (visible) {
-      setValue(currentName);
-      setError("");
       setTimeout(() => {
         if (inputRef.current) {
           inputRef.current.focus();

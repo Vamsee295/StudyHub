@@ -1,6 +1,5 @@
 import { UserProfile, RoadmapGenerationResult } from '@/types';
 import { profileApi } from '@/lib/api/profile';
-import { supabase } from '@/lib/supabase/client';
 
 const DRAFT_KEY = 'pathward-onboarding-draft';
 const PROFILE_KEY = 'pathward-user-profile';

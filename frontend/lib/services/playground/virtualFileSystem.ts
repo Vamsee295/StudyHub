@@ -5,13 +5,7 @@
  * All mutations are saved to IndexedDB via the persistence service.
  */
 
-import type {
-  ProjectFile,
-  ProjectFolder,
-  PlaygroundProject,
-  TreeNode,
-  SupportedLanguage,
-} from "@/types/playground";
+import type { ProjectFile, ProjectFolder, TreeNode, SupportedLanguage } from "@/types/playground";
 import * as db from "./persistence";
 
 // ── UUID helper (browser-safe) ─────────────────────────────────────────────────
@@ -343,7 +337,7 @@ export async function updateFileContent(file: ProjectFile, content: string): Pro
 export async function renameFile(
   file: ProjectFile,
   newName: string,
-  allFiles: ProjectFile[]
+  _allFiles: ProjectFile[]
 ): Promise<ProjectFile> {
   const parent = parentPath(file.path);
   const newPath = parent ? parent + "/" + newName : newName;

@@ -1,4 +1,4 @@
-import { Course, CourseLesson, CourseModule } from './types';
+import { Course, CourseLesson } from './types';
 import { programmingFundamentalsCourse } from './programming-fundamentals';
 import { oopCourse } from './oop';
 import { sqlCourse } from './sql';
@@ -58,9 +58,9 @@ export function getLesson(courseSlug: string, lessonSlug: string): CourseLesson 
   const course = getCourseBySlug(courseSlug);
   if (!course) return undefined;
 
-  for (const module of course.modules) {
+  for (const mod of course.modules) {
     // 1. Direct slug, legacySlug, legacyId, or id match
-    const lesson = module.lessons.find(l => 
+    const lesson = mod.lessons.find(l => 
       l.slug === lessonSlug || 
       l.id === lessonSlug ||
       l.legacySlug === lessonSlug ||
@@ -72,20 +72,20 @@ export function getLesson(courseSlug: string, lessonSlug: string): CourseLesson 
     const match = lessonSlug.match(/-lesson-(\d+)$/i);
     if (match) {
       const idx = parseInt(match[1], 10) - 1;
-      // If the lessonSlug contains module slug or matches module
+      // If the lessonSlug contains mod slug or matches mod
       if (
-        (lessonSlug.includes(module.slug) || module.slug.includes(lessonSlug.replace(/-lesson-\d+$/i, ''))) &&
+        (lessonSlug.includes(mod.slug) || mod.slug.includes(lessonSlug.replace(/-lesson-\d+$/i, ''))) &&
         idx >= 0 && 
-        idx < module.lessons.length
+        idx < mod.lessons.length
       ) {
-        return module.lessons[idx];
+        return mod.lessons[idx];
       }
     }
   }
 
   // 3. Fallback: check all modules in course for direct match across all lessons
-  for (const module of course.modules) {
-    const fallback = module.lessons.find(l => 
+  for (const mod of course.modules) {
+    const fallback = mod.lessons.find(l => 
       lessonSlug.endsWith(l.slug) || 
       (l.legacySlug && lessonSlug.endsWith(l.legacySlug))
     );

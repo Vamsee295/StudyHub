@@ -65,7 +65,7 @@ export const resourcesApi = {
     });
   },
 
-  getResource: async (resourceId: string): Promise<any> => {
+  getResource: async (resourceId: string): Promise<unknown> => {
     return apiClient.get(`/resources/${resourceId}`);
   },
 

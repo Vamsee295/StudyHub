@@ -7,6 +7,8 @@ from sqlalchemy.future import select
 from app.models.profile import Profile, ProfileCareerPath, ProfileSkillBaseline, CareerPath
 from app.models.company import UserCompanyTarget, Company
 from app.schemas.profile import OnboardingCompleteRequest, ProfileUpdateRequest
+from app.core.supabase import get_service_role_client
+from app.services.account_service import delete_user_data
 from datetime import datetime
 
 router = APIRouter(prefix="/api/profile", tags=["profile"])
@@ -20,6 +22,19 @@ async def get_profile_status(user: Any = Depends(get_current_user)):
         if not profile:
             return {"profile_completed": False}
         return {"profile_completed": profile.profile_completed}
+
+@router.delete("")
+@router.delete("/")
+async def delete_account(user: Any = Depends(get_current_user)):
+    """Permanently deletes the signed-in user's data and their Supabase login."""
+    # Delete the login first: if that fails the data is still intact and the user can retry.
+    try:
+        get_service_role_client().auth.admin.delete_user(user.id)
+    except Exception as e:
+        raise HTTPException(status_code=502, detail=f"Couldn't delete the login: {e}")
+    async with AsyncSessionLocal() as session:
+        removed = await delete_user_data(session, user.id)
+    return {"deleted": True, "rows": removed}
 
 @router.post("/onboarding/complete")
 async def complete_onboarding(data: OnboardingCompleteRequest, user: Any = Depends(get_current_user)):

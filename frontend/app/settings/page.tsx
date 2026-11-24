@@ -10,6 +10,7 @@ import { AppearanceSettings } from "@/components/settings/AppearanceSettings";
 import { PageHeader } from "@/components/ui/Page";
 import { buttonClass } from "@/components/ui/Button";
 import { askConfirm } from "@/components/ui/AskDialog";
+import { DeleteAccount, PasswordForm } from "@/components/settings/AccountSecurity";
 
 type TabType = "account" | "appearance" | "password" | "data";
 
@@ -52,7 +53,7 @@ export default function SettingsPage() {
     document.cookie = "onboarding-complete=; path=/; max-age=0; SameSite=Lax";
     localStorage.clear();
     sessionStorage.clear();
-    window.location.href = "/login";
+    window.location.replace("/login");
   };
 
   const details = [
@@ -106,14 +107,9 @@ export default function SettingsPage() {
           {activeTab === "appearance" && <AppearanceSettings />}
 
           {activeTab === "password" && (
-            <div className="space-y-4">
+            <div className="space-y-6">
               <h2 className="display text-[32px]">Password</h2>
-              <p className="max-w-prose text-[15px] leading-relaxed text-body">
-                We&apos;ll email a link to <span className="font-semibold text-ink">{user?.email || "your address"}</span>. Open it to set a new password.
-              </p>
-              <Link href="/forgot-password" className={buttonClass("primary", "sm")}>
-                Send me a reset link <ArrowRight className="size-4" />
-              </Link>
+              <PasswordForm email={user?.email} />
             </div>
           )}
 
@@ -132,14 +128,13 @@ export default function SettingsPage() {
               <div className="flex flex-col justify-between gap-3 border-t-[1.5px] border-hair pt-5 sm:flex-row sm:items-center">
                 <div>
                   <h3 className="font-semibold">Sign out and clear this device</h3>
-                  <p className="max-w-prose text-[14px] text-body">
-                    Removes StudyHub&apos;s local data from this browser. It does not delete your account; deleting an account isn&apos;t available in the app yet.
-                  </p>
+                  <p className="max-w-prose text-[14px] text-body">Removes StudyHub&apos;s local data from this browser. Your account stays.</p>
                 </div>
                 <button onClick={signOutAndClear} className={buttonClass("danger", "sm")}>
                   <LogOut className="size-4" /> Sign out and clear
                 </button>
               </div>
+              <DeleteAccount email={user?.email} />
             </div>
           )}
         </section>

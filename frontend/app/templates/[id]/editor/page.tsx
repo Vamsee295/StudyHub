@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, use } from "react";
+import React, { useState, use } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Save, Download, AlertCircle, FileText, CheckCircle2 } from "lucide-react";
@@ -14,24 +14,12 @@ export default function TemplateEditorPage({ params }: { params: Promise<{ id: s
   const workspaceData = templateWorkspaces[templateId];
 
   // Form State
-  const [fieldValues, setFieldValues] = useState<Record<string, string>>({});
+  // starts from the template's default values
+  const [fieldValues, setFieldValues] = useState<Record<string, string>>(() =>
+    Object.fromEntries((workspaceData?.fields ?? []).map((f) => [f.key, f.value || ""]))
+  );
   const [isSaving, setIsSaving] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-    if (workspaceData) {
-      // Initialize with default values
-      const initial: Record<string, string> = {};
-      workspaceData.fields.forEach(f => {
-        initial[f.key] = f.value || "";
-      });
-      setFieldValues(initial);
-    }
-  }, [workspaceData]);
-
-  if (!mounted) return null;
 
   if (!workspaceData) {
     return (

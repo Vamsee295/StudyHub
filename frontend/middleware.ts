@@ -16,13 +16,6 @@ const protectedRoutes = [
   '/help'
 ];
 
-const authRoutes = [
-  '/login',
-  '/signup',
-  '/forgot-password',
-  '/reset-password'
-];
-
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   
@@ -33,10 +26,6 @@ export function middleware(request: NextRequest) {
   const isAuthenticated = hasAuthCookie || hasSupabaseCookie;
 
   const isProtectedRoute = protectedRoutes.some(
-    (route) => pathname === route || pathname.startsWith(route + '/')
-  );
-
-  const isAuthRoute = authRoutes.some(
     (route) => pathname === route || pathname.startsWith(route + '/')
   );
 

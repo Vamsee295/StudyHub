@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useMemo } from "react";
+import React, { useEffect, useRef, useMemo } from "react";
 import Editor from "@monaco-editor/react";
 import type { ProjectFile } from "@/types/playground";
 import { MONACO_THEME, defineMonacoTheme } from "@/lib/monacoTheme";
@@ -21,11 +21,13 @@ export default function MonacoWorkspace({
     [files, activeFileId]
   );
 
+  // Monaco keeps the first onChange it is given; these refs let it always reach the current file and callback.
   const activeFileRef = useRef<ProjectFile | null>(activeFile);
-  activeFileRef.current = activeFile;
-
   const onContentChangeRef = useRef(onContentChange);
-  onContentChangeRef.current = onContentChange;
+  useEffect(() => {
+    activeFileRef.current = activeFile;
+    onContentChangeRef.current = onContentChange;
+  });
 
   const handleChange = (value: string | undefined) => {
     if (value !== undefined && activeFileRef.current) {

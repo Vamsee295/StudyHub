@@ -23,7 +23,7 @@ export function CompanyDirectory({ companies, onSelect, searchQuery }: CompanyDi
           </div>
           <h3 className="text-lg font-bold text-ink mb-2">No companies found</h3>
           <p className="text-body max-w-md mx-auto">
-            We couldn't find any companies matching "{searchQuery}" in this segment.
+            We couldn’t find any companies matching “{searchQuery}” in this segment.
           </p>
         </div>
       ) : (

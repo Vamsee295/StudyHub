@@ -76,10 +76,15 @@ function TreeItem({
       ? renamingId === node.folder.id && renamingType === "folder"
       : renamingId === node.file.id && renamingType === "file";
 
+  // Entering rename mode starts from the current name
+  const [wasRenaming, setWasRenaming] = useState(isRenaming);
+  if (isRenaming !== wasRenaming) {
+    setWasRenaming(isRenaming);
+    if (isRenaming) setEditName(node.kind === "folder" ? node.folder.name : node.file.name);
+  }
   useEffect(() => {
     if (isRenaming) {
       const initialName = node.kind === "folder" ? node.folder.name : node.file.name;
-      setEditName(initialName);
       setTimeout(() => {
         if (inputRef.current) {
           inputRef.current.focus();

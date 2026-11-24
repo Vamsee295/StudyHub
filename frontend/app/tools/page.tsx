@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import { ToolsHeader } from "@/components/tools/ToolsHeader";
 import { ToolsSearchFilter } from "@/components/tools/ToolsSearchFilter";
 import { ContinueUsingSection } from "@/components/tools/ContinueUsingSection";
@@ -14,8 +14,8 @@ import { corePlacementTools, interviewUtilities, calculatorsTrackers } from "@/l
 export default function ToolsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState<ToolCategory>("all");
-  const [recent, setRecent] = useState<ContinueToolItem[]>([]);
-  useEffect(() => setRecent(recentToolItems()), []);
+  // AppLayout renders pages only on the client, so localStorage can be read up front
+  const [recent] = useState<ContinueToolItem[]>(recentToolItems);
 
   // Filter core placement tools
   const filteredCoreTools = useMemo(() => {
@@ -65,7 +65,7 @@ export default function ToolsPage() {
       {isFiltering && filteredCoreTools.length === 0 && (
         <div className="text-center py-20 bg-paper-2/50 rounded-xl border border-hair border-dashed">
           <p className="text-[14px] text-body font-medium">
-            No tools found for "{searchQuery}" in this category.
+            No tools found for “{searchQuery}” in this category.
           </p>
           <button
             onClick={() => {

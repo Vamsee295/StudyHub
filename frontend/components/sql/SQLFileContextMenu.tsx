@@ -27,7 +27,6 @@ export default function SQLFileContextMenu({
 }: Props) {
   const menuRef = useRef<HTMLDivElement>(null);
   const [isMobile, setIsMobile] = useState(false);
-  const [focusedIndex, setFocusedIndex] = useState<number>(-1);
 
   // Detect mobile viewport
   useEffect(() => {

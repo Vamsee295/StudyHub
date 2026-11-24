@@ -1,6 +1,6 @@
 // Long-form theory for SQL filtering, functions and grouping modules. Original writing.
 import { LessonTheory } from './utils';
-import { PG_QUERIES, PG_FUNCS, PG_COMPARISON, PG_PERF, SQLITE_LANG, UTL, MODERN_SQL } from './sql-theory-sources';
+import { PG_QUERIES, PG_FUNCS, PG_COMPARISON, SQLITE_LANG, UTL, MODERN_SQL } from './sql-theory-sources';
 
 export const sqlQueryingTheory: Record<string, LessonTheory> = {
   "where-and-comparison-operators": {

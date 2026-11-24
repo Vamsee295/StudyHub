@@ -1,27 +1,9 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { buttonClass } from "@/components/ui/Button";
-import { motion } from "framer-motion";
-import { 
-  User, 
-  Mail, 
-  GraduationCap, 
-  Briefcase, 
-  MapPin, 
-  Calendar, 
-  Sparkles, 
-  Edit3, 
-  Check, 
-  Compass,
-  Building,
-  Target,
-  ArrowRight,
-  Award
-} from "lucide-react";
-import { UserProfile } from "@/types";
-import { profileApi } from "@/lib/api/profile";
+import { Mail, GraduationCap, Briefcase, MapPin, Sparkles, Edit3, Check, Target, ArrowRight } from "lucide-react";
 import { ProfileNavTabs } from "@/components/profile/ProfileNavTabs";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { useProfile } from "@/components/providers/ProfileProvider";
@@ -186,7 +168,7 @@ export default function ProfilePreferencesPage() {
               <input
                 type="text"
                 value={profile.identity?.fullName || ""}
-                onChange={(e) => updateDraft({ identity: { fullName: e.target.value } as any })}
+                onChange={(e) => updateDraft({ identity: { fullName: e.target.value } })}
                 className="field w-full"
                 required
               />
@@ -199,7 +181,7 @@ export default function ProfilePreferencesPage() {
               <input
                 type="email"
                 value={profile.identity?.email || ""}
-                onChange={(e) => updateDraft({ identity: { email: e.target.value } as any })}
+                onChange={(e) => updateDraft({ identity: { email: e.target.value } })}
                 className="field w-full"
                 required
               />
@@ -212,7 +194,7 @@ export default function ProfilePreferencesPage() {
               <input
                 type="text"
                 value={profile.identity?.college || ""}
-                onChange={(e) => updateDraft({ identity: { college: e.target.value } as any })}
+                onChange={(e) => updateDraft({ identity: { college: e.target.value } })}
                 className="field w-full"
                 required
               />
@@ -225,7 +207,7 @@ export default function ProfilePreferencesPage() {
               <input
                 type="text"
                 value={profile.identity?.degree || ""}
-                onChange={(e) => updateDraft({ identity: { degree: e.target.value } as any })}
+                onChange={(e) => updateDraft({ identity: { degree: e.target.value } })}
                 className="field w-full"
                 required
               />
@@ -238,7 +220,7 @@ export default function ProfilePreferencesPage() {
               <input
                 type="text"
                 value={profile.identity?.branch || ""}
-                onChange={(e) => updateDraft({ identity: { branch: e.target.value } as any })}
+                onChange={(e) => updateDraft({ identity: { branch: e.target.value } })}
                 className="field w-full"
                 required
               />
@@ -250,7 +232,7 @@ export default function ProfilePreferencesPage() {
               </label>
               <select
                 value={profile.identity?.graduationYear || "2026"}
-                onChange={(e) => updateDraft({ identity: { graduationYear: e.target.value } as any })}
+                onChange={(e) => updateDraft({ identity: { graduationYear: e.target.value } })}
                 className="field w-full cursor-pointer"
               >
                 <option value="2025">2025</option>
@@ -266,7 +248,7 @@ export default function ProfilePreferencesPage() {
               </label>
               <select
                 value={profile.identity?.currentSemester || "Final Year"}
-                onChange={(e) => updateDraft({ identity: { currentSemester: e.target.value } as any })}
+                onChange={(e) => updateDraft({ identity: { currentSemester: e.target.value } })}
                 className="field w-full cursor-pointer"
               >
                 <option value="5th Semester (3rd Year)">5th Semester (3rd Year)</option>
@@ -284,7 +266,7 @@ export default function ProfilePreferencesPage() {
               <input
                 type="text"
                 value={profile.identity?.targetRole || ""}
-                onChange={(e) => updateDraft({ identity: { targetRole: e.target.value } as any })}
+                onChange={(e) => updateDraft({ identity: { targetRole: e.target.value } })}
                 className="field w-full"
                 required
               />
@@ -297,7 +279,7 @@ export default function ProfilePreferencesPage() {
               <input
                 type="text"
                 value={profile.identity?.preferredJobType || ""}
-                onChange={(e) => updateDraft({ identity: { preferredJobType: e.target.value } as any })}
+                onChange={(e) => updateDraft({ identity: { preferredJobType: e.target.value } })}
                 className="field w-full"
               />
             </div>
@@ -309,7 +291,7 @@ export default function ProfilePreferencesPage() {
               <input
                 type="text"
                 value={profile.identity?.locationPreference || ""}
-                onChange={(e) => updateDraft({ identity: { locationPreference: e.target.value } as any })}
+                onChange={(e) => updateDraft({ identity: { locationPreference: e.target.value } })}
                 className="field w-full"
               />
             </div>

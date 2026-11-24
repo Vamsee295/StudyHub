@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronDown } from "lucide-react";
-import { CompanyType, ResumeAnalysisTarget } from "@/lib/resume-analyzer/types";
+import { ResumeAnalysisTarget } from "@/lib/resume-analyzer/types";
 
 interface TargetCompanyFieldsProps {
   target: ResumeAnalysisTarget;
@@ -25,7 +25,6 @@ export function TargetCompanyFields({
   target,
   companyError,
   companyTypeError,
-  jobDescriptionError,
   disabled = false,
   onChange,
 }: TargetCompanyFieldsProps) {

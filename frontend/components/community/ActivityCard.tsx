@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { Heart, MessageCircle, ExternalLink, UserPlus, Check } from "lucide-react";
+import { Heart, MessageCircle, ExternalLink } from "lucide-react";
 import { clsx } from "clsx";
 import type { CommunityPost, CommunityAuthor } from "@/lib/types/community";
 import {
@@ -69,7 +69,6 @@ export function ActivityCard({
   post,
   currentUserId,
   onCommentClick,
-  onPostUpdated,
 }: ActivityCardProps) {
   const [liked, setLiked] = useState(post.user_has_liked);
   const [likeCount, setLikeCount] = useState(post.like_count);

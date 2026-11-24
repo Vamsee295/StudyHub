@@ -1,6 +1,5 @@
 "use client";
 
-import type { RefObject } from "react";
 import { Loader2, LockKeyhole, Sparkles } from "lucide-react";
 import { ResumeAnalysisRequest } from "@/lib/resume-analyzer/types";
 import { MIN_RESUME_TEXT_LENGTH, MAX_RESUME_TEXT_LENGTH } from "@/lib/resume-analyzer/validation";

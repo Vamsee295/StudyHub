@@ -28,12 +28,13 @@ export default function SQLFileItem({
   const inputRef = useRef<HTMLInputElement>(null);
   const threeDotBtnRef = useRef<HTMLButtonElement>(null);
 
-  // Sync editName when entering rename mode
-  useEffect(() => {
-    if (isRenaming) {
-      setEditName(file.name.replace(/\.sql$/, ""));
-    }
-  }, [isRenaming, file.name]);
+  // Entering rename mode starts from the current name
+  const [renameFrom, setRenameFrom] = useState<string | null>(null);
+  const renameKey = isRenaming ? file.name : null;
+  if (renameKey !== renameFrom) {
+    setRenameFrom(renameKey);
+    if (renameKey !== null) setEditName(renameKey.replace(/\.sql$/, ""));
+  }
 
   // Focus and select input text when entering rename mode
   useEffect(() => {

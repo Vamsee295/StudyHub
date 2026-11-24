@@ -104,8 +104,6 @@ function bundleJSEntry(
 
   // Replace relative imports with Blob URL equivalents
   // Pattern: import ... from "./something.js" or import "./something.js"
-  const importRegex = /import\s+((?:.|\n)*?)\s+from\s+['"](\.[^'"]+)['"]/g;
-  const sideEffectRegex = /import\s+['"](\.[^'"]+)['"]/g;
 
   const blobMap = new Map<string, string>();
 

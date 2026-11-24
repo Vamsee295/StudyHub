@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import type { DateGroup, CommunityPost } from "@/lib/types/community";
+import type { DateGroup } from "@/lib/types/community";
 import { ActivityCard } from "./ActivityCard";
 import { FeedSkeleton } from "./FeedSkeleton";
 import { EmptyFeedState } from "./EmptyFeedState";

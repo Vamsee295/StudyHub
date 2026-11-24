@@ -1,12 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { PageHeader } from "@/components/ui/Page";
 import { ChevronUp, Lightbulb, Loader2, Search, Trash2 } from "lucide-react";
 import { clsx } from "clsx";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { ideasApi, Idea, IdeaCategory, IdeaFilter, IdeaList, IdeaStatus } from "@/lib/api/ideas";
+import { errorMessage } from "@/lib/utils";
 
 const focusRing = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent";
 const PAGE = 20;
@@ -44,27 +45,48 @@ export default function IdeasPage() {
   const [query, setQuery] = useState("");
   const [debounced, setDebounced] = useState("");
   const [data, setData] = useState<IdeaList | null>(null);
-  const [loading, setLoading] = useState(true);
+  // `data` belongs to the filters in `dataKey`; while they differ from the current filters, a fetch is in flight.
+  const [dataKey, setDataKey] = useState<string | null>(null);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const key = `${filter}|${sort}|${debounced}`;
+  const loading = loadingMore || dataKey !== key;
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
 
   useEffect(() => { const t = setTimeout(() => setDebounced(query), 300); return () => clearTimeout(t); }, [query]);
 
-  const load = useCallback(async (offset = 0) => {
-    setLoading(true);
-    setError(null);
+  const [reload, setReload] = useState(0);
+
+  // First page for the current filters. Waits for auth so the list marks the user's own votes.
+  useEffect(() => {
+    if (authLoading) return;
+    let live = true;
+    const k = `${filter}|${sort}|${debounced}`;
+    ideasApi
+      .list({ status: filter, sort, q: debounced, limit: PAGE, offset: 0 })
+      .then((res) => {
+        if (!live) return;
+        setData(res);
+        setError(null);
+      })
+      .catch((e) => live && setError(errorMessage(e) || "Couldn't load ideas."))
+      .finally(() => live && setDataKey(k));
+    return () => {
+      live = false; // a newer filter's response wins
+    };
+  }, [filter, sort, debounced, authLoading, reload]);
+
+  const loadMore = async (offset: number) => {
+    setLoadingMore(true);
     try {
       const res = await ideasApi.list({ status: filter, sort, q: debounced, limit: PAGE, offset });
-      setData((prev) => (offset && prev ? { ...res, items: [...prev.items, ...res.items] } : res));
-    } catch (e: any) {
-      setError(e.message || "Couldn't load ideas.");
+      setData((prev) => (prev ? { ...res, items: [...prev.items, ...res.items] } : res));
+    } catch (e) {
+      setError(errorMessage(e) || "Couldn't load ideas.");
     } finally {
-      setLoading(false);
+      setLoadingMore(false);
     }
-  }, [filter, sort, debounced]);
-
-  // Wait for auth so the list marks the user's own votes.
-  useEffect(() => { if (!authLoading) load(0); }, [load, authLoading]);
+  };
 
   const patchIdea = (id: string, patch: Partial<Idea>) =>
     setData((d) => d && { ...d, items: d.items.map((i) => (i.id === id ? { ...i, ...patch } : i)) });
@@ -77,9 +99,9 @@ export default function IdeasPage() {
     try {
       const r = idea.has_voted ? await ideasApi.unvote(idea.id) : await ideasApi.vote(idea.id);
       patchIdea(idea.id, r);
-    } catch (e: any) {
+    } catch (e) {
       patchIdea(idea.id, { has_voted: idea.has_voted, vote_count: idea.vote_count });
-      setError(e.message || "Vote failed.");
+      setError(errorMessage(e) || "Vote failed.");
     } finally {
       setBusy(null);
     }
@@ -90,8 +112,8 @@ export default function IdeasPage() {
     try {
       await ideasApi.remove(idea.id);
       setData((d) => d && { ...d, items: d.items.filter((i) => i.id !== idea.id), total: d.total - 1 });
-    } catch (e: any) {
-      setError(e.message || "Delete failed.");
+    } catch (e) {
+      setError(errorMessage(e) || "Delete failed.");
     }
   };
 
@@ -100,8 +122,8 @@ export default function IdeasPage() {
     try {
       const updated = await ideasApi.setStatus(idea.id, status, note || undefined);
       patchIdea(idea.id, { status: updated.status, status_note: updated.status_note });
-    } catch (e: any) {
-      setError(e.message || "Status change failed.");
+    } catch (e) {
+      setError(errorMessage(e) || "Status change failed.");
     }
   };
 
@@ -113,7 +135,7 @@ export default function IdeasPage() {
     <div className="flex w-full max-w-[900px] flex-col gap-8">
       <PageHeader eyebrow="Ideas board" title="What should we" hl="build?" note="suggest it, upvote it, watch it ship" />
 
-      {user ? <NewIdeaForm onCreated={() => { setFilter("active"); setSort("new"); load(0); }} /> : !authLoading && (
+      {user ? <NewIdeaForm onCreated={() => { setFilter("active"); setSort("new"); setReload((r) => r + 1); }} /> : !authLoading && (
         <p className="p-4 rounded-xl border border-dashed border-hair text-[14px] text-body">
           <Link href="/login?redirect=/ideas" className={`text-accent-ink font-semibold underline rounded ${focusRing}`}>Sign in</Link> to post ideas and vote.
         </p>
@@ -202,7 +224,7 @@ export default function IdeasPage() {
 
         {loading && <p className="flex items-center gap-2 text-[13px] text-body"><Loader2 aria-hidden="true" className="w-4 h-4 animate-spin" /> Loading ideas…</p>}
         {data && !loading && data.items.length < data.total && (
-          <button type="button" onClick={() => load(data.items.length)}
+          <button type="button" onClick={() => loadMore(data.items.length)}
             className={`self-center px-4 py-2 rounded-lg border border-hair text-[13px] font-semibold text-ink hover:border-accent ${focusRing}`}>
             Show more ({data.total - data.items.length} left)
           </button>
@@ -231,8 +253,8 @@ function NewIdeaForm({ onCreated }: { onCreated: () => void }) {
       await ideasApi.create({ title: title.trim(), description: description.trim() || undefined, category });
       setTitle(""); setDescription(""); setOpen(false);
       onCreated();
-    } catch (err: any) {
-      setError(err.message || "Couldn't post your idea.");
+    } catch (err) {
+      setError(errorMessage(err) || "Couldn't post your idea.");
     } finally {
       setSaving(false);
     }

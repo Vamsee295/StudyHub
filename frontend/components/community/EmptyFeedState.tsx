@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { BookOpen, Users } from "lucide-react";
+import { BookOpen } from "lucide-react";
 
 interface EmptyFeedStateProps {
   onShareClick: () => void;

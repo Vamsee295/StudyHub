@@ -68,9 +68,9 @@ export default function ReadinessPage() {
           <ul className="text-[13.5px] text-body flex flex-col gap-1.5 list-disc pl-5">
             <li><strong className="text-ink">55%</strong> lessons completed in the subject</li>
             <li><strong className="text-ink">35%</strong> your latest mock test score (counted as half your coverage until you take one)</li>
-            <li><strong className="text-ink">10%</strong> review health: share of review cards that aren't overdue</li>
+            <li><strong className="text-ink">10%</strong> review health: share of review cards that aren’t overdue</li>
           </ul>
-          <p className="text-[12.5px] text-mute">It measures preparation you've done here, not how an interviewer will judge you. Data stays in this browser.</p>
+          <p className="text-[12.5px] text-mute">It measures preparation you’ve done here, not how an interviewer will judge you. Data stays in this browser.</p>
         </div>
       </section>
 

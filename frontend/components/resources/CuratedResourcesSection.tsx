@@ -2,18 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { 
-  ArrowRight, 
-  ShieldCheck, 
-  Clock, 
-  FileText, 
-  CheckCircle2, 
-  Layers, 
-  ChevronDown, 
-  BookOpen, 
-  Download,
-  FolderOpen
-} from "lucide-react";
+import { ArrowRight, Clock, FileText, CheckCircle2, Layers, ChevronDown, Download, FolderOpen } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Resource } from "@/lib/resources";
 import { BookmarkButton } from "./BookmarkButton";

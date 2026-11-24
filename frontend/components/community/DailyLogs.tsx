@@ -5,6 +5,7 @@ import Link from "next/link";
 import { BookOpen, ChevronLeft, ChevronRight, Clock, Globe, Loader2, Lock } from "lucide-react";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { localDate, LogDay, LogDraft, StudyLog, studyLogsApi } from "@/lib/api/studyLogs";
+import { errorMessage } from "@/lib/utils";
 
 const focusRing = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent";
 
@@ -60,31 +61,36 @@ function MyLog({ date, onChange }: { date: string; onChange: () => void }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const load = useCallback(async () => {
-    setError(null);
-    try {
-      const d = await studyLogsApi.draft(date);
-      setDraft(d);
-      setNote(d.published?.note ?? "");
-    } catch (e: any) {
-      setError(e.message || "Couldn't load your log.");
-    }
-  }, [date]);
-  useEffect(() => { load(); }, [load]);
+  const [version, setVersion] = useState(0); // bumped after publish / unpublish to re-read the draft
+  useEffect(() => {
+    let live = true;
+    studyLogsApi
+      .draft(date)
+      .then((d) => {
+        if (!live) return;
+        setDraft(d);
+        setNote(d.published?.note ?? "");
+        setError(null);
+      })
+      .catch((e) => live && setError(errorMessage(e) || "Couldn't load your log."));
+    return () => {
+      live = false;
+    };
+  }, [date, version]);
 
   const publishable = date === localDate() || date === shift(localDate(), -1);
   const canPublish = !!draft && (draft.lessons.length > 0 || note.trim().length > 0);
 
   const publish = async () => {
     setBusy(true); setError(null);
-    try { await studyLogsApi.publish(date, note); await load(); onChange(); }
-    catch (e: any) { setError(e.message || "Couldn't publish."); }
+    try { await studyLogsApi.publish(date, note); setVersion((v) => v + 1); onChange(); }
+    catch (e) { setError(errorMessage(e) || "Couldn't publish."); }
     finally { setBusy(false); }
   };
   const unpublish = async () => {
     setBusy(true); setError(null);
-    try { await studyLogsApi.unpublish(date); await load(); onChange(); }
-    catch (e: any) { setError(e.message || "Couldn't unpublish."); }
+    try { await studyLogsApi.unpublish(date); setVersion((v) => v + 1); onChange(); }
+    catch (e) { setError(errorMessage(e) || "Couldn't unpublish."); }
     finally { setBusy(false); }
   };
 
@@ -124,7 +130,7 @@ function MyLog({ date, onChange }: { date: string; onChange: () => void }) {
               placeholder="What clicked, what was hard, what's next…"
               className={`px-3 py-2 rounded-lg border border-hair bg-card text-[14px] resize-y ${focusRing}`} />
           </label>
-          {stale && <p className="text-[12.5px] text-warning">You've completed more lessons since publishing. Update to include them.</p>}
+          {stale && <p className="text-[12.5px] text-warning">You’ve completed more lessons since publishing. Update to include them.</p>}
           {error && <p role="alert" className="text-[13px] text-danger">{error}</p>}
           <div className="flex flex-wrap items-center gap-2">
             <button type="button" onClick={publish} disabled={busy || !canPublish}
@@ -173,27 +179,45 @@ export function DailyLogs() {
   const [date, setDate] = useState(today);
   const [day, setDay] = useState<LogDay | null>(null);
   const [dates, setDates] = useState<{ log_date: string; count: number }[]>([]);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  // `day` belongs to `dayDate`; while that differs from the selected date, a fetch is in flight.
+  const [dayDate, setDayDate] = useState<string | null>(null);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const loading = loadingMore || dayDate !== date;
 
-  const loadDay = useCallback(async (offset = 0) => {
-    setLoading(true); setError(null);
+  const [version, setVersion] = useState(0); // bumped when the learner's own log changes
+  const refreshAll = useCallback(() => setVersion((v) => v + 1), []);
+
+  // First page of the selected day, plus the dates that have logs.
+  useEffect(() => {
+    if (authLoading) return;
+    let live = true;
+    studyLogsApi
+      .day(date, 0)
+      .then((d) => {
+        if (!live) return;
+        setDay(d);
+        setError(null);
+      })
+      .catch((e) => live && setError(errorMessage(e) || "Couldn't load logs."))
+      .finally(() => live && setDayDate(date));
+    studyLogsApi.dates().then((r) => live && setDates(r.dates)).catch(() => {});
+    return () => {
+      live = false;
+    };
+  }, [date, authLoading, version]);
+
+  const loadMore = async (offset: number) => {
+    setLoadingMore(true);
     try {
       const d = await studyLogsApi.day(date, offset);
-      setDay((prev) => (offset && prev ? { ...d, logs: [...prev.logs, ...d.logs] } : d));
-    } catch (e: any) {
-      setError(e.message || "Couldn't load logs.");
+      setDay((prev) => (prev ? { ...d, logs: [...prev.logs, ...d.logs] } : d));
+    } catch (e) {
+      setError(errorMessage(e) || "Couldn't load logs.");
     } finally {
-      setLoading(false);
+      setLoadingMore(false);
     }
-  }, [date]);
-
-  const refreshAll = useCallback(() => {
-    loadDay(0);
-    studyLogsApi.dates().then((r) => setDates(r.dates)).catch(() => {});
-  }, [loadDay]);
-
-  useEffect(() => { if (!authLoading) refreshAll(); }, [refreshAll, authLoading]);
+  };
 
   return (
     <div className="flex flex-col gap-6">
@@ -237,7 +261,7 @@ export function DailyLogs() {
         <ul className="flex flex-col gap-3">{day?.logs.map((l) => <LogCard key={l.id} log={l} />)}</ul>
         {loading && <p className="flex items-center gap-2 text-[13px] text-body"><Loader2 aria-hidden="true" className="w-4 h-4 animate-spin" /> Loading logs…</p>}
         {day && !loading && day.logs.length < day.total && (
-          <button type="button" onClick={() => loadDay(day.logs.length)} className={`self-center px-4 py-2 rounded-lg border border-hair text-[13px] font-semibold text-ink hover:border-accent ${focusRing}`}>
+          <button type="button" onClick={() => loadMore(day.logs.length)} className={`self-center px-4 py-2 rounded-lg border border-hair text-[13px] font-semibold text-ink hover:border-accent ${focusRing}`}>
             Show more ({day.total - day.logs.length} left)
           </button>
         )}

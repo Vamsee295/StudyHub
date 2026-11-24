@@ -1,16 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { 
-  CheckCircle2, 
-  CircleDot, 
-  Circle, 
-  Lock, 
-  User,
-  Loader2,
-  ArrowRight
-} from 'lucide-react';
+import React, { useState, useSyncExternalStore } from 'react';
+import { CheckCircle2, Loader2, ArrowRight } from 'lucide-react';
 import { UserProfile, UserIdentity, SkillBaseline, UserTargets } from '@/types';
 import { onboardingService } from '@/lib/services/onboardingService';
 import { useProfile } from '@/components/providers/ProfileProvider';
@@ -25,11 +16,14 @@ import WizardNav from '@/components/onboarding/WizardNav';
 import { StudyHubLogo } from '@/components/ui/StudyHubLogo';
 import { buttonClass } from '@/components/ui/Button';
 
+const noop = () => () => {};
+
 export default function OnboardingPage() {
-  const router = useRouter();
   const { user } = useAuth();
   const [currentStep, setCurrentStep] = useState(1);
-  const [profile, setProfile] = useState<Partial<UserProfile>>({
+  // Starts from a saved draft when there is one. The page shows a loader until it is on the client
+  // (isClient below), so reading localStorage here never reaches server-rendered markup.
+  const [profile, setProfile] = useState<Partial<UserProfile>>(() => ({
     identity: {
       fullName: '',
       college: '',
@@ -48,21 +42,13 @@ export default function OnboardingPage() {
     targets: {
       objectives: [],
       companies: []
-    }
-  });
-  
-  const [isClient, setIsClient] = useState(false);
+    },
+    ...(typeof window !== 'undefined' ? onboardingService.getDraft() : null),
+  }));
 
-  const { draftProfile: canonicalProfile, isLoading: profileLoading, refreshProfile } = useProfile();
+  const isClient = useSyncExternalStore(noop, () => true, () => false);
 
-  useEffect(() => {
-    setIsClient(true);
-    // Load draft if exists in local storage
-    const draft = onboardingService.getDraft();
-    if (draft) {
-      setProfile((prev) => ({ ...prev, ...draft }));
-    }
-  }, []);
+  const { isLoading: profileLoading, refreshProfile } = useProfile();
 
   // Removed: Strict route guard - now handled by OnboardingGuard component
 
@@ -101,10 +87,10 @@ export default function OnboardingPage() {
     try {
       await onboardingService.completeOnboarding(profile as UserProfile, user?.id);
       await refreshProfile();
-      window.location.href = '/dashboard';
+      window.location.replace('/dashboard'); // full reload so middleware sees the onboarding cookie
     } catch (e) {
       console.error("Skip for now error:", e);
-      window.location.href = '/dashboard';
+      window.location.replace('/dashboard');
     }
   };
 
@@ -113,10 +99,10 @@ export default function OnboardingPage() {
     try {
       await onboardingService.completeOnboarding(profile as UserProfile, user?.id);
       await refreshProfile();
-      window.location.href = '/dashboard';
+      window.location.replace('/dashboard');
     } catch (e) {
       console.error("Save and exit error:", e);
-      window.location.href = '/dashboard';
+      window.location.replace('/dashboard');
     }
   };
 
@@ -135,7 +121,7 @@ export default function OnboardingPage() {
       console.error("Failed to generate AI plan:", error);
     }
 
-    window.location.href = '/dashboard';
+    window.location.replace('/dashboard');
   };
 
   // State update helpers

@@ -83,7 +83,7 @@ export interface CourseLessonContent {
       title: string;
       slug: string;
     }>;
-    [key: string]: any;
+    [key: string]: unknown;
   }>;
 }
 

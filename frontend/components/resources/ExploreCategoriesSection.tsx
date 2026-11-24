@@ -1,73 +1,61 @@
 import { ArrowRight, Code2, Terminal, Database, Cpu, Brain, Calculator } from "lucide-react";
 import { libraryCategories } from "@/lib/data/resourcesData";
-import { clsx } from "clsx";
+
+const icons: Record<string, React.ComponentType<{ className?: string }>> = {
+  code_blocks: Code2,
+  terminal: Terminal,
+  database: Database,
+  memory: Cpu,
+  psychology: Brain,
+  calculate: Calculator,
+};
 
 interface ExploreCategoriesSectionProps {
+  /** live counts per category from the catalog */
+  counts: { name: string; count: number }[];
   onCategoryClick: (filterKey: string) => void;
 }
 
-export function ExploreCategoriesSection({ onCategoryClick }: ExploreCategoriesSectionProps) {
-  // Mapping string icon names from data to actual Lucide components
-  const iconMap: Record<string, React.ReactNode> = {
-    "code_blocks": <Code2 className="w-5 h-5" />,
-    "terminal": <Terminal className="w-5 h-5" />,
-    "database": <Database className="w-5 h-5" />,
-    "memory": <Cpu className="w-5 h-5" />,
-    "psychology": <Brain className="w-5 h-5" />,
-    "calculate": <Calculator className="w-5 h-5" />
-  };
+export function ExploreCategoriesSection({ counts, onCategoryClick }: ExploreCategoriesSectionProps) {
+  const countOf = (key: string) => counts.find((c) => c.name === key)?.count ?? 0;
+  const topics = libraryCategories.filter((c) => countOf(c.filterKey) > 0); // no empty topic cards
 
+  if (topics.length === 0) return null;
   return (
     <section className="flex flex-col gap-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="sec">
-          <span className="eyebrow sec-n mb-1.5 block">Topics</span>
-          <span className="display text-[28px] md:text-[34px]">Browse by topic</span>
-        </h2>
-          <p className="text-[13px] text-body">Browse resources mapped by technical domains.</p>
-        </div>
-      </div>
+      <h2 className="sec">
+        <span className="eyebrow sec-n mb-1.5 block">Topics</span>
+        <span className="display text-[28px] md:text-[34px]">Browse by topic</span>
+      </h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        {libraryCategories.map((cat) => (
-          <div 
-            key={cat.id}
-            className="group relative bg-card border border-hair rounded-2xl p-5 hover:border-accent hover:shadow-md hover:shadow-accent/5 transition-all flex flex-col h-full cursor-pointer"
-            onClick={() => onCategoryClick(cat.filterKey)}
-          >
-            <div className="flex items-start gap-4 mb-4">
-              <div className={clsx("w-10 h-10 rounded-xl flex items-center justify-center shrink-0", cat.colorScheme)}>
-                {iconMap[cat.icon]}
-              </div>
-              <div>
-                <h3 className="text-[15px] font-semibold text-ink leading-snug group-hover:text-accent-ink transition-colors mb-1">
-                  {cat.title}
-                </h3>
-                <p className="text-[13px] text-body leading-relaxed">
-                  {cat.description}
-                </p>
-              </div>
-            </div>
-
-            <div className="mt-auto pt-4 border-t border-hair flex items-center justify-between">
-              <div className="flex gap-4">
-                <div className="flex flex-col">
-                  <span className="text-[16px] font-semibold text-ink leading-none mb-1">{cat.resourcesCount}</span>
-                  <span className="text-[10px] uppercase tracking-wider font-semibold text-mute">Resources</span>
-                </div>
-                <div className="w-px bg-hair"></div>
-                <div className="flex flex-col">
-                  <span className="text-[16px] font-semibold text-ink leading-none mb-1">{cat.guidesCount}</span>
-                  <span className="text-[10px] uppercase tracking-wider font-semibold text-mute">Guides</span>
-                </div>
-              </div>
-              <div className="w-8 h-8 rounded-full bg-paper-2 group-hover:bg-accent flex items-center justify-center text-body group-hover:text-paper transition-all transform group-hover:translate-x-1">
-                <ArrowRight className="w-4 h-4" />
-              </div>
-            </div>
-          </div>
-        ))}
+      <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+        {topics.map((cat) => {
+          const Icon = icons[cat.icon] ?? Code2;
+          const n = countOf(cat.filterKey);
+          return (
+            <button
+              key={cat.id}
+              onClick={() => onCategoryClick(cat.filterKey)}
+              className="brut brut-hover no-press group flex h-full flex-col gap-4 rounded-2xl bg-card p-5 text-left"
+            >
+              <span className="flex items-start gap-4">
+                <span className="grid size-10 shrink-0 place-items-center rounded-xl border-2 border-line bg-paper text-accent">
+                  <Icon className="size-5" />
+                </span>
+                <span>
+                  <span className="label-cond block text-[19px] leading-snug group-hover:text-accent-ink">{cat.title}</span>
+                  <span className="mt-1 block text-[14px] leading-relaxed text-body">{cat.description}</span>
+                </span>
+              </span>
+              <span className="mt-auto flex items-center justify-between border-t-[1.5px] border-hair pt-3">
+                <span className="font-mono text-[12px] uppercase tracking-wider text-mute">
+                  {n} {n === 1 ? "resource" : "resources"}
+                </span>
+                <ArrowRight aria-hidden className="size-4 transition-transform group-hover:translate-x-0.5" />
+              </span>
+            </button>
+          );
+        })}
       </div>
     </section>
   );

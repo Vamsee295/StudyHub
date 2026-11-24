@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { Building2, ExternalLink, Printer } from "lucide-react";
 import { ToolWorkspaceHeader } from "@/components/tools/shared/ToolWorkspaceHeader";
@@ -11,14 +11,12 @@ import { getStoredProgress } from "@/lib/services/learnService";
 const focusRing = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent";
 
 export default function CompanyPrepPage() {
-  const [companyId, setCompanyId] = useState(COMPANY_PROFILES[0]?.id ?? "");
-  const [store, setStore] = useState<ReturnType<typeof getStoredProgress>>({});
-
-  useEffect(() => {
-    setStore(getStoredProgress());
+  // AppLayout renders pages only on the client, so the URL and localStorage can be read up front.
+  const [companyId, setCompanyId] = useState(() => {
     const q = new URLSearchParams(window.location.search).get("company");
-    if (q && COMPANY_PROFILES.some((p) => p.id === q)) setCompanyId(q);
-  }, []);
+    return q && COMPANY_PROFILES.some((p) => p.id === q) ? q : (COMPANY_PROFILES[0]?.id ?? "");
+  });
+  const [store] = useState(getStoredProgress);
 
   const profile = COMPANY_PROFILES.find((p) => p.id === companyId);
 

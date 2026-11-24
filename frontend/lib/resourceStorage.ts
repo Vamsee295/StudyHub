@@ -8,7 +8,11 @@ export interface RecentResourceItem {
   id: string;
   viewedAt: string;
   lastPage?: number;
+  maxPage?: number;   // furthest page reached: the reading progress
+  pageCount?: number; // real page count, reported by the PDF reader
 }
+
+export type RecentResource = Resource & Omit<RecentResourceItem, "id">;
 
 export const resourceStorage = {
   // --- SAVED / BOOKMARKS ---
@@ -70,15 +74,18 @@ export const resourceStorage = {
     }
   },
 
-  recordView(id: string, page: number = 1): void {
+  recordView(id: string, page: number = 1, pageCount?: number): void {
     if (typeof window === "undefined") return;
     const items = this.getRecentItems();
+    const prev = items.find((item) => item.id === id);
     const filtered = items.filter((item) => item.id !== id);
     const updated: RecentResourceItem[] = [
       {
         id,
         viewedAt: new Date().toISOString(),
-        lastPage: page
+        lastPage: page,
+        maxPage: Math.max(prev?.maxPage ?? prev?.lastPage ?? 0, page),
+        pageCount: pageCount ?? prev?.pageCount,
       },
       ...filtered
     ].slice(0, 20); // Keep last 20
@@ -100,18 +107,11 @@ export const resourceStorage = {
     }
   },
 
-  getRecentResources(): (Resource & { viewedAt: string; lastPage?: number })[] {
-    const recentItems = this.getRecentItems();
-    const result: (Resource & { viewedAt: string; lastPage?: number })[] = [];
-    for (const item of recentItems) {
-      const resource = resourceService.getById(item.id);
-      if (resource) {
-        result.push({
-          ...resource,
-          viewedAt: item.viewedAt,
-          lastPage: item.lastPage
-        });
-      }
+  getRecentResources(): RecentResource[] {
+    const result: RecentResource[] = [];
+    for (const { id, ...item } of this.getRecentItems()) {
+      const resource = resourceService.getById(id);
+      if (resource) result.push({ ...resource, ...item, pageCount: item.pageCount || resource.pageCount || undefined });
     }
     return result;
   },

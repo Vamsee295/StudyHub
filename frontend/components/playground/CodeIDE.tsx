@@ -70,6 +70,7 @@ import {
   saveLastProjectId,
   getLastProjectId,
 } from "@/lib/services/playground/persistence";
+import { errorMessage } from "@/lib/utils";
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -343,7 +344,7 @@ export default function CodeIDE() {
 
       newFiles.push({
         id: generateId(), projectId: pid, path: norm, name: basename(norm),
-        content: def.content, language: lang as any, createdAt: now, updatedAt: now,
+        content: def.content, language: lang, createdAt: now, updatedAt: now,
       });
     }
 
@@ -392,6 +393,8 @@ export default function CodeIDE() {
   }, [bootstrapProject]);
 
   useEffect(() => {
+    // Loading the saved project from IndexedDB is the external sync this effect exists for.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     loadOrCreateProject(language);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -497,8 +500,8 @@ export default function CodeIDE() {
       } else {
         setProblems([]);
       }
-    } catch (err: any) {
-      const msg = err?.message ?? "Unknown error";
+    } catch (err) {
+      const msg = errorMessage(err) ?? "Unknown error";
       setConsoleMessages((prev) => [
         ...prev,
         { id: generateId(), level: "error", message: `Execution failed: ${msg}`, timestamp: Date.now() },

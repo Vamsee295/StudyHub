@@ -1,9 +1,9 @@
 'use client';
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, CheckCircle2, Circle, Clock, Search, Filter } from 'lucide-react';
+import { ChevronDown, CheckCircle2, Circle, Clock, Search } from 'lucide-react';
 import { dsaCatalog, DSA_STAGES, DsaProblem } from '@/lib/data/dsaCatalog';
-import { roadmapApi, DsaProblemProgress, DsaProgressResponse } from '@/lib/api/roadmaps';
+import { roadmapApi, DsaProblemProgress } from '@/lib/api/roadmaps';
 import { DsaProblemDetailModal } from './DsaProblemDetailModal';
 
 export const DsaRoadmapView = () => {
@@ -17,19 +17,12 @@ export const DsaRoadmapView = () => {
   const [statusFilter, setStatusFilter] = useState<string>('all');
 
   useEffect(() => {
-    loadProgress();
+    roadmapApi
+      .getDsaProgress()
+      .then((data) => setProgress(data.progress || {}))
+      .catch((err) => console.error(err))
+      .finally(() => setLoading(false));
   }, []);
-
-  const loadProgress = async () => {
-    try {
-      const data = await roadmapApi.getDsaProgress();
-      setProgress(data.progress || {});
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleStatusUpdate = async (problemId: number, newStatus?: string, newNotes?: string) => {
     // Optimistic update

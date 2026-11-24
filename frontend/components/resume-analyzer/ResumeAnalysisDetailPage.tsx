@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import {
   AlertCircle,
   AlertTriangle,
@@ -11,13 +10,7 @@ import {
   Building2,
   CheckCircle2,
   CheckSquare,
-  ChevronRight,
   Clock,
-  ExternalLink,
-  FileCheck,
-  FileText,
-  HelpCircle,
-  Layers,
   Loader2,
   Mail,
   Phone,
@@ -25,24 +18,12 @@ import {
   RefreshCw,
   RotateCcw,
   Sparkles,
-  TrendingUp,
   User,
   XCircle,
 } from "lucide-react";
 
-import { resumeAnalysisApi, ResumeApiError } from "@/lib/resume-analyzer/client";
-import {
-  ActionItem,
-  AnalysisStage,
-  AtsCheck,
-  CompanyAlignmentFactor,
-  GetAnalysisResponse,
-  KeywordAnalysisItem,
-  ResumeAnalysisReport,
-  ResumeAnalysisSummary,
-  ResumeIssue,
-  SkillMatch,
-} from "@/lib/resume-analyzer/types";
+import { resumeAnalysisApi } from "@/lib/resume-analyzer/client";
+import { AnalysisStage, GetAnalysisResponse, ResumeAnalysisReport, ResumeAnalysisSummary } from "@/lib/resume-analyzer/types";
 
 interface ResumeAnalysisDetailPageProps {
   analysisId: string;
@@ -51,7 +32,6 @@ interface ResumeAnalysisDetailPageProps {
 type TabKey = "overview" | "ats" | "skills" | "company" | "action_plan";
 
 export function ResumeAnalysisDetailPage({ analysisId }: ResumeAnalysisDetailPageProps) {
-  const router = useRouter();
   const [analysis, setAnalysis] = useState<ResumeAnalysisSummary | null>(null);
   const [report, setReport] = useState<ResumeAnalysisReport | null>(null);
   const [stages, setStages] = useState<AnalysisStage[]>([]);
@@ -62,53 +42,7 @@ export function ResumeAnalysisDetailPage({ analysisId }: ResumeAnalysisDetailPag
   const [activeTab, setActiveTab] = useState<TabKey>("overview");
   const streamActiveRef = useRef(false);
 
-  useEffect(() => {
-    let isMounted = true;
-
-    async function loadAndProcess() {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const data: GetAnalysisResponse = await resumeAnalysisApi.getAnalysis(analysisId);
-        if (!isMounted) return;
-
-        setAnalysis(data.analysis);
-        setStages(data.analysis.stages || []);
-        setCurrentStageId(data.analysis.currentStage || null);
-
-        if (data.report && data.analysis.status === "completed") {
-          setReport(data.report);
-          setLoading(false);
-          return;
-        }
-
-        // If pending or processing, start streaming
-        if (data.analysis.status === "pending" || data.analysis.status === "processing") {
-          setLoading(false);
-          setProcessing(true);
-          await startStream();
-        } else {
-          setLoading(false);
-        }
-      } catch (err) {
-        if (!isMounted) return;
-        setLoading(false);
-        setError(
-          err instanceof Error ? err.message : "Unable to load the resume analysis."
-        );
-      }
-    }
-
-    loadAndProcess();
-
-    return () => {
-      isMounted = false;
-      streamActiveRef.current = false;
-    };
-  }, [analysisId]);
-
-  const startStream = async () => {
+  const startStream = useCallback(async () => {
     if (streamActiveRef.current) return;
     streamActiveRef.current = true;
     setProcessing(true);
@@ -154,7 +88,53 @@ export function ResumeAnalysisDetailPage({ analysisId }: ResumeAnalysisDetailPag
       setProcessing(false);
       streamActiveRef.current = false;
     }
-  };
+  }, [analysisId]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadAndProcess() {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const data: GetAnalysisResponse = await resumeAnalysisApi.getAnalysis(analysisId);
+        if (!isMounted) return;
+
+        setAnalysis(data.analysis);
+        setStages(data.analysis.stages || []);
+        setCurrentStageId(data.analysis.currentStage || null);
+
+        if (data.report && data.analysis.status === "completed") {
+          setReport(data.report);
+          setLoading(false);
+          return;
+        }
+
+        // If pending or processing, start streaming
+        if (data.analysis.status === "pending" || data.analysis.status === "processing") {
+          setLoading(false);
+          setProcessing(true);
+          await startStream();
+        } else {
+          setLoading(false);
+        }
+      } catch (err) {
+        if (!isMounted) return;
+        setLoading(false);
+        setError(
+          err instanceof Error ? err.message : "Unable to load the resume analysis."
+        );
+      }
+    }
+
+    loadAndProcess();
+
+    return () => {
+      isMounted = false;
+      streamActiveRef.current = false;
+    };
+  }, [analysisId, startStream]);
 
   const handleRetry = async () => {
     setError(null);

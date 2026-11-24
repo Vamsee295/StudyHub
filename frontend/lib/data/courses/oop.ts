@@ -1,4 +1,4 @@
-import { Course } from './types';
+import { Course, describeLesson } from './types';
 import { withTheory } from './utils';
 import { oopCoreTheory } from './oop-theory-core';
 import { oopPillarsTheory } from './oop-theory-pillars';
@@ -11,18 +11,6 @@ import { polymorphismLessons } from './oop-content-polymorphism';
 import { abstractionLessons } from './oop-content-abstraction';
 import { advancedOopLessons } from './oop-content-advanced';
 import { solidLessons } from './oop-content-solid';
-
-function extractLessonDescription(content: any): string {
-  if (content?.definition) return content.definition;
-  if (content?.sections && Array.isArray(content.sections)) {
-    const textSec = content.sections.find((s: any) => s.type === 'text' && s.title !== 'Prerequisites') || content.sections[0];
-    if (textSec && textSec.content) {
-      const plain = textSec.content.replace(/[*_#`]/g, '').trim();
-      return plain.slice(0, 160) + (plain.length > 160 ? '...' : '');
-    }
-  }
-  return '';
-}
 
 const rawOopCourse: Course = {
   id: "course-oop",
@@ -44,7 +32,7 @@ const rawOopCourse: Course = {
         id: `oop-${lesson.slug}`,
         slug: lesson.slug,
         title: lesson.title,
-        description: extractLessonDescription(lesson.content),
+        description: describeLesson(lesson.content),
         estimatedMinutes: 15,
         content: lesson.content
       }))
@@ -60,7 +48,7 @@ const rawOopCourse: Course = {
         id: `oop-${lesson.slug}`,
         slug: lesson.slug,
         title: lesson.title,
-        description: extractLessonDescription(lesson.content),
+        description: describeLesson(lesson.content),
         estimatedMinutes: 15,
         content: lesson.content
       }))
@@ -76,7 +64,7 @@ const rawOopCourse: Course = {
         id: `oop-${lesson.slug}`,
         slug: lesson.slug,
         title: lesson.title,
-        description: extractLessonDescription(lesson.content),
+        description: describeLesson(lesson.content),
         estimatedMinutes: 15,
         content: lesson.content
       }))
@@ -92,7 +80,7 @@ const rawOopCourse: Course = {
         id: `oop-${lesson.slug}`,
         slug: lesson.slug,
         title: lesson.title,
-        description: extractLessonDescription(lesson.content),
+        description: describeLesson(lesson.content),
         estimatedMinutes: 15,
         content: lesson.content
       }))
@@ -108,7 +96,7 @@ const rawOopCourse: Course = {
         id: `oop-${lesson.slug}`,
         slug: lesson.slug,
         title: lesson.title,
-        description: extractLessonDescription(lesson.content),
+        description: describeLesson(lesson.content),
         estimatedMinutes: 15,
         content: lesson.content
       }))
@@ -124,7 +112,7 @@ const rawOopCourse: Course = {
         id: `oop-${lesson.slug}`,
         slug: lesson.slug,
         title: lesson.title,
-        description: extractLessonDescription(lesson.content),
+        description: describeLesson(lesson.content),
         estimatedMinutes: 15,
         content: lesson.content
       }))
@@ -140,7 +128,7 @@ const rawOopCourse: Course = {
         id: `oop-${lesson.slug}`,
         slug: lesson.slug,
         title: lesson.title,
-        description: extractLessonDescription(lesson.content),
+        description: describeLesson(lesson.content),
         estimatedMinutes: 15,
         content: lesson.content
       }))
@@ -156,7 +144,7 @@ const rawOopCourse: Course = {
         id: `oop-${lesson.slug}`,
         slug: lesson.slug,
         title: lesson.title,
-        description: extractLessonDescription(lesson.content),
+        description: describeLesson(lesson.content),
         estimatedMinutes: 15,
         content: lesson.content
       }))

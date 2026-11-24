@@ -1,6 +1,6 @@
 import React from "react";
 import { Database } from "lucide-react";
-import { SQLResult, SQLExecutionResult } from "@/lib/sql/types";
+import { SQLExecutionResult } from "@/lib/sql/types";
 
 interface Props {
   result: SQLExecutionResult | null;

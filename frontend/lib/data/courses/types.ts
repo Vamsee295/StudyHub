@@ -88,7 +88,7 @@ export interface CourseLessonContent {
       title: string;
       slug: string;
     }>;
-    [key: string]: any;
+    [key: string]: unknown;
   }>;
 }
 
@@ -133,4 +133,14 @@ export interface CourseProgress {
   totalLessons: number;
   percentage: number;
   lastAccessedLessonSlug?: string;
+}
+
+/** A lesson's one-line description: its definition, else the start of its first text section. */
+export function describeLesson(content: CourseLessonContent | undefined): string {
+  if (content?.definition) return content.definition;
+  const sections = content?.sections ?? [];
+  const textSec = sections.find((s) => s.type === 'text' && s.title !== 'Prerequisites') || sections[0];
+  if (!textSec?.content) return '';
+  const plain = textSec.content.replace(/[*_#`]/g, '').trim();
+  return plain.slice(0, 160) + (plain.length > 160 ? '...' : '');
 }

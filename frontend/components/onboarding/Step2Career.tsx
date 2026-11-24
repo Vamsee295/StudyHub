@@ -79,7 +79,7 @@ export default function Step2Career({ data, update }: Step2CareerProps) {
       <div className="flex flex-col gap-1.5">
         <h2 className="display text-[32px] md:text-[38px]">Select Target Career Tracks</h2>
         <p className="text-sm text-mute leading-relaxed">
-          Select up to 2 primary tracks. We'll prioritize these skills in your learning roadmap and practice modules.
+          Select up to 2 primary tracks. We’ll prioritize these skills in your learning roadmap and practice modules.
         </p>
       </div>
 

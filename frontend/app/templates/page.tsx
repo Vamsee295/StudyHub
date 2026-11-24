@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import { TemplatesHeader } from "@/components/templates/TemplatesHeader";
 import { TemplatesSearchFilter } from "@/components/templates/TemplatesSearchFilter";
 import { LibraryGridSection } from "@/components/templates/LibraryGridSection";
@@ -17,20 +17,15 @@ import { SavedTemplateRecord } from "@/types";
 export default function TemplatesPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("all");
-  const [savedTemplates, setSavedTemplates] = useState<SavedTemplateRecord[]>([]);
-
-  // Load saved templates from localStorage on mount
-  useEffect(() => {
-    const localData = localStorage.getItem("pathward-saved-templates");
-    if (localData) {
-      try {
-        setSavedTemplates(JSON.parse(localData));
-      } catch (e) {
-        console.error("Error parsing saved templates", e);
-        setSavedTemplates([]);
-      }
+  // AppLayout renders pages only on the client, so localStorage can be read up front
+  const [savedTemplates] = useState<SavedTemplateRecord[]>(() => {
+    try {
+      return JSON.parse(localStorage.getItem("pathward-saved-templates") || "[]");
+    } catch (e) {
+      console.error("Error parsing saved templates", e);
+      return [];
     }
-  }, []);
+  });
 
   // Filter templates based on search query and category
   const filteredLibrary = useMemo(() => {

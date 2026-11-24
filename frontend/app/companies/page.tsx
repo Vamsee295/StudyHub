@@ -1,49 +1,37 @@
 "use client";
 
 import { useState, useEffect, useMemo, useRef } from "react";
-import { motion, useReducedMotion, Variants } from "framer-motion";
 import { CompaniesHeader } from "@/components/companies/CompaniesHeader";
 import { TargetCompaniesSection } from "@/components/companies/TargetCompaniesSection";
 import { CompanyWorkspace } from "@/components/companies/CompanyWorkspace";
 import { CompanyDirectory } from "@/components/companies/CompanyDirectory";
-import { RecommendedCompanies } from "@/components/companies/RecommendedCompanies";
 import { RecentlyExploredTable } from "@/components/companies/RecentlyExploredTable";
 import { AskedInSection } from "@/components/companies/AskedInSection";
 
 import { 
   targetCompanies, 
   companyWorkspaces, 
-  directoryCompanies, 
-  companyRecommendations
+  directoryCompanies,
 } from "@/lib/data/companiesData";
 import { RecentCompanyLog } from "@/types";
 
 export default function CompaniesPage() {
-  const reduced = useReducedMotion();
-  const [mounted, setMounted] = useState(false);
-  
-  // State
   const [searchQuery, setSearchQuery] = useState("");
   const [activeSegment, setActiveSegment] = useState("All Companies");
   const [selectedCompanyId, setSelectedCompanyId] = useState("microsoft");
-  const [recentHistory, setRecentHistory] = useState<RecentCompanyLog[]>([]);
+  // AppLayout renders pages only on the client, so localStorage is safe to read here.
+  const [recentHistory, setRecentHistory] = useState<RecentCompanyLog[]>(() => {
+    try {
+      const saved: RecentCompanyLog[] = JSON.parse(localStorage.getItem("pathward_recent_companies") || "[]");
+      return saved.filter((h) => typeof h.viewedAt === "number"); // entries from before viewedAt existed are dropped
+    } catch {
+      return [];
+    }
+  });
 
   const workspaceRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setMounted(true);
-    // Load history from localStorage or fallback
-    const saved = localStorage.getItem("pathward_recent_companies");
-    if (saved) {
-      try {
-        setRecentHistory(JSON.parse(saved));
-      } catch (e) {
-        setRecentHistory([]);
-      }
-    } else {
-      setRecentHistory([]);
-    }
-
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === "f") {
         e.preventDefault();
@@ -76,10 +64,7 @@ export default function CompaniesPage() {
           id: workspace.id,
           name: workspace.name,
           targetRole: workspace.targetRole,
-          lastInteraction: "Just now",
-          cohortStatus: "Active",
-          readinessScore: workspace.readinessScore,
-          sprintAction: "Continue Prep →"
+          viewedAt: Date.now(),
         };
         const updated = [newEntry, ...filtered].slice(0, 5); // Keep last 5
         localStorage.setItem("pathward_recent_companies", JSON.stringify(updated));
@@ -105,21 +90,6 @@ export default function CompaniesPage() {
 
   const activeWorkspace = companyWorkspaces[selectedCompanyId];
 
-  // Framer Motion variants
-  const container: Variants = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: { staggerChildren: 0.1 }
-    }
-  };
-
-  const item: Variants = {
-    hidden: { opacity: 0, y: 15 },
-    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
-  };
-
-  if (!mounted) return null;
 
   return (
     <div className="flex flex-col gap-10 md:gap-14 pb-24 relative max-w-[1440px] mx-auto w-full min-w-0">
@@ -132,56 +102,34 @@ export default function CompaniesPage() {
 
       {searchQuery === "" && <AskedInSection />}
 
-      <motion.div 
-        className="flex flex-col gap-10 md:gap-14"
-        variants={reduced ? undefined : container}
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true, margin: "-50px" }}
-      >
+      <div className="flex flex-col gap-10 md:gap-14">
         {/* Only show target and workspace if search is empty, otherwise just show directory filter results */}
         {searchQuery === "" && activeSegment === "All Companies" && (
           <>
-            <motion.div variants={reduced ? undefined : item}>
-              <TargetCompaniesSection 
-                targets={targetCompanies}
-                selectedId={selectedCompanyId}
-                onSelect={handleSelectCompany}
-              />
-            </motion.div>
+            <TargetCompaniesSection
+              targets={targetCompanies}
+              selectedId={selectedCompanyId}
+              onSelect={handleSelectCompany}
+            />
 
             {activeWorkspace && (
-              <motion.div variants={reduced ? undefined : item} ref={workspaceRef} className="scroll-mt-24">
+              <div ref={workspaceRef} className="scroll-mt-24">
                 <CompanyWorkspace workspace={activeWorkspace} />
-              </motion.div>
+              </div>
             )}
           </>
         )}
 
-        <motion.div variants={reduced ? undefined : item} className="scroll-mt-24">
-          <CompanyDirectory 
-            companies={filteredDirectory} 
-            searchQuery={searchQuery}
-            onSelect={handleSelectCompany}
-          />
-        </motion.div>
+        <CompanyDirectory
+          companies={filteredDirectory}
+          searchQuery={searchQuery}
+          onSelect={handleSelectCompany}
+        />
 
         {searchQuery === "" && (
-          <>
-            <motion.div variants={reduced ? undefined : item}>
-              <RecommendedCompanies recommendations={companyRecommendations} />
-            </motion.div>
-            
-            <motion.div variants={reduced ? undefined : item}>
-              <RecentlyExploredTable 
-                history={recentHistory}
-                onClear={handleClearHistory}
-                onSelect={handleSelectCompany}
-              />
-            </motion.div>
-          </>
+          <RecentlyExploredTable history={recentHistory} onClear={handleClearHistory} onSelect={handleSelectCompany} />
         )}
-      </motion.div>
+      </div>
     </div>
   );
 }

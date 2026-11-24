@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any -- test harness: stubs browser globals (window, fetch, localStorage) with loose shapes */
 // Simulates two devices syncing through a fake server with the backend's last-write-wins rule.
 // Usage: npx tsx scripts/check-sync.ts
 class MemStorage { m = new Map<string, string>(); getItem(k: string) { return this.m.has(k) ? this.m.get(k)! : null; } setItem(k: string, v: string) { this.m.set(k, String(v)); } removeItem(k: string) { this.m.delete(k); } clear() { this.m.clear(); } key(i: number) { return [...this.m.keys()][i] ?? null; } get length() { return this.m.size; } }

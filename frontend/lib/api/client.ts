@@ -35,7 +35,7 @@ export async function getAuthToken(): Promise<string | null> {
       _cachedTokenTime = now;
       return session.access_token;
     }
-  } catch (e) {
+  } catch {
     return null;
   }
   return null;
@@ -102,7 +102,7 @@ async function fetchAPI(endpoint: string, options: RequestInit) {
       headers,
       cache: 'no-store', // Fix Next.js aggressive caching for API calls
     });
-  } catch (err: any) {
+  } catch (err) {
     let fallbackSuccess = false;
     let fallbackUrl: string | null = null;
     if (API_URL.includes('localhost')) {
@@ -119,14 +119,14 @@ async function fetchAPI(endpoint: string, options: RequestInit) {
           cache: 'no-store',
         });
         fallbackSuccess = true;
-      } catch (fallbackErr) {
+      } catch {
         // Both primary and fallback failed
       }
     }
 
     if (!fallbackSuccess) {
       console.warn(`[API] Failed to reach backend at ${API_URL}${endpoint}:`, err);
-      throw new Error(err.message || 'Unable to connect to the backend server. Please verify the backend is running at http://localhost:8000');
+      throw new Error((err instanceof Error && err.message) || 'Unable to connect to the backend server. Please verify the backend is running at http://localhost:8000');
     }
   }
 
@@ -139,7 +139,7 @@ async function fetchAPI(endpoint: string, options: RequestInit) {
     try {
       const errorData = await response.json();
       errorMsg = errorData.detail || errorMsg;
-    } catch (e) {
+    } catch {
       errorMsg = (await response.text()) || errorMsg;
     }
     throw new Error(errorMsg);

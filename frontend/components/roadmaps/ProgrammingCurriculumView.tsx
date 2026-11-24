@@ -1,15 +1,12 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { motion, useReducedMotion } from 'framer-motion';
-import { CheckCircle2, Clock, ChevronRight } from 'lucide-react';
-import { clsx } from 'clsx';
+import { ChevronRight } from 'lucide-react';
 import { learnService, SubjectDetails } from '@/lib/services/learnService';
 
 export const ProgrammingCurriculumView = () => {
   const [subject, setSubject] = useState<SubjectDetails | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const reduced = useReducedMotion();
 
   useEffect(() => {
     async function loadCurriculum() {

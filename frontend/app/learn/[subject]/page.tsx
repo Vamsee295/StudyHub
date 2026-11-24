@@ -4,10 +4,11 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { clsx } from "clsx";
-import { ArrowLeft, ArrowRight, CheckCircle2, ChevronRight, ClipboardCheck, FileText, ListOrdered, Loader2, RotateCcw } from "lucide-react";
+import { ArrowLeft, ArrowRight, ChevronRight, ClipboardCheck, FileText, ListOrdered, Loader2, RotateCcw } from "lucide-react";
 import { learnService, SubjectDetails } from "@/lib/services/learnService";
 import { dueItems, getReviewItems } from "@/lib/learn/study";
 import { AskedInChips } from "@/components/learn/AskedIn";
+import { LessonDot } from "@/components/learn/LessonDot";
 import { PageHeader, Section, Progress } from "@/components/ui/Page";
 import { buttonClass } from "@/components/ui/Button";
 
@@ -140,13 +141,7 @@ export default function SubjectPage() {
                       <li key={t.id} className="border-b-[1.5px] border-hair">
                         <Link href={`/learn/${subject.slug}/${t.slug}`} className="group flex items-start gap-3 px-1 py-3 hover:bg-card-2 md:px-2">
                           <span className="mt-0.5 shrink-0">
-                            {t.status === "completed" ? (
-                              <CheckCircle2 aria-label="Completed" className="size-[18px] text-note" />
-                            ) : t.status === "in_progress" ? (
-                              <span aria-label="In progress" className="block size-[18px] rounded-full border-2 border-gold bg-[linear-gradient(90deg,var(--gold)_50%,transparent_50%)]" />
-                            ) : (
-                              <span aria-hidden className="block size-[18px] rounded-full border-2 border-ink/25" />
-                            )}
+                            <LessonDot status={t.status} progress={t.progress} className="size-[18px]" />
                           </span>
                           <span className="w-7 shrink-0 pt-px font-mono text-[12px] text-mute">{String(ti + 1).padStart(2, "0")}</span>
                           <span className="min-w-0 flex-1">
@@ -155,7 +150,9 @@ export default function SubjectPage() {
                             </span>
                             {t.description && <span className="mt-0.5 block text-[13px] text-mute">{t.description}</span>}
                           </span>
-                          <span className="shrink-0 pt-px font-mono text-[11px] text-mute">{t.estimated_minutes}m</span>
+                          <span className="shrink-0 pt-px font-mono text-[11px] text-mute">
+                            {t.status === "in_progress" && t.progress > 0 ? `${t.progress}%` : `${t.estimated_minutes}m`}
+                          </span>
                         </Link>
                       </li>
                     ))}

@@ -44,17 +44,6 @@ export default function SqlPlaygroundPage() {
   const [showExamples, setShowExamples] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
-  // ── Initialize DB ──────────────────────────────────────────────────────────
-  useEffect(() => {
-    databaseManager
-      .init()
-      .then(() => {
-        setDbStatus("ready");
-        refreshSchema();
-      })
-      .catch(() => setDbStatus("error"));
-  }, []);
-
   const refreshSchema = useCallback(async () => {
     setSchemaLoading(true);
     try {
@@ -64,6 +53,18 @@ export default function SqlPlaygroundPage() {
       setSchemaLoading(false);
     }
   }, []);
+
+  // ── Initialize DB ──────────────────────────────────────────────────────────
+  useEffect(() => {
+    databaseManager
+      .init()
+      .then(() => {
+        setDbStatus("ready");
+        refreshSchema();
+      })
+      .catch(() => setDbStatus("error"));
+  }, [refreshSchema]);
+
 
   // ── Execute Query ──────────────────────────────────────────────────────────
   const handleExecute = useCallback(async (sql: string) => {

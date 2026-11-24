@@ -52,7 +52,7 @@ export function ResumeDropzone({ onAnalyze, isAnalyzing }: ResumeDropzoneProps) 
     <div className="bg-card rounded-2xl border border-hair p-6 sm:p-8 flex flex-col h-full justify-center items-center">
       <h2 className="text-xl font-bold text-ink mb-2">Upload your Resume</h2>
       <p className="text-mute text-sm mb-8 text-center max-w-md">
-        We'll parse your resume and evaluate it against typical placement ATS systems to give you actionable feedback.
+        We’ll parse your resume and evaluate it against typical placement ATS systems to give you actionable feedback.
       </p>
       
       <div 

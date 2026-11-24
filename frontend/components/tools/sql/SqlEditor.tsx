@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useRef } from "react";
 import { Play, RotateCcw, AlignLeft, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import dynamic from "next/dynamic";

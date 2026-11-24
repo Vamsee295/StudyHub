@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { InterviewQuestion } from '@/lib/services/tools/interviewService';
 import { ToolCard } from '@/components/tools/shared/ToolCard';
-import { Timer, MessageSquare, Send, CheckCircle2 } from 'lucide-react';
+import { Timer, MessageSquare, Send } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface InterviewSessionProps {
@@ -16,10 +16,13 @@ export function InterviewSession({ question, currentIndex, totalQuestions, onSub
   const [answer, setAnswer] = useState('');
   const [secondsElapsed, setSecondsElapsed] = useState(0);
 
-  useEffect(() => {
+  // A new question starts with an empty answer and a fresh clock
+  const [askedId, setAskedId] = useState(question.id);
+  if (askedId !== question.id) {
+    setAskedId(question.id);
     setAnswer('');
     setSecondsElapsed(0);
-  }, [question.id]);
+  }
 
   useEffect(() => {
     let interval: NodeJS.Timeout;

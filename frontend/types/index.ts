@@ -42,7 +42,6 @@ export interface PracticeCategory {
   progress: number;
 }
 
-
 export interface Concept {
   key: string;
   title: string;
@@ -184,28 +183,6 @@ export interface CalculatorTrackerItem {
   href: string;
 }
 
-export interface RecommendedToolItem {
-  id: string;
-  title: string;
-  rationale: string;
-  tag: string;
-  subTag: string;
-  meta: string;
-  href: string;
-}
-
-export interface RecentToolAuditRecord {
-  id: string;
-  toolName: string;
-  category: string;
-  lastUsed: string;
-  statusText: string;
-  statusType: 'success' | 'warning' | 'default';
-  progressPercent: number;
-  href: string;
-  icon?: string;
-}
-
 export interface PracticeCurriculumBank {
   id: string;
   bankCode: string;
@@ -266,12 +243,6 @@ export interface HiringStage {
   tags: string[];
 }
 
-export interface CompanyCompetency {
-  name: string;
-  score: number;
-  isGap?: boolean;
-}
-
 export interface QuestionWeight {
   topic: string;
   frequency: number;
@@ -296,12 +267,7 @@ export interface CompanyWorkspaceDetail {
   locations: string[];
   targetRole: string;
   recruitmentWindow: string;
-  competenciesVerified: number;
-  totalCompetencies: number;
-  readinessScore: number;
-  readinessPhase: string;
   hiringStages: HiringStage[];
-  competencies: CompanyCompetency[];
   questionWeights: QuestionWeight[];
   recentQuestions: InterviewProblem[];
 }
@@ -316,117 +282,26 @@ export interface DirectoryCompany {
   roles: string[];
   processSummary: string;
   difficulty: string;
-  readinessScore: number;
   segmentFilter: string;
-}
-
-export interface CompanyRecommendation {
-  id: string;
-  name: string;
-  matchPercentage: number;
-  rationale: string;
-  roadmapsCount: number;
-  practiceSetsCount: number;
 }
 
 export interface RecentCompanyLog {
   id: string;
   name: string;
   targetRole: string;
-  lastInteraction: string;
-  cohortStatus: string;
-  readinessScore: number;
-  sprintAction: string;
+  viewedAt: number; // ms timestamp
 }
 
 // ----------------------------------------------------
 // RESOURCES LIBRARY MODULE TYPES
 // ----------------------------------------------------
 
-export interface LibraryResource {
-  id: string;
-  title: string;
-  subtitle?: string;
-  category: string;
-  track: string;
-  difficulty: "Beginner" | "Intermediate" | "Advanced" | "Core SDE";
-  readTime: string;
-  rating: number;
-  reviewsCount: number;
-  isVerified: boolean;
-  author: string;
-  description: string;
-  tags: string[];
-  slug: string;
-}
-
-export interface ContinueReadingItem {
-  id: string;
-  title: string;
-  track: string;
-  unitProgress: string;
-  percentage: number;
-  timeEstimate: string;
-  typeBadge: string;
-  href: string;
-}
-
 export interface ResourceCategoryItem {
   id: string;
   title: string;
   description: string;
   icon: string;
-  resourcesCount: number;
-  guidesCount: number;
-  colorScheme: string;
   filterKey: string;
-}
-
-export interface RecommendedResourceItem {
-  id: string;
-  title: string;
-  rationale: string;
-  badgeType: "Curriculum Alignment" | "Diagnostic Remediation" | "Stage Milestone Target" | string;
-  description: string;
-  readTime: string;
-  href: string;
-}
-
-export interface SavedResourceRecord {
-  id: string;
-  title: string;
-  topic: string;
-  type: string;
-  savedAt: string;
-  iconName: string;
-  href: string;
-}
-
-export interface RecentlyViewedRecord {
-  id: string;
-  title: string;
-  topic: string;
-  type: string;
-  viewedAt: string;
-  href: string;
-}
-
-export interface ResourceDetailContent {
-  id: string;
-  title: string;
-  timeEstimate: string;
-  difficulty: string;
-  topic: string;
-  summary: string;
-  keyTakeaways: string[];
-  sections: {
-    heading: string;
-    content: string;
-    codeSnippet?: string;
-    codeLanguage?: string;
-  }[];
-  interviewTraps: string[];
-  relatedResources: { title: string; href: string }[];
 }
 
 // ----------------------------------------------------

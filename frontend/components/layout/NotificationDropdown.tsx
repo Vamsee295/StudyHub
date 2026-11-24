@@ -159,7 +159,7 @@ export function NotificationDropdown({
                 <div className="w-12 h-12 rounded-full bg-paper-2 flex items-center justify-center mb-3">
                   <Bell className="w-5 h-5 text-mute" />
                 </div>
-                <h4 className="font-semibold text-[14px] text-ink mb-1">You're all caught up</h4>
+                <h4 className="font-semibold text-[14px] text-ink mb-1">You’re all caught up</h4>
                 <p className="text-[12px] text-body">No new notifications right now.</p>
               </div>
             ) : (

@@ -144,7 +144,8 @@ export const resumeAnalysisApi = {
 
 function parseResumeStream(body: ReadableStream<Uint8Array>): ReadableStream<ResumeStreamEvent> {
   let buffer = "";
-  return (body as any).pipeThrough(new TextDecoderStream()).pipeThrough(
+  // TS types TextDecoderStream as taking any BufferSource; the bytes here are Uint8Array
+  return body.pipeThrough(new TextDecoderStream() as unknown as ReadableWritablePair<string, Uint8Array>).pipeThrough(
     new TransformStream<string, ResumeStreamEvent>({
       transform(chunk, controller) {
         buffer += chunk;

@@ -12,37 +12,39 @@ interface InterviewFeedbackCardProps {
   isLastQuestion: boolean;
 }
 
-export function InterviewFeedbackCard({ question, userAnswer, feedback, onNext, isLastQuestion }: InterviewFeedbackCardProps) {
-  
-  const getScoreColor = (score: number) => {
-    if (score >= 4) return 'text-note bg-success-soft border-success-line';
-    if (score === 3) return 'text-warning bg-warning-soft border-warning-line';
-    return 'text-danger bg-danger-soft border-danger-line';
-  };
+function getScoreColor(score: number) {
+  if (score >= 4) return 'text-note bg-success-soft border-success-line';
+  if (score === 3) return 'text-warning bg-warning-soft border-warning-line';
+  return 'text-danger bg-danger-soft border-danger-line';
+}
 
-  const getScoreBarWidth = (score: number) => `${(score / 5) * 100}%`;
+const getScoreBarWidth = (score: number) => `${(score / 5) * 100}%`;
 
-  const MetricRow = ({ label, metric }: { label: string, metric: { score: number, notes: string } }) => (
-    <div className="py-4 border-b border-hair last:border-0">
-      <div className="flex items-center justify-between mb-2">
-        <span className="font-semibold text-body text-sm">{label}</span>
-        <div className="flex items-center gap-2">
-          <span className={cn("text-xs font-bold px-2 py-0.5 rounded", getScoreColor(metric.score))}>
-            {metric.score}/5
-          </span>
-        </div>
+function MetricRow({ label, metric }: { label: string; metric: { score: number; notes: string } }) {
+  return (
+  <div className="py-4 border-b border-hair last:border-0">
+    <div className="flex items-center justify-between mb-2">
+      <span className="font-semibold text-body text-sm">{label}</span>
+      <div className="flex items-center gap-2">
+        <span className={cn("text-xs font-bold px-2 py-0.5 rounded", getScoreColor(metric.score))}>
+          {metric.score}/5
+        </span>
       </div>
-      <div className="w-full h-1.5 bg-card-2 rounded-full mb-3 overflow-hidden">
-        <div 
-          className={cn("h-full rounded-full transition-all duration-1000", 
-            metric.score >= 4 ? "bg-note" : metric.score === 3 ? "bg-gold" : "bg-danger"
-          )}
-          style={{ width: getScoreBarWidth(metric.score) }}
-        ></div>
-      </div>
-      <p className="text-sm text-body">{metric.notes}</p>
     </div>
+    <div className="w-full h-1.5 bg-card-2 rounded-full mb-3 overflow-hidden">
+      <div 
+        className={cn("h-full rounded-full transition-all duration-1000", 
+          metric.score >= 4 ? "bg-note" : metric.score === 3 ? "bg-gold" : "bg-danger"
+        )}
+        style={{ width: getScoreBarWidth(metric.score) }}
+      ></div>
+    </div>
+    <p className="text-sm text-body">{metric.notes}</p>
+  </div>
   );
+}
+
+export function InterviewFeedbackCard({ question, userAnswer, feedback, onNext, isLastQuestion }: InterviewFeedbackCardProps) {
 
   return (
     <div className="flex flex-col h-full gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-12">

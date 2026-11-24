@@ -116,6 +116,15 @@ screenshot-checked at 375 / 1440 · passes `tsc` and `next build`.
   - `next build` green.
   - Not done from the original list: Lighthouse runs, keyboard-only pass, screenshot pass (the browser pane runs hidden, so checks were DOM-based).
 
+- **2026-11-25: Follow-ups: real progress, real account actions, lint at zero.**
+  - **Lesson reading bar.** A 3px bar under the lesson header: solid rust shows where you are, pale rust the furthest point you've read (measured to the end of the lesson body, not the notes). The furthest point is saved as the lesson's progress (local store + `POST /learn/topics/{id}/progress` with a new `progress` field, 0–99; the backend keeps the max). The header reads "42% read · 6 min left". The course outline and syllabus show a ring filled to the real % (it used to be a fixed half-circle and a fake 50%); the course bar is computed live, so "Mark complete" moves it at once. "Mark complete" no longer wipes saved notes.
+  - **Resources "Continue reading"** uses the PDF's real page count and the furthest page reached (it used to assume 10 pages and show 15% when unknown); topic cards count the live catalog instead of hard-coded numbers.
+  - **Password change** is real: re-checks the current password with Supabase, then `updateUser`. **Account deletion** is real: `DELETE /api/profile` deletes the Supabase login (service role), then every row the user owns, including rows hanging off theirs (votes on their ideas, comments on their posts), and recounts idea votes; the UI asks you to type DELETE. Test: `backend/tests/test_account_delete.py`.
+  - **Fake data removed:** company `readinessScore` / `competenciesVerified` / `competencies` scores, the "More companies to explore" block (invented counts, dead button), "Cohort status / Sprint action" columns (Recently opened now shows real times), unused mock resources and the mock resume service.
+  - **MDX 404s gone:** every lesson fetched `/content/learn/<course>/<lesson>/index.mdx`, and the only file was for a lesson no course links to. Removed the fetch, the orphan file, `MdxRenderer` and the three MDX packages.
+  - **Lint: 306 problems → 0 errors, 6 warnings** (user-avatar `<img>`s from arbitrary hosts). Typed the `any`s, used `errorMessage(e)` for caught errors, moved data fetches inside effects with ignore flags (fixes out-of-order responses), replaced reset-in-effect with adjust-during-render, and auth redirects use `location.replace`. Fixes found on the way: a null editor position crash in the SQL Lab, and ProfileProvider's debug logging.
+  - **Still open:** the Supabase `notifications` table doesn't exist, so the bell's queries 404 on every page.
+
 ### Phase 0: Foundation (no visible page work)
 | # | Task | Files |
 |---|---|---|

@@ -215,7 +215,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     document.cookie = "onboarding-complete=; path=/; max-age=0; SameSite=Lax";
     localStorage.clear();
     sessionStorage.clear();
-    window.location.href = "/login";
+    window.location.replace("/login");
   };
 
   if (!mounted || isLoading) {

@@ -103,12 +103,12 @@ export async function executeSQL(query: string): Promise<SQLExecutionResult> {
       executionTime: Math.round((end - start) * 10) / 10,
       rowsModified
     };
-  } catch (err: any) {
+  } catch (err) {
     return {
       results: [],
       executionTime: 0,
       rowsModified: 0,
-      error: err.message || String(err)
+      error: err instanceof Error ? err.message : String(err)
     };
   }
 }

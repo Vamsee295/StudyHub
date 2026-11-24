@@ -34,7 +34,7 @@ export function mapFolderToCategory(folderName: string): Resource["category"] {
   }
 
   // Fallback to formatted folder name or Other
-  return folderName ? (folderName as any) : "Other";
+  return folderName || "Other";
 }
 
 /**
@@ -54,7 +54,7 @@ export function generateSlugFromFilename(filename: string): string {
 export function generateTitleFromFilename(filename: string): string {
   const withoutExt = filename.replace(/\.pdf$/i, "");
   // Replace underscores and multiple dashes with spaces
-  let cleaned = withoutExt.replace(/[_-]+/g, " ").trim();
+  const cleaned = withoutExt.replace(/[_-]+/g, " ").trim();
 
   // If filename looks like AADS_CO1 -> "Advance Algorithms & Data Structures (CO1)"
   if (/^AADS[ _-]?CO[ -]?(\d+)$/i.test(cleaned)) {

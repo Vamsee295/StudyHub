@@ -35,7 +35,6 @@ export default function SearchDialog({ onClose }: { onClose: () => void }) {
 
   const results = useMemo(() => (query.trim() ? searchLessons(query, 20).map(toRow) : []), [query]);
   const rows = query.trim() ? results : bookmarks;
-  useEffect(() => setActive(0), [query]);
 
   const go = (row: Row | undefined) => {
     if (!row) return;
@@ -69,7 +68,10 @@ export default function SearchDialog({ onClose }: { onClose: () => void }) {
           <input
             ref={inputRef}
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => {
+              setQuery(e.target.value);
+              setActive(0); // new results: highlight the first
+            }}
             placeholder="Search all lessons and notes…"
             aria-label="Search lessons"
             aria-controls="search-results"

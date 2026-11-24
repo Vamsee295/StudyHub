@@ -18,16 +18,26 @@ export function CommentPanel({ post, currentUserId, onClose }: CommentPanelProps
   const [newComment, setNewComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  useEffect(() => {
-    if (!post) return;
+  // Another post opened: clear the old thread now (during render), then fetch the new one.
+  const [shownFor, setShownFor] = useState(post?.id);
+  if (post?.id !== shownFor) {
+    setShownFor(post?.id);
     setComments([]);
-    setIsLoading(true);
+    setIsLoading(!!post);
+  }
+  const postId = post?.id;
+  useEffect(() => {
+    if (!postId) return;
+    let live = true;
     communityApi
-      .getComments(post.id)
-      .then(setComments)
+      .getComments(postId)
+      .then((c) => live && setComments(c))
       .catch(console.error)
-      .finally(() => setIsLoading(false));
-  }, [post?.id]);
+      .finally(() => live && setIsLoading(false));
+    return () => {
+      live = false;
+    };
+  }, [postId]);
 
   // Close on Escape
   useEffect(() => {
@@ -46,7 +56,7 @@ export function CommentPanel({ post, currentUserId, onClose }: CommentPanelProps
       const created = await communityApi.createComment(post.id, { content: trimmed });
       setComments((prev) => [...prev, created]);
       setNewComment("");
-    } catch (err: any) {
+    } catch (err) {
       console.error("Comment failed:", err);
     } finally {
       setIsSubmitting(false);

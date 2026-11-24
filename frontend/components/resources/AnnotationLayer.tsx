@@ -34,14 +34,86 @@ export interface Annotation {
 interface AnnotationLayerProps {
   width: number;
   height: number;
-  currentPage: number;
-  fileUrl: string;
   onClose: () => void;
 }
 
 const COLORS = ["#ef4444", "#eab308", "#22c55e", "#3b82f6", "#a855f7", "#18181b", "#ffffff"];
 
-export function AnnotationLayer({ width, height, currentPage, fileUrl, onClose }: AnnotationLayerProps) {
+function drawAnnotation(ctx: CanvasRenderingContext2D, ann: Annotation) {
+  if (ann.points.length === 0) return;
+
+  ctx.save();
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+
+  if (ann.type === "eraser") {
+    ctx.globalCompositeOperation = "destination-out";
+    ctx.strokeStyle = "rgba(0,0,0,1)";
+    ctx.lineWidth = ann.width;
+  } else {
+    ctx.globalCompositeOperation = "source-over";
+    ctx.strokeStyle = ann.color;
+    ctx.lineWidth = ann.width;
+  }
+
+  if (ann.type === "highlighter") {
+    // Hex to RGBA for highlighter transparency
+    const r = parseInt(ann.color.slice(1, 3), 16) || 234;
+    const g = parseInt(ann.color.slice(3, 5), 16) || 179;
+    const b = parseInt(ann.color.slice(5, 7), 16) || 8;
+    ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, 0.4)`;
+    ctx.lineWidth = 24; // Thicker for highlighter
+  }
+
+  if (ann.type === "pencil" || ann.type === "highlighter" || ann.type === "eraser") {
+    ctx.beginPath();
+    ctx.moveTo(ann.points[0].x, ann.points[0].y);
+    for (let i = 1; i < ann.points.length; i++) {
+      ctx.lineTo(ann.points[i].x, ann.points[i].y);
+    }
+    ctx.stroke();
+  } else if (ann.type === "line" && ann.points.length > 1) {
+    const start = ann.points[0];
+    const end = ann.points[ann.points.length - 1];
+    ctx.beginPath();
+    ctx.moveTo(start.x, start.y);
+    ctx.lineTo(end.x, end.y);
+    ctx.stroke();
+  } else if (ann.type === "arrow" && ann.points.length > 1) {
+    const start = ann.points[0];
+    const end = ann.points[ann.points.length - 1];
+    ctx.beginPath();
+    ctx.moveTo(start.x, start.y);
+    ctx.lineTo(end.x, end.y);
+    ctx.stroke();
+    
+    // Draw arrowhead
+    const angle = Math.atan2(end.y - start.y, end.x - start.x);
+    const headLen = 15;
+    ctx.beginPath();
+    ctx.moveTo(end.x, end.y);
+    ctx.lineTo(end.x - headLen * Math.cos(angle - Math.PI / 6), end.y - headLen * Math.sin(angle - Math.PI / 6));
+    ctx.moveTo(end.x, end.y);
+    ctx.lineTo(end.x - headLen * Math.cos(angle + Math.PI / 6), end.y - headLen * Math.sin(angle + Math.PI / 6));
+    ctx.stroke();
+  } else if (ann.type === "circle" && ann.points.length > 1) {
+    const start = ann.points[0];
+    const end = ann.points[ann.points.length - 1];
+    const radiusX = Math.abs(end.x - start.x) / 2;
+    const radiusY = Math.abs(end.y - start.y) / 2;
+    const centerX = Math.min(start.x, end.x) + radiusX;
+    const centerY = Math.min(start.y, end.y) + radiusY;
+    
+    ctx.beginPath();
+    ctx.ellipse(centerX, centerY, radiusX, radiusY, 0, 0, 2 * Math.PI);
+    ctx.stroke();
+  }
+
+  ctx.restore();
+}
+
+/** Drawings are per page and zoom: the reader remounts this layer (via `key`) when either changes. */
+export function AnnotationLayer({ width, height, onClose }: AnnotationLayerProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   
   const [activeTool, setActiveTool] = useState<AnnotationTool>("pencil");
@@ -53,14 +125,6 @@ export function AnnotationLayer({ width, height, currentPage, fileUrl, onClose }
   const [redoStack, setRedoStack] = useState<Annotation[]>([]);
   const [currentStroke, setCurrentStroke] = useState<Annotation | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
-
-  // Reset when page, fileUrl, or dimensions (zoom) changes
-  useEffect(() => {
-    setAnnotations([]);
-    setRedoStack([]);
-    setCurrentStroke(null);
-    setIsDrawing(false);
-  }, [currentPage, fileUrl, width, height]);
 
   // Main render function
   const renderCanvas = useCallback(() => {
@@ -84,79 +148,6 @@ export function AnnotationLayer({ width, height, currentPage, fileUrl, onClose }
   useEffect(() => {
     renderCanvas();
   }, [renderCanvas, width, height]);
-
-  const drawAnnotation = (ctx: CanvasRenderingContext2D, ann: Annotation) => {
-    if (ann.points.length === 0) return;
-
-    ctx.save();
-    ctx.lineCap = "round";
-    ctx.lineJoin = "round";
-
-    if (ann.type === "eraser") {
-      ctx.globalCompositeOperation = "destination-out";
-      ctx.strokeStyle = "rgba(0,0,0,1)";
-      ctx.lineWidth = ann.width;
-    } else {
-      ctx.globalCompositeOperation = "source-over";
-      ctx.strokeStyle = ann.color;
-      ctx.lineWidth = ann.width;
-    }
-
-    if (ann.type === "highlighter") {
-      // Hex to RGBA for highlighter transparency
-      const r = parseInt(ann.color.slice(1, 3), 16) || 234;
-      const g = parseInt(ann.color.slice(3, 5), 16) || 179;
-      const b = parseInt(ann.color.slice(5, 7), 16) || 8;
-      ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, 0.4)`;
-      ctx.lineWidth = 24; // Thicker for highlighter
-    }
-
-    if (ann.type === "pencil" || ann.type === "highlighter" || ann.type === "eraser") {
-      ctx.beginPath();
-      ctx.moveTo(ann.points[0].x, ann.points[0].y);
-      for (let i = 1; i < ann.points.length; i++) {
-        ctx.lineTo(ann.points[i].x, ann.points[i].y);
-      }
-      ctx.stroke();
-    } else if (ann.type === "line" && ann.points.length > 1) {
-      const start = ann.points[0];
-      const end = ann.points[ann.points.length - 1];
-      ctx.beginPath();
-      ctx.moveTo(start.x, start.y);
-      ctx.lineTo(end.x, end.y);
-      ctx.stroke();
-    } else if (ann.type === "arrow" && ann.points.length > 1) {
-      const start = ann.points[0];
-      const end = ann.points[ann.points.length - 1];
-      ctx.beginPath();
-      ctx.moveTo(start.x, start.y);
-      ctx.lineTo(end.x, end.y);
-      ctx.stroke();
-      
-      // Draw arrowhead
-      const angle = Math.atan2(end.y - start.y, end.x - start.x);
-      const headLen = 15;
-      ctx.beginPath();
-      ctx.moveTo(end.x, end.y);
-      ctx.lineTo(end.x - headLen * Math.cos(angle - Math.PI / 6), end.y - headLen * Math.sin(angle - Math.PI / 6));
-      ctx.moveTo(end.x, end.y);
-      ctx.lineTo(end.x - headLen * Math.cos(angle + Math.PI / 6), end.y - headLen * Math.sin(angle + Math.PI / 6));
-      ctx.stroke();
-    } else if (ann.type === "circle" && ann.points.length > 1) {
-      const start = ann.points[0];
-      const end = ann.points[ann.points.length - 1];
-      const radiusX = Math.abs(end.x - start.x) / 2;
-      const radiusY = Math.abs(end.y - start.y) / 2;
-      const centerX = Math.min(start.x, end.x) + radiusX;
-      const centerY = Math.min(start.y, end.y) + radiusY;
-      
-      ctx.beginPath();
-      ctx.ellipse(centerX, centerY, radiusX, radiusY, 0, 0, 2 * Math.PI);
-      ctx.stroke();
-    }
-
-    ctx.restore();
-  };
 
   const getCoordinates = (e: React.PointerEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;

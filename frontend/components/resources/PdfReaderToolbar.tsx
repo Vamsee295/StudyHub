@@ -1,18 +1,17 @@
 "use client";
 
 import { clsx } from "clsx";
-import { 
-  ChevronLeft, 
-  ChevronRight, 
-  ExternalLink, 
-  Maximize2, 
-  Minimize2, 
-  RotateCw, 
-  RotateCcw, 
-  ZoomIn, 
+import {
+  ChevronLeft,
+  ChevronRight,
+  ExternalLink,
+  Maximize2,
+  Minimize2,
+  RotateCw,
+  ZoomIn,
   ZoomOut,
   Maximize,
-  Pencil
+  Pencil,
 } from "lucide-react";
 import React from "react";
 

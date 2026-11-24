@@ -1,6 +1,5 @@
 "use client";
 
-import type { RefObject } from "react";
 
 interface ResumeFormErrorsProps {
   errors: Record<string, string>;

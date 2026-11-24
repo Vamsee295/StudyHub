@@ -1,21 +1,10 @@
 "use client";
 
-import { useState, useEffect, useMemo, Suspense } from "react";
+import { useState, useMemo, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
-import { 
-  Check, 
-  CheckCircle2, 
-  Terminal, 
-  BookOpen, 
-  Code2, 
-  ArrowRight, 
-  ArrowUpRight, 
-  ChevronDown, 
-  Layers,
-  CheckCheck
-} from "lucide-react";
+import { Check, BookOpen, Code2, ArrowRight, ArrowUpRight, ChevronDown, Layers, CheckCheck } from "lucide-react";
 import { clsx } from "clsx";
 import { roadmapModules, RoadmapModule } from "@/lib/data/roadmapModules";
 import { getCourseBySlug } from "@/lib/data/courses";
@@ -57,13 +46,13 @@ function RoadmapContent() {
   const doneCount = modules.filter((m) => m.status === "completed").length;
   const overallPct = Math.round(modules.reduce((n, m) => n + m.progressPct, 0) / modules.length);
 
-  // Sync state if URL changes externally
-  useEffect(() => {
-    const param = searchParams.get("module");
-    if (param && modules.some((m) => m.slug === param)) {
-      setSelectedSlug(param);
-    }
-  }, [searchParams, modules]);
+  // Follow ?module= when the URL changes from outside (back/forward, a link)
+  const moduleParam = searchParams.get("module");
+  const [seenParam, setSeenParam] = useState(moduleParam);
+  if (moduleParam !== seenParam) {
+    setSeenParam(moduleParam);
+    if (moduleParam && modules.some((m) => m.slug === moduleParam)) setSelectedSlug(moduleParam);
+  }
 
   const activeModule: RoadmapModule = useMemo(() => {
     return (

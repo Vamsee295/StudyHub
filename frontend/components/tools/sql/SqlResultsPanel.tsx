@@ -209,13 +209,13 @@ function HistoryPanel({ history, onSelect }: { history: QueryHistoryItem[]; onSe
 export function SqlResultsPanel({ result, history, isLoading, onSelectHistory }: SqlResultsPanelProps) {
   const [tab, setTab] = useState<Tab>("results");
 
-  // Auto-switch to results when a SELECT comes in
-  React.useEffect(() => {
-    if (!result) return;
-    if (result.type === "select" && result.success) setTab("results");
-    else if (result.type === "error") setTab("messages");
-    else if (result.type === "mutation" || result.type === "ddl") setTab("messages");
-  }, [result]);
+  // A new result picks its tab: rows for a SELECT, messages for everything else
+  const [seen, setSeen] = useState(result);
+  if (result !== seen) {
+    setSeen(result);
+    if (result?.type === "select" && result.success) setTab("results");
+    else if (result && (result.type === "error" || result.type === "mutation" || result.type === "ddl")) setTab("messages");
+  }
 
   const tabs: { id: Tab; label: string; badge?: number }[] = [
     { id: "results",  label: "Results" },

@@ -1,5 +1,5 @@
 import { openDB, DBSchema, IDBPDatabase } from "idb";
-import { SQLWorkspace, SQLFile } from "./types";
+import { SQLWorkspace } from "./types";
 
 interface StudyHubSQLDB extends DBSchema {
   "sql-db": {

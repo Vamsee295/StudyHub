@@ -30,15 +30,6 @@ const PROTECTED_ROUTES = [
   '/settings',
 ];
 
-const PUBLIC_ROUTES = [
-  '/',
-  '/login',
-  '/signup',
-  '/forgot-password',
-  '/reset-password',
-  '/verify-email',
-];
-
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
@@ -51,7 +42,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     async function getInitialSession() {
       try {
-        const { data: { session }, error } = await supabase.auth.getSession();
+        const { data: { session } } = await supabase.auth.getSession();
         if (mounted) {
           setSession(session);
           setUser(session?.user ?? null);

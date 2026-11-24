@@ -1,10 +1,4 @@
-import { 
-  CompanyTarget, 
-  CompanyWorkspaceDetail, 
-  DirectoryCompany, 
-  CompanyRecommendation, 
-  RecentCompanyLog 
-} from "@/types";
+import { CompanyTarget, CompanyWorkspaceDetail, DirectoryCompany } from "@/types";
 
 export const targetCompanies: CompanyTarget[] = [
   {
@@ -58,10 +52,6 @@ export const companyWorkspaces: Record<string, CompanyWorkspaceDetail> = {
     locations: ["Redmond", "Hyderabad", "Bengaluru"],
     targetRole: "Software Engineer (SDE-1)",
     recruitmentWindow: "Active Cycle '26",
-    competenciesVerified: 18,
-    totalCompetencies: 28,
-    readinessScore: 64,
-    readinessPhase: "High Competency Phase",
     hiringStages: [
       {
         stageNumber: 1,
@@ -103,14 +93,6 @@ export const companyWorkspaces: Record<string, CompanyWorkspaceDetail> = {
         duration: "45 Mins",
         tags: ["Behavioral", "Culture Fit", "Past Experience"],
       }
-    ],
-    competencies: [
-      { name: "DSA & Algorithmic Patterns", score: 82 },
-      { name: "Core Computer Science (OS/CN)", score: 71 },
-      { name: "SQL & Database Engineering", score: 64 },
-      { name: "Low-Level & System Design", score: 42, isGap: true },
-      { name: "Aptitude & Analytical Logic", score: 88 },
-      { name: "Behavioral & STAR Formulation", score: 35, isGap: true },
     ],
     questionWeights: [
       { topic: "Binary Trees & BST", frequency: 34, label: "Asked" },
@@ -157,10 +139,6 @@ export const companyWorkspaces: Record<string, CompanyWorkspaceDetail> = {
     locations: ["Bengaluru", "Hyderabad", "Pune"],
     targetRole: "Software Engineer (SWE)",
     recruitmentWindow: "Active Cycle '26",
-    competenciesVerified: 22,
-    totalCompetencies: 28,
-    readinessScore: 78,
-    readinessPhase: "Advanced Preparation",
     hiringStages: [
       {
         stageNumber: 1,
@@ -194,14 +172,6 @@ export const companyWorkspaces: Record<string, CompanyWorkspaceDetail> = {
         duration: "45 Mins",
         tags: ["Behavioral", "Culture Fit"],
       }
-    ],
-    competencies: [
-      { name: "DSA & Algorithmic Patterns", score: 90 },
-      { name: "Core Computer Science (OS/CN)", score: 85 },
-      { name: "SQL & Database Engineering", score: 60 },
-      { name: "Low-Level & System Design", score: 75 },
-      { name: "Aptitude & Analytical Logic", score: 82 },
-      { name: "Behavioral & STAR Formulation", score: 78 },
     ],
     questionWeights: [
       { topic: "Graphs & Topological Sort", frequency: 45, label: "Asked" },
@@ -238,10 +208,6 @@ export const companyWorkspaces: Record<string, CompanyWorkspaceDetail> = {
     locations: ["Bengaluru", "Hyderabad", "Delhi"],
     targetRole: "Software Development Engineer 1",
     recruitmentWindow: "Active Cycle '26",
-    competenciesVerified: 20,
-    totalCompetencies: 28,
-    readinessScore: 71,
-    readinessPhase: "Mid-to-High Phase",
     hiringStages: [
       {
         stageNumber: 1,
@@ -275,14 +241,6 @@ export const companyWorkspaces: Record<string, CompanyWorkspaceDetail> = {
         duration: "60 Mins",
         tags: ["System Design", "LP"],
       }
-    ],
-    competencies: [
-      { name: "DSA & Algorithmic Patterns", score: 75 },
-      { name: "Core Computer Science (OS/CN)", score: 68 },
-      { name: "SQL & Database Engineering", score: 80 },
-      { name: "Low-Level & System Design", score: 55, isGap: true },
-      { name: "Aptitude & Analytical Logic", score: 85 },
-      { name: "Behavioral & STAR Formulation", score: 62 },
     ],
     questionWeights: [
       { topic: "Leadership Principles (STAR)", frequency: 0, label: "Very High" },
@@ -319,10 +277,6 @@ export const companyWorkspaces: Record<string, CompanyWorkspaceDetail> = {
     locations: ["Pan-India"],
     targetRole: "Systems Engineer (Digital/Prime)",
     recruitmentWindow: "Active Cycle '26",
-    competenciesVerified: 25,
-    totalCompetencies: 28,
-    readinessScore: 89,
-    readinessPhase: "Ready to Interview",
     hiringStages: [
       {
         stageNumber: 1,
@@ -348,14 +302,6 @@ export const companyWorkspaces: Record<string, CompanyWorkspaceDetail> = {
         duration: "45 Mins",
         tags: ["Projects", "Core CS", "HR"],
       }
-    ],
-    competencies: [
-      { name: "DSA & Algorithmic Patterns", score: 85 },
-      { name: "Core Computer Science (OS/CN)", score: 92 },
-      { name: "SQL & Database Engineering", score: 88 },
-      { name: "Low-Level & System Design", score: 70 },
-      { name: "Aptitude & Analytical Logic", score: 95 },
-      { name: "Behavioral & STAR Formulation", score: 80 },
     ],
     questionWeights: [
       { topic: "Quantitative Aptitude", frequency: 0, label: "Very High" },
@@ -397,7 +343,6 @@ export const directoryCompanies: DirectoryCompany[] = [
     roles: ["SDE-1", "Backend Developer"],
     processSummary: "4 Rounds • OA, LLD, HLD, Values",
     difficulty: "Hard",
-    readinessScore: 52,
     segmentFilter: "Product"
   },
   {
@@ -410,7 +355,6 @@ export const directoryCompanies: DirectoryCompany[] = [
     roles: ["Software Engineer 1"],
     processSummary: "5 Rounds • System Design focus",
     difficulty: "Hard",
-    readinessScore: 48,
     segmentFilter: "Product"
   },
   {
@@ -423,7 +367,6 @@ export const directoryCompanies: DirectoryCompany[] = [
     roles: ["System Engineer", "Specialist Programmer"],
     processSummary: "3 Rounds • Aptitude, Coding, HR",
     difficulty: "Medium",
-    readinessScore: 92,
     segmentFilter: "Service & IT"
   },
   {
@@ -436,7 +379,6 @@ export const directoryCompanies: DirectoryCompany[] = [
     roles: ["GenC", "GenC Elevate"],
     processSummary: "3 Rounds • AMCAT, Tech, HR",
     difficulty: "Medium",
-    readinessScore: 88,
     segmentFilter: "Service & IT"
   },
   {
@@ -449,7 +391,6 @@ export const directoryCompanies: DirectoryCompany[] = [
     roles: ["Technology Analyst"],
     processSummary: "4 Rounds • Math/Aptitude, Coding, CS Core",
     difficulty: "Hard",
-    readinessScore: 65,
     segmentFilter: "Product"
   },
   {
@@ -462,55 +403,6 @@ export const directoryCompanies: DirectoryCompany[] = [
     roles: ["SDE-1"],
     processSummary: "4 Rounds • DSA, Machine Coding, HM",
     difficulty: "Medium-Hard",
-    readinessScore: 70,
     segmentFilter: "High-Growth Startup"
-  }
-];
-
-export const companyRecommendations: CompanyRecommendation[] = [
-  {
-    id: "cisco",
-    name: "Cisco Systems",
-    matchPercentage: 94,
-    rationale: "Interviews lean on operating systems and computer networks.",
-    roadmapsCount: 2,
-    practiceSetsCount: 14
-  },
-  {
-    id: "oracle",
-    name: "Oracle OCI",
-    matchPercentage: 89,
-    rationale: "Rounds go deep on SQL and database design.",
-    roadmapsCount: 1,
-    practiceSetsCount: 8
-  },
-  {
-    id: "adobe",
-    name: "Adobe Systems",
-    matchPercentage: 86,
-    rationale: "Coding rounds favour arrays, strings and classic DSA patterns.",
-    roadmapsCount: 1,
-    practiceSetsCount: 12
-  }
-];
-
-export const initialRecentHistory: RecentCompanyLog[] = [
-  {
-    id: "amazon",
-    name: "Amazon",
-    targetRole: "SDE-1",
-    lastInteraction: "Viewed 2 hours ago",
-    cohortStatus: "Active",
-    readinessScore: 71,
-    sprintAction: "Continue Prep →"
-  },
-  {
-    id: "tcs-prime",
-    name: "TCS Prime",
-    targetRole: "Digital & Prime",
-    lastInteraction: "Viewed 1 day ago",
-    cohortStatus: "Tracking",
-    readinessScore: 89,
-    sprintAction: "Take Mock →"
   }
 ];

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import { ChevronRight, ChevronDown, Key, Hash, Type, Calendar, ToggleLeft, Database, RefreshCw, Table } from "lucide-react";
 import { DatabaseTable, DatabaseColumn } from "@/lib/services/tools/sqlService";
 

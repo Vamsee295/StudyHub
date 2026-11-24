@@ -13,8 +13,8 @@ export interface FunctionSignature {
 
 export interface TestCase {
   id: string;
-  input: Record<string, any>;
-  expectedOutput: any;
+  input: Record<string, unknown>;
+  expectedOutput: unknown;
 }
 
 export interface ExecutionRequest {
@@ -35,9 +35,9 @@ export interface TestCaseResult {
     | "compile_error"
     | "runtime_error"
     | "time_limit";
-  input: Record<string, any>;
-  expectedOutput: any;
-  actualOutput?: any;
+  input: Record<string, unknown>;
+  expectedOutput: unknown;
+  actualOutput?: unknown;
   runtimeMs?: number;
   error?: string;
 }

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import path from "path";
 import { getUnifiedCatalog } from "@/lib/materialsScanner";
+import { errorMessage } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -44,10 +45,10 @@ export async function GET() {
         "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate"
       }
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error("[Materials Catalog API] Error generating catalog:", error);
     return NextResponse.json(
-      { success: false, error: error.message || "Failed to scan materials" },
+      { success: false, error: errorMessage(error) || "Failed to scan materials" },
       { status: 500 }
     );
   }

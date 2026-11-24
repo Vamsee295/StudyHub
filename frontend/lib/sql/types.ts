@@ -14,7 +14,7 @@ export interface SQLTable {
 
 export interface SQLResult {
   columns: string[];
-  values: any[][];
+  values: (string | number | Uint8Array | null)[][]; // sql.js SqlValue
 }
 
 export interface SQLExecutionResult {

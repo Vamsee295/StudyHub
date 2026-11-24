@@ -9,6 +9,7 @@ import { communityApi } from "@/lib/api/community";
 import type { CommunityPost } from "@/lib/types/community";
 import { useAuth } from "@/components/providers/AuthProvider";
 import Link from "next/link";
+import { errorMessage } from "@/lib/utils";
 
 const ACTIVITY_TYPES: ActivityType[] = [
   "LEARNING_COMPLETED",
@@ -41,15 +42,22 @@ export function ShareProgressModal({ open, onClose, onPostCreated }: ShareProgre
   const [error, setError] = useState<string | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  useEffect(() => {
+  // Each time the modal opens it starts blank.
+  const [wasOpen, setWasOpen] = useState(open);
+  if (open !== wasOpen) {
+    setWasOpen(open);
     if (open) {
-      setTimeout(() => textareaRef.current?.focus(), 50);
       setContent("");
       setSelectedType("CUSTOM_POST");
       setActivityTitle("");
       setSelectedTags([]);
       setError(null);
     }
+  }
+  useEffect(() => {
+    if (!open) return;
+    const t = setTimeout(() => textareaRef.current?.focus(), 50);
+    return () => clearTimeout(t);
   }, [open]);
 
   // Close on Escape
@@ -91,8 +99,8 @@ export function ShareProgressModal({ open, onClose, onPostCreated }: ShareProgre
       const post = await communityApi.createPost(payload);
       onPostCreated(post);
       onClose();
-    } catch (err: any) {
-      setError(err?.message || "Unable to publish your post. Please try again.");
+    } catch (err) {
+      setError(errorMessage(err) || "Unable to publish your post. Please try again.");
     } finally {
       setIsSubmitting(false);
     }

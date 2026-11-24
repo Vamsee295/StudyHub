@@ -1,9 +1,7 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 
 export function GoogleButton({ label = "Continue with Google" }: { label?: string }) {
-  const router = useRouter();
 
   const handleGoogleSignIn = async () => {
     try {
@@ -15,7 +13,7 @@ export function GoogleButton({ label = "Continue with Google" }: { label?: strin
         }
       });
       if (error) throw error;
-    } catch (err: any) {
+    } catch (err) {
       console.error("Google sign in failed", err);
     }
   };

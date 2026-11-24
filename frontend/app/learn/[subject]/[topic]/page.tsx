@@ -28,6 +28,7 @@ import { labForLesson } from "@/lib/labs/catalog";
 import { AskedInChips } from "@/components/learn/AskedIn";
 import { LessonBookmarkButton } from "@/components/learn/LessonBookmarkButton";
 import { LessonPrereqs } from "@/components/learn/LessonPrereqs";
+import { LessonDot } from "@/components/learn/LessonDot";
 import { Badge } from "@/components/ui/Badge";
 import { optionClass } from "@/components/learn/optionClass";
 import { buttonClass } from "@/components/ui/Button";
@@ -421,6 +422,11 @@ export default function TopicPage() {
   const [notesSaved, setNotesSaved] = useState(false);
   const notesTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const lessonScrollRef = useRef<HTMLDivElement>(null);
+  const contentEndRef = useRef<HTMLDivElement>(null);
+  // Reading bar: `here` is where the reader is now, `furthest` the deepest point reached (saved as the lesson's progress).
+  const [here, setHere] = useState(0);
+  const [furthest, setFurthest] = useState(0);
+  const savedRef = useRef({ id: "", pct: 0, done: false });
 
   // new lesson: back to the top of the reading pane
   useEffect(() => {
@@ -435,6 +441,10 @@ export default function TopicPage() {
         setSubject(s);
         setTopic(t);
         setNotes(t.notes || "");
+        const start = t.status === "completed" ? 100 : t.user_progress || 0;
+        setFurthest(start);
+        setHere(0);
+        savedRef.current = { id: t.id, pct: start, done: t.status === "completed" };
         setError(null);
       })
       .catch((err: Error) => {
@@ -446,6 +456,61 @@ export default function TopicPage() {
       live = false;
     };
   }, [subjectSlug, topicSlug]);
+
+  // Track scrolling through the lesson body (up to the end of the content, not the notes below it).
+  useEffect(() => {
+    const el = lessonScrollRef.current;
+    const end = contentEndRef.current;
+    if (loading || !el || !end) return;
+    let raf = 0;
+    const measure = () => {
+      raf = 0;
+      const endY = end.getBoundingClientRect().top - el.getBoundingClientRect().top + el.scrollTop;
+      const span = endY - el.clientHeight;
+      const pct = span <= 0 ? 100 : Math.round(Math.min(1, Math.max(0, el.scrollTop / span)) * 100);
+      setHere(pct);
+      setFurthest((f) => Math.max(f, pct));
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(measure);
+    };
+    measure();
+    el.addEventListener("scroll", onScroll, { passive: true });
+    const ro = new ResizeObserver(onScroll); // images, code blocks and quizzes change the height
+    ro.observe(el.firstElementChild ?? el);
+    return () => {
+      el.removeEventListener("scroll", onScroll);
+      ro.disconnect();
+      cancelAnimationFrame(raf);
+    };
+  }, [loading, topicSlug]);
+
+  const leavingRef = useRef(false);
+  useEffect(() => {
+    leavingRef.current = false;
+    return () => {
+      leavingRef.current = true; // runs before the save effect's cleanup below, so the last bit of reading is flushed
+    };
+  }, []);
+
+  // Save the furthest point read, a moment after the reader stops (and when they leave the lesson).
+  useEffect(() => {
+    const saved = savedRef.current;
+    if (!saved.id || saved.done || furthest <= saved.pct) return;
+    const save = () => {
+      if (saved.done || furthest <= saved.pct) return;
+      saved.pct = furthest;
+      learnService.updateTopicProgress(saved.id, "in_progress", undefined, furthest);
+      setSubject((s) =>
+        s && { ...s, modules: s.modules.map((m) => ({ ...m, topics: m.topics.map((t) => (t.id === saved.id && t.status !== "completed" ? { ...t, status: "in_progress", progress: Math.min(99, furthest) } : t)) })) }
+      );
+    };
+    const timer = setTimeout(save, 1200);
+    return () => {
+      clearTimeout(timer);
+      if (leavingRef.current || saved.id !== savedRef.current.id) save(); // left before the timer fired
+    };
+  }, [furthest]);
 
   const { currentModule, nextTopic, prevTopic, position, total } = useMemo(() => {
     if (!subject || !topic) return { currentModule: null, nextTopic: null, prevTopic: null, position: 0, total: 0 };
@@ -466,11 +531,8 @@ export default function TopicPage() {
     try {
       return JSON.parse(topic.content);
     } catch {
-      // MDX lessons (public/content/learn/**/index.mdx) are plain markdown: drop the frontmatter and the
-      // "# Title" line (the page already shows the title) and render the rest as theory.
-      // ponytail: JSX components inside MDX would print as text; wire up MdxRenderer if a lesson ever needs them.
-      const body = topic.content.replace(/^---[\s\S]*?\n---\s*/, "").replace(/^#\s.*\n/, "");
-      return body.trim() ? { theory: body } : null;
+      // a plain markdown string: render it as theory
+      return topic.content.trim() ? { theory: topic.content } : null;
     }
   }, [topic]);
 
@@ -515,6 +577,8 @@ export default function TopicPage() {
           link: `/learn/${subjectSlug}/${topicSlug}`,
         });
       }
+      savedRef.current = { ...savedRef.current, pct: 100, done: true };
+      setFurthest(100);
       setTopic({ ...topic, status: "completed" });
       setSubject({
         ...subject,
@@ -547,6 +611,11 @@ export default function TopicPage() {
   };
 
   const sections: any[] = content ? (content.sections ?? legacySections(content)) : [];
+  const lessons = subject.modules.flatMap((m) => m.topics);
+  const doneCount = lessons.filter((t) => t.status === "completed").length;
+  const coursePct = lessons.length ? Math.round((doneCount / lessons.length) * 100) : 0;
+  const read = isCompleted ? 100 : furthest;
+  const minutesLeft = Math.ceil((topic.estimated_minutes || 0) * (1 - read / 100));
 
   return (
     <div className="flex h-full min-w-0 overflow-hidden">
@@ -557,7 +626,7 @@ export default function TopicPage() {
             <ArrowLeft className="size-3" /> Course
           </Link>
           <p className="display text-[26px]">{subject.name}</p>
-          <Progress value={subject.progress_percentage || 0} label="Complete" className="mt-3" />
+          <Progress value={coursePct} label={`${doneCount} of ${lessons.length} lessons`} className="mt-3" />
         </div>
         <nav className="no-scrollbar min-h-0 flex-1 overflow-y-auto pb-6">
           {subject.modules.map((m, mIdx) => (
@@ -567,7 +636,6 @@ export default function TopicPage() {
               </p>
               {m.topics.map((t) => {
                 const active = t.id === topic.id;
-                const done = t.status === "completed";
                 return (
                   <Link
                     key={t.id}
@@ -578,11 +646,7 @@ export default function TopicPage() {
                       active ? "bg-ink text-paper" : "hover:bg-card-2"
                     )}
                   >
-                    {done ? (
-                      <CheckCircle2 aria-label="Completed" className={clsx("mt-px size-4 shrink-0", active ? "text-paper" : "text-note")} />
-                    ) : (
-                      <span aria-hidden className={clsx("mt-px block size-4 shrink-0 rounded-full border-2", active ? "border-paper" : "border-ink/25")} />
-                    )}
+                    <LessonDot status={t.status} progress={t.progress} inverted={active} className="mt-px size-4" />
                     <span className={clsx("min-w-0 flex-1", active && "font-semibold")}>{t.title}</span>
                     <span className={clsx("font-mono text-[11px]", active ? "text-paper/70" : "text-mute")}>{t.estimated_minutes}m</span>
                   </Link>
@@ -594,23 +658,38 @@ export default function TopicPage() {
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden bg-card">
-        <header className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-b-[1.5px] border-hair px-5 py-3 md:px-10">
+        <header className="relative flex shrink-0 flex-wrap items-center justify-between gap-3 border-b-[1.5px] border-hair px-5 py-3 md:px-10">
           <Link href={`/learn/${subject.slug}`} className="min-w-0 truncate font-mono text-[12px] uppercase tracking-wider text-mute hover:text-ink lg:pointer-events-none">
             <span className="lg:hidden">← </span>
             {currentModule.title} · {position}/{total}
           </Link>
-          <div className="flex shrink-0 items-center gap-2">
+          <div className="flex shrink-0 items-center gap-3">
+            <span className="hidden font-mono text-[12px] tabular-nums text-mute sm:inline">
+              {isCompleted ? "Read" : read >= 100 ? "Reached the end" : `${read}% read · ${minutesLeft} min left`}
+            </span>
             <LessonBookmarkButton course={subjectSlug} lesson={topicSlug} />
             {isCompleted ? (
               <span className="label-cond flex h-9 items-center gap-1.5 rounded-xl bg-success-soft px-3 text-[14px] text-note">
                 <CheckCircle2 className="size-4" /> Completed
               </span>
             ) : (
-              <button onClick={markComplete} disabled={updating} className={buttonClass("primary", "sm")}>
+              <button onClick={markComplete} disabled={updating} className={buttonClass(read >= 100 ? "accent" : "primary", "sm")}>
                 {updating ? <Loader2 className="size-4 animate-spin" /> : <Check className="size-4" />}
                 Mark complete
               </button>
             )}
+          </div>
+          {/* reading bar: solid = where you are, pale = the furthest you've read */}
+          <div
+            role="progressbar"
+            aria-label="Lesson read"
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={read}
+            className="absolute inset-x-0 -bottom-[1.5px] h-[3px] bg-transparent"
+          >
+            <div className={clsx("absolute inset-y-0 left-0", isCompleted ? "bg-note" : "bg-accent/30")} style={{ width: `${read}%` }} />
+            {!isCompleted && <div className="absolute inset-y-0 left-0 bg-accent" style={{ width: `${here}%` }} />}
           </div>
         </header>
 
@@ -649,6 +728,7 @@ export default function TopicPage() {
             ) : (
               <p className="text-body">This lesson has no content yet.</p>
             )}
+            <div ref={contentEndRef} aria-hidden />
 
             <section className="border-t-[1.5px] border-hair pt-8">
               <div className="mb-3 flex items-center justify-between">

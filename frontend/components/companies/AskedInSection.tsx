@@ -11,16 +11,15 @@ const focusRing = "focus-visible:outline-none focus-visible:ring-2 focus-visible
 
 /** What each company is reported to test, mapped to StudyHub modules, with sources. */
 export function AskedInSection() {
-  const [selected, setSelected] = useState(COMPANY_PROFILES[0].id);
-
-  // Deep links such as /companies?company=infosys#asked-in preselect a company.
-  useEffect(() => {
+  // Deep links such as /companies?company=infosys#asked-in preselect a company (pages render client-side only).
+  const [linked] = useState(() => {
     const id = new URLSearchParams(window.location.search).get("company");
-    if (id && COMPANY_PROFILES.some((c) => c.id === id)) {
-      setSelected(id);
-      document.getElementById("asked-in")?.scrollIntoView({ block: "start" });
-    }
-  }, []);
+    return id && COMPANY_PROFILES.some((c) => c.id === id) ? id : null;
+  });
+  const [selected, setSelected] = useState(linked ?? COMPANY_PROFILES[0].id);
+  useEffect(() => {
+    if (linked) document.getElementById("asked-in")?.scrollIntoView({ block: "start" });
+  }, [linked]);
 
   const company = COMPANY_PROFILES.find((c) => c.id === selected)!;
 

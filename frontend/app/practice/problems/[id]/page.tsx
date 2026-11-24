@@ -1,7 +1,7 @@
 "use client";
 
 import { ASKED_IN_CAVEAT } from "@/lib/data/askedIn";
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import {
@@ -10,7 +10,7 @@ import {
   Terminal, Loader2, AlertTriangle, Clock, MemoryStick
 } from "lucide-react";
 import { clsx } from "clsx";
-import Editor from "@monaco-editor/react";
+import Editor, { type Monaco, type OnMount } from "@monaco-editor/react";
 import { getProblem, generateStarterCode } from "@/lib/problems/problemRegistry";
 import { problemStorage } from "@/lib/problems/problemStorage";
 import { executeCode, explainError } from "@/lib/execution/executionClient";
@@ -18,6 +18,7 @@ import { MONACO_THEME, defineMonacoTheme } from "@/lib/monacoTheme";
 import { Badge } from "@/components/ui/Badge";
 import { buttonClass } from "@/components/ui/Button";
 import type { ExecutionResult, TestCaseResult } from "@/lib/execution/executionTypes";
+import { errorMessage } from "@/lib/utils";
 
 // ─── Status helpers ───────────────────────────────────────────────────────────
 const statusLabel: Record<string, string> = {
@@ -273,26 +274,26 @@ export default function ProblemWorkspace() {
   const [explanation, setExplanation] = useState<string | null>(null);
   const [isExplaining, setIsExplaining] = useState(false);
 
-  const [monacoInstance, setMonacoInstance] = useState<any>(null);
-  const [editorInstance, setEditorInstance] = useState<any>(null);
+  const [monacoInstance, setMonacoInstance] = useState<Monaco | null>(null);
+  const [editorInstance, setEditorInstance] = useState<Parameters<OnMount>[0] | null>(null);
 
-  const handleEditorDidMount = (editor: any, monaco: any) => {
+  const handleEditorDidMount: OnMount = (editor, monaco) => {
     setEditorInstance(editor);
     setMonacoInstance(monaco);
   };
 
-  // Synchronize starter code and state when problem or language changes
-  useEffect(() => {
-    if (problem) {
-      const freshCode = problem.starterCode?.[language] || generateStarterCode(problem.functionSignature, language);
-      setCode(freshCode);
-      setExecResult(null);
-      setExecError(null);
-      setHasRun(false);
-      setSelectedCase(0);
-      setHintOpen(false);
-    }
-  }, [problemId, problem?.id, language]);
+  // New problem or language: fresh starter code and a clean run panel
+  const editorKey = problem ? `${problem.id}|${language}` : null;
+  const [loadedKey, setLoadedKey] = useState<string | null>(null);
+  if (problem && editorKey !== loadedKey) {
+    setLoadedKey(editorKey);
+    setCode(problem.starterCode?.[language] || generateStarterCode(problem.functionSignature, language));
+    setExecResult(null);
+    setExecError(null);
+    setHasRun(false);
+    setSelectedCase(0);
+    setHintOpen(false);
+  }
 
   // Apply monaco markers when execResult changes
   useEffect(() => {
@@ -345,8 +346,8 @@ export default function ProblemWorkspace() {
       if (problemStorage.getStatus(problemId) !== "solved") {
         problemStorage.setStatus(problemId, "attempted");
       }
-    } catch (err: any) {
-      setExecError(err.message || "Execution service unavailable. Is the backend running?");
+    } catch (err) {
+      setExecError(errorMessage(err) || "Execution service unavailable. Is the backend running?");
     } finally {
       setIsRunning(false);
     }
@@ -376,8 +377,8 @@ export default function ProblemWorkspace() {
       } else if (problemStorage.getStatus(problemId) !== "solved") {
         problemStorage.setStatus(problemId, "attempted");
       }
-    } catch (err: any) {
-      setExecError(err.message || "Submission service unavailable. Is the backend running?");
+    } catch (err) {
+      setExecError(errorMessage(err) || "Submission service unavailable. Is the backend running?");
     } finally {
       setIsSubmitting(false);
     }
@@ -394,8 +395,8 @@ export default function ProblemWorkspace() {
     try {
       const exp = await explainError(code, errorMsg, language);
       setExplanation(exp);
-    } catch (err: any) {
-      setExplanation(err.message || "Failed to generate explanation. Please try again.");
+    } catch (err) {
+      setExplanation(errorMessage(err) || "Failed to generate explanation. Please try again.");
     } finally {
       setIsExplaining(false);
     }

@@ -15,19 +15,22 @@ interface ProgrammingItemModalProps {
 }
 
 export const ProgrammingItemModal: React.FC<ProgrammingItemModalProps> = ({
-  isOpen, onClose, item, progress, onUpdate, onItemSelect
+  isOpen, onClose, item, progress, onUpdate
 }) => {
   const [isUpdating, setIsUpdating] = useState(false);
   const [note, setNote] = useState("");
   const [showHint, setShowHint] = useState(false);
   const [saveTimeout, setSaveTimeout] = useState<NodeJS.Timeout | null>(null);
 
-  useEffect(() => {
+  // Another item (or freshly saved notes): hide the hint and show the saved note.
+  const [shown, setShown] = useState({ item, notes: progress?.notes });
+  if (shown.item !== item || shown.notes !== progress?.notes) {
+    setShown({ item, notes: progress?.notes });
     if (item) {
       setShowHint(false);
       setNote(progress?.notes || "");
     }
-  }, [item, progress?.notes]);
+  }
 
   // Handle escape key
   useEffect(() => {
@@ -151,7 +154,7 @@ export const ProgrammingItemModal: React.FC<ProgrammingItemModalProps> = ({
               {isLesson && (
                 <div className="mb-6">
                   <h3 className="text-[13px] font-bold uppercase tracking-wider text-ink mb-2">
-                    What you'll learn
+                    What you’ll learn
                   </h3>
                   <ul className="space-y-2">
                     {lessonItem.learningPoints.map((pt, i) => (
@@ -168,7 +171,7 @@ export const ProgrammingItemModal: React.FC<ProgrammingItemModalProps> = ({
               {!isLesson && (
                 <div className="mb-6">
                   <h3 className="text-[13px] font-bold uppercase tracking-wider text-ink mb-2">
-                    What you'll practice
+                    What you’ll practice
                   </h3>
                   <div className="flex flex-wrap gap-2">
                     {exerciseItem.practiceSkills.map((skill, i) => (

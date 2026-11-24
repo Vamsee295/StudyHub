@@ -16,7 +16,9 @@ export default function LivePreview({
 }: LivePreviewProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const onMessageRef = useRef(onConsoleMessage);
-  onMessageRef.current = onConsoleMessage;
+  useEffect(() => {
+    onMessageRef.current = onConsoleMessage; // the message listener below is bound once
+  });
 
   const [viewport, setViewport] = useState<PreviewViewport>("desktop");
 

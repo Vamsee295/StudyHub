@@ -1,8 +1,9 @@
 "use client";
 
+import type { User } from "@supabase/supabase-js";
 import Link from "next/link";
 import { FormEvent, useState, Suspense, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { ArrowRight, ArrowLeft, Loader2 } from "lucide-react";
 import { BrandPanel } from "@/components/auth/BrandPanel";
@@ -13,6 +14,7 @@ import { PasswordField } from "@/components/auth/PasswordField";
 import { GoogleButton, AuthDivider } from "@/components/auth/AuthShared";
 import { StudyHubLogo } from "@/components/ui/StudyHubLogo";
 import { supabase } from "@/lib/supabase/client";
+import { errorMessage } from "@/lib/utils";
 
 function AuthTabs({ active, onChange }: { active: "login" | "signup", onChange: (mode: "login" | "signup") => void }) {
   return (
@@ -47,10 +49,16 @@ function AuthTabs({ active, onChange }: { active: "login" | "signup", onChange: 
 }
 
 function AuthForm() {
-  const router = useRouter();
   const searchParams = useSearchParams();
 
-  const [mode, setMode] = useState<"login" | "signup">("login");
+  const modeParam = searchParams.get("mode");
+  const [mode, setMode] = useState<"login" | "signup">(modeParam === "signup" ? "signup" : "login");
+  // follow ?mode=signup when a link changes it while the page is open
+  const [seenMode, setSeenMode] = useState(modeParam);
+  if (modeParam !== seenMode) {
+    setSeenMode(modeParam);
+    if (modeParam === "signup") setMode("signup");
+  }
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -62,13 +70,8 @@ function AuthForm() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
-  const [existingUser, setExistingUser] = useState<any>(null);
+  const [existingUser, setExistingUser] = useState<User | null>(null);
 
-  useEffect(() => {
-    if (searchParams.get("mode") === "signup") {
-      setMode("signup");
-    }
-  }, [searchParams]);
 
   // Check if user is already authenticated
   useEffect(() => {
@@ -132,15 +135,15 @@ function AuthForm() {
             // Route based on onboarding completion
             if (profileData.profile_completed) {
               const targetUrl = searchParams.get("redirect") || "/dashboard";
-              window.location.href = targetUrl;
+              window.location.replace(targetUrl); // full reload: middleware re-reads the auth cookies; replace() keeps Back out of /login
             } else {
-              window.location.href = "/onboarding";
+              window.location.replace("/onboarding");
             }
           } catch (profileError) {
             console.error("Error fetching profile:", profileError);
             // Fallback to dashboard if profile fetch fails
             const targetUrl = searchParams.get("redirect") || "/dashboard";
-            window.location.href = targetUrl;
+            window.location.replace(targetUrl);
           }
           return;
         }
@@ -163,16 +166,16 @@ function AuthForm() {
           }
           setMessage("Account created! Redirecting to setup...");
           // New users always go to onboarding
-          window.location.href = "/onboarding";
+          window.location.replace("/onboarding");
           return;
         } else if (data.user) {
           setMessage("Account created! Please check your email to confirm your account, then sign in.");
           setMode("login");
         }
       }
-    } catch (err: any) {
+    } catch (err) {
       setMessage("");
-      const errMsg = err.message || "";
+      const errMsg = errorMessage(err) || "";
       if (errMsg === "Invalid login credentials" || errMsg.toLowerCase().includes("invalid login")) {
         setErrors({ email: "Email or password is incorrect. If you haven't created an account yet, click 'Sign up' above." });
       } else if (errMsg.toLowerCase().includes("already registered")) {

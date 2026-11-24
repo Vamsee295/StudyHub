@@ -22,7 +22,7 @@ export function PreviewSnapshotSection() {
           
           <div className="p-6 text-[13px] leading-relaxed text-body font-serif h-full relative">
             <h4 className="text-[16px] font-bold text-ink mb-4 font-sans">
-              "Tell me about yourself"
+              “Tell me about yourself”
             </h4>
             <p className="mb-4">
               I am a <span className="bg-warning-soft text-warning px-1 py-0.5 rounded border border-warning-line">[YEAR]</span> student at <span className="bg-warning-soft text-warning px-1 py-0.5 rounded border border-warning-line">[UNIVERSITY]</span>. Over the last year, I’ve specialized in <span className="bg-warning-soft text-warning px-1 py-0.5 rounded border border-warning-line">[TECH STACK]</span>. 
@@ -45,7 +45,7 @@ export function PreviewSnapshotSection() {
               LIVE TEMPLATE WORKSPACE
             </span>
             <h3 className="text-2xl font-medium text-ink mb-3">
-              Don't just read it. Build it.
+              Don’t just read it. Build it.
             </h3>
             <p className="text-[14px] text-body">
               Our workspace allows you to fill in variables and instantly generate customized output ready for your interviews.

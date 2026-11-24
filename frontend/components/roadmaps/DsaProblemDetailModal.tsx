@@ -1,8 +1,18 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { DsaProblem, dsaCatalog } from '@/lib/data/dsaCatalog';
-import { roadmapApi } from '@/lib/api/roadmaps';
-import { CheckCircle2, Clock, ExternalLink, X, HelpCircle, Code, Server, XCircle, ChevronRight, PenLine, Target, BookOpen } from 'lucide-react';
+import {
+  CheckCircle2,
+  Clock,
+  ExternalLink,
+  X,
+  HelpCircle,
+  XCircle,
+  ChevronRight,
+  PenLine,
+  Target,
+  BookOpen,
+} from 'lucide-react';
 
 import { DsaProblemProgress } from '@/lib/api/roadmaps';
 
@@ -23,13 +33,15 @@ export const DsaProblemDetailModal: React.FC<DsaProblemDetailModalProps> = ({
   const [showHint, setShowHint] = useState(false);
   const [saveTimeout, setSaveTimeout] = useState<NodeJS.Timeout | null>(null);
 
-  // Reset local state when problem changes (must be before any early return)
-  React.useEffect(() => {
+  // Another problem (or freshly saved notes): hide the hint and show the saved note. Before any early return.
+  const [shown, setShown] = useState({ problem, notes: progress?.notes });
+  if (shown.problem !== problem || shown.notes !== progress?.notes) {
+    setShown({ problem, notes: progress?.notes });
     if (problem) {
       setShowHint(false);
       setNote(progress?.notes || "");
     }
-  }, [problem, progress?.notes]);
+  }
 
   if (!problem) return null;
 
@@ -145,7 +157,7 @@ export const DsaProblemDetailModal: React.FC<DsaProblemDetailModalProps> = ({
               {/* What you'll practice (Mocked standard skills for now) */}
               <div className="space-y-3">
                 <h3 className="text-xs font-bold text-mute uppercase tracking-wider flex items-center gap-2">
-                  <BookOpen className="w-4 h-4" /> What you'll practice
+                  <BookOpen className="w-4 h-4" /> What you’ll practice
                 </h3>
                 <div className="flex flex-wrap gap-2">
                   {problem.skills.map((skill, idx) => (

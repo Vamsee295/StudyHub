@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
-import { Database, Play, RotateCcw, Plus, Trash2, FileCode2, Terminal, PanelLeft, X } from "lucide-react";
-import Editor, { useMonaco } from "@monaco-editor/react";
+import { Database, Play, RotateCcw, Plus, FileCode2, Terminal, PanelLeft, X } from "lucide-react";
+import Editor, { type OnMount } from "@monaco-editor/react";
 
 import { 
   initDatabase, 
@@ -41,7 +41,7 @@ export default function SQLLab() {
   // Workspace State
   const [workspace, setWorkspace] = useState<SQLWorkspace | null>(null);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
-  const editorRef = useRef<any>(null);
+  const editorRef = useRef<Parameters<OnMount>[0] | null>(null);
   const saveTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Layout State
@@ -203,7 +203,7 @@ export default function SQLLab() {
       const original = ws.files[id];
       if (!original) return ws;
       
-      let baseName = original.name.replace(/\.sql$/, "");
+      const baseName = original.name.replace(/\.sql$/, "");
       let newName = `${baseName}-copy.sql`;
       let idx = 1;
       while (Object.values(ws.files).some(f => f.name.toLowerCase() === newName.toLowerCase())) {
@@ -294,8 +294,8 @@ export default function SQLLab() {
 
   const handleInsertText = (text: string) => {
     const editor = editorRef.current;
-    if (editor) {
-      const position = editor.getPosition();
+    const position = editor?.getPosition();
+    if (editor && position) {
       editor.executeEdits("schema-insert", [{
         range: {
           startLineNumber: position.lineNumber,

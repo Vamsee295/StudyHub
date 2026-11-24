@@ -2,7 +2,6 @@
 
 import React from "react";
 import type { CommunityStats } from "@/lib/types/community";
-import { TrendingUp, Activity } from "lucide-react";
 
 interface TrendingSidebarProps {
   stats: CommunityStats | null;
@@ -16,7 +15,7 @@ export function TrendingSidebar({ stats }: TrendingSidebarProps) {
       {/* Quick stats */}
       <div className="flex flex-col">
         <h3 className="text-[12px] uppercase tracking-[0.12em] font-semibold text-mute mb-4">
-          Today's Activity
+          Today’s Activity
         </h3>
         <div className="grid grid-cols-2 gap-4">
           <div>

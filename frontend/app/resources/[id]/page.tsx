@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef, use, useCallback } from "react";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
 import { 
   ArrowLeft, 
   Clock, 
@@ -23,20 +22,20 @@ import { NativePdfReader } from "@/components/resources/NativePdfReader";
 import { PdfReaderToolbar } from "@/components/resources/PdfReaderToolbar";
 
 export default function ResourceDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const router = useRouter();
   const resolvedParams = use(params);
   const id = resolvedParams.id;
 
-  const [resource, setResource] = useState<Resource | null>(null);
-  const [mounted, setMounted] = useState(false);
-  const [isBookmarked, setIsBookmarked] = useState(false);
-  const [isCompleted, setIsCompleted] = useState(false);
+  // AppLayout renders pages only on the client, so the catalog and localStorage can be read up front.
+  const [resource, setResource] = useState<Resource | null>(() => resourceService.getById(id) ?? null);
+  const [isBookmarked, setIsBookmarked] = useState(() => resourceStorage.isSaved(id));
+  const [isCompleted, setIsCompleted] = useState(() => resourceStorage.isCompleted(id));
   const [copiedLink, setCopiedLink] = useState(false);
 
   // PDF Viewer Controls State
   const [zoomLevel, setZoomLevel] = useState<number>(100);
   const [rotation, setRotation] = useState<number>(0);
-  const [currentPage, setCurrentPage] = useState<number>(1);
+  // resume where the reader left off
+  const [currentPage, setCurrentPage] = useState<number>(() => resourceStorage.getRecentItems().find((r) => r.id === id)?.lastPage || 1);
   const [pageCount, setPageCount] = useState<number>(1);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isDoodleMode, setIsDoodleMode] = useState(false);
@@ -44,21 +43,8 @@ export default function ResourceDetailPage({ params }: { params: Promise<{ id: s
   const readerContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setMounted(true);
-    const found = resourceService.getById(id);
-    if (found) {
-      setResource(found);
-      setIsBookmarked(resourceStorage.isSaved(found.id));
-      setIsCompleted(resourceStorage.isCompleted(found.id));
-      
-      // If we have history for this resource, resume from last page
-      const recentItems = resourceStorage.getRecentResources();
-      const match = recentItems.find(r => r.id === found.id);
-      if (match && match.lastPage && match.lastPage > 1) {
-        setCurrentPage(match.lastPage);
-      }
-      
-      resourceStorage.recordView(found.id, match?.lastPage || 1);
+    if (resourceService.getById(id)) {
+      resourceStorage.recordView(id, resourceStorage.getRecentItems().find((r) => r.id === id)?.lastPage || 1);
     } else {
       // Dynamic fallback for newly added files
       fetch("/api/materials/catalog")
@@ -84,10 +70,8 @@ export default function ResourceDetailPage({ params }: { params: Promise<{ id: s
   // Handle document loaded from PDF.js
   const handleDocumentLoad = useCallback((numPages: number) => {
     setPageCount(numPages);
-    if (resource && !resource.pageCount) {
-      // We could update the resource object here if we wanted to dynamically set page counts
-    }
-  }, [resource]);
+    if (resource) resourceStorage.recordView(resource.id, currentPage, numPages); // the real page count drives the progress bar
+  }, [resource, currentPage]);
 
   // Fullscreen change listener
   useEffect(() => {
@@ -98,40 +82,6 @@ export default function ResourceDetailPage({ params }: { params: Promise<{ id: s
     return () => document.removeEventListener("fullscreenchange", handleFullscreenChange);
   }, []);
 
-  // Keyboard navigation
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      // Don't trigger if user is typing in an input (e.g. page jump)
-      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
-        return;
-      }
-
-      switch (e.key) {
-        case "ArrowRight":
-        case "ArrowDown":
-          e.preventDefault();
-          handleNextPage();
-          break;
-        case "ArrowLeft":
-        case "ArrowUp":
-          e.preventDefault();
-          handlePrevPage();
-          break;
-        case "+":
-        case "=":
-          e.preventDefault();
-          handleZoomIn();
-          break;
-        case "-":
-          e.preventDefault();
-          handleZoomOut();
-          break;
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [currentPage, pageCount, resource]);
 
   const toggleBookmark = () => {
     if (!resource) return;
@@ -202,7 +152,41 @@ export default function ResourceDetailPage({ params }: { params: Promise<{ id: s
     }
   };
 
-  if (!mounted) return null;
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't trigger if user is typing in an input (e.g. page jump)
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+        return;
+      }
+
+      switch (e.key) {
+        case "ArrowRight":
+        case "ArrowDown":
+          e.preventDefault();
+          handleNextPage();
+          break;
+        case "ArrowLeft":
+        case "ArrowUp":
+          e.preventDefault();
+          handlePrevPage();
+          break;
+        case "+":
+        case "=":
+          e.preventDefault();
+          handleZoomIn();
+          break;
+        case "-":
+          e.preventDefault();
+          handleZoomOut();
+          break;
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }); // re-binds each render so the handlers see the current page
+
 
   if (!resource) {
     return (

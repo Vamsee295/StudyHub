@@ -4,18 +4,26 @@ import React, { createContext, useContext, useEffect, useState, useCallback, use
 import { UserProfile } from '@/types';
 import { useAuth } from './AuthProvider';
 import { profileApi } from '@/lib/api/profile';
-import { onboardingService, BLANK_USER_PROFILE } from '@/lib/services/onboardingService';
+import { BLANK_USER_PROFILE } from '@/lib/services/onboardingService';
 import { supabase } from '@/lib/supabase/client';
+import { errorMessage } from "@/lib/utils";
 
 type ProfileState = {
   savedProfile: UserProfile;
   draftProfile: UserProfile;
   isLoading: boolean;
   error: string | null;
-  updateDraft: (updates: Partial<UserProfile>) => void;
+  updateDraft: (updates: ProfilePatch) => void;
   saveProfile: (profileToSave?: UserProfile) => Promise<void>;
   cancelEdits: () => void;
   refreshProfile: () => Promise<void>;
+};
+
+/** A partial profile; identity, targets and skillBaseline are merged field by field. */
+export type ProfilePatch = Omit<Partial<UserProfile>, "identity" | "targets" | "skillBaseline"> & {
+  identity?: Partial<UserProfile["identity"]>;
+  targets?: Partial<UserProfile["targets"]>;
+  skillBaseline?: Partial<UserProfile["skillBaseline"]>;
 };
 
 const ProfileContext = createContext<ProfileState | null>(null);
@@ -62,20 +70,14 @@ export const ProfileProvider = ({ children }: { children: React.ReactNode }) => 
     }
 
     try {
-      console.log("[AUTH] user id:", user.id);
       
       // Fetch authoritative profile from backend API
       const dbRes = await profileApi.getProfile();
-      console.log("\n=======================================");
-      console.log("[PROFILE HYDRATION]");
-      console.log("GET /api/profile response =", dbRes);
-      console.log("ProfileProvider fullName =", dbRes.full_name);
-      console.log("=======================================\n");
 
       let targetsRes = { companies: [] };
       try {
         targetsRes = await profileApi.getTargetCompanies();
-      } catch (e) {}
+      } catch {}
 
       const isCompleted = dbRes.profile_completed || 
         (typeof document !== 'undefined' && document.cookie.includes('onboarding-complete=true')) ||
@@ -122,10 +124,9 @@ export const ProfileProvider = ({ children }: { children: React.ReactNode }) => 
           if (finalProfile.profileCompleted) {
             document.cookie = "onboarding-complete=true; path=/; max-age=31536000";
           }
-        } catch (e) {}
+        } catch {}
       }
 
-      console.log("[PROFILE REFRESH] success");
     } catch (err) {
       console.warn("[PROFILE LOAD ERROR]", err);
       // If DB/backend fails, preserve existing cached profile or cookie state if available
@@ -152,10 +153,13 @@ export const ProfileProvider = ({ children }: { children: React.ReactNode }) => 
   }, [user?.id, user?.email, authLoading]);
 
   useEffect(() => {
+    // Syncing with the server is what this effect is for: loadProfile shows the cached profile at once,
+    // then replaces it with the server's copy.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     loadProfile();
   }, [loadProfile]);
 
-  const updateDraft = useCallback((updates: Partial<UserProfile>) => {
+  const updateDraft = useCallback((updates: ProfilePatch) => {
     setDraftProfile(prev => ({
       ...prev,
       ...updates,
@@ -181,7 +185,6 @@ export const ProfileProvider = ({ children }: { children: React.ReactNode }) => 
     const targetProfile = profileToSave || draftProfile;
 
     try {
-      console.log("[PROFILE UPDATE]", targetProfile.identity?.fullName);
 
       // 1. Update auth metadata first
       if (targetProfile.identity?.fullName) {
@@ -192,7 +195,7 @@ export const ProfileProvider = ({ children }: { children: React.ReactNode }) => 
       }
 
       // 2. Persist to Postgres profiles table
-      const res = await profileApi.updateProfile({
+      await profileApi.updateProfile({
         full_name: targetProfile.identity?.fullName,
         fullName: targetProfile.identity?.fullName,
         university: targetProfile.identity?.college,
@@ -217,14 +220,13 @@ export const ProfileProvider = ({ children }: { children: React.ReactNode }) => 
         completionPercentage: targetProfile.completionPercentage || 100
       });
 
-      console.log("[PROFILE UPDATE SUCCESS]", res);
 
       // Refresh canonical state by performing a fresh SELECT from Supabase
       await loadProfile();
 
-    } catch (err: any) {
+    } catch (err) {
       console.error("[PROFILE SAVE ERROR]", err);
-      setError(err.message || "Failed to save profile");
+      setError(errorMessage(err) || "Failed to save profile");
       throw err;
     }
   }, [user, draftProfile, loadProfile]);

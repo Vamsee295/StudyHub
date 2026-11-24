@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, FileCheck2, ShieldCheck } from "lucide-react";
 import Link from "next/link";
@@ -39,12 +39,11 @@ export function ResumeAnalyzerPage() {
   const [submitting, setSubmitting] = useState(false);
   const errorRef = useRef<HTMLDivElement | null>(null);
 
-  useEffect(() => {
-    if (isLoading || request.target.role) return;
-    const profileRole = draftProfile.identity?.targetRole?.trim();
-    if (!profileRole) return;
+  // Prefill the target role from the profile once it has loaded (only while the field is empty)
+  const profileRole = draftProfile.identity?.targetRole?.trim();
+  if (!isLoading && !request.target.role && profileRole) {
     setRequest((current) => ({ ...current, target: { ...current.target, ...getRoleFromProfile(profileRole) } }));
-  }, [draftProfile.identity?.targetRole, isLoading, request.target.role]);
+  }
 
   const updateTarget = (patch: Partial<ResumeAnalysisTarget>) => {
     setRequest((current) => ({ ...current, target: { ...current.target, ...patch } }));

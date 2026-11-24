@@ -1,76 +1,59 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { motion, useReducedMotion, Variants } from "framer-motion";
 
 import { ResourcesHeader } from "@/components/resources/ResourcesHeader";
 import { ResourcesSearchFilter, SortOption } from "@/components/resources/ResourcesSearchFilter";
-import { ContinueReadingSection } from "@/components/resources/ContinueReadingSection";
+import { ContinueReadingSection, type ContinueItem } from "@/components/resources/ContinueReadingSection";
 import { ExploreCategoriesSection } from "@/components/resources/ExploreCategoriesSection";
 import { CuratedResourcesSection } from "@/components/resources/CuratedResourcesSection";
 import { SavedAndRecentSection } from "@/components/resources/SavedAndRecentSection";
 
-import { resourceService, Resource } from "@/lib/resources";
+import { resourceService } from "@/lib/resources";
 import { resourceStorage } from "@/lib/resourceStorage";
 
 export default function ResourcesPage() {
-  const reduced = useReducedMotion();
-  const [mounted, setMounted] = useState(false);
-
-  // Search & Filter State
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState("All");
   const [sortBy, setSortBy] = useState<SortOption>("Relevant");
 
-  // Telemetry & Storage State
+  // Bumped when the catalog or this device's saved/recent/completed lists change; everything below re-reads.
   const [catalogVersion, setCatalogVersion] = useState(0);
-  const [savedIds, setSavedIds] = useState<string[]>([]);
-  const [completedIds, setCompletedIds] = useState<string[]>([]);
-  const [recentResources, setRecentResources] = useState<(Resource & { viewedAt: string; lastPage?: number })[]>([]);
-  const [savedResources, setSavedResources] = useState<Resource[]>([]);
-  const [stats, setStats] = useState({ saved: 0, recent: 0, completed: 0 });
+  const [storageVersion, setStorageVersion] = useState(0);
+  const refresh = () => setStorageVersion((v) => v + 1);
 
-  const categories = useMemo(() => {
-    return resourceService.getCategoriesWithCounts();
-  }, [catalogVersion]);
+  // AppLayout renders pages only on the client, so reading localStorage during render is safe.
+  const store = useMemo(
+    () => ({
+      savedIds: resourceStorage.getSavedIds(),
+      completedIds: resourceStorage.getCompletedIds(),
+      recent: resourceStorage.getRecentResources(),
+      saved: resourceStorage.getSavedResources(),
+      stats: resourceStorage.getStats(),
+    }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- the versions are the cache keys for localStorage reads
+    [storageVersion, catalogVersion]
+  );
 
-  const refreshStorageData = () => {
-    const sIds = resourceStorage.getSavedIds();
-    const cIds = resourceStorage.getCompletedIds();
-    const recents = resourceStorage.getRecentResources();
-    const saveds = resourceStorage.getSavedResources();
-    const currentStats = resourceStorage.getStats();
-
-    setSavedIds(sIds);
-    setCompletedIds(cIds);
-    setRecentResources(recents);
-    setSavedResources(saveds);
-    setStats(currentStats);
-  };
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- re-count when the catalog changes
+  const categories = useMemo(() => resourceService.getCategoriesWithCounts(), [catalogVersion]);
 
   useEffect(() => {
-    setMounted(true);
-    refreshStorageData();
-
-    // Dynamically sync newly added materials from filesystem API
+    // Pick up materials added to the filesystem since the build
     fetch("/api/materials/catalog")
       .then((res) => res.json())
       .then((data) => {
-        if (data && data.success && Array.isArray(data.resources)) {
+        if (data?.success && Array.isArray(data.resources)) {
           resourceService.setDynamicCatalog(data.resources);
           setCatalogVersion((v) => v + 1);
         }
       })
-      .catch((err) => {
-        console.warn("[Resources] Using catalog baseline:", err);
-      });
+      .catch((err) => console.warn("[Resources] Using catalog baseline:", err));
 
-    // Global keyboard shortcut for search
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === "k") {
         e.preventDefault();
-        const searchInput = document.querySelector('input[placeholder*="Search notes"]') as HTMLInputElement;
-        if (searchInput) searchInput.focus();
+        document.querySelector<HTMLInputElement>('input[placeholder*="Search notes"]')?.focus();
       }
     };
     window.addEventListener("keydown", handleKeyDown);
@@ -81,75 +64,58 @@ export default function ResourcesPage() {
     e.preventDefault();
     e.stopPropagation();
     resourceStorage.toggleSave(id);
-    refreshStorageData();
+    refresh();
   };
 
   const handleRemoveSaved = (id: string) => {
     resourceStorage.toggleSave(id);
-    refreshStorageData();
+    refresh();
   };
 
   const handleClearHistory = () => {
     resourceStorage.clearRecent();
-    refreshStorageData();
+    refresh();
   };
 
   const handleCategoryClick = (filterKey: string) => {
     setActiveFilter(filterKey);
-    const element = document.getElementById("curated-resources");
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
+    document.getElementById("curated-resources")?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
-  // Filtered resources based on query, category, and sort
-  const filteredResources = useMemo(() => {
-    return resourceService.searchAndFilter({
-      query: searchQuery,
-      category: activeFilter,
-      sortBy
-    });
-  }, [searchQuery, activeFilter, sortBy, catalogVersion]);
+  const filteredResources = useMemo(
+    () => resourceService.searchAndFilter({ query: searchQuery, category: activeFilter, sortBy }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- catalogVersion invalidates the catalog
+    [searchQuery, activeFilter, sortBy, catalogVersion]
+  );
 
-  // Format continue reading items
-  const continueReadingItems = useMemo(() => {
-    return recentResources.slice(0, 3).map((r) => {
-      const page = r.lastPage || 1;
-      const totalPages = r.pageCount || 10;
-      const percentage = Math.min(100, Math.round((page / totalPages) * 100));
+  // Started but unfinished PDFs. Progress = furthest page reached / real page count; no bar when the count isn't known yet.
+  const continueReadingItems = useMemo<ContinueItem[]>(
+    () =>
+      store.recent
+        .filter((r) => !store.completedIds.includes(r.id))
+        .slice(0, 3)
+        .map((r) => {
+          const page = r.maxPage ?? r.lastPage ?? 1;
+          return {
+            id: r.id,
+            title: r.title,
+            category: r.category,
+            page,
+            pageCount: r.pageCount,
+            percentage: r.pageCount ? Math.min(100, Math.round((page / r.pageCount) * 100)) : null,
+            href: `/resources/${r.id}`,
+          };
+        }),
+    [store]
+  );
 
-      return {
-        id: r.id,
-        title: r.title,
-        track: `Official StudyHub · ${r.category}`,
-        unitProgress: `Page ${page} of ${totalPages}`,
-        percentage: percentage > 0 ? percentage : 15,
-        timeEstimate: r.readTimeEstimate || "Read",
-        typeBadge: "PDF Document",
-        href: `/resources/${r.id}`
-      };
-    });
-  }, [recentResources]);
-
-  // Framer Motion configuration
-  const container: Variants = {
-    hidden: { opacity: 0 },
-    show: { opacity: 1, transition: { staggerChildren: 0.08 } }
-  };
-  const item: Variants = {
-    hidden: { opacity: 0, y: 16 },
-    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
-  };
+  const browsing = searchQuery === "" && activeFilter === "All";
 
   return (
-    <div className="flex flex-col gap-10 md:gap-14 pb-24 relative max-w-[1440px] mx-auto w-full min-w-0">
-      <ResourcesHeader 
-        savedCount={mounted ? stats.saved : 0}
-        recentCount={mounted ? stats.recent : 0}
-        completedCount={mounted ? stats.completed : 0}
-      />
-      
-      <ResourcesSearchFilter 
+    <div className="relative mx-auto flex w-full min-w-0 max-w-[1440px] flex-col gap-10 pb-24 md:gap-14">
+      <ResourcesHeader savedCount={store.stats.saved} recentCount={store.stats.recent} completedCount={store.stats.completed} />
+
+      <ResourcesSearchFilter
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
         activeFilter={activeFilter}
@@ -159,46 +125,25 @@ export default function ResourcesPage() {
         setSortBy={setSortBy}
       />
 
-      <motion.div 
-        className="flex flex-col gap-10 md:gap-14"
-        variants={reduced ? undefined : container}
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true, margin: "-50px" }}
-      >
-        {mounted && searchQuery === "" && activeFilter === "All" && continueReadingItems.length > 0 && (
-          <motion.div variants={reduced ? undefined : item}>
-            <ContinueReadingSection items={continueReadingItems} />
-          </motion.div>
-        )}
+      {browsing && <ContinueReadingSection items={continueReadingItems} />}
 
-        <motion.div variants={reduced ? undefined : item}>
-          <CuratedResourcesSection 
-            resources={filteredResources} 
-            bookmarkedIds={mounted ? savedIds : []}
-            completedIds={mounted ? completedIds : []}
-            onToggleBookmark={handleToggleBookmark}
-          />
-        </motion.div>
+      <CuratedResourcesSection
+        resources={filteredResources}
+        bookmarkedIds={store.savedIds}
+        completedIds={store.completedIds}
+        onToggleBookmark={handleToggleBookmark}
+      />
 
-        {searchQuery === "" && activeFilter === "All" && (
-          <motion.div variants={reduced ? undefined : item}>
-            <ExploreCategoriesSection onCategoryClick={handleCategoryClick} />
-          </motion.div>
-        )}
+      {browsing && <ExploreCategoriesSection counts={categories} onCategoryClick={handleCategoryClick} />}
 
-        {mounted && searchQuery === "" && activeFilter === "All" && (
-          <motion.div variants={reduced ? undefined : item}>
-            <SavedAndRecentSection 
-              savedResources={savedResources}
-              recentResources={recentResources}
-              onRemoveSaved={handleRemoveSaved}
-              onClearHistory={handleClearHistory}
-            />
-          </motion.div>
-        )}
-      </motion.div>
+      {browsing && (
+        <SavedAndRecentSection
+          savedResources={store.saved}
+          recentResources={store.recent}
+          onRemoveSaved={handleRemoveSaved}
+          onClearHistory={handleClearHistory}
+        />
+      )}
     </div>
   );
 }
-

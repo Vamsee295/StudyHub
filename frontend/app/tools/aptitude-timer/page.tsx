@@ -15,7 +15,7 @@ type Lap = { ms: number; skipped: boolean };
 export default function AptitudeTimerPage() {
   const [questions, setQuestions] = useState(20);
   const [minutes, setMinutes] = useState(25);
-  const [running, setRunning] = useState(false);
+  const [wantRun, setRunning] = useState(false); // the learner pressed start; the clock also stops itself when done
   const [elapsed, setElapsed] = useState(0);      // total ms
   const [lapStart, setLapStart] = useState(0);    // elapsed value when the current question began
   const [laps, setLaps] = useState<Lap[]>([]);
@@ -25,6 +25,7 @@ export default function AptitudeTimerPage() {
   const target = (minutes * 60_000) / Math.max(1, questions);
   const limit = minutes * 60_000;
   const done = laps.length >= questions || elapsed >= limit;
+  const running = wantRun && !done;
 
   useEffect(() => {
     if (!running) return;
@@ -37,7 +38,6 @@ export default function AptitudeTimerPage() {
     return () => { if (tick.current) clearInterval(tick.current); };
   }, [running]);
 
-  useEffect(() => { if (done && running) setRunning(false); }, [done, running]);
 
   const lap = (skipped: boolean) => {
     if (done || elapsed === 0) return;

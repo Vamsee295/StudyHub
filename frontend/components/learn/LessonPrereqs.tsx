@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import Link from "next/link";
 import { CheckCircle2, Circle, ListChecks } from "lucide-react";
 import { prerequisitesFor } from "@/lib/learn/lessonPrereqs";
@@ -9,13 +9,12 @@ import { getStoredProgress } from "@/lib/services/learnService";
 /** "Before this lesson" panel: prerequisite lessons with completion state from saved progress. */
 export function LessonPrereqs({ course, lesson }: { course: string; lesson: string }) {
   const items = useMemo(() => prerequisitesFor(course, lesson), [course, lesson]);
-  const [done, setDone] = useState<Set<string>>(new Set());
-
-  useEffect(() => {
+  // rendered inside the lesson page, which only renders on the client
+  const done = useMemo(() => {
     const store = getStoredProgress();
-    setDone(new Set(items
+    return new Set(items
       .filter((p) => store[p.lessonId]?.status === "completed" || store[p.lesson]?.status === "completed")
-      .map((p) => `${p.course}/${p.lesson}`)));
+      .map((p) => `${p.course}/${p.lesson}`));
   }, [items]);
 
   // The "previous lesson" entry alone isn't worth a panel.

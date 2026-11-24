@@ -22,3 +22,8 @@ export function formatDistanceToNow(date: Date): string {
   if (d < 7) return `${d}d ago`;
   return date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
 }
+
+/** The message of a caught value (`catch (e)` is `unknown`): an Error's message, a thrown string, else "". */
+export function errorMessage(e: unknown): string {
+  return e instanceof Error ? e.message : typeof e === 'string' ? e : '';
+}

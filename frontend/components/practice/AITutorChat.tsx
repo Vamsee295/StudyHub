@@ -2,7 +2,6 @@
 
 import { useState, useRef, useEffect } from "react";
 import { Send, Bot, User, Loader2, Sparkles } from "lucide-react";
-import { apiClient } from "@/lib/api/client";
 
 interface Message {
   role: "user" | "assistant";

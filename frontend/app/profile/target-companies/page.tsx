@@ -1,24 +1,11 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { PageHeader } from "@/components/ui/Page";
 import { buttonClass } from "@/components/ui/Button";
-import { 
-  Building2, 
-  Plus, 
-  Trash2, 
-  ArrowRight, 
-  ExternalLink, 
-  CheckCircle2, 
-  Clock, 
-  TrendingUp,
-  Search,
-  SlidersHorizontal,
-  Briefcase,
-  AlertCircle
-} from "lucide-react";
-import { targetCompanies, directoryCompanies, companyWorkspaces } from "@/lib/data/companiesData";
+import { Building2, Plus, Trash2, ExternalLink, Search } from "lucide-react";
+import { targetCompanies, directoryCompanies } from "@/lib/data/companiesData";
 import { ProfileNavTabs } from "@/components/profile/ProfileNavTabs";
 import { CompanyTarget } from "@/types";
 import { useProfile } from "@/components/providers/ProfileProvider";
@@ -48,7 +35,6 @@ export default function TargetCompaniesPage() {
   });
   const [searchFilter, setSearchFilter] = useState("");
   const [addModalOpen, setAddModalOpen] = useState(false);
-  const [selectedToAdd, setSelectedToAdd] = useState("");
 
   const saveTrackedList = (updated: CompanyTarget[]) => {
     setTrackedList(updated);
@@ -99,7 +85,6 @@ export default function TargetCompaniesPage() {
 
     saveTrackedList([...trackedList, newTarget]);
     setAddModalOpen(false);
-    setSelectedToAdd("");
   };
 
   const filtered = trackedList.filter(c => 

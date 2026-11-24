@@ -9,13 +9,14 @@ import json
 from app.core.database import AsyncSessionLocal
 from app.core.security import get_current_user
 from app.models.learning import LearningSubject, LearningModule, LearningTopic, UserLearningProgress
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 router = APIRouter(prefix="/api/learn", tags=["learn"])
 
 class TopicProgressUpdate(BaseModel):
     status: str # "not_started", "in_progress", "completed"
     notes: str = None
+    progress: int | None = Field(None, ge=0, le=100)  # how far the learner has read, in %
 
 @router.get("/subjects")
 async def get_subjects(user: Any = Depends(get_current_user)):
@@ -297,9 +298,11 @@ async def update_topic_progress(topic_id: str, payload: TopicProgressUpdate, use
             if not progress.completed_at:
                 progress.completed_at = datetime.utcnow()
         elif payload.status == "in_progress":
-            if progress.progress == 100:
-                progress.progress = 50
+            if progress.completed_at:  # reopened: reading progress starts over
+                progress.progress = 0
                 progress.completed_at = None
+            if payload.progress is not None:  # furthest point read; scrolling back up never lowers it
+                progress.progress = max(progress.progress or 0, min(payload.progress, 99))
                 
         await session.commit()
         await session.refresh(progress)

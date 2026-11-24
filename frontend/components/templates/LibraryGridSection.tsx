@@ -1,7 +1,6 @@
 import React from "react";
 import Link from "next/link";
 import { ArrowRight, FileText, Clock, LayoutTemplate } from "lucide-react";
-import { clsx } from "clsx";
 import { TemplateItem } from "@/types";
 
 export function LibraryGridSection({ templates }: { templates: TemplateItem[] }) {

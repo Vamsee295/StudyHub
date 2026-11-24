@@ -1,12 +1,11 @@
-import { apiClient } from './client';
 
 export const authApi = {
-  login: async (credentials: any) => {
+  login: async (credentials: { email: string; password: string }) => {
     const { supabase } = await import('@/lib/supabase/client');
     return supabase.auth.signInWithPassword(credentials);
   },
   
-  signup: async (credentials: any) => {
+  signup: async (credentials: { email: string; password: string; full_name?: string }) => {
     const { supabase } = await import('@/lib/supabase/client');
     return supabase.auth.signUp({
       email: credentials.email,

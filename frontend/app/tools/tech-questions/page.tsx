@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { CheckCircle2, Layers, RotateCcw, XCircle } from "lucide-react";
 import { clsx } from "clsx";
@@ -19,12 +19,12 @@ export default function TechQuestionDrillPage() {
   const [index, setIndex] = useState(0);
   const [picked, setPicked] = useState<number | null>(null);
   const [results, setResults] = useState<{ id: string; correct: boolean }[]>([]);
-  const [dueCount, setDueCount] = useState(0);
-
   const bank = useMemo(() => questionBank(course), [course]);
-  useEffect(() => {
+  // re-read when a deck starts or ends, since answering changes the review queue
+  const dueCount = useMemo(() => {
     const ids = new Set(bank.map((q) => q.id));
-    setDueCount(dueItems(getReviewItems(course)).filter((r) => ids.has(r.id)).length);
+    return dueItems(getReviewItems(course)).filter((r) => ids.has(r.id)).length;
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- deck is the refresh trigger
   }, [course, bank, deck]);
 
   const start = () => {

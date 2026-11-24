@@ -6,6 +6,7 @@ import { PDFDocumentProxy, RenderTask } from "pdfjs-dist";
 import { clsx } from "clsx";
 import { AlertCircle, RefreshCw } from "lucide-react";
 import { AnnotationLayer } from "./AnnotationLayer";
+import { errorMessage } from "@/lib/utils";
 
 // Use Cloudflare CDN for the worker to avoid Webpack configuration issues in Next.js
 if (typeof window !== "undefined" && !pdfjsLib.GlobalWorkerOptions.workerSrc) {
@@ -72,10 +73,10 @@ export function NativePdfReader({
           onDocumentLoad(doc.numPages);
           setIsLoading(false);
         }
-      } catch (err: any) {
+      } catch (err) {
         if (isMounted) {
           console.error("Error loading PDF:", err);
-          setError(err.message || "Failed to load PDF document.");
+          setError(errorMessage(err) || "Failed to load PDF document.");
           setIsLoading(false);
         }
       }
@@ -143,7 +144,6 @@ export function NativePdfReader({
         const renderContext = {
           canvasContext: ctx,
           viewport: viewport,
-          // @ts-ignore - some versions of types demand canvas, some don't
           canvas: canvas,
         };
 
@@ -152,8 +152,8 @@ export function NativePdfReader({
         
         await renderTask.promise;
         
-      } catch (err: any) {
-        if (err.name === 'RenderingCancelledException') {
+      } catch (err) {
+        if (err instanceof Error && err.name === 'RenderingCancelledException') {
           // Normal during rapid page changes
           return;
         }
@@ -211,10 +211,9 @@ export function NativePdfReader({
         />
         {isDoodleMode && canvasDimensions && !isLoading && (
           <AnnotationLayer
+            key={`${fileUrl}#${currentPage}@${canvasDimensions.width}x${canvasDimensions.height}`}
             width={canvasDimensions.width}
             height={canvasDimensions.height}
-            currentPage={currentPage}
-            fileUrl={fileUrl}
             onClose={() => onCloseDoodle && onCloseDoodle()}
           />
         )}

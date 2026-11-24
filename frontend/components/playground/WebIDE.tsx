@@ -221,6 +221,8 @@ export default function WebIDE() {
 
   useEffect(() => {
     if (!project || isLoading) return;
+    // Saves open tabs / active file to IndexedDB: the external sync this effect exists for.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     persistProjectState();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeFileId, tabs]);

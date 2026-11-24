@@ -50,7 +50,7 @@ export default function Step4Targets({ data, update }: Step4TargetsProps) {
       <div className="flex flex-col gap-1.5">
         <h2 className="display text-[32px] md:text-[38px]">Your goals</h2>
         <p className="text-sm text-mute leading-relaxed">
-          What you're aiming for, and the companies you'd like to get into.
+          What you’re aiming for, and the companies you’d like to get into.
         </p>
       </div>
 

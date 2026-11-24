@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { StudyWithMeHero } from "@/components/community/StudyWithMeHero";
 import { ActivityFilterBar } from "@/components/community/ActivityFilterBar";
 import { ActivityFeed } from "@/components/community/ActivityFeed";
@@ -40,71 +40,67 @@ function mergeGroups(existing: DateGroup[], incoming: DateGroup[]): DateGroup[] 
 export default function StudyWithMePage() {
   const [activeFilter, setActiveFilter] = useState<FeedFilter>("all");
   const [groups, setGroups] = useState<DateGroup[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  // `groups` belong to `loadedFilter`; while it differs from the active filter, the first page is loading.
+  const [loadedFilter, setLoadedFilter] = useState<FeedFilter | null>(null);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(false);
   const [nextOffset, setNextOffset] = useState(0);
   const [stats, setStats] = useState<CommunityStats | null>(null);
   const [shareOpen, setShareOpen] = useState(false);
   const [commentPostId, setCommentPostId] = useState<string | null>(null);
-  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
-  const [view, setView] = useState<"feed" | "logs">("feed");
-
-  // ?view=logs opens the daily logs directly (shareable link).
-  useEffect(() => {
-    if (new URLSearchParams(window.location.search).get("view") === "logs") setView("logs");
-  }, []);
+  // ?view=logs opens the daily logs directly (shareable link). Pages render client-side only, so window is there.
+  const [view, setView] = useState<"feed" | "logs">(() =>
+    new URLSearchParams(window.location.search).get("view") === "logs" ? "logs" : "feed"
+  );
   const switchView = (v: "feed" | "logs") => {
     setView(v);
     window.history.replaceState(null, "", v === "logs" ? "?view=logs" : window.location.pathname);
   };
 
   const { user } = useAuth();
-
-  // Sync current user id from auth context
-  useEffect(() => {
-    setCurrentUserId(user?.id ?? null);
-  }, [user]);
+  const currentUserId = user?.id ?? null;
 
   // Fetch stats once
   useEffect(() => {
     communityApi.getStats().then(setStats).catch(() => {});
   }, []);
 
-  // Load feed when filter changes (reset pagination)
-  const loadFeed = useCallback(
-    async (filter: FeedFilter, offset = 0, append = false) => {
-      if (offset === 0) setIsLoading(true);
-      else setIsLoadingMore(true);
-      try {
-        const data: FeedResponse = await communityApi.getFeed(filter, LIMIT, offset);
-        if (append) {
-          setGroups((prev) => mergeGroups(prev, data.groups));
-        } else {
-          setGroups(data.groups);
-        }
-        setHasMore(data.has_more);
-        setNextOffset(data.next_offset ?? offset + LIMIT);
-      } catch {
-        if (!append) setGroups([]);
-      } finally {
-        setIsLoading(false);
-        setIsLoadingMore(false);
-      }
-    },
-    []
-  );
+  const isLoading = loadedFilter !== activeFilter;
 
+  // First page whenever the filter changes (pagination resets)
   useEffect(() => {
-    loadFeed(activeFilter, 0, false);
-  }, [activeFilter, loadFeed]);
+    let live = true;
+    communityApi
+      .getFeed(activeFilter, LIMIT, 0)
+      .then((data: FeedResponse) => {
+        if (!live) return;
+        setGroups(data.groups);
+        setHasMore(data.has_more);
+        setNextOffset(data.next_offset ?? LIMIT);
+      })
+      .catch(() => live && setGroups([]))
+      .finally(() => live && setLoadedFilter(activeFilter));
+    return () => {
+      live = false;
+    };
+  }, [activeFilter]);
 
   const handleFilterChange = (filter: FeedFilter) => {
     setActiveFilter(filter);
   };
 
-  const handleLoadMore = () => {
-    loadFeed(activeFilter, nextOffset, true);
+  const handleLoadMore = async () => {
+    setIsLoadingMore(true);
+    try {
+      const data: FeedResponse = await communityApi.getFeed(activeFilter, LIMIT, nextOffset);
+      setGroups((prev) => mergeGroups(prev, data.groups));
+      setHasMore(data.has_more);
+      setNextOffset(data.next_offset ?? nextOffset + LIMIT);
+    } catch {
+      // keep what's shown; the button stays for a retry
+    } finally {
+      setIsLoadingMore(false);
+    }
   };
 
   const handlePostCreated = (newPost: CommunityPost) => {
