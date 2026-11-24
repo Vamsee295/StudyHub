@@ -2,6 +2,7 @@
 // Built from each lesson's quickCheck / takeaways / interviewTraps sections.
 import { getCourseBySlug } from "@/lib/data/courses/index";
 import { EXTRA_QUESTIONS } from "@/lib/data/question-bank/index";
+import { markChanged } from "@/lib/sync/userSync";
 
 export interface BankQuestion {
   id: string;            // `${lessonSlug}#${index}` — stable across sessions
@@ -116,6 +117,7 @@ function read<T>(key: string, fallback: T): T {
 }
 function write(key: string, value: unknown) {
   try { localStorage.setItem(key, JSON.stringify(value)); } catch { /* storage full or blocked */ }
+  markChanged(key);   // syncs test history and review queue to the account
 }
 
 const attemptsKey = (s: string) => `studyhub:tests:${s}`;

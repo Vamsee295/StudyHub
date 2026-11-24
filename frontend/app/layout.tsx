@@ -3,6 +3,7 @@ import "./globals.css";
 import { AuthProvider } from "@/components/providers/AuthProvider";
 import { ProfileProvider } from "@/components/providers/ProfileProvider";
 import { OnboardingGuard } from "@/components/providers/OnboardingGuard";
+import { SyncManager } from "@/components/providers/SyncManager";
 
 export const metadata: Metadata = {
   title: "StudyHub — Everything you need to prepare for your tech career",
@@ -37,6 +38,7 @@ export default function RootLayout({
       <body className="antialiased">
         <AuthProvider>
           <ProfileProvider>
+            <SyncManager />
             <OnboardingGuard>
               {children}
             </OnboardingGuard>

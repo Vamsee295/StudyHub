@@ -136,15 +136,9 @@ Video lessons (production cost), AI-research/robotics tracks (not our audience),
 
 **Shipped:** P0 fixes (unbuilt tools hidden, prerequisite links, resume security, migrations); `theory` + `sources` lesson fields and renderer; 700+ word notes for all 195 DBMS, OS, CN, DSA and SQL lessons; auto-generated course roadmaps with "Next on your path"; `--sync` now prunes stale placeholder lessons (363 removed).
 
-**Still missing for "prepare a whole subject from scratch":**
+**Shipped since (2026-11-24):** deep notes for all 402 lessons across 13 courses (PF, OOP and Aptitude included); System Design course with 24 lessons and walkthroughs; subject mock tests, revision sheets and spaced-repetition review; "asked in" company tags; five labs; reading-order lists; concept map; daily question with streaks; lesson search (Ctrl+K), lesson bookmarks and a Saved page; lesson-level prerequisites (58 curated links plus module links, checked by `scripts/check-lesson-prereqs.ts`); six rebuilt tools (readiness, company prep sheet, technical question drill, aptitude pacing timer, CGPA converter, STAR builder) with the other ten placeholders dropped and fake "recently used" data replaced by real tracking. Ideas board at `/ideas`: `ideas` and `idea_votes` tables (migration `d4e8b2f6a1c3`), `/api/ideas` routes, one vote per user, 5 ideas per user per day, duplicate-title check, statuses changed only by emails in `ADMIN_EMAILS`. Study With Me daily logs (`/study-with-me?view=logs`): a private draft auto-filled from the learner's lesson completions on their local day, published only by choice (today or yesterday), with a public day-by-day archive; `study_logs` table (migration `e7a3c9d1b5f2`) and `/api/community/logs` routes. Server-side sync: daily-question history, mock tests, review queue, bookmarks, STAR stories, readiness choices and recent tools sync to the account through `user_sync_data` (migration `f2b6d8e4a9c1`) and `/api/sync`; lesson progress is hydrated from `user_learning_progress`. Append-only data merges from both devices; data with deletions uses last write wins. Local data from a different account is cleared on sign-in. Client logic is checked by `scripts/check-sync.ts`.
+
+**Still missing:**
 | Gap | Notes |
 |---|---|
-| Deep notes for Programming Fundamentals (78), OOP (41), Aptitude (64) | Same pipeline as Phase 1–2 |
-| System Design course + walkthroughs | system-design-primer (CC BY 4.0) backbone |
-| Subject mock tests and revision | Timed per-subject test from lesson quizzes, a revision sheet per module, spaced-repetition review queue |
-| "Asked in" tags | `askedIn` on lessons and problems, filter on Companies |
-| Labs | Big-O visualizer, CPU scheduling Gantt, page replacement, subnet calculator, capacity estimator |
-| Reading-order lists | Per subject, our lessons + free external resources |
-| Concept graph, daily question, ideas board, Study With Me logs | Phase 4 engagement |
-| 16 hidden tools | Rebuild top 6 or drop |
-| Content search, bookmarks, personal notes per lesson | Not built |
+| More company profiles | `COMPANY_PROFILES` covers the sourced set; add more only with verifiable sources |

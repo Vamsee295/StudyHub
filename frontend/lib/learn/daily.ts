@@ -2,6 +2,7 @@
 // question banks in a fixed shuffled order so nothing repeats until the whole pool is used.
 import { ALL_COURSES } from "@/lib/data/courses/index";
 import { BankQuestion, questionBank, seededRandom, shuffle } from "@/lib/learn/study";
+import { markChanged } from "@/lib/sync/userSync";
 
 export interface DailyQuestion extends BankQuestion { course: string; courseTitle: string; date: string; dayNumber: number }
 export interface DailyEntry { id: string; correct: boolean; pick?: number }
@@ -59,4 +60,5 @@ export function getDailyHistory(): DailyHistory {
 }
 export function saveDailyAnswer(date: string, entry: DailyEntry) {
   try { localStorage.setItem(KEY, JSON.stringify({ ...getDailyHistory(), [date]: entry })); } catch { /* storage blocked */ }
+  markChanged(KEY);
 }
