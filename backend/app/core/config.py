@@ -18,6 +18,9 @@ class Settings(BaseSettings):
     
     # CORS
     frontend_url: str = "http://localhost:3000"
+
+    # Comma-separated emails allowed to change ideas board statuses
+    admin_emails: str = ""
     
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
