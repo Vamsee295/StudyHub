@@ -1,28 +1,21 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { ToolsHeader } from "@/components/tools/ToolsHeader";
 import { ToolsSearchFilter } from "@/components/tools/ToolsSearchFilter";
 import { ContinueUsingSection } from "@/components/tools/ContinueUsingSection";
 import { CorePlacementToolsSection } from "@/components/tools/CorePlacementToolsSection";
 import { InterviewUtilitiesSection } from "@/components/tools/InterviewUtilitiesSection";
 import { CalculatorsTrackersSection } from "@/components/tools/CalculatorsTrackersSection";
-import { RecommendedToolsSection } from "@/components/tools/RecommendedToolsSection";
-import { RecentlyUsedLedger } from "@/components/tools/RecentlyUsedLedger";
-import { ToolCategory } from "@/types";
-
-import {
-  continueUsingTools,
-  corePlacementTools,
-  interviewUtilities,
-  calculatorsTrackers,
-  recommendedTools,
-  recentToolAudits,
-} from "@/lib/data/toolsData";
+import { ToolCategory, ContinueToolItem } from "@/types";
+import { recentToolItems } from "@/lib/tools/recentTools";
+import { corePlacementTools, interviewUtilities, calculatorsTrackers } from "@/lib/data/toolsData";
 
 export default function ToolsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState<ToolCategory>("all");
+  const [recent, setRecent] = useState<ContinueToolItem[]>([]);
+  useEffect(() => setRecent(recentToolItems()), []);
 
   // Filter core placement tools
   const filteredCoreTools = useMemo(() => {
@@ -57,7 +50,7 @@ export default function ToolsPage() {
       />
 
       {/* When filtering, only show relevant sections or just hide recommended/recent things */}
-      {!isFiltering && <ContinueUsingSection items={continueUsingTools} />}
+      {!isFiltering && <ContinueUsingSection items={recent} />}
 
       <CorePlacementToolsSection items={filteredCoreTools} />
 
@@ -65,8 +58,6 @@ export default function ToolsPage() {
         <>
           <InterviewUtilitiesSection items={interviewUtilities} />
           <CalculatorsTrackersSection items={calculatorsTrackers} />
-          <RecommendedToolsSection items={recommendedTools} />
-          <RecentlyUsedLedger items={recentToolAudits} />
         </>
       )}
 
