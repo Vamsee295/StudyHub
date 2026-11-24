@@ -26,6 +26,8 @@ import MdxRenderer from "@/components/mdx/MdxRenderer";
 import { TheoryNotes, LessonSources } from "@/components/learn/TheoryNotes";
 import { labForLesson } from "@/lib/labs/catalog";
 import { AskedInChips } from "@/components/learn/AskedIn";
+import { LessonBookmarkButton } from "@/components/learn/LessonBookmarkButton";
+import { LessonPrereqs } from "@/components/learn/LessonPrereqs";
 import { notificationService } from "@/lib/services/notificationService";
 import { useAuth } from "@/components/providers/AuthProvider";
 
@@ -746,7 +748,9 @@ export default function TopicPage() {
             </span>
           </div>
           
-          <button 
+          <div className="flex items-center gap-2 shrink-0">
+          <LessonBookmarkButton course={subjectSlug} lesson={topicSlug} />
+          <button
             onClick={toggleComplete}
             disabled={updating || isCompleted}
             className={clsx(
@@ -766,6 +770,7 @@ export default function TopicPage() {
             )}
             {isCompleted ? "Completed" : "Mark as Complete"}
           </button>
+          </div>
         </header>
 
         {/* ONE CLEAR SCROLLABLE CONTENT REGION */}
@@ -786,6 +791,7 @@ export default function TopicPage() {
             {parsedContent ? (
               <div className="flex flex-col gap-10">
                 {currentModule && <AskedInChips course={subjectSlug} module={currentModule.slug} />}
+                <LessonPrereqs course={subjectSlug} lesson={topicSlug} />
                 {parsedContent.theory && <TheoryNotes markdown={parsedContent.theory} />}
                 {labForLesson(subjectSlug, topicSlug).map((lab) => (
                   <Link key={lab.slug} href={`/labs/${lab.slug}`}

@@ -14,6 +14,7 @@ import { authApi } from "@/lib/api/auth";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { useProfile } from "@/components/providers/ProfileProvider";
 import { StudyHubLogo } from "@/components/ui/StudyHubLogo";
+import { SearchLauncher } from "@/components/learn/SearchLauncher";
 
 const navLinks = [
   { name: "Dashboard", href: "/dashboard" },
@@ -191,7 +192,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             <StudyHubLogo href="/dashboard" size="md" showBadge={false} />
 
             {/* Nav Links */}
-            <nav className="hidden lg:flex items-center gap-0.5 xl:gap-1 text-[12.5px] xl:text-[13.5px]">
+            <nav className="hidden xl:flex items-center gap-0.5 text-[13px]">
               {navLinks.map((link) => {
                 const isActive = pathname === link.href || pathname?.startsWith(link.href + "/");
                 return (
@@ -199,7 +200,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                     key={link.name}
                     href={link.href}
                     className={clsx(
-                      "px-2 xl:px-2.5 py-1.5 rounded-md transition-all flex items-center gap-1.5 whitespace-nowrap",
+                      "px-1.5 py-1.5 rounded-md transition-all flex items-center gap-1.5 whitespace-nowrap",
                       isActive
                         ? "font-semibold text-[var(--accent)] bg-[var(--accent-soft)] ring-1 ring-[var(--accent-soft-border)]"
                         : "font-medium text-[var(--ink-secondary)] hover:text-[var(--ink)] hover:bg-[var(--surface-subdued)]/70"
@@ -215,6 +216,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
           {/* Right Utility Actions */}
           <div className="flex items-center gap-2.5 sm:gap-3.5 shrink-0 pl-2">
+            <SearchLauncher />
             {/* Notifications */}
             <div className="relative shrink-0 flex items-center">
               <button
@@ -294,7 +296,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
             {/* Mobile Menu Button */}
             <button
-              className="lg:hidden p-2 text-[var(--ink-secondary)] hover:text-[var(--ink)] hover:bg-[var(--surface-subdued)] rounded-lg transition-colors shrink-0"
+              className="xl:hidden p-2 text-[var(--ink-secondary)] hover:text-[var(--ink)] hover:bg-[var(--surface-subdued)] rounded-lg transition-colors shrink-0"
               onClick={() => setMobileMenuOpen((v) => !v)}
               aria-label="Toggle navigation menu"
             >
@@ -305,7 +307,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
         {/* Mobile Navigation Dropdown */}
         {mobileMenuOpen && (
-          <div className="lg:hidden bg-[var(--surface)] border-t border-[var(--border)] px-6 py-4 flex flex-col gap-2 shadow-md">
+          <div className="xl:hidden bg-[var(--surface)] border-t border-[var(--border)] px-6 py-4 flex flex-col gap-2 shadow-md">
             {navLinks.map((link) => {
               const isActive = pathname === link.href || pathname?.startsWith(link.href + "/");
               return (
@@ -347,7 +349,8 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               <span className="w-2 h-2 rounded-full bg-[var(--success)]"></span>
               <span>STUDYHUB · Mapped Learning &amp; Placement Engine · Verified Cycle 2026</span>
             </div>
-            <div className="flex items-center gap-4 text-[var(--ink-tertiary)]">
+            <div className="flex flex-wrap justify-center items-center gap-x-4 gap-y-1 text-[var(--ink-tertiary)] [&>a]:whitespace-nowrap">
+              <Link className="font-medium text-[var(--accent)] hover:underline" href="/ideas">Ideas board</Link>
               <a className="hover:text-[var(--ink-secondary)] transition-colors" href="#">Privacy</a>
               <a className="hover:text-[var(--ink-secondary)] transition-colors" href="#">Terms of Verification</a>
               <a className="hover:text-[var(--ink-secondary)] transition-colors" href="#">Campus Network</a>
