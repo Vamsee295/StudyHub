@@ -1,5 +1,6 @@
 "use client";
 
+import { Avatar } from "@/components/ui/Avatar";
 import { useState, useEffect, useSyncExternalStore, ViewTransition } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -110,6 +111,13 @@ const readCollapsed = () => {
   }
 };
 const noop = () => () => {};
+// Tablets and small laptops (768–1023px) get the icon rail so pages keep their width.
+const NARROW = "(max-width: 1023px)";
+const subscribeNarrow = (cb: () => void) => {
+  const mq = window.matchMedia(NARROW);
+  mq.addEventListener("change", cb);
+  return () => mq.removeEventListener("change", cb);
+};
 // The first page to appear is the app opening, not a navigation, so it doesn't slide in.
 let started = false;
 
@@ -123,6 +131,8 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const mounted = useSyncExternalStore(noop, () => true, () => false);
   // read on first render: nothing reads it until `mounted`, so the server/client difference never reaches the DOM
   const [collapsed, setCollapsed] = useState(readCollapsed);
+  const narrow = useSyncExternalStore(subscribeNarrow, () => window.matchMedia(NARROW).matches, () => false);
+  const rail = collapsed || narrow; // what the sidebar shows; `collapsed` is the saved choice for wide screens
   const [profileOpen, setProfileOpen] = useState(false);
   const [mobileProfileOpen, setMobileProfileOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
@@ -136,11 +146,11 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
   // --sb drives the sidebar width and the content's left edge
   useEffect(() => {
-    document.documentElement.style.setProperty("--sb", collapsed ? "72px" : "240px");
+    document.documentElement.style.setProperty("--sb", rail ? "72px" : "240px");
     try {
       localStorage.setItem(SIDEBAR_KEY, collapsed ? "1" : "0");
     } catch {}
-  }, [collapsed]);
+  }, [rail, collapsed]);
 
   // Ctrl/Cmd + B toggles the sidebar; the "System" theme follows the OS live
   useEffect(() => {
@@ -228,7 +238,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
   const displayName = profile.identity?.fullName || (user?.email ? user.email.split("@")[0] : "Learner");
   const displayRole = profile.identity?.targetRole || profile.careerTracks?.[0] || "Software Development Engineer";
-  const displayAvatar = profile.identity?.avatarUrl || "https://api.dicebear.com/9.x/avataaars/svg?seed=Felix";
+  const displayAvatar = profile.identity?.avatarUrl;
 
   // Lessons and editors fill the screen and scroll inside themselves
   const isWorkspace =
@@ -247,17 +257,17 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       <Link
         key={href}
         href={href}
-        title={collapsed ? label : undefined}
-        aria-label={collapsed ? label : undefined}
+        title={rail ? label : undefined}
+        aria-label={rail ? label : undefined}
         aria-current={on ? "page" : undefined}
         className={clsx(
           "label-cond flex h-10 items-center gap-3 rounded-xl text-[16px] transition-colors",
-          collapsed ? "justify-center" : "px-3",
+          rail ? "justify-center" : "px-3",
           on ? "bg-ink text-paper" : "text-ink/70 hover:bg-ink/[0.06] hover:text-ink"
         )}
       >
         <Icon className={clsx("size-[18px] shrink-0", on ? "text-paper" : "text-accent")} />
-        {!collapsed && <span className="truncate">{label}</span>}
+        {!rail && <span className="truncate">{label}</span>}
       </Link>
     );
   };
@@ -297,14 +307,21 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className={clsx("relative text-ink", isWorkspace ? "h-dvh overflow-hidden" : "min-h-dvh")}>
+      {/* first Tab stop: jump past the sidebar */}
+      <a
+        href="#main"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-xl focus:bg-ink focus:px-4 focus:py-2 focus:text-paper"
+      >
+        Skip to content
+      </a>
       {/* ── Desktop sidebar ── */}
       <aside
         className="fixed inset-y-0 left-0 z-40 hidden w-[var(--sb)] flex-col border-r-[2.4px] border-line bg-paper transition-[width] duration-200 [view-transition-name:sidebar] md:flex"
         aria-label="Main navigation"
       >
-        <div className={clsx("flex h-16 shrink-0 items-center gap-2", collapsed ? "justify-center px-2" : "justify-between pl-4 pr-3")}>
-          <StudyHubLogo href="/dashboard" size="sm" iconOnly={collapsed} />
-          {!collapsed && (
+        <div className={clsx("flex h-16 shrink-0 items-center gap-2", rail ? "justify-center px-2" : "justify-between pl-4 pr-3")}>
+          <StudyHubLogo href="/dashboard" size="sm" iconOnly={rail} />
+          {!rail && (
             <button
               type="button"
               onClick={() => setCollapsed(true)}
@@ -317,16 +334,16 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           )}
         </div>
 
-        <div className={clsx("relative flex shrink-0 items-center gap-1 pb-3", collapsed ? "flex-col px-2" : "px-3")}>
+        <div className={clsx("relative flex shrink-0 items-center gap-1 pb-3", rail ? "flex-col px-2" : "px-3")}>
           <SearchLauncher />
           {bell(notificationsOpen, () => setNotificationsOpen((o) => !o))}
           {notificationsMenu("left-3 top-full mt-2")}
         </div>
 
-        <nav className={clsx("no-scrollbar flex-1 overflow-y-auto pb-4", collapsed ? "px-2" : "px-3")}>
+        <nav className={clsx("no-scrollbar flex-1 overflow-y-auto pb-4", rail ? "px-2" : "px-3")}>
           {groups.map((g) => (
             <div key={g.title} className="mb-4">
-              {collapsed ? (
+              {rail ? (
                 <div className="mx-auto mb-2 h-px w-6 bg-hair" />
               ) : (
                 <p className="eyebrow mb-1.5 px-3 !text-[11px] !text-mute">{g.title}</p>
@@ -337,7 +354,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           <div className="flex flex-col gap-0.5 border-t-[1.5px] border-hair pt-3">{utility.map(navLink)}</div>
         </nav>
 
-        <div className={clsx("relative shrink-0 border-t-[2.4px] border-line p-3", collapsed && "flex flex-col items-center gap-2")}>
+        <div className={clsx("relative shrink-0 border-t-[2.4px] border-line p-3", rail && "flex flex-col items-center gap-2")}>
           <button
             type="button"
             onClick={() => setProfileOpen((o) => !o)}
@@ -346,11 +363,11 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             title="Account & preferences"
             className={clsx(
               "flex w-full items-center gap-2.5 rounded-xl text-left transition-colors hover:bg-ink/[0.06]",
-              collapsed ? "justify-center p-1" : "p-1.5"
+              rail ? "justify-center p-1" : "p-1.5"
             )}
           >
-            <img alt="" src={displayAvatar} className="size-9 shrink-0 rounded-full border-2 border-line bg-card object-cover" />
-            {!collapsed && (
+            <Avatar src={displayAvatar} name={displayName} className="size-9 text-[13px]" />
+            {!rail && (
               <span className="min-w-0 flex-1">
                 <span className="block truncate text-[14px] font-semibold leading-tight">{displayName}</span>
                 <span className="block truncate font-mono text-[11px] text-mute">{displayRole}</span>
@@ -365,7 +382,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             isLoading={isLoading}
             placement="left-3 bottom-full mb-2"
           />
-          {collapsed && (
+          {collapsed && !narrow && (
             <button
               type="button"
               onClick={() => setCollapsed(false)}
@@ -393,7 +410,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             aria-label="Account & preferences"
             className="tap ml-1 shrink-0 rounded-full"
           >
-            <img alt="" src={displayAvatar} className="size-8 rounded-full border-2 border-line bg-card object-cover" />
+            <Avatar src={displayAvatar} name={displayName} className="size-8 text-[12px]" />
           </button>
           <ProfileDropdown
             isOpen={mobileProfileOpen}
@@ -408,8 +425,10 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       {/* ── Page ── */}
       <div className={clsx("md:pl-[var(--sb)] md:transition-[padding] md:duration-200", isWorkspace && "h-[calc(100dvh-3.5rem)] md:h-dvh")}>
         <main
+          id="main"
+          tabIndex={-1}
           className={clsx(
-            "min-w-0",
+            "min-w-0 outline-none",
             isWorkspace ? "h-full overflow-hidden" : "mx-auto max-w-[1200px] px-4 pb-28 pt-6 md:px-8 md:pb-16 md:pt-8"
           )}
         >

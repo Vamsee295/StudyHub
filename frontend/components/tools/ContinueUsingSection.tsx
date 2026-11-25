@@ -21,13 +21,13 @@ export function ContinueUsingSection({ items }: { items: ContinueToolItem[] }) {
           <Link
             key={item.id}
             href={item.href}
-            className="group block bg-card border border-hair rounded-xl p-5 hover:border-accent-line hover:bg-accent-soft hover:shadow-md transition-all duration-300 relative overflow-hidden"
+            className="group block bg-card border-[1.5px] border-hair rounded-xl p-5 hover:border-accent-line hover:bg-accent-soft hover:shadow-[4px_5px_0_var(--hard)] transition-all duration-300 relative overflow-hidden"
           >
             {/* Subtle top accent line */}
             <div className="absolute top-0 left-0 w-full h-[2px] bg-accent/10 group-hover:bg-accent transition-colors"></div>
 
             <div className="flex justify-between items-start mb-3">
-              <span className="inline-block px-2 py-1 rounded bg-paper-2 border border-hair text-[10px] font-mono font-medium text-body uppercase group-hover:bg-card group-hover:border-accent-line group-hover:text-accent-ink transition-colors">
+              <span className="inline-block px-2 py-1 rounded bg-paper-2 border-[1.5px] border-hair text-[10px] font-mono font-medium text-body uppercase group-hover:bg-card group-hover:border-accent-line group-hover:text-accent-ink transition-colors">
                 {item.badge}
               </span>
               <span className="text-[12px] font-medium text-mute">{item.timeAgo}</span>

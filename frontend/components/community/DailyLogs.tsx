@@ -1,5 +1,6 @@
 "use client";
 
+import { Avatar } from "@/components/ui/Avatar";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { BookOpen, ChevronLeft, ChevronRight, Clock, Globe, Loader2, Lock } from "lucide-react";
@@ -42,7 +43,7 @@ function LessonList({ lessons }: { lessons: StudyLog["lessons"] }) {
           <ul className="mt-1 flex flex-wrap gap-1.5">
             {g.lessons.map((l) => (
               <li key={l.topic_slug}>
-                <Link href={`/learn/${l.subject_slug}/${l.topic_slug}`} className={`inline-block px-2 py-0.5 rounded-md border border-hair bg-paper-2/50 text-[12px] text-body hover:text-accent-ink hover:border-accent ${focusRing}`}>
+                <Link href={`/learn/${l.subject_slug}/${l.topic_slug}`} className={`inline-block px-2 py-0.5 rounded-md border-[1.5px] border-hair bg-paper-2/50 text-[12px] text-body hover:text-accent-ink hover:border-accent ${focusRing}`}>
                   {l.title}
                 </Link>
               </li>
@@ -128,7 +129,7 @@ function MyLog({ date, onChange }: { date: string; onChange: () => void }) {
             <span className="font-semibold text-ink">Note <span className="font-normal text-mute">(optional, public when published)</span></span>
             <textarea value={note} onChange={(e) => setNote(e.target.value)} maxLength={1000} rows={2}
               placeholder="What clicked, what was hard, what's next…"
-              className={`px-3 py-2 rounded-lg border border-hair bg-card text-[14px] resize-y ${focusRing}`} />
+              className={`px-3 py-2 rounded-lg border-[1.5px] border-hair bg-card text-[14px] resize-y ${focusRing}`} />
           </label>
           {stale && <p className="text-[12.5px] text-warning">You’ve completed more lessons since publishing. Update to include them.</p>}
           {error && <p role="alert" className="text-[13px] text-danger">{error}</p>}
@@ -139,7 +140,7 @@ function MyLog({ date, onChange }: { date: string; onChange: () => void }) {
             </button>
             {published && (
               <button type="button" onClick={unpublish} disabled={busy}
-                className={`px-4 py-2 rounded-lg border border-hair text-[13px] font-semibold text-body hover:text-ink disabled:opacity-50 ${focusRing}`}>
+                className={`px-4 py-2 rounded-lg border-[1.5px] border-hair text-[13px] font-semibold text-body hover:text-ink disabled:opacity-50 ${focusRing}`}>
                 Unpublish
               </button>
             )}
@@ -153,11 +154,9 @@ function MyLog({ date, onChange }: { date: string; onChange: () => void }) {
 
 function LogCard({ log }: { log: StudyLog }) {
   return (
-    <li className="p-4 rounded-xl border border-hair bg-card flex flex-col gap-3">
+    <li className="p-4 rounded-xl border-[1.5px] border-hair bg-card flex flex-col gap-3">
       <div className="flex items-center gap-3">
-        {log.avatar_url
-          ? <img src={log.avatar_url} alt="" className="w-8 h-8 rounded-full object-cover" />
-          : <span aria-hidden="true" className="w-8 h-8 rounded-full bg-accent-soft text-accent-ink flex items-center justify-center text-[13px] font-bold">{log.author_name.charAt(0)}</span>}
+        <Avatar src={log.avatar_url} name={log.author_name} className="size-8 text-[12px]" />
         <div className="min-w-0">
           <p className="text-[14px] font-semibold text-ink truncate">{log.author_name}{log.is_mine && <span className="font-normal text-mute"> (you)</span>}</p>
           <p className="text-[12px] text-mute flex items-center gap-3 tabular-nums">
@@ -230,11 +229,11 @@ export function DailyLogs() {
 
       <section aria-labelledby="logs-day" className="flex flex-col gap-4">
         <div className="flex items-center gap-2">
-          <button type="button" onClick={() => setDate(shift(date, -1))} aria-label="Previous day" className={`p-1.5 rounded-lg border border-hair text-body hover:text-ink ${focusRing}`}>
+          <button type="button" onClick={() => setDate(shift(date, -1))} aria-label="Previous day" className={`p-1.5 rounded-lg border-[1.5px] border-hair text-body hover:text-ink ${focusRing}`}>
             <ChevronLeft aria-hidden="true" className="w-4 h-4" />
           </button>
           <h2 id="logs-day" className="text-[15px] font-bold text-ink min-w-[9rem] text-center">{pretty(date)}</h2>
-          <button type="button" onClick={() => setDate(shift(date, 1))} disabled={date >= today} aria-label="Next day" className={`p-1.5 rounded-lg border border-hair text-body hover:text-ink disabled:opacity-40 ${focusRing}`}>
+          <button type="button" onClick={() => setDate(shift(date, 1))} disabled={date >= today} aria-label="Next day" className={`p-1.5 rounded-lg border-[1.5px] border-hair text-body hover:text-ink disabled:opacity-40 ${focusRing}`}>
             <ChevronRight aria-hidden="true" className="w-4 h-4" />
           </button>
           {date !== today && <button type="button" onClick={() => setDate(today)} className={`text-[13px] text-accent-ink underline rounded ${focusRing}`}>Back to today</button>}
@@ -261,7 +260,7 @@ export function DailyLogs() {
         <ul className="flex flex-col gap-3">{day?.logs.map((l) => <LogCard key={l.id} log={l} />)}</ul>
         {loading && <p className="flex items-center gap-2 text-[13px] text-body"><Loader2 aria-hidden="true" className="w-4 h-4 animate-spin" /> Loading logs…</p>}
         {day && !loading && day.logs.length < day.total && (
-          <button type="button" onClick={() => loadMore(day.logs.length)} className={`self-center px-4 py-2 rounded-lg border border-hair text-[13px] font-semibold text-ink hover:border-accent ${focusRing}`}>
+          <button type="button" onClick={() => loadMore(day.logs.length)} className={`self-center px-4 py-2 rounded-lg border-[1.5px] border-hair text-[13px] font-semibold text-ink hover:border-accent ${focusRing}`}>
             Show more ({day.total - day.logs.length} left)
           </button>
         )}

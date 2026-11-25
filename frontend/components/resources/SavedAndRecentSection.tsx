@@ -42,7 +42,7 @@ export function SavedAndRecentSection({
           </div>
         </div>
 
-        <div className="bg-card border border-hair rounded-2xl overflow-hidden shadow-[0_1px_2px_0_rgba(0,0,0,0.02)]">
+        <div className="bg-card border-[1.5px] border-hair rounded-2xl overflow-hidden">
           {savedResources.length === 0 ? (
             <div className="py-12 flex flex-col items-center justify-center text-center px-6">
               <BookmarkMinus className="w-10 h-10 text-mute mb-3 opacity-50" />
@@ -79,7 +79,7 @@ export function SavedAndRecentSection({
                         </div>
                       </td>
                       <td className="px-5 py-4">
-                        <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-paper-2 text-body border border-hair">
+                        <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-paper-2 text-body border-[1.5px] border-hair">
                           {item.category}
                         </span>
                       </td>
@@ -87,7 +87,7 @@ export function SavedAndRecentSection({
                         {item.pageCount ? `${item.pageCount} p.` : "—"}
                       </td>
                       <td className="px-5 py-4">
-                        <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="flex items-center justify-end gap-2 transition-opacity sm:opacity-0 sm:group-hover:opacity-100 sm:focus-within:opacity-100">
                           <Link 
                             href={`/resources/${item.id}`}
                             className="p-1.5 text-body hover:text-accent-ink hover:bg-accent-soft rounded transition-colors"
@@ -136,7 +136,7 @@ export function SavedAndRecentSection({
 
         <div className="flex flex-col gap-3">
           {recentResources.length === 0 ? (
-            <div className="bg-card border border-hair rounded-2xl p-6 text-center shadow-[0_1px_2px_0_rgba(0,0,0,0.02)]">
+            <div className="bg-card border-[1.5px] border-hair rounded-2xl p-6 text-center">
               <History className="w-6 h-6 text-mute mx-auto mb-2 opacity-50" />
               <p className="text-[13px] text-body">No recent reading history.</p>
             </div>
@@ -144,13 +144,13 @@ export function SavedAndRecentSection({
             recentResources.map((item) => (
               <div 
                 key={item.id}
-                className="group flex flex-col gap-2 p-4 rounded-xl bg-card border border-hair hover:border-line transition-colors shadow-[0_1px_2px_0_rgba(0,0,0,0.02)]"
+                className="group flex flex-col gap-2 p-4 rounded-xl bg-card border-[1.5px] border-hair hover:border-line transition-colors"
               >
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] font-mono tracking-wider font-medium text-mute uppercase">
                     {formatRelativeTime(item.viewedAt)}
                   </span>
-                  <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-paper-2 text-body border border-hair">
+                  <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-paper-2 text-body border-[1.5px] border-hair">
                     {item.category}
                   </span>
                 </div>
@@ -166,7 +166,7 @@ export function SavedAndRecentSection({
                   </span>
                   <Link 
                     href={`/resources/${item.id}`}
-                    className="text-[12px] font-semibold text-accent-ink hover:text-accent-ink flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0"
+                    className="text-[12px] font-semibold text-accent-ink hover:text-accent-ink flex items-center gap-1 sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100 sm:focus-within:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0"
                   >
                     Resume <ArrowRight className="w-3 h-3" />
                   </Link>

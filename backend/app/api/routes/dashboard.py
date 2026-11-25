@@ -71,7 +71,7 @@ async def get_dashboard(user: Any = Depends(get_current_user)):
             .join(LearningTopic, UserLearningProgress.topic_id == LearningTopic.id)
             .join(LearningModule, LearningTopic.module_id == LearningModule.id)
             .join(LearningSubject, LearningModule.subject_id == LearningSubject.id)
-            .where(UserLearningProgress.user_id == user.id)
+            .where(UserLearningProgress.user_id == user.id, UserLearningProgress.status != "completed")  # resume an unfinished lesson
             .order_by(UserLearningProgress.last_accessed_at.desc())
         )
         first_recent = recent_prog.first()

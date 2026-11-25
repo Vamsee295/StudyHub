@@ -1,4 +1,5 @@
 'use client';
+import { pressable } from "@/lib/utils";
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, CheckCircle2, Circle, Clock, Search } from 'lucide-react';
@@ -111,7 +112,7 @@ export const DsaRoadmapView = () => {
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       {/* Header section */}
-      <div className="bg-card rounded-2xl border border-hair p-8">
+      <div className="bg-card rounded-2xl border-[1.5px] border-hair p-8">
         <div className="max-w-3xl">
           <p className="eyebrow mb-3">Roadmap · DSA</p>
           <h1 className="display mb-4 text-[36px] md:text-[44px]">Data structures &amp; algorithms</h1>
@@ -120,7 +121,7 @@ export const DsaRoadmapView = () => {
           </p>
 
           {/* Progress Card */}
-          <div className="bg-paper-2 rounded-xl p-6 border border-hair">
+          <div className="bg-paper-2 rounded-xl p-6 border-[1.5px] border-hair">
             <div className="flex items-end justify-between mb-4">
               <div>
                 <div className="text-sm font-medium text-mute mb-1">Overall Progress</div>
@@ -158,14 +159,14 @@ export const DsaRoadmapView = () => {
             placeholder="Search problems or patterns..."
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
-            className="w-full pl-12 pr-4 py-3 bg-card border border-hair rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
+            className="w-full pl-12 pr-4 py-3 bg-card border-[1.5px] border-hair rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
           />
         </div>
         <div className="flex gap-3 w-full sm:w-auto">
           <select 
             value={difficultyFilter} 
             onChange={e => setDifficultyFilter(e.target.value)}
-            className="px-4 py-3 bg-card border border-hair rounded-xl text-sm font-medium text-body outline-none focus:ring-2 focus:ring-accent"
+            className="px-4 py-3 bg-card border-[1.5px] border-hair rounded-xl text-sm font-medium text-body outline-none focus:ring-2 focus:ring-accent"
           >
             <option value="all">All Difficulties</option>
             <option value="easy">Easy</option>
@@ -175,7 +176,7 @@ export const DsaRoadmapView = () => {
           <select 
             value={statusFilter} 
             onChange={e => setStatusFilter(e.target.value)}
-            className="px-4 py-3 bg-card border border-hair rounded-xl text-sm font-medium text-body outline-none focus:ring-2 focus:ring-accent"
+            className="px-4 py-3 bg-card border-[1.5px] border-hair rounded-xl text-sm font-medium text-body outline-none focus:ring-2 focus:ring-accent"
           >
             <option value="all">All Status</option>
             <option value="solved">Solved</option>
@@ -211,17 +212,17 @@ export const DsaRoadmapView = () => {
           const isExpanded = expandedStages.has(stage) || searchQuery.length > 0;
 
           return (
-            <div key={stage} className="bg-card border border-hair rounded-2xl overflow-hidden transition-all hover:border-ink/25">
+            <div key={stage} className="bg-card border-[1.5px] border-hair rounded-2xl overflow-hidden transition-all hover:border-ink/25">
               <button 
                 onClick={() => toggleStage(stage)}
                 className="w-full flex items-center justify-between p-5 sm:p-6 text-left bg-card hover:bg-paper-2 transition-colors"
               >
                 <div className="flex items-center gap-4 sm:gap-6">
-                  <div className="flex-shrink-0 w-12 h-12 rounded-full bg-card-2 border border-hair flex items-center justify-center text-mute font-bold font-mono">
+                  <div className="flex-shrink-0 w-12 h-12 rounded-full bg-card-2 border-[1.5px] border-hair flex items-center justify-center text-mute font-bold font-mono">
                     {String(idx + 1).padStart(2, '0')}
                   </div>
                   <div>
-                    <h3 className="text-lg sm:text-xl font-bold text-ink">{stage}</h3>
+                    <h3 className="label-cond text-[20px]">{stage}</h3>
                     <div className="text-sm text-mute mt-1 flex items-center gap-3">
                       <span>{stageProblems.length} Problems</span>
                       <span className="w-1 h-1 rounded-full bg-ink/20"></span>
@@ -254,8 +255,8 @@ export const DsaRoadmapView = () => {
                         return (
                           <div 
                             key={problem.id}
-                            onClick={() => setSelectedProblem(problem)}
-                            className="group flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-card border border-hair rounded-xl hover:border-accent-line hover:shadow-sm transition-all cursor-pointer gap-4"
+                            {...pressable(() => setSelectedProblem(problem))}
+                            className="group flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-card border-[1.5px] border-hair rounded-xl hover:border-accent-line hover:shadow-sm transition-all cursor-pointer gap-4"
                           >
                             <div className="flex items-start sm:items-center gap-4">
                               <button 
@@ -288,7 +289,7 @@ export const DsaRoadmapView = () => {
                               </div>
                             </div>
                             
-                            <div className="hidden sm:flex items-center gap-2 text-sm font-medium text-accent-ink opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div className="hidden sm:flex items-center gap-2 text-sm font-medium text-accent-ink sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100 sm:focus-within:opacity-100 transition-opacity">
                               View Details &rarr;
                             </div>
                           </div>
@@ -326,7 +327,7 @@ export const DsaRoadmapView = () => {
 };
 
 const DifficultyStat = ({ label, solved, total, color }: { label: string, solved: number, total: number, color: string }) => (
-  <div className="flex items-center gap-3 bg-card p-3 rounded-lg border border-hair">
+  <div className="flex items-center gap-3 bg-card p-3 rounded-lg border-[1.5px] border-hair">
     <div className={`w-2 h-2 rounded-full ${color}`} />
     <div className="flex-1">
       <div className="text-xs font-medium text-mute uppercase">{label}</div>

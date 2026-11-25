@@ -35,7 +35,7 @@ export function ResumeSourceSelector({
   disabled = false,
 }: ResumeSourceSelectorProps) {
   return (
-    <fieldset className="border border-hair rounded-lg p-4 bg-card">
+    <fieldset className="border-[1.5px] border-hair rounded-lg p-4 bg-card">
       <legend className="px-1.5 text-[11px] font-mono font-semibold uppercase tracking-wide text-body">
         Resume source
       </legend>

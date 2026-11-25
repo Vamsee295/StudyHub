@@ -63,7 +63,7 @@ export default function ToolsPage() {
 
       {/* Empty State for Core Tools if filtering returns nothing */}
       {isFiltering && filteredCoreTools.length === 0 && (
-        <div className="text-center py-20 bg-paper-2/50 rounded-xl border border-hair border-dashed">
+        <div className="text-center py-20 bg-paper-2/50 rounded-xl border-[1.5px] border-hair border-dashed">
           <p className="text-[14px] text-body font-medium">
             No tools found for “{searchQuery}” in this category.
           </p>

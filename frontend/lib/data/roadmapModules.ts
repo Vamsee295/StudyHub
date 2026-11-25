@@ -26,7 +26,6 @@ export interface RoadmapModule {
   progressPct: number;
   progressDetail: string;
   targetVelocity: string;
-  clearanceEstimate: string;
   topics: string[];
   modulesSummary: string;
   resources: CuratedResource[];
@@ -55,7 +54,6 @@ export const roadmapModules: RoadmapModule[] = [
     progressPct: 0,
     progressDetail: "0 / 93 lessons completed",
     targetVelocity: "2 lessons/day",
-    clearanceEstimate: "Pending",
     topics: [
       "Arrays & Pointers",
       "Call Stack & Heap",
@@ -110,7 +108,6 @@ export const roadmapModules: RoadmapModule[] = [
     progressPct: 100,
     progressDetail: "65 / 65 design patterns built",
     targetVelocity: "5 patterns/day",
-    clearanceEstimate: "Architecture Cleared",
     topics: [
       "Encapsulation",
       "Polymorphism & V-Tables",
@@ -165,7 +162,6 @@ export const roadmapModules: RoadmapModule[] = [
     progressPct: 100,
     progressDetail: "92 / 92 query challenges verified",
     targetVelocity: "6 queries/day",
-    clearanceEstimate: "SQL Cleared",
     topics: [
       "Inner / Outer Joins",
       "Aggregation & GROUP BY",
@@ -220,7 +216,6 @@ export const roadmapModules: RoadmapModule[] = [
     progressPct: 68,
     progressDetail: "280 / 412 problems solved",
     targetVelocity: "8 questions/day",
-    clearanceEstimate: "18 Days remaining",
     topics: [
       "Arrays & Two Pointers",
       "Strings",
@@ -276,7 +271,6 @@ export const roadmapModules: RoadmapModule[] = [
     progressPct: 0,
     progressDetail: "Next Up on Milestone Completion",
     targetVelocity: "4 topics/day",
-    clearanceEstimate: "Unlocks at DSA 75%",
     topics: [
       "ACID Properties",
       "Transaction Isolation",
@@ -331,7 +325,6 @@ export const roadmapModules: RoadmapModule[] = [
     progressPct: 0,
     progressDetail: "Scheduled for Phase 06",
     targetVelocity: "4 topics/day",
-    clearanceEstimate: "Upcoming Milestone",
     topics: [
       "Process vs Thread Lifecycle",
       "CPU Scheduling Policies",
@@ -386,7 +379,6 @@ export const roadmapModules: RoadmapModule[] = [
     progressPct: 0,
     progressDetail: "Scheduled for Phase 07",
     targetVelocity: "4 topics/day",
-    clearanceEstimate: "Upcoming Milestone",
     topics: [
       "OSI & TCP/IP Stack Layers",
       "TCP 3-Way Handshake & FIN",
@@ -441,7 +433,6 @@ export const roadmapModules: RoadmapModule[] = [
     progressPct: 0,
     progressDetail: "Scheduled for Phase 08",
     targetVelocity: "2 project milestones/week",
-    clearanceEstimate: "Upcoming Milestone",
     topics: [
       "System Architecture Defense",
       "REST & gRPC Contracts",
@@ -496,7 +487,6 @@ export const roadmapModules: RoadmapModule[] = [
     progressPct: 0,
     progressDetail: "Scheduled for Phase 09",
     targetVelocity: "1 resume iteration/week",
-    clearanceEstimate: "Upcoming Milestone",
     topics: [
       "Google XYZ Bullet Formula",
       "ATS Keyword Optimization",
@@ -551,7 +541,6 @@ export const roadmapModules: RoadmapModule[] = [
     progressPct: 0,
     progressDetail: "Scheduled for August 2026",
     targetVelocity: "3 full simulations/week",
-    clearanceEstimate: "Upcoming Milestone",
     topics: [
       "Timed Problem Solving",
       "Hidden Edge Case Detection",
@@ -606,7 +595,6 @@ export const roadmapModules: RoadmapModule[] = [
     progressPct: 0,
     progressDetail: "Scheduled for Phase 11",
     targetVelocity: "2 mock interviews/week",
-    clearanceEstimate: "Upcoming Milestone",
     topics: [
       "Thinking Out Loud Protocols",
       "Low-Level Design (LLD)",
@@ -661,7 +649,6 @@ export const roadmapModules: RoadmapModule[] = [
     progressPct: 0,
     progressDetail: "Final Stage",
     targetVelocity: "1 story bank revision/day",
-    clearanceEstimate: "Final Round Target",
     topics: [
       "STAR Framework Mastery",
       "Amazon 16 Leadership Principles",

@@ -1,5 +1,6 @@
 ﻿"use client";
 
+import { pressable } from "@/lib/utils";
 import React from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import type {
@@ -217,7 +218,7 @@ export default function BottomPanel({
                   <div
                     key={p.id}
                     className={`ide-problem-line ide-problem-${p.severity}`}
-                    onClick={() => onJumpToError?.(p)}
+                    {...pressable(() => onJumpToError?.(p))}
                     title="Click to navigate"
                   >
                     <span className="ide-problem-icon">

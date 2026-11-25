@@ -52,7 +52,7 @@ export default function DsaVisualizerPage() {
         <ToolWorkspaceHeader
           title="DSA Visualizer"
           description="Interactive visualization of common data structures and algorithms to help you understand how they work under the hood."
-          badge="Algorithm Engine"
+          badge="Step-through"
           icon={<Activity className="w-5 h-5" />}
         />
 

@@ -10,7 +10,7 @@ interface DsaCanvasProps {
 export function DsaCanvas({ currentStep }: DsaCanvasProps) {
   if (!currentStep) {
     return (
-      <div className="flex-1 bg-card rounded-2xl border border-hair flex items-center justify-center p-8">
+      <div className="flex-1 bg-card rounded-2xl border-[1.5px] border-hair flex items-center justify-center p-8">
         <p className="text-mute">Select an algorithm and click Play to start visualization.</p>
       </div>
     );
@@ -30,9 +30,9 @@ export function DsaCanvas({ currentStep }: DsaCanvasProps) {
   };
 
   return (
-    <div className="flex-1 bg-card rounded-2xl border border-hair flex flex-col overflow-hidden relative">
+    <div className="flex-1 bg-card rounded-2xl border-[1.5px] border-hair flex flex-col overflow-hidden relative">
       <div className="p-4 border-b border-hair bg-paper-2/50 flex items-center justify-center">
-        <p className="font-mono text-sm text-body bg-card px-4 py-2 rounded-lg border border-hair inline-block">
+        <p className="font-mono text-sm text-body bg-card px-4 py-2 rounded-lg border-[1.5px] border-hair inline-block">
           {currentStep.description || "Initializing..."}
         </p>
       </div>

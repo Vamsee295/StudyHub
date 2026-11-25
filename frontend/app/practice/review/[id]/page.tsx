@@ -60,15 +60,15 @@ export default function PracticeReviewPage({ params }: { params: Promise<{ id: s
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-card border border-hair rounded-xl p-5 flex flex-col gap-2">
+        <div className="bg-card border-[1.5px] border-hair rounded-xl p-5 flex flex-col gap-2">
           <span className="text-[11px] font-mono font-semibold uppercase tracking-wider text-mute">Accuracy</span>
           <span className="display text-[48px] leading-none">{accuracy}%</span>
         </div>
-        <div className="bg-card border border-hair rounded-xl p-5 flex flex-col gap-2">
+        <div className="bg-card border-[1.5px] border-hair rounded-xl p-5 flex flex-col gap-2">
           <span className="text-[11px] font-mono font-semibold uppercase tracking-wider text-mute">Score</span>
           <span className="display text-[48px] leading-none">{attempt.score} / {attempt.total_questions}</span>
         </div>
-        <div className="bg-paper-2 border border-hair rounded-xl p-5 flex flex-col gap-2 justify-center">
+        <div className="bg-paper-2 border-[1.5px] border-hair rounded-xl p-5 flex flex-col gap-2 justify-center">
           <Link href={`/practice/session/${attempt.set_id}`} className={buttonClass("primary")}>
             Retake Session
           </Link>
@@ -87,7 +87,7 @@ export default function PracticeReviewPage({ params }: { params: Promise<{ id: s
             const chosen = q.options.find((o) => o.id === a?.choice);
             const correct = q.options.find((o) => o.id === q.correct_option);
             return (
-              <div key={q.id} className="bg-card border border-hair rounded-lg p-4 flex flex-col gap-3">
+              <div key={q.id} className="bg-card border-[1.5px] border-hair rounded-lg p-4 flex flex-col gap-3">
                 <div className="flex items-start gap-4">
                   {isCorrect ? (
                     <CheckCircle2 className="w-5 h-5 text-note shrink-0 mt-0.5" />
@@ -109,7 +109,7 @@ export default function PracticeReviewPage({ params }: { params: Promise<{ id: s
                   </div>
                 </div>
                 {a?.text && (
-                  <pre className="text-[12px] font-mono whitespace-pre-wrap bg-paper-2 border border-hair rounded-md p-3 text-ink">{a.text}</pre>
+                  <pre className="text-[12px] font-mono whitespace-pre-wrap bg-paper-2 border-[1.5px] border-hair rounded-md p-3 text-ink">{a.text}</pre>
                 )}
                 {q.explanation && (
                   <p className="text-[13px] text-body leading-relaxed">

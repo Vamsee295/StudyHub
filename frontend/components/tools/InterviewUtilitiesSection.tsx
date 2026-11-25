@@ -23,10 +23,10 @@ export function InterviewUtilitiesSection({ items }: { items: InterviewUtilityIt
           <Link
             key={item.id}
             href={item.href}
-            className="group block bg-card border border-hair rounded-xl p-5 hover:border-line transition-all duration-300"
+            className="group block bg-card border-[1.5px] border-hair rounded-xl p-5 hover:border-line transition-all duration-300"
           >
             <div className="flex items-center gap-2 mb-3">
-              <span className="px-2 py-0.5 rounded-sm bg-paper-2 border border-hair text-[10px] font-mono font-medium text-body uppercase">
+              <span className="px-2 py-0.5 rounded-sm bg-paper-2 border-[1.5px] border-hair text-[10px] font-mono font-medium text-body uppercase">
                 {item.tag}
               </span>
             </div>
@@ -46,7 +46,7 @@ export function InterviewUtilitiesSection({ items }: { items: InterviewUtilityIt
                 "inline-flex items-center justify-center gap-2 h-9 px-4 rounded-md text-[13px] font-semibold transition-all w-full",
                 item.isPrimaryAction
                   ? "bg-ink text-paper group-hover:bg-accent"
-                  : "bg-paper-2 text-ink border border-hair group-hover:bg-card group-hover:border-accent group-hover:text-accent-ink"
+                  : "bg-paper-2 text-ink border-[1.5px] border-hair group-hover:bg-card group-hover:border-accent group-hover:text-accent-ink"
               )}
             >
               {item.actionLabel}

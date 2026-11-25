@@ -26,12 +26,12 @@ export function InterviewSummaryReport({ evaluations, onRestart }: InterviewSumm
   return (
     <div className="max-w-4xl mx-auto flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-12">
       <div className="flex items-center justify-between mb-2">
-        <h2 className="text-2xl font-bold text-ink flex items-center gap-2">
+        <h2 className="display text-[30px] flex items-center gap-2">
           <BarChart className="w-6 h-6 text-accent-ink" /> Session Complete
         </h2>
         <button
           onClick={onRestart}
-          className="flex items-center gap-2 px-4 py-2 bg-card text-body rounded-lg border border-hair font-medium hover:bg-card-2 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 bg-card text-body rounded-lg border-[1.5px] border-hair font-medium hover:bg-card-2 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" /> Start New Session
         </button>
@@ -73,7 +73,7 @@ export function InterviewSummaryReport({ evaluations, onRestart }: InterviewSumm
             {evaluations.map((ev, i) => {
               const qScore = (ev.feedback.understanding.score + ev.feedback.technicalAccuracy.score + ev.feedback.clarity.score + ev.feedback.completeness.score) / 4;
               return (
-                <div key={i} className="flex items-center justify-between p-3 bg-paper-2 rounded-lg border border-hair">
+                <div key={i} className="flex items-center justify-between p-3 bg-paper-2 rounded-lg border-[1.5px] border-hair">
                   <span className="text-sm font-medium text-body">Question {i + 1}</span>
                   <div className="flex items-center gap-2">
                     <div className="w-24 h-1.5 bg-ink/10 rounded-full overflow-hidden">

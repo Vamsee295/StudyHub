@@ -2,7 +2,6 @@ export interface LearningPath {
   slug: string;
   name: string;
   weeks: string;
-  resourceCount: string;
   description: string;
   tags: string[];
   ctaLabel: string;
@@ -36,12 +35,6 @@ export interface Company {
   focus: string[];
 }
 
-export interface PracticeCategory {
-  name: string;
-  questions: number;
-  progress: number;
-}
-
 export interface Concept {
   key: string;
   title: string;
@@ -73,34 +66,6 @@ export type KMapLink = [string, string];
 export interface DashboardSkill {
   name: string;
   value: number;
-}
-
-export interface LearnModule {
-  id: string;
-  title: string;
-  description: string;
-  type: "video" | "reading" | "exercise";
-  duration: string;
-  completed: boolean;
-}
-
-export interface LearnSubject {
-  id: string;
-  slug: string;
-  title: string;
-  description: string;
-  category: "Technical" | "Placement" | "Core CS" | "Aptitude";
-  progress: number;
-  totalModules: number;
-  completedModules: number;
-  modules: LearnModule[];
-}
-
-export interface LearnPath {
-  id: string;
-  title: string;
-  description: string;
-  subjects: string[]; // array of subject slugs
 }
 
 export interface QuickPracticeSprint {
@@ -230,14 +195,11 @@ export interface CompanyTarget {
   segment: "Product MNC" | "High-Volume IT" | "FinTech & Consulting" | "High-Growth Startup" | "Mass Hiring / NQT";
   tier: string;
   roles: string[];
-  readiness: number;
-  recruiterHighlight: { title: string; detail: string };
 }
 
 export interface HiringStage {
   stageNumber: number;
   title: string;
-  status: "Cleared" | "In-Flight" | "Scheduled" | "Upcoming" | "Final Bar";
   description: string;
   duration: string;
   tags: string[];
@@ -245,8 +207,6 @@ export interface HiringStage {
 
 export interface QuestionWeight {
   topic: string;
-  frequency: number;
-  label: "Very High" | "Asked" | "Queries";
 }
 
 export interface InterviewProblem {
@@ -254,8 +214,6 @@ export interface InterviewProblem {
   title: string;
   domain: string;
   difficulty: "Easy" | "Easy-Medium" | "Medium" | "Medium-Hard" | "Hard";
-  recurrenceRate: string;
-  askedDate: string;
   description: string;
 }
 

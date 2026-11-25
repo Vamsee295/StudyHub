@@ -5,10 +5,10 @@ import { ArrowRight, LayoutTemplate, Activity } from "lucide-react";
 export function PreviewSnapshotSection() {
   return (
     <section className="mb-16">
-      <div className="flex flex-col lg:flex-row gap-8 bg-paper-2/30 border border-hair rounded-2xl p-6 md:p-8">
+      <div className="flex flex-col lg:flex-row gap-8 bg-paper-2/30 border-[1.5px] border-hair rounded-2xl p-6 md:p-8">
         
         {/* Left Side: Preview Image / Mock Document */}
-        <div className="flex-1 rounded-xl bg-card border border-hair overflow-hidden flex flex-col relative">
+        <div className="flex-1 rounded-xl bg-card border-[1.5px] border-hair overflow-hidden flex flex-col relative">
           <div className="bg-paper border-b border-hair px-4 py-2.5 flex items-center gap-2">
             <div className="flex gap-1.5">
               <div className="w-2.5 h-2.5 rounded-full bg-[#ff5f56]"></div>
@@ -73,7 +73,7 @@ export function PreviewSnapshotSection() {
             href="/templates/project-walkthrough"
             className="flex items-center justify-center gap-2 bg-ink text-paper hover:bg-ink/90 px-5 py-2.5 rounded-xl text-[14px] font-semibold transition-all"
           >
-            Try the Workspace <ArrowRight className="w-4 h-4" />
+            Open the editor <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
 

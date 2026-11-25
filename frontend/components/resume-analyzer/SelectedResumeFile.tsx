@@ -23,9 +23,9 @@ export function SelectedResumeFile({
   }
 
   return (
-    <div className="mt-3 rounded-md border border-hair bg-card p-3">
+    <div className="mt-3 rounded-md border-[1.5px] border-hair bg-card p-3">
       <div className="flex items-start gap-3">
-        <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded border border-hair bg-paper-2 text-accent-ink">
+        <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded border-[1.5px] border-hair bg-paper-2 text-accent-ink">
           <File size={17} strokeWidth={1.8} />
         </span>
         <div className="min-w-0 flex-1">
@@ -45,7 +45,7 @@ export function SelectedResumeFile({
             type="button"
             onClick={onReplace}
             disabled={disabled}
-            className="inline-flex items-center gap-1.5 rounded border border-hair bg-card px-2.5 py-1.5 text-[11.5px] font-semibold text-body hover:border-line hover:text-ink disabled:cursor-not-allowed disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 rounded border-[1.5px] border-hair bg-card px-2.5 py-1.5 text-[11.5px] font-semibold text-body hover:border-line hover:text-ink disabled:cursor-not-allowed disabled:opacity-50"
             aria-label={`Replace ${file.name}`}
           >
             <RefreshCw size={13} />
@@ -55,7 +55,7 @@ export function SelectedResumeFile({
             type="button"
             onClick={onRemove}
             disabled={disabled}
-            className="inline-flex items-center gap-1.5 rounded border border-hair bg-card px-2.5 py-1.5 text-[11.5px] font-semibold text-body hover:border-danger-line hover:text-danger disabled:cursor-not-allowed disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 rounded border-[1.5px] border-hair bg-card px-2.5 py-1.5 text-[11.5px] font-semibold text-body hover:border-danger-line hover:text-danger disabled:cursor-not-allowed disabled:opacity-50"
             aria-label={`Remove ${file.name}`}
           >
             <X size={13} />

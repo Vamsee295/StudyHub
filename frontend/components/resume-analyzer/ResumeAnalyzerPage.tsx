@@ -122,7 +122,7 @@ export function ResumeAnalyzerPage() {
 
       <header className="mb-7">
         <div className="flex items-center gap-3 mb-4">
-          <div className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-card border border-hair shadow-[0_1px_2px_-1px_rgba(15,23,42,0.04)]">
+          <div className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-card border-[1.5px] border-hair shadow-[0_1px_2px_-1px_rgba(15,23,42,0.04)]">
             <span className="w-1.5 h-1.5 rounded-full bg-note animate-pulse"></span>
             <span className="text-[10.5px] font-mono font-semibold uppercase tracking-wider text-note">
               Resume Analyzer
@@ -143,11 +143,11 @@ export function ResumeAnalyzerPage() {
             </p>
           </div>
           <div className="flex shrink-0 flex-wrap gap-2">
-            <span className="inline-flex items-center gap-1.5 rounded border border-hair bg-card px-2.5 py-1.5 text-[11px] font-mono text-body">
+            <span className="inline-flex items-center gap-1.5 rounded border-[1.5px] border-hair bg-card px-2.5 py-1.5 text-[11px] font-mono text-body">
               <FileCheck2 size={14} />
               PDF + text
             </span>
-            <span className="inline-flex items-center gap-1.5 rounded border border-hair bg-card px-2.5 py-1.5 text-[11px] font-mono text-body">
+            <span className="inline-flex items-center gap-1.5 rounded border-[1.5px] border-hair bg-card px-2.5 py-1.5 text-[11px] font-mono text-body">
               <ShieldCheck size={14} />
               Authenticated
             </span>
@@ -156,7 +156,7 @@ export function ResumeAnalyzerPage() {
       </header>
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_260px] items-start">
-        <main className="rounded-lg border border-hair bg-card p-4 shadow-[0_1px_2px_-1px_rgba(15,23,42,0.04)] sm:p-6">
+        <main className="rounded-lg border-[1.5px] border-hair bg-card p-4 shadow-[0_1px_2px_-1px_rgba(15,23,42,0.04)] sm:p-6">
           <ResumeInputForm
             request={request}
             file={file}
@@ -173,7 +173,7 @@ export function ResumeAnalyzerPage() {
         </main>
 
         <aside className="space-y-4 lg:sticky lg:top-24" aria-labelledby="analyzer-notes-heading">
-          <section className="rounded-lg border border-hair bg-card p-4">
+          <section className="rounded-lg border-[1.5px] border-hair bg-card p-4">
             <h2 id="analyzer-notes-heading" className="text-[13px] font-bold text-ink">What gets checked</h2>
             <ul className="mt-3 space-y-2.5 text-[12.5px] leading-relaxed text-body">
               <li className="flex gap-2"><span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-accent"></span>Candidate and contact details</li>
@@ -183,7 +183,7 @@ export function ResumeAnalyzerPage() {
               <li className="flex gap-2"><span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-accent"></span>Prioritized action plan</li>
             </ul>
           </section>
-          <section className="rounded-lg border border-hair bg-card p-4">
+          <section className="rounded-lg border-[1.5px] border-hair bg-card p-4">
             <h2 className="text-[13px] font-bold text-ink">Before you analyze</h2>
             <p className="mt-3 text-[12.5px] leading-relaxed text-body">
               Use a PDF with selectable text when possible. Add the exact company and role so the comparison reflects the opportunity rather than a generic checklist.

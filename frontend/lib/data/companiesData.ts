@@ -8,8 +8,6 @@ export const targetCompanies: CompanyTarget[] = [
     segment: "Product MNC",
     tier: "Tier-1",
     roles: ["SWE", "STEP Intern"],
-    readiness: 78,
-    recruiterHighlight: { title: "Q3 Campus", detail: "8.5+ CGPA / OA Active" },
   },
   {
     id: "microsoft",
@@ -18,8 +16,6 @@ export const targetCompanies: CompanyTarget[] = [
     segment: "Product MNC",
     tier: "Tier-1",
     roles: ["SDE-1", "Intern"],
-    readiness: 64,
-    recruiterHighlight: { title: "5 Stages", detail: "OA Rate 82%" },
   },
   {
     id: "amazon",
@@ -28,8 +24,6 @@ export const targetCompanies: CompanyTarget[] = [
     segment: "Product MNC",
     tier: "Tier-1",
     roles: ["SDE-1", "Intern"],
-    readiness: 71,
-    recruiterHighlight: { title: "LP Weight High", detail: "Mock: Ready" },
   },
   {
     id: "tcs-prime",
@@ -38,8 +32,6 @@ export const targetCompanies: CompanyTarget[] = [
     segment: "High-Volume IT",
     tier: "Tier-2",
     roles: ["Digital & Prime"],
-    readiness: 89,
-    recruiterHighlight: { title: "Diff: Medium", detail: "Focus: SQL/Aptitude" },
   },
 ];
 
@@ -56,7 +48,6 @@ export const companyWorkspaces: Record<string, CompanyWorkspaceDetail> = {
       {
         stageNumber: 1,
         title: "Online Assessment (OA)",
-        status: "Cleared",
         description: "Codility-style platform with 3 algorithms & data structure questions.",
         duration: "90 Mins",
         tags: ["Arrays", "Strings", "Sorting"],
@@ -64,7 +55,6 @@ export const companyWorkspaces: Record<string, CompanyWorkspaceDetail> = {
       {
         stageNumber: 2,
         title: "Technical Interview 1",
-        status: "In-Flight",
         description: "Focuses on Data Structures, Problem Solving, and basic CS fundamentals.",
         duration: "45 Mins",
         tags: ["Binary Trees", "Linked Lists"],
@@ -72,7 +62,6 @@ export const companyWorkspaces: Record<string, CompanyWorkspaceDetail> = {
       {
         stageNumber: 3,
         title: "Technical Round 2 (LLD)",
-        status: "Scheduled",
         description: "Low-Level Design (LLD), Object-Oriented Design (OOD) concepts.",
         duration: "60 Mins",
         tags: ["OOD", "Design Patterns", "UML"],
@@ -80,7 +69,6 @@ export const companyWorkspaces: Record<string, CompanyWorkspaceDetail> = {
       {
         stageNumber: 4,
         title: "Systems & Scale",
-        status: "Upcoming",
         description: "High-Level Design (HLD), System Architecture, DB Scaling.",
         duration: "60 Mins",
         tags: ["Databases", "Caching", "Load Balancing"],
@@ -88,18 +76,17 @@ export const companyWorkspaces: Record<string, CompanyWorkspaceDetail> = {
       {
         stageNumber: 5,
         title: "As-Appropriate (AA)",
-        status: "Final Bar",
         description: "Hiring Manager round focusing on behavioral aspects and culture fit.",
         duration: "45 Mins",
         tags: ["Behavioral", "Culture Fit", "Past Experience"],
       }
     ],
     questionWeights: [
-      { topic: "Binary Trees & BST", frequency: 34, label: "Asked" },
-      { topic: "LRU Cache & OOD", frequency: 0, label: "Very High" },
-      { topic: "Dynamic Programming", frequency: 22, label: "Asked" },
-      { topic: "Operating Systems", frequency: 18, label: "Asked" },
-      { topic: "SQL & Schema Normalization", frequency: 15, label: "Queries" },
+      { topic: "Binary Trees & BST" },
+      { topic: "LRU Cache & OOD" },
+      { topic: "Dynamic Programming" },
+      { topic: "Operating Systems" },
+      { topic: "SQL & Schema Normalization" },
     ],
     recentQuestions: [
       {
@@ -107,8 +94,6 @@ export const companyWorkspaces: Record<string, CompanyWorkspaceDetail> = {
         title: "Design an LRU Cache",
         domain: "Low-Level Design",
         difficulty: "Hard",
-        recurrenceRate: "82% Recurrence",
-        askedDate: "Asked 12 Days Ago",
         description: "Implement an LRU Cache with O(1) get and put operations. Focus on doubly-linked list & hash map integration.",
       },
       {
@@ -116,8 +101,6 @@ export const companyWorkspaces: Record<string, CompanyWorkspaceDetail> = {
         title: "Serialize & Deserialize Binary Tree",
         domain: "Data Structures",
         difficulty: "Hard",
-        recurrenceRate: "64% Recurrence",
-        askedDate: "Asked 3 Weeks Ago",
         description: "Design an algorithm to serialize and deserialize a binary tree. Focus on handling null nodes optimally.",
       },
       {
@@ -125,8 +108,6 @@ export const companyWorkspaces: Record<string, CompanyWorkspaceDetail> = {
         title: "Deadlock Detection in OS",
         domain: "Core CS",
         difficulty: "Medium",
-        recurrenceRate: "45% Recurrence",
-        askedDate: "Asked 1 Month Ago",
         description: "Explain Banker's Algorithm and write a theoretical approach to detect and prevent deadlocks.",
       },
     ]
@@ -143,7 +124,6 @@ export const companyWorkspaces: Record<string, CompanyWorkspaceDetail> = {
       {
         stageNumber: 1,
         title: "Online Assessment (OA)",
-        status: "Cleared",
         description: "Graph modeling and dynamic programming focus.",
         duration: "90 Mins",
         tags: ["Graphs", "DP"],
@@ -151,7 +131,6 @@ export const companyWorkspaces: Record<string, CompanyWorkspaceDetail> = {
       {
         stageNumber: 2,
         title: "Technical Interview 1",
-        status: "Scheduled",
         description: "Advanced Data Structures & Problem Solving.",
         duration: "45 Mins",
         tags: ["Trees", "Tries", "Heaps"],
@@ -159,7 +138,6 @@ export const companyWorkspaces: Record<string, CompanyWorkspaceDetail> = {
       {
         stageNumber: 3,
         title: "Technical Interview 2",
-        status: "Upcoming",
         description: "Algorithms & Logic Optimization.",
         duration: "45 Mins",
         tags: ["Algorithm Design", "Complexity"],
@@ -167,17 +145,16 @@ export const companyWorkspaces: Record<string, CompanyWorkspaceDetail> = {
       {
         stageNumber: 4,
         title: "Googlyness & Leadership",
-        status: "Final Bar",
         description: "Behavioral round assessing culture fit and conflict resolution.",
         duration: "45 Mins",
         tags: ["Behavioral", "Culture Fit"],
       }
     ],
     questionWeights: [
-      { topic: "Graphs & Topological Sort", frequency: 45, label: "Asked" },
-      { topic: "Dynamic Programming (2D)", frequency: 38, label: "Asked" },
-      { topic: "Segment Trees & Fenwick", frequency: 12, label: "Asked" },
-      { topic: "System Design (Scalability)", frequency: 0, label: "Very High" },
+      { topic: "Graphs & Topological Sort" },
+      { topic: "Dynamic Programming (2D)" },
+      { topic: "Segment Trees & Fenwick" },
+      { topic: "System Design (Scalability)" },
     ],
     recentQuestions: [
       {
@@ -185,8 +162,6 @@ export const companyWorkspaces: Record<string, CompanyWorkspaceDetail> = {
         title: "Evaluate Division",
         domain: "Data Structures",
         difficulty: "Medium-Hard",
-        recurrenceRate: "75% Recurrence",
-        askedDate: "Asked 1 Week Ago",
         description: "Given equations (e.g., A/B = k), evaluate new queries. Requires modeling as a directed graph.",
       },
       {
@@ -194,8 +169,6 @@ export const companyWorkspaces: Record<string, CompanyWorkspaceDetail> = {
         title: "Guess the Word",
         domain: "Algorithms",
         difficulty: "Hard",
-        recurrenceRate: "50% Recurrence",
-        askedDate: "Asked 2 Weeks Ago",
         description: "Interactive problem to guess a 6-letter word with limited API calls using minimax strategy.",
       }
     ]
@@ -212,7 +185,6 @@ export const companyWorkspaces: Record<string, CompanyWorkspaceDetail> = {
       {
         stageNumber: 1,
         title: "Online Assessment (OA)",
-        status: "Cleared",
         description: "2 Coding questions + Work Simulation Survey.",
         duration: "120 Mins",
         tags: ["Strings", "Arrays", "Simulation"],
@@ -220,7 +192,6 @@ export const companyWorkspaces: Record<string, CompanyWorkspaceDetail> = {
       {
         stageNumber: 2,
         title: "Technical Interview 1",
-        status: "In-Flight",
         description: "DSA with focus on Leadership Principles.",
         duration: "60 Mins",
         tags: ["DSA", "LP"],
@@ -228,7 +199,6 @@ export const companyWorkspaces: Record<string, CompanyWorkspaceDetail> = {
       {
         stageNumber: 3,
         title: "Technical Interview 2",
-        status: "Scheduled",
         description: "Low Level Design or Object Modeling with LP.",
         duration: "60 Mins",
         tags: ["LLD", "LP"],
@@ -236,17 +206,16 @@ export const companyWorkspaces: Record<string, CompanyWorkspaceDetail> = {
       {
         stageNumber: 4,
         title: "Bar Raiser",
-        status: "Final Bar",
         description: "System Design, Deep Dive, and intensive behavioral.",
         duration: "60 Mins",
         tags: ["System Design", "LP"],
       }
     ],
     questionWeights: [
-      { topic: "Leadership Principles (STAR)", frequency: 0, label: "Very High" },
-      { topic: "Arrays & Strings", frequency: 40, label: "Asked" },
-      { topic: "Heaps & Priority Queues", frequency: 28, label: "Asked" },
-      { topic: "Object Oriented Design", frequency: 20, label: "Asked" },
+      { topic: "Leadership Principles (STAR)" },
+      { topic: "Arrays & Strings" },
+      { topic: "Heaps & Priority Queues" },
+      { topic: "Object Oriented Design" },
     ],
     recentQuestions: [
       {
@@ -254,8 +223,6 @@ export const companyWorkspaces: Record<string, CompanyWorkspaceDetail> = {
         title: "Number of Islands",
         domain: "Data Structures",
         difficulty: "Medium",
-        recurrenceRate: "85% Recurrence",
-        askedDate: "Asked 5 Days Ago",
         description: "Given a 2D grid of 1s (land) and 0s (water), count the number of islands. Use DFS/BFS.",
       },
       {
@@ -263,8 +230,6 @@ export const companyWorkspaces: Record<string, CompanyWorkspaceDetail> = {
         title: "Design Amazon Locker System",
         domain: "Low-Level Design",
         difficulty: "Medium-Hard",
-        recurrenceRate: "60% Recurrence",
-        askedDate: "Asked 1 Month Ago",
         description: "Design the classes and interfaces for an Amazon Locker delivery and pickup system.",
       }
     ]
@@ -281,7 +246,6 @@ export const companyWorkspaces: Record<string, CompanyWorkspaceDetail> = {
       {
         stageNumber: 1,
         title: "National Qualifier Test (NQT)",
-        status: "Cleared",
         description: "Aptitude, Logical Reasoning, Verbal, and Basic Coding.",
         duration: "180 Mins",
         tags: ["Aptitude", "Logic", "Verbal"],
@@ -289,7 +253,6 @@ export const companyWorkspaces: Record<string, CompanyWorkspaceDetail> = {
       {
         stageNumber: 2,
         title: "Advanced Coding Round",
-        status: "Cleared",
         description: "2 advanced coding problems (Medium difficulty).",
         duration: "60 Mins",
         tags: ["Arrays", "Math", "Strings"],
@@ -297,17 +260,16 @@ export const companyWorkspaces: Record<string, CompanyWorkspaceDetail> = {
       {
         stageNumber: 3,
         title: "Technical + MR Panel",
-        status: "In-Flight",
         description: "Technical subjects, project discussion, and managerial fit.",
         duration: "45 Mins",
         tags: ["Projects", "Core CS", "HR"],
       }
     ],
     questionWeights: [
-      { topic: "Quantitative Aptitude", frequency: 0, label: "Very High" },
-      { topic: "Basic Data Structures", frequency: 50, label: "Asked" },
-      { topic: "SQL Queries (Joins/Group By)", frequency: 35, label: "Asked" },
-      { topic: "OOP Concepts", frequency: 40, label: "Asked" },
+      { topic: "Quantitative Aptitude" },
+      { topic: "Basic Data Structures" },
+      { topic: "SQL Queries (Joins/Group By)" },
+      { topic: "OOP Concepts" },
     ],
     recentQuestions: [
       {
@@ -315,8 +277,6 @@ export const companyWorkspaces: Record<string, CompanyWorkspaceDetail> = {
         title: "Rotate Array",
         domain: "Data Structures",
         difficulty: "Medium",
-        recurrenceRate: "70% Recurrence",
-        askedDate: "Asked 2 Weeks Ago",
         description: "Given an array, rotate the array to the right by k steps, where k is non-negative.",
       },
       {
@@ -324,8 +284,6 @@ export const companyWorkspaces: Record<string, CompanyWorkspaceDetail> = {
         title: "SQL: Nth Highest Salary",
         domain: "SQL",
         difficulty: "Medium",
-        recurrenceRate: "90% Recurrence",
-        askedDate: "Asked 3 Weeks Ago",
         description: "Write an SQL query to report the nth highest salary from the Employee table.",
       }
     ]

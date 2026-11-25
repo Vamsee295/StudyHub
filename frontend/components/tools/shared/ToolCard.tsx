@@ -10,7 +10,7 @@ export function ToolCard({ children, className, noPadding = false, ...props }: T
   return (
     <div 
       className={cn(
-        "bg-card rounded-2xl border border-hair overflow-hidden",
+        "bg-card rounded-2xl border-[1.5px] border-hair overflow-hidden",
         !noPadding && "p-5 sm:p-6",
         className
       )}

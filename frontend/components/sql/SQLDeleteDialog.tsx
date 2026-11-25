@@ -45,7 +45,7 @@ export default function SQLDeleteDialog({
       onClick={onCancel}
     >
       <div 
-        className="bg-card border border-hair rounded-xl shadow-2xl max-w-sm w-full p-5 animate-in zoom-in-95 duration-150"
+        className="bg-card border-[1.5px] border-hair rounded-xl shadow-2xl max-w-sm w-full p-5 animate-in zoom-in-95 duration-150"
         onClick={e => e.stopPropagation()}
         role="alertdialog"
         aria-modal="true"

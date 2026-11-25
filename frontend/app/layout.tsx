@@ -19,9 +19,9 @@ export const metadata: Metadata = {
   description:
     "Structured roadmaps, technical resources, company preparation, practice and career tools for engineering students — mapped into one unified learning system.",
   icons: {
-    icon: "/favicon.png",
-    shortcut: "/favicon.png",
-    apple: "/logo-emblem.png",
+    icon: "/logo-mark.svg",
+    shortcut: "/logo-mark.svg",
+    apple: "/apple-icon.png",
   },
 };
 

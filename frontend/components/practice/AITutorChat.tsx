@@ -112,14 +112,14 @@ export function AITutorChat({ questionId }: AITutorChatProps) {
           <div key={i} className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
             <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 ${
               msg.role === 'user' 
-                ? 'bg-paper-2 border border-hair text-body' 
+                ? 'bg-paper-2 border-[1.5px] border-hair text-body' 
                 : 'bg-accent-soft text-accent-ink'
             }`}>
               {msg.role === 'user' ? <User className="w-3.5 h-3.5" /> : <Bot className="w-3.5 h-3.5" />}
             </div>
             <div className={`text-[13px] leading-relaxed max-w-[85%] ${
               msg.role === 'user' 
-                ? 'bg-card border border-hair text-ink px-3 py-2 rounded-xl rounded-tr-sm' 
+                ? 'bg-card border-[1.5px] border-hair text-ink px-3 py-2 rounded-xl rounded-tr-sm' 
                 : 'text-ink pt-1 whitespace-pre-wrap'
             }`}>
               {msg.content}
@@ -144,7 +144,7 @@ export function AITutorChat({ questionId }: AITutorChatProps) {
             onChange={(e) => setInput(e.target.value)}
             disabled={isStreaming}
             placeholder="Ask for a hint..."
-            className="w-full bg-paper-2 border border-hair rounded-md pl-3 pr-10 py-2 text-[13px] text-ink placeholder:text-mute focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent disabled:opacity-50"
+            className="w-full bg-paper-2 border-[1.5px] border-hair rounded-md pl-3 pr-10 py-2 text-[13px] text-ink placeholder:text-mute focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent disabled:opacity-50"
           />
           <button 
             type="submit"

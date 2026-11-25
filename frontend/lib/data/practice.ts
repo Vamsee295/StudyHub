@@ -1,16 +1,3 @@
-import { PracticeCategory } from "@/types";
-
-export const practiceCategories: PracticeCategory[] = [
-  { name: "DSA", questions: 412, progress: 38 },
-  { name: "SQL", questions: 180, progress: 61 },
-  { name: "Aptitude", questions: 260, progress: 22 },
-  { name: "DBMS", questions: 140, progress: 47 },
-  { name: "Operating Systems", questions: 120, progress: 29 },
-  { name: "OOP", questions: 96, progress: 54 },
-];
-
-export const practiceStats = ["180+ DSA", "60+ SQL Queries", "350+ CS MCQs"];
-
 export const featuredProblem = {
   difficulty: "Medium",
   title: "Two Sum & 3-Sum Optimal Pointer Technique",

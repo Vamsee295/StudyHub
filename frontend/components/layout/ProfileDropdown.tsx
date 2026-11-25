@@ -1,5 +1,6 @@
 "use client";
 
+import { Avatar } from "@/components/ui/Avatar";
 import React, { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { 
@@ -79,7 +80,7 @@ export function ProfileDropdown({
   }
 
   const email = profile.identity?.email || user?.email || "";
-  const avatarUrl = profile.identity?.avatarUrl || "https://api.dicebear.com/9.x/avataaars/svg?seed=Felix";
+  const avatarUrl = profile.identity?.avatarUrl;
   const completion = profile.completionPercentage || (profile.profileCompleted ? 100 : 0);
   const companies = profile.targets?.companies ?? [];
   const rows = [
@@ -100,7 +101,7 @@ export function ProfileDropdown({
     <div ref={dropdownRef} className={`pop-in brut absolute ${placement} z-50 w-[320px] max-w-[calc(100vw-24px)] overflow-hidden rounded-2xl bg-card`}>
       <button onClick={() => handleNavigate("/profile/preferences")} className="w-full border-b-[1.5px] border-hair p-4 text-left hover:bg-card-2">
         <span className="flex items-center gap-3">
-          <img src={avatarUrl} alt="" className="size-11 shrink-0 rounded-full border-2 border-line bg-paper object-cover" />
+          <Avatar src={avatarUrl} name={fullName} className="size-11 text-[15px]" />
           <span className="min-w-0 flex-1">
             <span className="block truncate text-[15px] font-semibold">{fullName}</span>
             <span className="block truncate font-mono text-[11px] text-mute">{email}</span>

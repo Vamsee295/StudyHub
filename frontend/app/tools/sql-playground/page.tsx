@@ -169,7 +169,7 @@ export default function SqlPlaygroundPage() {
 
             <button
               onClick={() => setIsSidebarOpen((prev) => !prev)}
-              className="text-[12px] font-medium px-3 py-1.5 rounded-lg border border-hair bg-card hover:bg-card-2 text-ink transition-colors hidden lg:flex items-center gap-1.5"
+              className="text-[12px] font-medium px-3 py-1.5 rounded-lg border-[1.5px] border-hair bg-card hover:bg-card-2 text-ink transition-colors hidden lg:flex items-center gap-1.5"
             >
               <Database className="w-3.5 h-3.5" />
               {isSidebarOpen ? "Hide Schema" : "Show Schema"}
@@ -179,12 +179,12 @@ export default function SqlPlaygroundPage() {
             <div className="relative">
               <button
                 onClick={() => setShowExamples((s) => !s)}
-                className="text-[12px] font-medium px-3 py-1.5 rounded-lg border border-hair bg-card hover:bg-card-2 text-ink transition-colors"
+                className="text-[12px] font-medium px-3 py-1.5 rounded-lg border-[1.5px] border-hair bg-card hover:bg-card-2 text-ink transition-colors"
               >
                 Examples ▾
               </button>
               {showExamples && (
-                <div className="absolute right-0 top-full mt-1 bg-card border border-hair rounded-xl shadow-lg z-50 py-1 w-52">
+                <div className="absolute right-0 top-full mt-1 bg-card border-[1.5px] border-hair rounded-xl shadow-lg z-50 py-1 w-52">
                   {EXAMPLE_QUERIES.map((ex) => (
                     <button
                       key={ex.label}
@@ -263,7 +263,7 @@ export default function SqlPlaygroundPage() {
           onClick={() => setShowResetConfirm(false)}
         >
           <div
-            className="bg-card rounded-2xl border border-hair shadow-2xl max-w-sm w-full p-6"
+            className="bg-card rounded-2xl border-[1.5px] border-hair shadow-2xl max-w-sm w-full p-6"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center gap-3 mb-3">
@@ -281,7 +281,7 @@ export default function SqlPlaygroundPage() {
             <div className="flex gap-3">
               <button
                 onClick={() => setShowResetConfirm(false)}
-                className="flex-1 px-4 py-2 rounded-xl border border-hair text-[13px] font-medium text-ink hover:bg-card-2 transition-colors"
+                className="flex-1 px-4 py-2 rounded-xl border-[1.5px] border-hair text-[13px] font-medium text-ink hover:bg-card-2 transition-colors"
               >
                 Cancel
               </button>

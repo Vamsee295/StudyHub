@@ -10,9 +10,9 @@ export default function DashboardLoading() {
         
         {/* Quick Stats Skeleton */}
         <div className="flex flex-wrap items-center gap-4 shrink-0">
-          <div className="h-16 w-36 bg-card border border-hair rounded-lg"></div>
-          <div className="h-16 w-44 bg-card border border-hair rounded-lg"></div>
-          <div className="h-16 w-32 bg-card border border-hair rounded-lg"></div>
+          <div className="h-16 w-36 bg-card border-[1.5px] border-hair rounded-lg"></div>
+          <div className="h-16 w-44 bg-card border-[1.5px] border-hair rounded-lg"></div>
+          <div className="h-16 w-32 bg-card border-[1.5px] border-hair rounded-lg"></div>
         </div>
       </section>
 
@@ -20,17 +20,17 @@ export default function DashboardLoading() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* LEFT COLUMN */}
         <div className="lg:col-span-8 flex flex-col gap-6">
-          <div className="bg-card rounded-2xl p-6 border border-hair h-52"></div>
+          <div className="bg-card rounded-2xl p-6 border-[1.5px] border-hair h-52"></div>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
             {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div key={i} className="bg-card h-28 rounded-xl border border-hair"></div>
+              <div key={i} className="bg-card h-28 rounded-xl border-[1.5px] border-hair"></div>
             ))}
           </div>
         </div>
 
         {/* RIGHT COLUMN */}
         <div className="lg:col-span-4 flex flex-col gap-6">
-          <div className="bg-card rounded-xl p-6 border border-hair h-72"></div>
+          <div className="bg-card rounded-xl p-6 border-[1.5px] border-hair h-72"></div>
           <div className="bg-accent-soft rounded-xl p-6 border border-accent-line h-40"></div>
         </div>
       </div>

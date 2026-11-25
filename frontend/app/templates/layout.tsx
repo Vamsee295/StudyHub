@@ -3,7 +3,7 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Templates — StudyHub",
-  description: "Verified engineering resume templates, cold email scripts, and preparation rubrics.",
+  description: "Resume templates, cold email scripts and interview prep rubrics.",
 };
 
 export default function TemplatesLayout({

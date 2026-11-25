@@ -28,7 +28,7 @@ export function DsaControls({
   canStepBackward
 }: DsaControlsProps) {
   return (
-    <div className="bg-card rounded-2xl border border-hair p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+    <div className="bg-card rounded-2xl border-[1.5px] border-hair p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
       
       {/* Playback Controls */}
       <div className="flex items-center gap-2">
@@ -47,7 +47,7 @@ export function DsaControls({
             "p-3 rounded-full flex items-center justify-center transition-all disabled:opacity-50 disabled:cursor-not-allowed",
             isPlaying 
               ? "bg-warning-soft text-warning hover:bg-warning-line" 
-              : "bg-accent text-paper hover:bg-accent hover:shadow-md"
+              : "bg-accent text-paper hover:bg-accent hover:shadow-[4px_5px_0_var(--hard)]"
           )}
         >
           {isPlaying ? <Pause className="w-6 h-6 fill-current" /> : <Play className="w-6 h-6 fill-current ml-1" />}
@@ -74,7 +74,7 @@ export function DsaControls({
 
       {/* Settings */}
       <div className="flex items-center gap-4 text-sm w-full sm:w-auto">
-        <div className="flex items-center gap-2 bg-paper-2 px-3 py-1.5 rounded-lg border border-hair flex-1 sm:flex-none">
+        <div className="flex items-center gap-2 bg-paper-2 px-3 py-1.5 rounded-lg border-[1.5px] border-hair flex-1 sm:flex-none">
           <Settings2 className="w-4 h-4 text-mute" />
           <span className="text-body font-medium">Speed:</span>
           <select 

@@ -25,7 +25,7 @@ export default function TemplateWorkspacePage({ params }: { params: Promise<{ id
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh]">
         <AlertCircle className="w-10 h-10 text-accent-ink mb-4" />
-        <h2 className="text-xl font-bold text-ink mb-2">Template Workspace Not Found</h2>
+        <h2 className="label-cond text-[22px] mb-2">Template not found</h2>
         <p className="text-body mb-6 text-center max-w-md">
           The requested template could not be loaded. This might be because the template ID is invalid or the data is missing.
         </p>
@@ -104,7 +104,7 @@ export default function TemplateWorkspacePage({ params }: { params: Promise<{ id
         </div>
 
         <div className="flex items-center gap-3 w-full sm:w-auto">
-          <div className="flex items-center bg-paper-2 p-1 rounded-lg border border-hair mr-2 hidden md:flex">
+          <div className="flex items-center bg-paper-2 p-1 rounded-lg border-[1.5px] border-hair mr-2 hidden md:flex">
             <button
               onClick={() => setViewMode("split")}
               className={clsx(
@@ -125,7 +125,7 @@ export default function TemplateWorkspacePage({ params }: { params: Promise<{ id
             </button>
           </div>
           
-          <button className="flex items-center justify-center gap-1.5 px-3 py-2 bg-card border border-hair rounded-lg text-[13px] font-semibold text-body hover:text-ink hover:bg-paper-2 transition-all flex-1 sm:flex-none">
+          <button className="flex items-center justify-center gap-1.5 px-3 py-2 bg-card border-[1.5px] border-hair rounded-lg text-[13px] font-semibold text-body hover:text-ink hover:bg-paper-2 transition-all flex-1 sm:flex-none">
             <Download className="w-4 h-4" /> Export
           </button>
           
@@ -156,7 +156,7 @@ export default function TemplateWorkspacePage({ params }: { params: Promise<{ id
           "w-full lg:w-1/3 flex flex-col gap-5",
           viewMode === "preview" ? "hidden" : "block"
         )}>
-          <div className="bg-card border border-hair rounded-xl p-5 sticky top-[90px] overflow-y-auto max-h-[calc(100vh-120px)] custom-scrollbar">
+          <div className="bg-card border-[1.5px] border-hair rounded-xl p-5 sticky top-[90px] overflow-y-auto max-h-[calc(100vh-120px)] custom-scrollbar">
             <h3 className="text-[14px] font-bold text-ink mb-4 flex items-center gap-2">
               <TerminalSquare className="w-4 h-4 text-body" />
               Template Variables
@@ -175,7 +175,7 @@ export default function TemplateWorkspacePage({ params }: { params: Promise<{ id
                       onChange={(e) => handleFieldChange(field.key, e.target.value)}
                       placeholder={field.placeholder}
                       rows={3}
-                      className="w-full px-3 py-2 bg-paper border border-hair hover:border-line focus:border-accent focus:ring-1 focus:ring-accent rounded-lg text-[13px] text-ink transition-all resize-none outline-none"
+                      className="w-full px-3 py-2 bg-paper border-[1.5px] border-hair hover:border-line focus:border-accent focus:ring-1 focus:ring-accent rounded-lg text-[13px] text-ink transition-all resize-none outline-none"
                     />
                   ) : (
                     <input
@@ -184,7 +184,7 @@ export default function TemplateWorkspacePage({ params }: { params: Promise<{ id
                       value={fieldValues[field.key] || ""}
                       onChange={(e) => handleFieldChange(field.key, e.target.value)}
                       placeholder={field.placeholder}
-                      className="w-full px-3 py-2 bg-paper border border-hair hover:border-line focus:border-accent focus:ring-1 focus:ring-accent rounded-lg text-[13px] text-ink transition-all outline-none"
+                      className="w-full px-3 py-2 bg-paper border-[1.5px] border-hair hover:border-line focus:border-accent focus:ring-1 focus:ring-accent rounded-lg text-[13px] text-ink transition-all outline-none"
                     />
                   )}
                 </div>
@@ -198,7 +198,7 @@ export default function TemplateWorkspacePage({ params }: { params: Promise<{ id
           "w-full flex-1",
           viewMode === "preview" ? "max-w-3xl mx-auto" : "lg:w-2/3"
         )}>
-          <div className="bg-card border border-hair rounded-xl min-h-full">
+          <div className="bg-card border-[1.5px] border-hair rounded-xl min-h-full">
             {/* Preview Toolbar */}
             <div className="bg-paper border-b border-hair px-4 py-3 flex items-center gap-2 rounded-t-xl">
               <div className="flex gap-1.5">

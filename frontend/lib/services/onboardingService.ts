@@ -17,7 +17,7 @@ export const BLANK_USER_PROFILE: UserProfile = {
     targetRole: "Software Development Engineer (SDE-1)",
     preferredJobType: "Full-Time Campus & Off-Campus",
     locationPreference: "Bangalore / Hyderabad / Pune / Remote",
-    avatarUrl: "https://api.dicebear.com/9.x/avataaars/svg?seed=Felix"
+    avatarUrl: ""
   },
   careerTracks: ["Software Engineer"],
   skillBaseline: {

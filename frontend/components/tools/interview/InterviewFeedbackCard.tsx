@@ -50,7 +50,7 @@ export function InterviewFeedbackCard({ question, userAnswer, feedback, onNext, 
     <div className="flex flex-col h-full gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-12">
       
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-ink flex items-center gap-2">
+        <h2 className="display text-[30px] flex items-center gap-2">
           <Target className="w-6 h-6 text-accent-ink" /> Evaluation Results
         </h2>
         <button
@@ -70,7 +70,7 @@ export function InterviewFeedbackCard({ question, userAnswer, feedback, onNext, 
             <p className="font-medium text-ink mb-6">{question.text}</p>
             
             <h3 className="text-xs font-bold text-mute uppercase tracking-wider mb-2">Your Answer</h3>
-            <div className="bg-paper-2 p-4 rounded-xl border border-hair text-sm text-body whitespace-pre-wrap font-medium">
+            <div className="bg-paper-2 p-4 rounded-xl border-[1.5px] border-hair text-sm text-body whitespace-pre-wrap font-medium">
               {userAnswer}
             </div>
           </ToolCard>
@@ -128,7 +128,7 @@ export function InterviewFeedbackCard({ question, userAnswer, feedback, onNext, 
             <h4 className="text-xs font-bold text-mute uppercase tracking-wider mb-2 mt-6">Key Points to Cover</h4>
             <div className="flex flex-wrap gap-2">
               {feedback.keyPoints.map((point, i) => (
-                <span key={i} className="px-2.5 py-1 bg-card-2 text-body text-xs font-medium rounded border border-hair">
+                <span key={i} className="px-2.5 py-1 bg-card-2 text-body text-xs font-medium rounded border-[1.5px] border-hair">
                   {point}
                 </span>
               ))}

@@ -173,13 +173,13 @@ export function NativePdfReader({
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center p-12 text-center min-h-[500px] w-full bg-card border border-hair rounded-2xl">
+      <div className="flex flex-col items-center justify-center p-12 text-center min-h-[500px] w-full bg-card border-[1.5px] border-hair rounded-2xl">
         <AlertCircle className="w-10 h-10 text-danger mb-3" />
         <h3 className="text-[16px] font-semibold text-ink mb-1">Unable to load document</h3>
         <p className="text-[13px] text-body mb-6">{error}</p>
         <button 
           onClick={() => window.location.reload()}
-          className="px-4 py-2 rounded-xl bg-paper-2 border border-hair text-[13px] font-semibold text-ink hover:bg-hair transition-colors"
+          className="px-4 py-2 rounded-xl bg-paper-2 border-[1.5px] border-hair text-[13px] font-semibold text-ink hover:bg-hair transition-colors"
         >
           Try Again
         </button>

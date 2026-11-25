@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="StudyHub">
+  <!-- StudyHub mark: a study card with a bookmark and a half-read reading bar (Paper & Ink, DESIGN.md) -->
+  <rect x="8" y="8" width="52" height="52" rx="12" fill="#191614"/>
+  <rect x="4" y="4" width="52" height="52" rx="12" fill="#fbf8f2" stroke="#191614" stroke-width="4"/>
+  <path d="M35 4h13v25l-6.5-5.2L35 29z" fill="#c8603a" stroke="#191614" stroke-width="3.5" stroke-linejoin="round"/>
+  <rect x="13" y="14" width="15" height="5" rx="2.5" fill="#191614"/>
+  <rect x="13" y="35" width="34" height="5" rx="2.5" fill="#191614"/>
+  <rect x="13" y="45" width="34" height="5" rx="2.5" fill="#191614" fill-opacity=".18"/>
+  <rect x="13" y="45" width="19" height="5" rx="2.5" fill="#c8603a"/>
+</svg>

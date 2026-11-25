@@ -58,14 +58,14 @@ export default function CompanyPrepPage() {
         <label className="flex flex-col gap-1.5 mb-8 max-w-sm">
           <span className="text-[12px] font-bold uppercase tracking-wider text-ink">Company</span>
           <select value={companyId} onChange={(e) => choose(e.target.value)}
-            className={`px-3 py-2 rounded-lg border border-hair bg-card text-[14px] text-ink ${focusRing}`}>
+            className={`px-3 py-2 rounded-lg border-[1.5px] border-hair bg-card text-[14px] text-ink ${focusRing}`}>
             {[...COMPANY_PROFILES].sort((a, b) => a.name.localeCompare(b.name)).map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
           </select>
         </label>
       </div>
 
       {profile && (
-        <article className="p-6 sm:p-8 rounded-xl border border-hair bg-card flex flex-col gap-6 print:border-0 print:p-0">
+        <article className="p-6 sm:p-8 rounded-xl border-[1.5px] border-hair bg-card flex flex-col gap-6 print:border-0 print:p-0">
           <header className="flex flex-col gap-2">
             <p className="text-[11px] font-mono font-bold uppercase tracking-wider text-accent-ink">Prep sheet</p>
             <h2 className="text-3xl text-ink">{profile.name}</h2>

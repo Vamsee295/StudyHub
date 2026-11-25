@@ -47,18 +47,18 @@ export function TemplatesSearchFilter({
             onBlur={() => setIsFocused(false)}
             className="w-full pl-10 pr-12 py-2.5 bg-transparent text-[14px] text-ink placeholder:text-mute focus:outline-none"
           />
-          <kbd className="absolute right-3 font-mono text-[10px] bg-paper-2 border border-hair text-body px-1.5 py-0.5 rounded shadow-[0_1px_1px_0_rgba(0,0,0,0.02)] font-medium">
+          <kbd className="absolute right-3 font-mono text-[10px] bg-paper-2 border-[1.5px] border-hair text-body px-1.5 py-0.5 rounded shadow-[0_1px_1px_0_rgba(0,0,0,0.02)] font-medium">
             ⌘K
           </kbd>
         </div>
 
         {/* Action Buttons */}
         <div className="flex items-center gap-2 w-full sm:w-auto">
-          <button className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 bg-card border border-hair rounded-xl text-[13px] font-semibold text-body hover:text-ink hover:border-line hover:bg-paper-2 transition-all">
+          <button className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 bg-card border-[1.5px] border-hair rounded-xl text-[13px] font-semibold text-body hover:text-ink hover:border-line hover:bg-paper-2 transition-all">
             <SlidersHorizontal className="w-4 h-4" />
             <span>Filter</span>
           </button>
-          <button className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 bg-card border border-hair rounded-xl text-[13px] font-semibold text-body hover:text-ink hover:border-line hover:bg-paper-2 transition-all">
+          <button className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 bg-card border-[1.5px] border-hair rounded-xl text-[13px] font-semibold text-body hover:text-ink hover:border-line hover:bg-paper-2 transition-all">
             <ArrowDownAZ className="w-4 h-4" />
             <span>Sort</span>
           </button>

@@ -52,7 +52,7 @@ export function ResumeInputForm({
               Use one source. A PDF is preferred because the parser can preserve section and page metadata.
             </p>
           </div>
-          <span className="mt-0.5 hidden rounded border border-hair bg-paper-2 px-2 py-1 text-[10.5px] font-mono text-body sm:inline-flex">
+          <span className="mt-0.5 hidden rounded border-[1.5px] border-hair bg-paper-2 px-2 py-1 text-[10.5px] font-mono text-body sm:inline-flex">
             INPUT
           </span>
         </div>
@@ -120,7 +120,7 @@ export function ResumeInputForm({
               The report compares the resume with the role and hiring context you provide.
             </p>
           </div>
-          <span className="mt-0.5 hidden rounded border border-hair bg-paper-2 px-2 py-1 text-[10.5px] font-mono text-body sm:inline-flex">
+          <span className="mt-0.5 hidden rounded border-[1.5px] border-hair bg-paper-2 px-2 py-1 text-[10.5px] font-mono text-body sm:inline-flex">
             BENCHMARK
           </span>
         </div>
@@ -151,7 +151,7 @@ export function ResumeInputForm({
               Paste the job description so the AI can extract the exact skills, keywords, and responsibilities.
             </p>
           </div>
-          <span className="mt-0.5 hidden rounded border border-hair bg-paper-2 px-2 py-1 text-[10.5px] font-mono text-body sm:inline-flex">
+          <span className="mt-0.5 hidden rounded border-[1.5px] border-hair bg-paper-2 px-2 py-1 text-[10.5px] font-mono text-body sm:inline-flex">
             CONTEXT
           </span>
         </div>

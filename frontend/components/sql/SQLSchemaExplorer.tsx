@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { pressable } from "@/lib/utils";
 import { Database, Table2, ChevronRight, ChevronDown } from "lucide-react";
 import { SQLTable } from "@/lib/sql/types";
 
@@ -35,7 +36,7 @@ export default function SQLSchemaExplorer({ schema, onInsertText }: Props) {
             <div key={table.name} className="mb-1">
               <div 
                 className="flex items-center gap-1.5 px-2 py-1.5 hover:bg-paper-2 rounded cursor-pointer group"
-                onClick={() => toggleTable(table.name)}
+                {...pressable(() => toggleTable(table.name))}
               >
                 {expandedTables[table.name] ? (
                   <ChevronDown className="w-3.5 h-3.5 text-mute" />
@@ -49,7 +50,7 @@ export default function SQLSchemaExplorer({ schema, onInsertText }: Props) {
                 
                 {/* Hover actions */}
                 <button 
-                  className="opacity-0 group-hover:opacity-100 text-[10px] text-body hover:text-accent font-medium px-1 rounded transition-opacity"
+                  className="sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100 sm:focus-within:opacity-100 text-[10px] text-body hover:text-accent font-medium px-1 rounded transition-opacity"
                   onClick={(e) => {
                     e.stopPropagation();
                     onInsertText(`SELECT * FROM ${table.name};\n`);
@@ -66,7 +67,7 @@ export default function SQLSchemaExplorer({ schema, onInsertText }: Props) {
                     <div 
                       key={col.name} 
                       className="flex items-center justify-between text-xs group/col hover:bg-paper-2 px-1.5 py-1 rounded cursor-pointer"
-                      onClick={() => onInsertText(col.name)}
+                      {...pressable(() => onInsertText(col.name))}
                       title={`Insert column ${col.name}`}
                     >
                       <div className="flex items-center gap-1.5 overflow-hidden">

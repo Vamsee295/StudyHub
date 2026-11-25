@@ -54,7 +54,11 @@ export default function SubjectPage() {
   }
 
   const allTopics = subject.modules.flatMap((m) => m.topics.map((t) => ({ ...t, moduleTitle: m.title })));
-  const next = allTopics.find((t) => t.status === "in_progress") ?? allTopics.find((t) => t.status !== "completed");
+  // the unfinished lesson read most recently, else the first one not done
+  const lastRead = allTopics
+    .filter((t) => t.status === "in_progress")
+    .sort((a, b) => (b.last_read ?? "").localeCompare(a.last_read ?? ""))[0];
+  const next = lastRead ?? allTopics.find((t) => t.status !== "completed");
   const tools = [
     { href: `/learn/${subject.slug}/test`, label: "Mock test", icon: ClipboardCheck },
     { href: `/learn/${subject.slug}/revise`, label: "Revision sheet", icon: FileText },

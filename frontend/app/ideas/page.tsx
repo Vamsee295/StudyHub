@@ -157,11 +157,11 @@ export default function IdeasPage() {
               <span className="sr-only">Search ideas</span>
               <Search aria-hidden="true" className="w-4 h-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-mute" />
               <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search…" maxLength={100}
-                className={`pl-8 pr-3 py-1.5 rounded-lg border border-hair bg-card text-[13px] w-40 ${focusRing}`} />
+                className={`pl-8 pr-3 py-1.5 rounded-lg border-[1.5px] border-hair bg-card text-[13px] w-40 ${focusRing}`} />
             </label>
             <label className="text-[13px]">
               <span className="sr-only">Sort</span>
-              <select value={sort} onChange={(e) => setSort(e.target.value as "top" | "new")} className={`px-2 py-1.5 rounded-lg border border-hair bg-card ${focusRing}`}>
+              <select value={sort} onChange={(e) => setSort(e.target.value as "top" | "new")} className={`px-2 py-1.5 rounded-lg border-[1.5px] border-hair bg-card ${focusRing}`}>
                 <option value="top">Most votes</option>
                 <option value="new">Newest</option>
               </select>
@@ -179,7 +179,7 @@ export default function IdeasPage() {
 
         <ul className="flex flex-col gap-3">
           {data?.items.map((idea) => (
-            <li key={idea.id} className="flex gap-4 p-4 rounded-xl border border-hair bg-card">
+            <li key={idea.id} className="flex gap-4 p-4 rounded-xl border-[1.5px] border-hair bg-card">
               <button type="button" onClick={() => toggleVote(idea)} disabled={!user || busy === idea.id}
                 aria-pressed={idea.has_voted} aria-label={`${idea.has_voted ? "Remove your vote from" : "Upvote"} ${idea.title}. ${idea.vote_count} votes`}
                 title={user ? undefined : "Sign in to vote"}
@@ -205,7 +205,7 @@ export default function IdeasPage() {
                     <label className="ml-auto inline-flex items-center gap-1">
                       <span className="sr-only">Change status</span>
                       <select value={idea.status} onChange={(e) => changeStatus(idea, e.target.value as IdeaStatus)}
-                        className={`px-1.5 py-0.5 rounded border border-hair bg-card text-[12px] ${focusRing}`}>
+                        className={`px-1.5 py-0.5 rounded border-[1.5px] border-hair bg-card text-[12px] ${focusRing}`}>
                         {(Object.keys(STATUS) as IdeaStatus[]).map((s) => <option key={s} value={s}>{STATUS[s].label}</option>)}
                       </select>
                     </label>
@@ -225,7 +225,7 @@ export default function IdeasPage() {
         {loading && <p className="flex items-center gap-2 text-[13px] text-body"><Loader2 aria-hidden="true" className="w-4 h-4 animate-spin" /> Loading ideas…</p>}
         {data && !loading && data.items.length < data.total && (
           <button type="button" onClick={() => loadMore(data.items.length)}
-            className={`self-center px-4 py-2 rounded-lg border border-hair text-[13px] font-semibold text-ink hover:border-accent ${focusRing}`}>
+            className={`self-center px-4 py-2 rounded-lg border-[1.5px] border-hair text-[13px] font-semibold text-ink hover:border-accent ${focusRing}`}>
             Show more ({data.total - data.items.length} left)
           </button>
         )}
@@ -270,23 +270,23 @@ function NewIdeaForm({ onCreated }: { onCreated: () => void }) {
   }
 
   return (
-    <form onSubmit={submit} className="p-5 rounded-xl border border-hair bg-card flex flex-col gap-4">
+    <form onSubmit={submit} className="p-5 rounded-xl border-[1.5px] border-hair bg-card flex flex-col gap-4">
       <label className="flex flex-col gap-1.5 text-[13px]">
         <span className="flex justify-between font-semibold text-ink">Title <span className="font-normal text-mute tabular-nums">{title.trim().length}/120</span></span>
         <input value={title} onChange={(e) => setTitle(e.target.value)} maxLength={120} autoFocus required
           placeholder="e.g. Add practice questions for operating systems" aria-describedby="title-help"
-          className={`px-3 py-2 rounded-lg border border-hair bg-card text-[14px] ${focusRing}`} />
+          className={`px-3 py-2 rounded-lg border-[1.5px] border-hair bg-card text-[14px] ${focusRing}`} />
         <span id="title-help" className="text-[12px] text-mute">At least 8 characters. Check the board first: upvoting an existing idea counts more than a duplicate.</span>
       </label>
       <label className="flex flex-col gap-1.5 text-[13px]">
         <span className="font-semibold text-ink">Details <span className="font-normal text-mute">(optional)</span></span>
         <textarea value={description} onChange={(e) => setDescription(e.target.value)} maxLength={2000} rows={3}
           placeholder="What problem would this solve for you?"
-          className={`px-3 py-2 rounded-lg border border-hair bg-card text-[14px] resize-y ${focusRing}`} />
+          className={`px-3 py-2 rounded-lg border-[1.5px] border-hair bg-card text-[14px] resize-y ${focusRing}`} />
       </label>
       <label className="flex flex-col gap-1.5 text-[13px] max-w-[200px]">
         <span className="font-semibold text-ink">Area</span>
-        <select value={category} onChange={(e) => setCategory(e.target.value as IdeaCategory)} className={`px-3 py-2 rounded-lg border border-hair bg-card ${focusRing}`}>
+        <select value={category} onChange={(e) => setCategory(e.target.value as IdeaCategory)} className={`px-3 py-2 rounded-lg border-[1.5px] border-hair bg-card ${focusRing}`}>
           {CATEGORIES.map((c) => <option key={c.id} value={c.id}>{c.label}</option>)}
         </select>
       </label>

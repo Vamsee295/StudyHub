@@ -1,10 +1,11 @@
 "use client";
 
+import { Avatar } from "@/components/ui/Avatar";
 import React, { useState } from "react";
 import Link from "next/link";
 import { Heart, MessageCircle, ExternalLink } from "lucide-react";
 import { clsx } from "clsx";
-import type { CommunityPost, CommunityAuthor } from "@/lib/types/community";
+import type { CommunityPost } from "@/lib/types/community";
 import {
   ACTIVITY_TYPE_LABELS,
   ACTIVITY_TYPE_EMOJI,
@@ -19,25 +20,6 @@ interface ActivityCardProps {
   currentUserId?: string | null;
   onCommentClick: (postId: string) => void;
   onPostUpdated?: (post: CommunityPost) => void;
-}
-
-function Avatar({ author }: { author?: CommunityAuthor | null }) {
-  const name = author?.full_name || "?";
-  const initials = name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2);
-  if (author?.avatar_url) {
-    return (
-      <img
-        src={author.avatar_url}
-        alt={name}
-        className="w-9 h-9 rounded-full object-cover border border-hair shrink-0"
-      />
-    );
-  }
-  return (
-    <div className="w-[38px] h-[38px] rounded-full bg-accent-soft border border-accent-line flex items-center justify-center shrink-0">
-      <span className="text-[13px] font-bold text-accent-ink">{initials}</span>
-    </div>
-  );
 }
 
 function ActivityBadge({ type }: { type: ActivityType }) {
@@ -56,7 +38,7 @@ function TagList({ tags }: { tags?: string | null }) {
       {list.map((t) => (
         <span
           key={t}
-          className="text-[11px] px-2 py-0.5 rounded-md bg-card-2 text-body font-medium border border-hair"
+          className="text-[11px] px-2 py-0.5 rounded-md bg-card-2 text-body font-medium border-[1.5px] border-hair"
         >
           {t}
         </span>
@@ -100,13 +82,13 @@ export function ActivityCard({
 
   return (
     <article
-      className="bg-card rounded-[12px] border border-hair p-[22px] transition-colors hover:border-ink/25"
+      className="bg-card rounded-[12px] border-[1.5px] border-hair p-[22px] transition-colors hover:border-ink/25"
       aria-label={`Post by ${post.author?.full_name || "a learner"}`}
     >
       {/* Header: Avatar + Author + Time */}
       <div className="flex items-start justify-between gap-3 mb-4">
         <div className="flex items-center gap-3 min-w-0">
-          <Avatar author={post.author} />
+          <Avatar src={post.author?.avatar_url} name={post.author?.full_name || "?"} className="size-9 border-[1.5px] text-[13px]" />
           <div className="min-w-0 flex flex-col justify-center">
             <span className="text-[14px] font-medium text-ink truncate leading-tight">
               {post.author?.full_name || "StudyHub Learner"}

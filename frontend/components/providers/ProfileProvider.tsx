@@ -5,7 +5,6 @@ import { UserProfile } from '@/types';
 import { useAuth } from './AuthProvider';
 import { profileApi } from '@/lib/api/profile';
 import { BLANK_USER_PROFILE } from '@/lib/services/onboardingService';
-import { supabase } from '@/lib/supabase/client';
 import { errorMessage } from "@/lib/utils";
 
 type ProfileState = {
@@ -188,6 +187,7 @@ export const ProfileProvider = ({ children }: { children: React.ReactNode }) => 
 
       // 1. Update auth metadata first
       if (targetProfile.identity?.fullName) {
+        const { supabase } = await import('@/lib/supabase/client');
         const { error } = await supabase.auth.updateUser({
           data: { full_name: targetProfile.identity.fullName }
         });

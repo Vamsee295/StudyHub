@@ -1,3 +1,5 @@
+import { lastVerified } from "@/lib/data/companies";
+import { pressable } from "@/lib/utils";
 import { DirectoryCompany } from "@/types";
 import { ChevronRight, SearchX } from "lucide-react";
 import { clsx } from "clsx";
@@ -12,12 +14,18 @@ export function CompanyDirectory({ companies, onSelect, searchQuery }: CompanyDi
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-1">
-        <h2 className="text-xl font-semibold text-ink tracking-tight">Explore Company Directory</h2>
-        <p className="text-sm text-body">Search and filter {companies.length} active pipelines</p>
+        <h2 className="sec">
+          <span className="eyebrow sec-n mb-1.5 block">Directory</span>
+          <span className="display text-[28px] md:text-[34px]">All companies</span>
+        </h2>
+        <p className="text-sm text-body">{companies.length} companies with their rounds, roles and packages</p>
+        <p className="font-mono text-[11px] text-mute">
+          Packages and rounds come from public placement reports and vary by year, role and campus. Last checked {lastVerified}.
+        </p>
       </div>
 
       {companies.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-20 text-center bg-card border border-hair rounded-xl border-dashed">
+        <div className="flex flex-col items-center justify-center py-20 text-center bg-card border-[1.5px] border-hair rounded-xl border-dashed">
           <div className="w-16 h-16 bg-paper-2 rounded-2xl flex items-center justify-center mb-4">
             <SearchX className="w-8 h-8 text-mute" />
           </div>
@@ -33,12 +41,12 @@ export function CompanyDirectory({ companies, onSelect, searchQuery }: CompanyDi
             return (
               <div 
                 key={company.id} 
-                className="bg-card border border-hair hover:border-line rounded-xl p-5 flex flex-col h-full gap-4 transition-all hover:shadow-sm group cursor-pointer"
-                onClick={() => onSelect(company.id)}
+                className="bg-card border-[1.5px] border-hair hover:border-line rounded-xl p-5 flex flex-col h-full gap-4 transition-all hover:shadow-sm group cursor-pointer"
+                {...pressable(() => onSelect(company.id))}
               >
                 {/* Header: Logo, Name, Location */}
                 <div className="flex gap-3">
-                  <div className="w-12 h-12 shrink-0 rounded-lg bg-paper-2 border border-hair flex items-center justify-center text-ink font-bold text-lg font-newsreader">
+                  <div className="w-12 h-12 shrink-0 rounded-lg bg-paper-2 border-[1.5px] border-hair flex items-center justify-center text-ink font-bold text-lg font-cond">
                     {company.monogram}
                   </div>
                   <div className="flex flex-col justify-center gap-0.5">
@@ -55,7 +63,7 @@ export function CompanyDirectory({ companies, onSelect, searchQuery }: CompanyDi
 
                 {/* Details Grid */}
                 <div className="mt-1 grid grid-cols-1 gap-3">
-                  <div className="flex flex-col gap-1 bg-paper border border-hair rounded-lg p-2.5">
+                  <div className="flex flex-col gap-1 bg-paper border-[1.5px] border-hair rounded-lg p-2.5">
                     <span className="text-[10px] font-semibold text-mute uppercase tracking-wider">Packages</span>
                     <span className="text-[12px] font-mono font-semibold text-ink">{company.salaryRange}</span>
                   </div>
@@ -65,7 +73,7 @@ export function CompanyDirectory({ companies, onSelect, searchQuery }: CompanyDi
                 <div className="flex flex-col gap-2 mt-auto">
                   <div className="flex flex-wrap gap-1.5">
                     {company.roles.map(r => (
-                      <span key={r} className="text-[10px] bg-paper-2 border border-hair px-1.5 py-0.5 rounded text-body">
+                      <span key={r} className="text-[10px] bg-paper-2 border-[1.5px] border-hair px-1.5 py-0.5 rounded text-body">
                         {r}
                       </span>
                     ))}

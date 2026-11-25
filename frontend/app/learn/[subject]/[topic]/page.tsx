@@ -664,8 +664,11 @@ export default function TopicPage() {
             {currentModule.title} · {position}/{total}
           </Link>
           <div className="flex shrink-0 items-center gap-3">
-            <span className="hidden font-mono text-[12px] tabular-nums text-mute sm:inline">
-              {isCompleted ? "Read" : read >= 100 ? "Reached the end" : `${read}% read · ${minutesLeft} min left`}
+            <span className="font-mono text-[12px] tabular-nums text-mute">
+              <span className="sm:hidden">{isCompleted ? "" : `${read}%`}</span>
+              <span className="hidden sm:inline">
+                {isCompleted ? "Read" : read >= 100 ? "Reached the end" : `${read}% read · ${minutesLeft} min left`}
+              </span>
             </span>
             <LessonBookmarkButton course={subjectSlug} lesson={topicSlug} />
             {isCompleted ? (
@@ -729,6 +732,17 @@ export default function TopicPage() {
               <p className="text-body">This lesson has no content yet.</p>
             )}
             <div ref={contentEndRef} aria-hidden />
+            {!isCompleted && read >= 100 && (
+              <div className="brut flex flex-wrap items-center justify-between gap-4 rounded-2xl bg-card p-5">
+                <span>
+                  <span className="label-cond block text-[20px]">You reached the end</span>
+                  <span className="text-[14px] text-body">Mark it complete to count it towards the course and your streak.</span>
+                </span>
+                <button onClick={markComplete} disabled={updating} className={buttonClass("accent")}>
+                  {updating ? <Loader2 className="size-4 animate-spin" /> : <Check className="size-4" />} Mark complete
+                </button>
+              </div>
+            )}
 
             <section className="border-t-[1.5px] border-hair pt-8">
               <div className="mb-3 flex items-center justify-between">

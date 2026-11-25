@@ -53,7 +53,7 @@ function TableRow({ table, onTableClick }: { table: DatabaseTable; onTableClick:
             e.stopPropagation();
             onTableClick(table.name);
           }}
-          className="opacity-0 group-hover:opacity-100 text-[10px] text-accent-ink font-semibold bg-accent-soft px-1.5 py-0.5 rounded transition-all hover:bg-accent hover:text-paper"
+          className="sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100 sm:focus-within:opacity-100 text-[10px] text-accent-ink font-semibold bg-accent-soft px-1.5 py-0.5 rounded transition-all hover:bg-accent hover:text-paper"
           title={`SELECT * FROM ${table.name}`}
         >
           SELECT
@@ -88,7 +88,7 @@ function ColumnRow({ col }: { col: DatabaseColumn }) {
 
 export function SqlSchemaSidebar({ tables, isLoading, onTableClick, onRefresh }: SqlSchemaSidebarProps) {
   return (
-    <div className="bg-card rounded-2xl border border-hair flex flex-col h-full overflow-hidden">
+    <div className="bg-card rounded-2xl border-[1.5px] border-hair flex flex-col h-full overflow-hidden">
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-hair bg-paper-2/60 shrink-0">
         <div className="flex items-center gap-2">

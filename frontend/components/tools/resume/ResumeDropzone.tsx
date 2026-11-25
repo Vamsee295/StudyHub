@@ -48,9 +48,11 @@ export function ResumeDropzone({ onAnalyze, isAnalyzing }: ResumeDropzoneProps) 
     }
   };
 
+  const openPicker = () => inputRef.current?.click();
+
   return (
-    <div className="bg-card rounded-2xl border border-hair p-6 sm:p-8 flex flex-col h-full justify-center items-center">
-      <h2 className="text-xl font-bold text-ink mb-2">Upload your Resume</h2>
+    <div className="bg-card rounded-2xl border-[1.5px] border-hair p-6 sm:p-8 flex flex-col h-full justify-center items-center">
+      <h2 className="label-cond text-[22px] mb-2">Upload your resume</h2>
       <p className="text-mute text-sm mb-8 text-center max-w-md">
         We’ll parse your resume and evaluate it against typical placement ATS systems to give you actionable feedback.
       </p>
@@ -66,7 +68,16 @@ export function ResumeDropzone({ onAnalyze, isAnalyzing }: ResumeDropzoneProps) 
         onDragLeave={handleDrag}
         onDragOver={handleDrag}
         onDrop={handleDrop}
-        onClick={() => inputRef.current?.click()}
+        role="button"
+        tabIndex={0}
+        onClick={openPicker}
+        onKeyDown={(e) => {
+          if (e.target === e.currentTarget && (e.key === "Enter" || e.key === " ")) {
+            e.preventDefault();
+            openPicker();
+          }
+        }}
+        aria-label="Choose a resume file"
       >
         <input 
           ref={inputRef}
@@ -110,7 +121,7 @@ export function ResumeDropzone({ onAnalyze, isAnalyzing }: ResumeDropzoneProps) 
           <button 
             onClick={() => onAnalyze(null)}
             disabled={isAnalyzing}
-            className="flex items-center gap-2 px-5 py-2.5 bg-paper-2 border border-hair text-body rounded-lg hover:bg-card-2 transition-colors font-medium text-sm"
+            className="flex items-center gap-2 px-5 py-2.5 bg-paper-2 border-[1.5px] border-hair text-body rounded-lg hover:bg-card-2 transition-colors font-medium text-sm"
           >
             <FileText className="w-4 h-4 text-accent" />
             Try with Sample SDE Resume

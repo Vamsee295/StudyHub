@@ -80,7 +80,7 @@ export function CommentPanel({ post, currentUserId, onClose }: CommentPanelProps
       aria-modal="true"
       aria-label="Comments"
     >
-      <div className="bg-card w-full sm:max-w-lg rounded-t-2xl sm:rounded-2xl shadow-2xl border border-hair overflow-hidden flex flex-col max-h-[85vh]">
+      <div className="bg-card w-full sm:max-w-lg rounded-t-2xl sm:rounded-2xl shadow-2xl border-[1.5px] border-hair overflow-hidden flex flex-col max-h-[85vh]">
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-hair">
           <div className="flex items-center gap-2">
@@ -153,7 +153,7 @@ export function CommentPanel({ post, currentUserId, onClose }: CommentPanelProps
                 placeholder="Write a comment… (Ctrl+Enter to post)"
                 rows={2}
                 maxLength={1000}
-                className="flex-1 resize-none px-3.5 py-2.5 rounded-xl border border-hair text-[13px] text-ink placeholder-mute focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent leading-relaxed"
+                className="flex-1 resize-none px-3.5 py-2.5 rounded-xl border-[1.5px] border-hair text-[13px] text-ink placeholder-mute focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent leading-relaxed"
               />
               <button
                 onClick={handleSubmit}

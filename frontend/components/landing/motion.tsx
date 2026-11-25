@@ -1,40 +1,49 @@
 "use client";
 // Landing-page motion, ported from the portfolio (Vamsee295/Portfolio app/Components/common/motion.tsx).
 // App pages appear instantly; only the landing reveals on scroll (DESIGN §7).
-import { motion, useInView, useReducedMotion } from "framer-motion";
-import { useEffect, useId, useRef, useState, type ReactNode } from "react";
+// No animation library: an IntersectionObserver adds a class and CSS does the rest (globals.css "landing reveal").
+// Content renders visible on the server; only things that start below the fold are hidden and then revealed,
+// so the first screen paints at once and nothing depends on JS to show up.
+import { useEffect, useId, useRef, useState, type ReactNode, type RefObject } from "react";
 
-export const ease = [0.6, 0, 0.3, 1] as const;
+/** Below the fold at mount: hide it (`waitClass`), then add `reveal-in` once it scrolls into view. */
+function useRevealOnScroll(ref: RefObject<HTMLElement | null>, waitClass: string, delay = 0) {
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || el.getBoundingClientRect().top < window.innerHeight) return; // already visible: leave it be
+    el.classList.add(waitClass);
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        el.style.transitionDelay = `${delay}s`;
+        el.classList.add("reveal-in");
+        io.disconnect();
+      },
+      { threshold: 0.15 }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [ref, waitClass, delay]);
+}
 
 /** Rises into view once, when scrolled to. */
 export function Reveal({ children, delay = 0, className = "" }: { children: ReactNode; delay?: number; className?: string }) {
-  const still = useReducedMotion();
+  const ref = useRef<HTMLDivElement>(null);
+  useRevealOnScroll(ref, "reveal-wait", delay);
   return (
-    <motion.div
-      className={className}
-      initial={still ? false : { opacity: 0, y: 28 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.15 }}
-      transition={{ duration: 0.7, delay, ease }}
-    >
+    <div ref={ref} className={className}>
       {children}
-    </motion.div>
+    </div>
   );
 }
 
 /** Rust block that sweeps in behind a word when it scrolls into view. */
 export function Marked({ children }: { children: ReactNode }) {
-  const still = useReducedMotion();
+  const ref = useRef<HTMLSpanElement>(null);
+  useRevealOnScroll(ref, "mark-wait", 0.25);
   return (
     <span className="relative mx-[0.06em] inline-block whitespace-nowrap px-[0.14em]">
-      <motion.span
-        aria-hidden
-        className="absolute -inset-x-[0.04em] -inset-y-[0.04em] origin-left -rotate-1 rounded-lg bg-accent"
-        initial={still ? false : { scaleX: 0 }}
-        whileInView={{ scaleX: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.55, delay: 0.25, ease }}
-      />
+      <span ref={ref} aria-hidden className="mark-block absolute -inset-x-[0.04em] -inset-y-[0.04em] origin-left -rotate-1 rounded-lg bg-accent" />
       <span className="relative text-paper">{children}</span>
     </span>
   );
@@ -43,23 +52,30 @@ export function Marked({ children }: { children: ReactNode }) {
 /** Counts from 0 to `to` with an ease-out cubic when it scrolls into view. */
 export function CountUp({ to }: { to: number }) {
   const ref = useRef<HTMLSpanElement>(null);
-  const inView = useInView(ref, { once: true });
-  const still = useReducedMotion();
   // Starts at the real number (server HTML, no-JS, paused tabs all show it); the first animation frame resets it to 0.
   const [n, setN] = useState(to);
 
   useEffect(() => {
-    if (!inView || still) return;
+    const el = ref.current;
+    if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     let raf = 0;
-    const t0 = performance.now();
-    const step = (t: number) => {
-      const k = Math.min(1, (t - t0) / 1400);
-      setN(Math.round(to * (1 - Math.pow(1 - k, 3))));
-      if (k < 1) raf = requestAnimationFrame(step);
+    const io = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return;
+      io.disconnect();
+      const t0 = performance.now();
+      const step = (t: number) => {
+        const k = Math.min(1, (t - t0) / 1400);
+        setN(Math.round(to * (1 - Math.pow(1 - k, 3))));
+        if (k < 1) raf = requestAnimationFrame(step);
+      };
+      raf = requestAnimationFrame(step);
+    });
+    io.observe(el);
+    return () => {
+      io.disconnect();
+      cancelAnimationFrame(raf);
     };
-    raf = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(raf);
-  }, [inView, still, to]);
+  }, [to]);
 
   return <span ref={ref}>{n.toLocaleString("en-IN")}</span>;
 }

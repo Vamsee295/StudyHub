@@ -173,7 +173,7 @@ export default function SQLFileContextMenu({
       ref={menuRef}
       role="menu"
       aria-label={`Options for ${file.name}`}
-      className="fixed z-50 bg-card border border-hair shadow-xl rounded-lg py-1.5 w-48 text-sm animate-in fade-in zoom-in-95 duration-100 select-none"
+      className="fixed z-50 bg-card border-[1.5px] border-hair shadow-xl rounded-lg py-1.5 w-48 text-sm animate-in fade-in zoom-in-95 duration-100 select-none"
       style={{
         top: posY,
         left: posX

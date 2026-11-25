@@ -27,7 +27,7 @@ export default function Step3Baseline({ data, update }: Step3BaselineProps) {
         </p>
       </div>
 
-      <div className="flex flex-col border border-hair rounded-xl overflow-hidden bg-card shadow-2xs">
+      <div className="flex flex-col border-[1.5px] border-hair rounded-xl overflow-hidden bg-card shadow-2xs">
         {/* Header row */}
         <div className="hidden md:grid grid-cols-12 gap-4 bg-paper-2/80 px-4 py-3 border-b border-hair text-xs font-mono font-semibold uppercase tracking-wider text-mute">
           <div className="col-span-5">Competency Domain</div>

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { pressable } from "@/lib/utils";
 import { motion, AnimatePresence } from 'framer-motion';
 import { DsaProblem, dsaCatalog } from '@/lib/data/dsaCatalog';
 import {
@@ -118,7 +119,7 @@ export const DsaProblemDetailModal: React.FC<DsaProblemDetailModalProps> = ({
                   </div>
                   <span className="text-sm font-mono text-mute">#{problem.id}</span>
                 </div>
-                <h2 className="text-2xl font-bold text-ink mb-1">{problem.title}</h2>
+                <h2 className="display text-[30px] mb-1">{problem.title}</h2>
                 <div className="text-sm text-mute mb-4 font-medium">
                   {problem.primaryTopic} {problem.tags.length > 1 ? `· ${problem.tags.find(t => t !== problem.primaryTopic) || ''}` : ''}
                 </div>
@@ -161,7 +162,7 @@ export const DsaProblemDetailModal: React.FC<DsaProblemDetailModalProps> = ({
                 </h3>
                 <div className="flex flex-wrap gap-2">
                   {problem.skills.map((skill, idx) => (
-                    <div key={idx} className="text-sm text-body font-medium p-2 bg-paper-2 rounded border border-hair">
+                    <div key={idx} className="text-sm text-body font-medium p-2 bg-paper-2 rounded border-[1.5px] border-hair">
                       {skill}
                     </div>
                   ))}
@@ -171,7 +172,7 @@ export const DsaProblemDetailModal: React.FC<DsaProblemDetailModalProps> = ({
               {/* Algorithmic Context */}
               <div className="space-y-3">
                 <h3 className="text-xs font-bold text-mute uppercase tracking-wider">Algorithmic Context</h3>
-                <div className="grid grid-cols-2 gap-0 border border-hair rounded-xl overflow-hidden divide-x divide-hair">
+                <div className="grid grid-cols-2 gap-0 border-[1.5px] border-hair rounded-xl overflow-hidden divide-x divide-hair">
                   <div className="p-4 bg-card flex flex-col items-center justify-center">
                     <span className="text-[10px] font-bold text-mute uppercase tracking-widest mb-1">Time</span>
                     <span className="font-mono text-base font-semibold text-ink">{problem.timeComplexity}</span>
@@ -215,9 +216,9 @@ export const DsaProblemDetailModal: React.FC<DsaProblemDetailModalProps> = ({
               {/* Your Progress */}
               <div className="space-y-3">
                 <h3 className="text-xs font-bold text-mute uppercase tracking-wider">Your Progress</h3>
-                <div className="border border-hair rounded-xl overflow-hidden bg-card">
+                <div className="border-[1.5px] border-hair rounded-xl overflow-hidden bg-card">
                   <div 
-                    onClick={() => handleStatusUpdate('not_started')}
+                    {...pressable(() => handleStatusUpdate('not_started'))}
                     className="flex items-center gap-3 p-3 border-b border-hair cursor-pointer hover:bg-paper-2 transition-colors"
                   >
                     <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${status === 'not_started' ? 'border-ink/25' : 'border-hair'}`}>
@@ -228,7 +229,7 @@ export const DsaProblemDetailModal: React.FC<DsaProblemDetailModalProps> = ({
                     </div>
                   </div>
                   <div 
-                    onClick={() => handleStatusUpdate('attempted')}
+                    {...pressable(() => handleStatusUpdate('attempted'))}
                     className="flex items-center gap-3 p-3 border-b border-hair cursor-pointer hover:bg-paper-2 transition-colors"
                   >
                     <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${status === 'attempted' ? 'border-gold' : 'border-hair'}`}>
@@ -242,7 +243,7 @@ export const DsaProblemDetailModal: React.FC<DsaProblemDetailModalProps> = ({
                     </div>
                   </div>
                   <div 
-                    onClick={() => handleStatusUpdate('solved')}
+                    {...pressable(() => handleStatusUpdate('solved'))}
                     className="flex items-center gap-3 p-3 cursor-pointer hover:bg-paper-2 transition-colors"
                   >
                     <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${status === 'solved' ? 'border-note' : 'border-hair'}`}>
@@ -270,7 +271,7 @@ export const DsaProblemDetailModal: React.FC<DsaProblemDetailModalProps> = ({
                   onChange={(e) => handleNoteChange(e.target.value)}
                   onBlur={handleNoteBlur}
                   placeholder="Add your notes... (e.g. 'Used nested loops initially. Need to remember complement = target - nums[i]')"
-                  className="w-full p-4 border border-hair rounded-xl text-sm text-body min-h-[120px] resize-y focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent placeholder:text-mute"
+                  className="w-full p-4 border-[1.5px] border-hair rounded-xl text-sm text-body min-h-[120px] resize-y focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent placeholder:text-mute"
                 />
               </div>
 
@@ -285,7 +286,7 @@ export const DsaProblemDetailModal: React.FC<DsaProblemDetailModalProps> = ({
                       return (
                         <div 
                           key={related.id} 
-                          onClick={() => onProblemSelect?.(related.id)}
+                          {...pressable(() => onProblemSelect?.(related.id))}
                           className="flex items-center gap-2 text-sm text-body hover:text-accent-ink cursor-pointer group py-1"
                         >
                           <ChevronRight className="w-3 h-3 text-ink/30 group-hover:text-accent transition-colors" />
@@ -333,7 +334,7 @@ export const DsaProblemDetailModal: React.FC<DsaProblemDetailModalProps> = ({
                   <button
                     disabled={isUpdating}
                     onClick={() => handleStatusUpdate('not_started')}
-                    className="flex items-center justify-center gap-2 w-full py-3 px-4 bg-card border border-hair hover:border-danger-line hover:bg-danger-soft hover:text-danger text-body font-medium rounded-xl transition-all disabled:opacity-50"
+                    className="flex items-center justify-center gap-2 w-full py-3 px-4 bg-card border-[1.5px] border-hair hover:border-danger-line hover:bg-danger-soft hover:text-danger text-body font-medium rounded-xl transition-all disabled:opacity-50"
                   >
                     <XCircle className="w-5 h-5" />
                     Reset Progress

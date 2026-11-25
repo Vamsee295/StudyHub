@@ -49,10 +49,11 @@ export function AskDialog() {
           <p className="display text-[28px]">{current.title}</p>
           {current.body && <p className="mt-2 text-[15px] leading-relaxed text-body">{current.body}</p>}
           <div className="mt-6 flex justify-end gap-2">
-            <button type="button" onClick={() => finish(false)} className={buttonClass("ghost", "sm")}>
+            {/* dangerous actions start on Cancel so a stray Enter can't confirm them */}
+            <button type="button" autoFocus={!!current.danger} onClick={() => finish(false)} className={buttonClass("ghost", "sm")}>
               Cancel
             </button>
-            <button type="button" autoFocus onClick={() => finish(true)} className={clsx(buttonClass(current.danger ? "danger" : "primary", "sm"))}>
+            <button type="button" autoFocus={!current.danger} onClick={() => finish(true)} className={clsx(buttonClass(current.danger ? "danger" : "primary", "sm"))}>
               {current.ok}
             </button>
           </div>

@@ -29,7 +29,7 @@ export default function Step1Identity({ data, update }: Step1IdentityProps) {
             placeholder="e.g. Rahul Sharma"
             value={data.fullName || ''}
             onChange={(e) => update({ fullName: e.target.value })}
-            className="w-full bg-paper-2/60 border border-hair rounded-lg px-3.5 py-2.5 text-sm text-ink placeholder:text-mute focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 focus:bg-card transition-all"
+            className="w-full bg-paper-2/60 border-[1.5px] border-hair rounded-lg px-3.5 py-2.5 text-sm text-ink placeholder:text-mute focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 focus:bg-card transition-all"
           />
         </div>
 
@@ -44,7 +44,7 @@ export default function Step1Identity({ data, update }: Step1IdentityProps) {
             placeholder="e.g. Indian Institute of Technology"
             value={data.college || ''}
             onChange={(e) => update({ college: e.target.value })}
-            className="w-full bg-paper-2/60 border border-hair rounded-lg px-3.5 py-2.5 text-sm text-ink placeholder:text-mute focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 focus:bg-card transition-all"
+            className="w-full bg-paper-2/60 border-[1.5px] border-hair rounded-lg px-3.5 py-2.5 text-sm text-ink placeholder:text-mute focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 focus:bg-card transition-all"
           />
         </div>
 
@@ -58,7 +58,7 @@ export default function Step1Identity({ data, update }: Step1IdentityProps) {
               id="degree"
               value={data.degree || 'B.Tech — Computer Science & Engineering'}
               onChange={(e) => update({ degree: e.target.value })}
-              className="w-full bg-paper-2/60 border border-hair rounded-lg px-3.5 py-2.5 text-sm text-ink focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 focus:bg-card transition-all appearance-none cursor-pointer pr-10"
+              className="w-full bg-paper-2/60 border-[1.5px] border-hair rounded-lg px-3.5 py-2.5 text-sm text-ink focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 focus:bg-card transition-all appearance-none cursor-pointer pr-10"
             >
               <option value="B.Tech — Computer Science & Engineering">B.Tech — Computer Science & Engineering</option>
               <option value="B.Tech — Information Technology">B.Tech — Information Technology</option>
@@ -84,7 +84,7 @@ export default function Step1Identity({ data, update }: Step1IdentityProps) {
               id="gradYear"
               value={data.graduationYear || '2026'}
               onChange={(e) => update({ graduationYear: e.target.value })}
-              className="w-full bg-paper-2/60 border border-hair rounded-lg px-3.5 py-2.5 text-sm text-ink focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 focus:bg-card transition-all appearance-none cursor-pointer pr-10"
+              className="w-full bg-paper-2/60 border-[1.5px] border-hair rounded-lg px-3.5 py-2.5 text-sm text-ink focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 focus:bg-card transition-all appearance-none cursor-pointer pr-10"
             >
               <option value="2024">2024</option>
               <option value="2025">2025</option>
@@ -106,7 +106,7 @@ export default function Step1Identity({ data, update }: Step1IdentityProps) {
               id="driveCycle"
               value={data.driveCycle || 'Campus & Off-Campus 2026–27'}
               onChange={(e) => update({ driveCycle: e.target.value })}
-              className="w-full bg-paper-2/60 border border-hair rounded-lg px-3.5 py-2.5 text-sm text-ink focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 focus:bg-card transition-all appearance-none cursor-pointer pr-10"
+              className="w-full bg-paper-2/60 border-[1.5px] border-hair rounded-lg px-3.5 py-2.5 text-sm text-ink focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 focus:bg-card transition-all appearance-none cursor-pointer pr-10"
             >
               <option value="Campus & Off-Campus 2024–25">Campus & Off-Campus 2024–25</option>
               <option value="Campus & Off-Campus 2025–26">Campus & Off-Campus 2025–26</option>

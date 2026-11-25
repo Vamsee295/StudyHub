@@ -20,7 +20,7 @@ export function RecommendationsSection({ recommendations }: { recommendations: T
         {recommendations.map((template) => (
           <div
             key={template.id}
-            className="group bg-card border-t-2 border-hair border-t-accent rounded-b-xl rounded-t-sm p-6 hover:shadow-md transition-all flex flex-col h-full"
+            className="group bg-card border-t-2 border-hair border-t-accent rounded-b-xl rounded-t-sm p-6 hover:shadow-[4px_5px_0_var(--hard)] transition-all flex flex-col h-full"
           >
             <div className="flex items-center gap-2 mb-3">
               <span className="bg-accent-soft text-accent-ink text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded border border-accent-line flex items-center gap-1.5">
@@ -33,7 +33,7 @@ export function RecommendationsSection({ recommendations }: { recommendations: T
               {template.title}
             </h3>
 
-            <div className="bg-paper border border-hair rounded-lg p-3 my-3">
+            <div className="bg-paper border-[1.5px] border-hair rounded-lg p-3 my-3">
               <p className="text-[13px] text-body flex gap-2">
                 <Lightbulb className="w-4 h-4 text-accent-ink shrink-0 mt-0.5" />
                 <span className="leading-relaxed">{template.description}</span>
@@ -41,7 +41,7 @@ export function RecommendationsSection({ recommendations }: { recommendations: T
             </div>
 
             <div className="mt-auto pt-4 flex items-center justify-between">
-              <span className="text-[12px] font-semibold text-body bg-paper-2 px-2.5 py-1 rounded-md border border-hair/50">
+              <span className="text-[12px] font-semibold text-body bg-paper-2 px-2.5 py-1 rounded-md border-[1.5px] border-hair/50">
                 {template.estimatedTime}
               </span>
               <Link

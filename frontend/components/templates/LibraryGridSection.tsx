@@ -30,7 +30,7 @@ export function LibraryGridSection({ templates }: { templates: TemplateItem[] })
         {templates.map((template) => (
           <div
             key={template.id}
-            className="group bg-card border border-hair rounded-xl flex flex-col h-full hover:border-line hover:shadow-md transition-all overflow-hidden relative"
+            className="group bg-card border-[1.5px] border-hair rounded-xl flex flex-col h-full hover:border-line hover:shadow-[4px_5px_0_var(--hard)] transition-all overflow-hidden relative"
           >
             {/* Top accent line */}
             <div className="h-1 w-full bg-hair transition-colors group-hover:bg-accent"></div>
@@ -75,7 +75,7 @@ export function LibraryGridSection({ templates }: { templates: TemplateItem[] })
               {/* Tags */}
               <div className="flex flex-wrap gap-1.5 pt-4 border-t border-hair/50">
                 {template.tags.map((tag, i) => (
-                  <span key={i} className="text-[11px] bg-paper-2 text-body px-2 py-0.5 rounded-md font-medium border border-hair/50">
+                  <span key={i} className="text-[11px] bg-paper-2 text-body px-2 py-0.5 rounded-md font-medium border-[1.5px] border-hair/50">
                     {tag}
                   </span>
                 ))}
@@ -90,7 +90,7 @@ export function LibraryGridSection({ templates }: { templates: TemplateItem[] })
               </span>
               <Link
                 href={`/templates/${template.id}`}
-                className="bg-card text-ink border border-hair group-hover:border-accent group-hover:bg-accent group-hover:text-paper text-[13px] font-semibold px-4 py-1.5 rounded-lg transition-all flex items-center gap-1.5"
+                className="bg-card text-ink border-[1.5px] border-hair group-hover:border-accent group-hover:bg-accent group-hover:text-paper text-[13px] font-semibold px-4 py-1.5 rounded-lg transition-all flex items-center gap-1.5"
               >
                 Use Template
                 <ArrowRight className="w-3.5 h-3.5" />

@@ -14,9 +14,9 @@ import {
   PlaySquare,
   Server,
   TerminalSquare,
-  type LucideIcon,
 } from "lucide-react";
 import { DailyCard } from "@/components/learn/DailyCard";
+import { courseProgress } from "@/lib/learn/progress";
 import { PageHeader, Section, Progress } from "@/components/ui/Page";
 import { buttonClass } from "@/components/ui/Button";
 import { dashboardApi } from "@/lib/api/dashboard";
@@ -26,13 +26,6 @@ import { useProfile } from "@/components/providers/ProfileProvider";
 /* eslint-disable @typescript-eslint/no-explicit-any -- the /dashboard payload is untyped on the API side */
 
 const CACHE_KEY = "pathward-dashboard-cache";
-const subjectIcons: Record<string, LucideIcon> = {
-  TerminalSquare,
-  Code2: CodeXml,
-  Database,
-  Server,
-  Network,
-};
 const quickTools = [
   { name: "SQL Playground", icon: Database, href: "/tools/sql-playground" },
   { name: "DSA Visualizer", icon: PlaySquare, href: "/tools/dsa-visualizer" },
@@ -72,22 +65,23 @@ export default function DashboardPage() {
   const fullName = profile?.identity?.fullName || (user?.email ? user.email.split("@")[0] : "Learner");
   const firstName = fullName.split(" ")[0];
   const track = data?.current_track || profile?.identity?.targetRole || profile?.careerTracks?.[0] || "Software Development Engineer";
-  const readiness = data?.metrics?.readiness > 0 ? data.metrics.readiness : profile?.completionPercentage || 0;
+  // Real progress: lessons completed across every course (this device's store, synced to the account).
+  const [courses] = useState(courseProgress); // AppLayout renders pages only on the client
+  const lessonsDone = courses.reduce((n, c) => n + c.done, 0);
+  const lessonsTotal = courses.reduce((n, c) => n + c.total, 0);
+  const overallPct = lessonsTotal ? Math.round((100 * lessonsDone) / lessonsTotal) : 0;
 
   const cont = data?.continue_learning || { module: "Start your first module", topic: `Begin your ${track} path`, progress: 0, has_started: false };
   const contHref = cont.has_started && cont.subject_slug && cont.topic_slug ? `/learn/${cont.subject_slug}/${cont.topic_slug}` : "/learn";
-  const subjects: any[] = data?.learning_progress || [
-    { name: "Programming", progress: 0, icon: "TerminalSquare" },
-    { name: "DSA", progress: 0, icon: "Code2" },
-    { name: "SQL", progress: 0, icon: "Database" },
-    { name: "Core CS", progress: 0, icon: "Server" },
-    { name: "Aptitude", progress: 0, icon: "Network" },
-  ];
+  // courses you've started first (most done first), topped up with the rest
+  const subjects = [...courses].sort((a, b) => b.pct - a.pct || b.done - a.done).slice(0, 6);
+  const iconFor = (slug: string) =>
+    /dsa|algorithm/.test(slug) ? CodeXml : /sql|dbms/.test(slug) ? Database : /os|network|cn/.test(slug) ? Server : /apt/.test(slug) ? Network : TerminalSquare;
   const plan = data?.today_plan || { tasks: [], completion: 0 };
   const company = profile?.targets?.companies?.[0];
   const target = data?.upcoming_target || {
     title: company ? `${company} prep` : "Pick your target companies",
-    subtitle: company ? `Preparation calibrated for ${company}.` : "Track companies to tailor your interview prep.",
+    subtitle: company ? `Rounds, topics and practice for ${company}.` : "Track companies to tailor your interview prep.",
   };
 
   const toggleTask = async (taskId: number) => {
@@ -110,8 +104,10 @@ export default function DashboardPage() {
     <>
       <PageHeader eyebrow={track} title={`${hello},`} hl={firstName}>
         <div className="text-right max-md:text-left">
-          <p className="display text-[56px] leading-none">{readiness}%</p>
-          <p className="font-mono text-[11px] uppercase tracking-wider text-mute">Placement readiness</p>
+          <p className="display text-[56px] leading-none">{overallPct}%</p>
+          <p className="font-mono text-[11px] uppercase tracking-wider text-mute">
+            {lessonsDone} of {lessonsTotal} lessons done
+          </p>
         </div>
       </PageHeader>
 
@@ -129,21 +125,22 @@ export default function DashboardPage() {
                 {cont.has_started ? "Continue" : "Start learning"} <ArrowRight className="size-5" />
               </Link>
             </div>
-            <Progress value={cont.progress} label="Module progress" className="mt-6" />
+            <Progress value={cont.progress} label="Lesson read" className="mt-6" />
           </div>
 
           <Section title="Your subjects" kicker="Progress" href="/learn">
             <div className="grid grid-cols-2 gap-5 sm:grid-cols-3">
               {subjects.map((s) => {
-                const Icon = subjectIcons[s.icon] || TerminalSquare;
+                const Icon = iconFor(s.slug);
                 return (
-                  <Link key={s.name} href="/learn" className="brut brut-hover no-press flex flex-col rounded-2xl bg-card p-4">
+                  <Link key={s.slug} href={`/learn/${s.slug}`} className="brut brut-hover no-press flex flex-col rounded-2xl bg-card p-4">
                     <span className="flex items-center justify-between">
                       <Icon className="size-5 text-accent" aria-hidden />
-                      <span className="display text-[28px]">{s.progress}%</span>
+                      <span className="display text-[28px]">{s.pct}%</span>
                     </span>
-                    <span className="label-cond mb-3 mt-4 text-[17px]">{s.name}</span>
-                    <Progress value={s.progress} className="mt-auto" />
+                    <span className="label-cond mb-1 mt-4 text-[17px] leading-tight">{s.title}</span>
+                    <span className="mb-3 font-mono text-[11px] text-mute">{s.done} of {s.total} lessons</span>
+                    <Progress value={s.pct} className="mt-auto" />
                   </Link>
                 );
               })}

@@ -93,7 +93,7 @@ function RoadmapContent() {
           transition={{ duration: 0.45 }}
           className="lg:col-span-4 flex flex-col gap-3"
         >
-          <div className="bg-card rounded-2xl p-5 border border-hair">
+          <div className="bg-card rounded-2xl p-5 border-[1.5px] border-hair">
             <div className="flex items-center justify-between pb-3.5 mb-2 border-b border-hair/60">
               <h2 className="text-[13px] font-bold text-ink uppercase tracking-wider">
                 Curriculum Path
@@ -194,7 +194,7 @@ function RoadmapContent() {
           className="lg:col-span-8 flex flex-col gap-6"
         >
           {/* MAIN DOSSIER WHITE CARD */}
-          <div className="bg-card rounded-2xl p-6 sm:p-10 border border-hair shadow-card flex flex-col gap-8">
+          <div className="bg-card rounded-2xl p-6 sm:p-10 border-[1.5px] border-hair shadow-card flex flex-col gap-8">
             
             <AnimatePresence mode="wait">
               {selectedSlug === "dsa" ? (
@@ -236,7 +236,7 @@ function RoadmapContent() {
                 </div>
 
                 {/* OVERALL PROGRESS SECTION */}
-                <div className="bg-paper-2/70 p-6 sm:p-7 rounded-xl border border-hair flex flex-col gap-3.5">
+                <div className="bg-paper-2/70 p-6 sm:p-7 rounded-xl border-[1.5px] border-hair flex flex-col gap-3.5">
                   <div className="flex flex-wrap justify-between items-center text-sm gap-2">
                     <span className="text-[12px] font-bold text-ink uppercase tracking-wider font-mono">
                       Overall Stage Progress
@@ -268,7 +268,7 @@ function RoadmapContent() {
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
                     
                     {/* CARD 1: WHAT TO LEARN */}
-                  <div className="bg-card p-6 rounded-xl border border-hair hover:border-line transition-all flex flex-col justify-between hover:shadow-md">
+                  <div className="bg-card p-6 rounded-xl border-[1.5px] border-hair hover:border-line transition-all flex flex-col justify-between hover:shadow-[4px_5px_0_var(--hard)]">
                     <div className="flex flex-col gap-3.5">
                       <div className="flex items-center gap-2 pb-2.5 border-b border-hair/60">
                         <Layers className="w-4 h-4 text-accent-ink" />
@@ -302,7 +302,7 @@ function RoadmapContent() {
                   </div>
 
                   {/* CARD 2: CURATED RESOURCES */}
-                  <div className="bg-card p-6 rounded-xl border border-hair hover:border-line transition-all flex flex-col justify-between hover:shadow-md">
+                  <div className="bg-card p-6 rounded-xl border-[1.5px] border-hair hover:border-line transition-all flex flex-col justify-between hover:shadow-[4px_5px_0_var(--hard)]">
                     <div className="flex flex-col gap-3.5">
                       <div className="flex items-center gap-2 pb-2.5 border-b border-hair/60">
                         <BookOpen className="w-4 h-4 text-accent-ink" />
@@ -340,7 +340,7 @@ function RoadmapContent() {
                   </div>
 
                   {/* CARD 3: PRACTICE & LABS */}
-                  <div className="bg-card p-6 rounded-xl border border-hair hover:border-line transition-all flex flex-col justify-between hover:shadow-md">
+                  <div className="bg-card p-6 rounded-xl border-[1.5px] border-hair hover:border-line transition-all flex flex-col justify-between hover:shadow-[4px_5px_0_var(--hard)]">
                     <div className="flex flex-col gap-3.5">
                       <div className="flex items-center gap-2 pb-2.5 border-b border-hair/60">
                         <Code2 className="w-4 h-4 text-accent-ink" />
@@ -449,8 +449,8 @@ export default function RoadmapsPage() {
         <div className="flex flex-col gap-8 pb-16 w-full animate-pulse">
           <div className="h-10 w-80 bg-hair/70 rounded-lg"></div>
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            <div className="lg:col-span-4 bg-card h-[600px] rounded-2xl border border-hair"></div>
-            <div className="lg:col-span-8 bg-card h-[600px] rounded-2xl border border-hair"></div>
+            <div className="lg:col-span-4 bg-card h-[600px] rounded-2xl border-[1.5px] border-hair"></div>
+            <div className="lg:col-span-8 bg-card h-[600px] rounded-2xl border-[1.5px] border-hair"></div>
           </div>
         </div>
       }

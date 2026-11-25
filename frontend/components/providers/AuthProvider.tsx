@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase/client';
+import type { SupabaseClient } from '@supabase/supabase-js';
 import { Session, User } from '@supabase/supabase-js';
 import { useRouter, usePathname } from 'next/navigation';
 
@@ -37,10 +37,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
   const pathname = usePathname();
 
-  useEffect(() => {
-    let mounted = true;
+  // The landing page needs no auth, so it doesn't download the Supabase client (~55 KB gzipped);
+  // the session starts as soon as the visitor moves to any other page.
+  const onLanding = pathname === '/';
 
-    async function getInitialSession() {
+  useEffect(() => {
+    if (onLanding) return;
+    let mounted = true;
+    let unsubscribe = () => {};
+
+    async function getInitialSession(supabase: SupabaseClient) {
       try {
         const { data: { session } } = await supabase.auth.getSession();
         if (mounted) {
@@ -61,7 +67,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
     }
 
-    getInitialSession();
+    import('@/lib/supabase/client').then(({ supabase }) => {
+    if (!mounted) return;
+    getInitialSession(supabase);
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (_event, session) => {
@@ -80,12 +88,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
       }
     );
+    unsubscribe = () => subscription.unsubscribe();
+    });
 
     return () => {
       mounted = false;
-      subscription.unsubscribe();
+      unsubscribe();
     };
-  }, []);
+  }, [onLanding]);
 
   // Route protection effect - DO NOT redirect authenticated users away from /login
   useEffect(() => {

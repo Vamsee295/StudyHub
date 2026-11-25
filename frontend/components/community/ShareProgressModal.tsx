@@ -119,7 +119,7 @@ export function ShareProgressModal({ open, onClose, onPostCreated }: ShareProgre
       aria-modal="true"
       aria-label="Share your progress"
     >
-      <div className="bg-card w-full sm:max-w-lg rounded-t-2xl sm:rounded-2xl shadow-2xl border border-hair overflow-hidden flex flex-col max-h-[90vh]">
+      <div className="bg-card w-full sm:max-w-lg rounded-t-2xl sm:rounded-2xl shadow-2xl border-[1.5px] border-hair overflow-hidden flex flex-col max-h-[90vh]">
         {/* Modal Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-hair">
           <div className="flex items-center gap-2">
@@ -179,7 +179,7 @@ export function ShareProgressModal({ open, onClose, onPostCreated }: ShareProgre
                     : "Brief title…"
                 }
                 maxLength={200}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-hair text-[14px] text-ink placeholder-mute focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
+                className="w-full px-3.5 py-2.5 rounded-xl border-[1.5px] border-hair text-[14px] text-ink placeholder-mute focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
               />
             </div>
           )}
@@ -196,7 +196,7 @@ export function ShareProgressModal({ open, onClose, onPostCreated }: ShareProgre
               placeholder="Share what you learned, problems you solved, resources you found useful, or a milestone you reached…"
               rows={4}
               maxLength={2000}
-              className="w-full px-3.5 py-2.5 rounded-xl border border-hair text-[14px] text-ink placeholder-mute focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent resize-none leading-relaxed"
+              className="w-full px-3.5 py-2.5 rounded-xl border-[1.5px] border-hair text-[14px] text-ink placeholder-mute focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent resize-none leading-relaxed"
             />
             <p className={clsx(
               "text-right text-[11px] mt-0.5",
@@ -251,7 +251,7 @@ export function ShareProgressModal({ open, onClose, onPostCreated }: ShareProgre
         <div className="px-5 py-4 border-t border-hair flex items-center justify-end gap-3">
           <button
             onClick={onClose}
-            className="px-4 py-2 rounded-xl border border-hair text-[13px] font-medium text-body hover:bg-card-2 transition-colors"
+            className="px-4 py-2 rounded-xl border-[1.5px] border-hair text-[13px] font-medium text-body hover:bg-card-2 transition-colors"
           >
             Cancel
           </button>

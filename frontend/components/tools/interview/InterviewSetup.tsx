@@ -21,7 +21,7 @@ export function InterviewSetup({ onStart }: InterviewSetupProps) {
           <Settings className="w-6 h-6 text-accent-ink" />
         </div>
         <div>
-          <h2 className="text-xl font-bold text-ink">Configure Interview</h2>
+          <h2 className="label-cond text-[22px]">Set up your interview</h2>
           <p className="text-mute text-sm">Customize your mock interview session</p>
         </div>
       </div>
@@ -71,7 +71,7 @@ export function InterviewSetup({ onStart }: InterviewSetupProps) {
           <select 
             value={company}
             onChange={(e) => setCompany(e.target.value)}
-            className="w-full bg-card border border-hair text-body rounded-lg px-4 py-2.5 outline-none focus:border-accent transition-colors"
+            className="w-full bg-card border-[1.5px] border-hair text-body rounded-lg px-4 py-2.5 outline-none focus:border-accent transition-colors"
           >
             {companies.map(c => (
               <option key={c} value={c}>{c}</option>
@@ -82,7 +82,7 @@ export function InterviewSetup({ onStart }: InterviewSetupProps) {
 
       <button
         onClick={() => onStart({ domain, count, company })}
-        className="w-full bg-accent text-paper rounded-xl py-3.5 font-bold hover:bg-accent transition-all flex items-center justify-center gap-2 hover:shadow-md"
+        className="w-full bg-accent text-paper rounded-xl py-3.5 font-bold hover:bg-accent transition-all flex items-center justify-center gap-2 hover:shadow-[4px_5px_0_var(--hard)]"
       >
         <Play className="w-5 h-5 fill-current" />
         Start Interview Session

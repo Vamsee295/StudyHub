@@ -45,3 +45,9 @@ next-env.d.ts
 .docs
 .claude
 Agentic-Coding
+# python
+__pycache__/
+*.py[cod]
+
+# local SQLite databases (test data)
+pathward.db

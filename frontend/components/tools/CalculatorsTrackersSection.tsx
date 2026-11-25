@@ -14,7 +14,7 @@ export function CalculatorsTrackersSection({ items }: { items: CalculatorTracker
           <span className="display text-[28px] md:text-[34px]">Calculators &amp; trackers</span>
         </h2>
         <span className="text-[13px] text-body font-medium hidden sm:block">
-          Quick formula and telemetry utilities for placement milestones
+          Quick calculators for CGPA, readiness and timing
         </span>
       </div>
 
@@ -23,7 +23,7 @@ export function CalculatorsTrackersSection({ items }: { items: CalculatorTracker
           <Link
             key={item.id}
             href={item.href}
-            className="group flex flex-col items-center text-center bg-card border border-hair rounded-xl p-4 hover:border-accent hover:shadow-sm transition-all duration-300"
+            className="group flex flex-col items-center text-center bg-card border-[1.5px] border-hair rounded-xl p-4 hover:border-accent hover:shadow-sm transition-all duration-300"
           >
             <span className="text-[10px] font-mono font-medium text-mute uppercase tracking-wider mb-2 group-hover:text-accent-ink transition-colors">
               {item.subtitle}

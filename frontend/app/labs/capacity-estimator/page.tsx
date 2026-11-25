@@ -47,7 +47,7 @@ export default function CapacityLab() {
       <section className={cardCls}>
         <div className="flex flex-wrap gap-2 mb-4">
           {Object.keys(PRESETS).map((k) => (
-            <button key={k} type="button" onClick={() => setInput(PRESETS[k])} className={`px-3 py-1.5 rounded-lg border border-hair text-[13px] text-body hover:border-accent ${focusRing}`}>Load: {k}</button>
+            <button key={k} type="button" onClick={() => setInput(PRESETS[k])} className={`px-3 py-1.5 rounded-lg border-[1.5px] border-hair text-[13px] text-body hover:border-accent ${focusRing}`}>Load: {k}</button>
           ))}
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">

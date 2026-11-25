@@ -10,7 +10,7 @@ interface DsaInfoPanelProps {
 
 export function DsaInfoPanel({ algorithm, currentLineIndex }: DsaInfoPanelProps) {
   return (
-    <div className="bg-card rounded-2xl border border-hair flex flex-col h-full overflow-hidden">
+    <div className="bg-card rounded-2xl border-[1.5px] border-hair flex flex-col h-full overflow-hidden">
       <div className="p-4 border-b border-hair flex items-center gap-2">
         <Info className="w-5 h-5 text-accent" />
         <h3 className="font-semibold text-ink">Information</h3>

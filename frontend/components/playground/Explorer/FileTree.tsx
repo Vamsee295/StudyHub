@@ -222,6 +222,7 @@ function TreeItem({
         >
           <span
             className="ide-tree-arrow"
+            aria-hidden
             onClick={(e) => {
               e.stopPropagation();
               onToggleFolder(node.folder.path);

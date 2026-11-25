@@ -1,5 +1,6 @@
 "use client";
 
+import { pressable } from "@/lib/utils";
 import React from "react";
 import type { ProjectFile, EditorTab } from "@/types/playground";
 
@@ -52,7 +53,7 @@ export default function EditorTabs({
           <div
             key={fileId}
             className={`ide-tab ${isActive ? "ide-tab-active" : ""}`}
-            onClick={() => onSelect(fileId)}
+            {...pressable(() => onSelect(fileId))}
             title={file.path}
           >
             <span className="ide-tab-icon">{getFileIcon(file.name)}</span>

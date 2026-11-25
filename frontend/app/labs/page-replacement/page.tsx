@@ -42,7 +42,7 @@ export default function PageReplacementLab() {
             </button>
           ))}
           {Object.entries(PRESETS).map(([k, v]) => (
-            <button key={k} type="button" onClick={() => setText(v)} className={`px-3 py-1.5 rounded-lg border border-hair text-[13px] text-body hover:border-accent ${focusRing}`}>Load: {k}</button>
+            <button key={k} type="button" onClick={() => setText(v)} className={`px-3 py-1.5 rounded-lg border-[1.5px] border-hair text-[13px] text-body hover:border-accent ${focusRing}`}>Load: {k}</button>
           ))}
         </div>
       </section>
@@ -68,7 +68,7 @@ export default function PageReplacementLab() {
                 <tr key={f}>
                   <td className="px-2 py-1 text-left text-[11px] font-sans text-mute">Frame {f + 1}</td>
                   {run.steps.map((s, i) => (
-                    <td key={i} className={clsx("px-2 py-1 border border-hair",
+                    <td key={i} className={clsx("px-2 py-1 border-[1.5px] border-hair",
                       s.fault && s.frames[f] === s.page ? "bg-accent-soft text-ink font-bold" : "text-body")}>
                       {s.frames[f] ?? ""}
                     </td>

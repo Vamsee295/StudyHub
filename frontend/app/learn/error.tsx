@@ -22,7 +22,7 @@ export default function LearnError({
       </div>
       
       <div className="flex flex-col items-center gap-2 text-center max-w-md">
-        <h2 className="text-xl font-bold text-ink">Something went wrong</h2>
+        <h2 className="label-cond text-[22px]">Something went wrong</h2>
         <p className="text-[14px] text-body leading-relaxed">
           We encountered an issue loading the learning content. Please try again or navigate back to the dashboard.
         </p>
@@ -30,7 +30,7 @@ export default function LearnError({
 
       <button
         onClick={() => reset()}
-        className="mt-2 inline-flex items-center gap-2 bg-card border border-hair hover:border-ink text-ink px-4 py-2 rounded-lg text-[13px] font-semibold transition-colors shadow-sm"
+        className="mt-2 inline-flex items-center gap-2 bg-card border-[1.5px] border-hair hover:border-ink text-ink px-4 py-2 rounded-lg text-[13px] font-semibold transition-colors shadow-sm"
       >
         <RefreshCw className="w-4 h-4" />
         Try again

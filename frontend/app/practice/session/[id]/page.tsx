@@ -250,14 +250,14 @@ export default function PracticeSessionPage({ params }: { params: Promise<{ id: 
             <button
               onClick={() => setCurrent((c) => Math.max(0, c - 1))}
               disabled={current === 0}
-              className="px-4 py-1.5 rounded-md text-[12px] font-semibold border border-hair text-ink disabled:opacity-40"
+              className="px-4 py-1.5 rounded-md text-[12px] font-semibold border-[1.5px] border-hair text-ink disabled:opacity-40"
             >
               Previous
             </button>
             <button
               onClick={() => setCurrent((c) => Math.min(questions.length - 1, c + 1))}
               disabled={current === questions.length - 1}
-              className="px-4 py-1.5 rounded-md text-[12px] font-semibold border border-hair text-ink disabled:opacity-40"
+              className="px-4 py-1.5 rounded-md text-[12px] font-semibold border-[1.5px] border-hair text-ink disabled:opacity-40"
             >
               Next
             </button>

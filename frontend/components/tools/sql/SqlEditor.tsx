@@ -80,7 +80,7 @@ export function SqlEditor({
   };
 
   return (
-    <div className="bg-card rounded-2xl border border-hair flex flex-col h-full overflow-hidden">
+    <div className="bg-card rounded-2xl border-[1.5px] border-hair flex flex-col h-full overflow-hidden">
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-2.5 border-b border-hair bg-paper-2/60 shrink-0">
         <div className="flex items-center gap-2">

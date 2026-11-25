@@ -40,7 +40,7 @@ export function AskedInSection() {
         ))}
       </div>
 
-      <div className="p-5 rounded-xl border border-hair bg-card flex flex-col gap-4">
+      <div className="p-5 rounded-xl border-[1.5px] border-hair bg-card flex flex-col gap-4">
         <p className="text-[15px] text-ink">{company.process}</p>
 
         <div className="flex flex-col gap-3">
@@ -56,7 +56,7 @@ export function AskedInSection() {
                 <div className="flex flex-wrap gap-1.5">
                   {modules.map((m) => (
                     <Link key={m.slug} href={`/learn/${course.slug}/${m.lessons[0]?.slug ?? ""}`}
-                      className={`px-2 py-0.5 rounded-md border border-hair text-[12px] text-body hover:border-accent hover:text-ink ${focusRing}`}>
+                      className={`px-2 py-0.5 rounded-md border-[1.5px] border-hair text-[12px] text-body hover:border-accent hover:text-ink ${focusRing}`}>
                       {m.title}
                     </Link>
                   ))}

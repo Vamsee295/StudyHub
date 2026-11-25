@@ -43,7 +43,7 @@ export default function CgpaConverterPage() {
       />
 
       <div className="grid md:grid-cols-[1fr_280px] gap-6">
-        <section aria-label="Converter" className="p-6 rounded-xl border border-hair bg-card flex flex-col gap-5">
+        <section aria-label="Converter" className="p-6 rounded-xl border-[1.5px] border-hair bg-card flex flex-col gap-5">
           <label className="flex flex-col gap-1.5 text-[13px] max-w-[200px]">
             <span className="font-semibold text-ink">Your CGPA (out of 10)</span>
             <input inputMode="decimal" value={cgpa} onChange={(e) => setCgpa(e.target.value)} aria-invalid={!valid}
@@ -68,17 +68,17 @@ export default function CgpaConverterPage() {
             <div className="grid grid-cols-2 gap-4 max-w-sm">
               <label className="flex flex-col gap-1.5 text-[13px]">
                 <span className="font-semibold text-ink">Multiply by</span>
-                <input inputMode="decimal" value={m} onChange={(e) => setM(e.target.value)} className={`px-3 py-2 rounded-lg border border-hair bg-card tabular-nums ${focusRing}`} />
+                <input inputMode="decimal" value={m} onChange={(e) => setM(e.target.value)} className={`px-3 py-2 rounded-lg border-[1.5px] border-hair bg-card tabular-nums ${focusRing}`} />
               </label>
               <label className="flex flex-col gap-1.5 text-[13px]">
                 <span className="font-semibold text-ink">Then add</span>
-                <input inputMode="decimal" value={c} onChange={(e) => setC(e.target.value)} className={`px-3 py-2 rounded-lg border border-hair bg-card tabular-nums ${focusRing}`} />
+                <input inputMode="decimal" value={c} onChange={(e) => setC(e.target.value)} className={`px-3 py-2 rounded-lg border-[1.5px] border-hair bg-card tabular-nums ${focusRing}`} />
               </label>
             </div>
           )}
         </section>
 
-        <aside aria-label="Result" className="p-6 rounded-xl border border-hair bg-card flex flex-col gap-3 self-start">
+        <aside aria-label="Result" className="p-6 rounded-xl border-[1.5px] border-hair bg-card flex flex-col gap-3 self-start">
           <h2 className="text-[12px] font-bold uppercase tracking-wider text-mute">Equivalent percentage</h2>
           <p className="text-5xl font-bold tabular-nums text-ink" aria-live="polite">{pct === null ? "—" : `${pct.toFixed(2)}%`}</p>
           {pct !== null && (

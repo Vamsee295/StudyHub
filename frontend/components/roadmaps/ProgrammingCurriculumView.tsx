@@ -24,7 +24,7 @@ export const ProgrammingCurriculumView = () => {
 
   if (isLoading) {
     return (
-      <div className="bg-card rounded-2xl p-6 sm:p-10 border border-hair shadow-card flex justify-center py-20">
+      <div className="bg-card rounded-2xl p-6 sm:p-10 border-[1.5px] border-hair shadow-card flex justify-center py-20">
         <div className="w-8 h-8 border-4 border-accent border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
@@ -42,7 +42,7 @@ export const ProgrammingCurriculumView = () => {
         </h3>
       </div>
 
-      <div className="flex items-center gap-6 text-[13px] font-mono text-body mb-2 bg-paper-2/50 p-3 rounded-lg border border-hair">
+      <div className="flex items-center gap-6 text-[13px] font-mono text-body mb-2 bg-paper-2/50 p-3 rounded-lg border-[1.5px] border-hair">
         <span className="flex items-center gap-1.5"><div className="w-1.5 h-1.5 rounded-full bg-accent-line"></div>{subject.modules.length} Modules</span>
         <span className="flex items-center gap-1.5"><div className="w-1.5 h-1.5 rounded-full bg-accent-line"></div>{totalLessons} Lessons</span>
         <span className="flex items-center gap-1.5"><div className="w-1.5 h-1.5 rounded-full bg-accent-line"></div>~15 hours</span>

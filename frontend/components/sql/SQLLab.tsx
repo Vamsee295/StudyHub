@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
+import { pressable } from "@/lib/utils";
 import Link from "next/link";
 import { Database, Play, RotateCcw, Plus, FileCode2, Terminal, PanelLeft, X } from "lucide-react";
 import Editor, { type OnMount } from "@monaco-editor/react";
@@ -453,7 +454,7 @@ export default function SQLLab() {
               return (
                 <div 
                   key={id}
-                  onClick={() => switchTab(id)}
+                  {...pressable(() => switchTab(id))}
                   className={`flex items-center h-9 px-4 gap-2 text-xs cursor-pointer border-r border-[#2b2723] select-none ${isActive ? 'bg-[#151311] text-accent border-t-2 border-t-accent' : 'text-mute hover:bg-[#221f1c] border-t-2 border-t-transparent'}`}
                 >
                   <FileCode2 className="w-3.5 h-3.5" />

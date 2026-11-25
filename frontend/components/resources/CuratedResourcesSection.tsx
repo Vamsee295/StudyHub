@@ -1,5 +1,6 @@
 "use client";
 
+import { pressable } from "@/lib/utils";
 import { useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Clock, FileText, CheckCircle2, Layers, ChevronDown, Download, FolderOpen } from "lucide-react";
@@ -74,7 +75,7 @@ export function CuratedResourcesSection({
                   "col-span-1 lg:col-span-2 group bg-card border rounded-2xl p-5 md:p-6 flex flex-col gap-4 transition-all relative",
                   isExpanded 
                     ? "border-accent ring-2 ring-accent/10 shadow-md" 
-                    : "border-hair hover:border-accent hover:shadow-md hover:shadow-accent/5"
+                    : "border-hair hover:border-accent hover:shadow-[4px_5px_0_var(--hard)]"
                 )}
               >
                 {/* Header row with badges and bookmark */}
@@ -106,7 +107,7 @@ export function CuratedResourcesSection({
                 {/* Pack Title & Description */}
                 <div 
                   className="cursor-pointer select-none"
-                  onClick={() => togglePack(resource.id)}
+                  {...pressable(() => togglePack(resource.id))}
                 >
                   <div className="flex items-center justify-between gap-3">
                     <h3 className="text-[19px] md:text-[20px] font-semibold text-ink leading-snug group-hover:text-accent-ink transition-colors">
@@ -121,13 +122,13 @@ export function CuratedResourcesSection({
                 {/* Tags */}
                 <div className="flex flex-wrap gap-2">
                   {resource.tags.map((tag) => (
-                    <span key={tag} className="text-[11px] px-2 py-0.5 bg-paper-2 text-body rounded-md border border-hair/60 font-medium">
+                    <span key={tag} className="text-[11px] px-2 py-0.5 bg-paper-2 text-body rounded-md border-[1.5px] border-hair/60 font-medium">
                       {tag}
                     </span>
                   ))}
                 </div>
 
-                {/* Action Bar / Click to Drop Button */}
+                {/* Action bar: expand a pack to list its files */}
                 <div className="mt-auto pt-4 border-t border-hair flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div className="flex items-center gap-3 text-[12px] text-mute font-medium">
                     {resource.readTimeEstimate && (
@@ -158,7 +159,7 @@ export function CuratedResourcesSection({
                         : "bg-accent text-paper hover:bg-accent-ink shadow-accent/20"
                     )}
                   >
-                    <span>{isExpanded ? "Collapse Pack Files" : `Drop ${resource.packItems?.length || 4} Files (Click to View)`}</span>
+                    <span>{isExpanded ? "Hide the files" : `Show the ${resource.packItems?.length ?? 0} files`}</span>
                     <ChevronDown className={clsx("w-4 h-4 transition-transform duration-200", isExpanded && "rotate-180")} />
                   </button>
                 </div>
@@ -173,7 +174,7 @@ export function CuratedResourcesSection({
                       transition={{ duration: 0.25, ease: "easeInOut" }}
                       className="overflow-hidden mt-2 pt-2 border-t border-hair"
                     >
-                      <div className="bg-paper-2/60 border border-hair rounded-xl p-4 flex flex-col gap-3">
+                      <div className="bg-paper-2/60 border-[1.5px] border-hair rounded-xl p-4 flex flex-col gap-3">
                         <div className="flex items-center justify-between pb-2 border-b border-hair">
                           <div className="flex items-center gap-2">
                             <Layers className="w-4 h-4 text-accent-ink" />
@@ -190,7 +191,7 @@ export function CuratedResourcesSection({
                           {resource.packItems?.map((item, idx) => (
                             <div 
                               key={item.id}
-                              className="bg-card border border-hair hover:border-accent hover:shadow-sm rounded-xl p-3.5 flex flex-col justify-between gap-3 transition-all group/sub"
+                              className="bg-card border-[1.5px] border-hair hover:border-accent hover:shadow-sm rounded-xl p-3.5 flex flex-col justify-between gap-3 transition-all group/sub"
                             >
                               <div className="flex flex-col gap-1.5">
                                 <div className="flex items-center justify-between gap-2">
@@ -249,7 +250,7 @@ export function CuratedResourcesSection({
           return (
             <div 
               key={resource.id}
-              className="group bg-card border border-hair hover:border-accent hover:shadow-md hover:shadow-accent/5 rounded-2xl p-5 flex flex-col gap-4 transition-all relative"
+              className="group bg-card border-[1.5px] border-hair hover:border-accent hover:shadow-[4px_5px_0_var(--hard)] rounded-2xl p-5 flex flex-col gap-4 transition-all relative"
             >
               <div className="flex items-start justify-between gap-4">
                 <div className="flex items-center gap-2 flex-wrap">

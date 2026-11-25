@@ -23,6 +23,8 @@ export interface LearningTopic {
   estimated_minutes: number;
   status: string;
   progress: number;
+  /** when this device last saved progress for the lesson (ISO), if ever */
+  last_read?: string;
 }
 
 export interface LearningModule {
@@ -220,7 +222,8 @@ export const learnService = {
           description: lesson.description,
           estimated_minutes: lesson.estimatedMinutes,
           status,
-          progress
+          progress,
+          last_read: lProg?.updatedAt,
         };
       })
     }));

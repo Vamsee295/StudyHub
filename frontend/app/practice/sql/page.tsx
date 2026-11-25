@@ -15,6 +15,11 @@ const SQLLab = dynamic(() => import("@/components/sql/SQLLab"), {
 });
 
 export default function SQLLabPage() {
-  return <SQLLab />;
+  return (
+    <>
+      <h1 className="sr-only">SQL lab</h1>
+      <SQLLab />
+    </>
+  );
 }
 

@@ -70,11 +70,11 @@ export default function CpuSchedulingLab() {
         <div className="flex flex-wrap gap-2 mt-3">
           <button type="button" disabled={procs.length >= 8}
             onClick={() => setProcs((ps) => [...ps, { id: `P${ps.length + 1}`, arrival: 0, burst: 3, priority: ps.length + 1 }])}
-            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-hair text-[13px] text-ink hover:border-accent disabled:opacity-40 ${focusRing}`}>
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border-[1.5px] border-hair text-[13px] text-ink hover:border-accent disabled:opacity-40 ${focusRing}`}>
             <Plus aria-hidden="true" className="w-4 h-4" /> Add process
           </button>
           {Object.keys(PRESETS).map((k) => (
-            <button key={k} type="button" onClick={() => setProcs(PRESETS[k])} className={`px-3 py-1.5 rounded-lg border border-hair text-[13px] text-body hover:border-accent ${focusRing}`}>Load: {k}</button>
+            <button key={k} type="button" onClick={() => setProcs(PRESETS[k])} className={`px-3 py-1.5 rounded-lg border-[1.5px] border-hair text-[13px] text-body hover:border-accent ${focusRing}`}>Load: {k}</button>
           ))}
         </div>
         {!valid && <p className="text-[13px] text-danger mt-2">Add at least one process, and give every process a burst of 1 or more.</p>}
@@ -84,7 +84,7 @@ export default function CpuSchedulingLab() {
         <>
           <section className={cardCls}>
             <h2 className="text-[12px] font-bold uppercase tracking-wider text-ink mb-3">Gantt chart</h2>
-            <div className="flex w-full h-12 rounded-lg overflow-hidden border border-hair" role="img"
+            <div className="flex w-full h-12 rounded-lg overflow-hidden border-[1.5px] border-hair" role="img"
               aria-label={result.gantt.map((s) => `${s.id ?? "idle"} from ${s.start} to ${s.end}`).join(", ")}>
               {result.gantt.map((s, i) => (
                 <div key={i} className="flex items-center justify-center text-[12px] font-mono font-bold text-paper border-r border-card/40 last:border-r-0"

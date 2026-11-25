@@ -28,8 +28,6 @@ export default function TargetCompaniesPage() {
           segment: "Product MNC",
           tier: "Tier-1",
           roles: ["Software Engineer"],
-          readiness: 0,
-          recruiterHighlight: { title: "Target", detail: "Added from your profile" },
         }
     );
   });
@@ -70,8 +68,6 @@ export default function TargetCompaniesPage() {
       segment: (found.segment as CompanyTarget["segment"]) || "Product MNC",
       tier: found.difficulty || "Tier-1",
       roles: found.roles,
-      readiness: 65,
-      recruiterHighlight: { title: "Assessment", detail: "Pattern synced for '26" }
     } : {
       id: companyId,
       name: companyId,
@@ -79,8 +75,6 @@ export default function TargetCompaniesPage() {
       segment: "Product MNC",
       tier: "Tier-1",
       roles: ["Software Engineer"],
-      readiness: 60,
-      recruiterHighlight: { title: "SDE Prep", detail: "Target Active" }
     };
 
     saveTrackedList([...trackedList, newTarget]);
@@ -126,7 +120,7 @@ export default function TargetCompaniesPage() {
 
       {/* COMPANIES LIST */}
       {filtered.length === 0 ? (
-        <div className="bg-card border border-hair rounded-2xl p-12 text-center">
+        <div className="bg-card border-[1.5px] border-hair rounded-2xl p-12 text-center">
           <Building2 className="w-12 h-12 text-ink/30 mx-auto mb-3" />
           <h3 className="text-base font-bold text-ink">No companies tracked yet</h3>
           <p className="text-xs text-body max-w-sm mx-auto mt-1 mb-4">
@@ -144,12 +138,12 @@ export default function TargetCompaniesPage() {
           {filtered.map((company) => (
             <div
               key={company.id}
-              className="bg-card border border-hair hover:border-line rounded-2xl p-6 transition-all flex flex-col justify-between group"
+              className="bg-card border-[1.5px] border-hair hover:border-line rounded-2xl p-6 transition-all flex flex-col justify-between group"
             >
               <div>
                 <div className="flex items-start justify-between gap-4 mb-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-11 h-11 rounded-xl bg-card-2 border border-hair text-ink font-bold text-lg flex items-center justify-center shrink-0">
+                    <div className="w-11 h-11 rounded-xl bg-card-2 border-[1.5px] border-hair text-ink font-bold text-lg flex items-center justify-center shrink-0">
                       {company.monogram}
                     </div>
                     <div>
@@ -182,19 +176,12 @@ export default function TargetCompaniesPage() {
                     </span>
                     <div className="flex flex-wrap gap-1.5">
                       {company.roles.map(r => (
-                        <span key={r} className="text-xs px-2.5 py-0.5 rounded-md bg-paper-2 text-ink font-medium border border-hair/60">
+                        <span key={r} className="text-xs px-2.5 py-0.5 rounded-md bg-paper-2 text-ink font-medium border-[1.5px] border-hair/60">
                           {r}
                         </span>
                       ))}
                     </div>
                   </div>
-
-                  {company.recruiterHighlight && (
-                    <div className="p-3 rounded-lg bg-paper-2 border border-hair/80 text-xs flex items-center justify-between">
-                      <span className="text-body font-medium">{company.recruiterHighlight.title}</span>
-                      <span className="font-mono text-mute font-semibold">{company.recruiterHighlight.detail}</span>
-                    </div>
-                  )}
                 </div>
               </div>
 
@@ -214,7 +201,7 @@ export default function TargetCompaniesPage() {
       {/* ADD COMPANY POPUP SELECTOR */}
       {addModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
-          <div className="bg-card rounded-2xl border border-hair shadow-2xl p-6 w-full max-w-md">
+          <div className="bg-card rounded-2xl border-[1.5px] border-hair shadow-2xl p-6 w-full max-w-md">
             <h3 className="text-base font-bold text-ink mb-1">Add Company to Target Tracker</h3>
             <p className="text-xs text-mute mb-4">Pick a company to track.</p>
 
@@ -225,7 +212,7 @@ export default function TargetCompaniesPage() {
                   <button
                     key={comp.id}
                     onClick={() => handleAddCompany(comp.id)}
-                    className="w-full flex items-center justify-between p-3 rounded-xl border border-hair hover:border-accent hover:bg-accent-soft/50 transition-all text-left group cursor-pointer"
+                    className="w-full flex items-center justify-between p-3 rounded-xl border-[1.5px] border-hair hover:border-accent hover:bg-accent-soft/50 transition-all text-left group cursor-pointer"
                   >
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-lg bg-card-2 font-bold flex items-center justify-center text-xs text-body">

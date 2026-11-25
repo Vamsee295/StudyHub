@@ -70,7 +70,7 @@ export default function TechQuestionDrillPage() {
       />
 
       {deck === null || finished ? (
-        <section aria-label="Drill settings" className="p-6 rounded-xl border border-hair bg-card flex flex-col gap-5">
+        <section aria-label="Drill settings" className="p-6 rounded-xl border-[1.5px] border-hair bg-card flex flex-col gap-5">
           {finished && deck && (
             <div className="flex flex-col gap-1 pb-4 border-b border-hair">
               <p className="text-[12px] font-bold uppercase tracking-wider text-mute">Drill complete</p>
@@ -86,13 +86,13 @@ export default function TechQuestionDrillPage() {
           <div className="grid sm:grid-cols-3 gap-4">
             <label className="flex flex-col gap-1.5 text-[13px]">
               <span className="font-semibold text-ink">Course</span>
-              <select value={course} onChange={(e) => setCourse(e.target.value)} className={`px-3 py-2 rounded-lg border border-hair bg-card ${focusRing}`}>
+              <select value={course} onChange={(e) => setCourse(e.target.value)} className={`px-3 py-2 rounded-lg border-[1.5px] border-hair bg-card ${focusRing}`}>
                 {ALL_COURSES.map((c) => <option key={c.slug} value={c.slug}>{c.title}</option>)}
               </select>
             </label>
             <label className="flex flex-col gap-1.5 text-[13px]">
               <span className="font-semibold text-ink">Questions</span>
-              <select value={count} onChange={(e) => setCount(Number(e.target.value))} className={`px-3 py-2 rounded-lg border border-hair bg-card ${focusRing}`}>
+              <select value={count} onChange={(e) => setCount(Number(e.target.value))} className={`px-3 py-2 rounded-lg border-[1.5px] border-hair bg-card ${focusRing}`}>
                 {[10, 20, 30].map((n) => <option key={n} value={n}>{n}</option>)}
               </select>
             </label>
@@ -109,7 +109,7 @@ export default function TechQuestionDrillPage() {
           </button>
         </section>
       ) : q && (
-        <section aria-label={`Question ${index + 1} of ${deck.length}`} className="p-6 rounded-xl border border-hair bg-card flex flex-col gap-5">
+        <section aria-label={`Question ${index + 1} of ${deck.length}`} className="p-6 rounded-xl border-[1.5px] border-hair bg-card flex flex-col gap-5">
           <div className="flex items-center justify-between text-[12px] text-mute">
             <span className="font-mono uppercase tracking-wider">{q.moduleTitle}</span>
             <span className="tabular-nums">{index + 1} / {deck.length} · {correct} correct</span>

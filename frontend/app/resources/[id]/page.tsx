@@ -293,7 +293,7 @@ export default function ResourceDetailPage({ params }: { params: Promise<{ id: s
             <a
               href={downloadUrl}
               download={resource.filename}
-              className="flex items-center gap-2 px-3.5 py-2 rounded-xl text-[13px] font-medium bg-card border border-hair text-body hover:border-line hover:text-ink transition-all"
+              className="flex items-center gap-2 px-3.5 py-2 rounded-xl text-[13px] font-medium bg-card border-[1.5px] border-hair text-body hover:border-line hover:text-ink transition-all"
               title="Download PDF"
             >
               <Download className="w-4 h-4" />
@@ -302,7 +302,7 @@ export default function ResourceDetailPage({ params }: { params: Promise<{ id: s
 
             <button 
               onClick={handleShare}
-              className="flex items-center gap-2 p-2 rounded-xl bg-card border border-hair text-body hover:border-line hover:text-ink transition-all cursor-pointer"
+              className="flex items-center gap-2 p-2 rounded-xl bg-card border-[1.5px] border-hair text-body hover:border-line hover:text-ink transition-all cursor-pointer"
               title="Share Link"
             >
               {copiedLink ? <Check className="w-4 h-4 text-note" /> : <Share2 className="w-4 h-4" />}
@@ -318,7 +318,7 @@ export default function ResourceDetailPage({ params }: { params: Promise<{ id: s
         );
         if (!parentPack || !parentPack.packItems) return null;
         return (
-          <div className="mb-6 p-3 bg-card border border-hair rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="mb-6 p-3 bg-card border-[1.5px] border-hair rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-center gap-2 text-[13px] font-semibold text-ink">
               <Layers className="w-4 h-4 text-accent-ink" />
               <span>{parentPack.title}:</span>
@@ -350,7 +350,7 @@ export default function ResourceDetailPage({ params }: { params: Promise<{ id: s
       <div 
         ref={readerContainerRef}
         className={clsx(
-          "flex flex-col bg-card border border-hair rounded-2xl overflow-hidden shadow-lg transition-all",
+          "flex flex-col bg-card border-[1.5px] border-hair rounded-2xl overflow-hidden shadow-lg transition-all",
           isFullscreen ? "fixed inset-0 z-50 rounded-none border-0 h-screen w-screen" : "w-full"
         )}
       >
@@ -428,7 +428,7 @@ export default function ResourceDetailPage({ params }: { params: Promise<{ id: s
               <Link 
                 key={rel.id}
                 href={`/resources/${rel.id}`}
-                className="group p-4 rounded-xl border border-hair hover:border-accent hover:bg-paper-2/30 transition-all flex flex-col justify-between gap-3 bg-card"
+                className="group p-4 rounded-xl border-[1.5px] border-hair hover:border-accent hover:bg-paper-2/30 transition-all flex flex-col justify-between gap-3 bg-card"
               >
                 <div>
                   <span className="text-[11px] font-semibold text-accent-ink uppercase font-mono mb-1 block">

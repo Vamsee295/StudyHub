@@ -63,7 +63,7 @@ export function InterviewSession({ question, currentIndex, totalQuestions, onSub
             {question.difficulty}
           </span>
         </div>
-        <div className="flex items-center gap-1.5 text-mute font-mono text-sm bg-card px-3 py-1 rounded-lg border border-hair">
+        <div className="flex items-center gap-1.5 text-mute font-mono text-sm bg-card px-3 py-1 rounded-lg border-[1.5px] border-hair">
           <Timer className="w-4 h-4 text-mute" />
           {formatTime(secondsElapsed)}
         </div>
@@ -122,7 +122,7 @@ export function InterviewSession({ question, currentIndex, totalQuestions, onSub
         {/* Evaluating overlay */}
         {isEvaluating && (
           <div className="absolute inset-0 bg-card/60 backdrop-blur-[1px] flex items-center justify-center z-10">
-            <div className="bg-card p-6 rounded-2xl shadow-xl border border-hair flex flex-col items-center max-w-sm text-center">
+            <div className="bg-card p-6 rounded-2xl shadow-xl border-[1.5px] border-hair flex flex-col items-center max-w-sm text-center">
               <div className="w-12 h-12 border-4 border-accent-line border-t-accent rounded-full animate-spin mb-4"></div>
               <h3 className="font-bold text-ink mb-1">Analyzing your response</h3>
               <p className="text-sm text-mute">Evaluating understanding, accuracy, and clarity against standard rubric...</p>

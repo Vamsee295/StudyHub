@@ -57,13 +57,13 @@ export default function ReadinessPage() {
       />
 
       <section aria-labelledby="overall" className="grid md:grid-cols-[260px_1fr] gap-6 mb-10">
-        <div className="p-6 rounded-xl border border-hair bg-card flex flex-col items-center gap-2 text-center">
+        <div className="p-6 rounded-xl border-[1.5px] border-hair bg-card flex flex-col items-center gap-2 text-center">
           <h2 id="overall" className="text-[12px] font-bold uppercase tracking-wider text-mute">Overall readiness</h2>
           <p className="text-5xl font-bold tabular-nums" style={{ color: b.color }}>{overall}<span className="text-2xl">%</span></p>
           <p className="text-[14px] font-semibold" style={{ color: b.color }}>{b.label}</p>
           <p className="text-[12px] text-mute">Across {picked.length} subject{picked.length === 1 ? "" : "s"}, weighted by lesson count</p>
         </div>
-        <div className="p-6 rounded-xl border border-hair bg-card flex flex-col gap-3">
+        <div className="p-6 rounded-xl border-[1.5px] border-hair bg-card flex flex-col gap-3">
           <h2 className="text-[12px] font-bold uppercase tracking-wider text-mute">How the score works</h2>
           <ul className="text-[13.5px] text-body flex flex-col gap-1.5 list-disc pl-5">
             <li><strong className="text-ink">55%</strong> lessons completed in the subject</li>
@@ -91,7 +91,7 @@ export default function ReadinessPage() {
         {picked.length === 0 ? (
           <p className="text-[14px] text-body">Select at least one subject.</p>
         ) : (
-          <div className="overflow-x-auto rounded-xl border border-hair bg-card">
+          <div className="overflow-x-auto rounded-xl border-[1.5px] border-hair bg-card">
             <table className="w-full text-[13.5px]">
               <thead className="text-left text-[11.5px] uppercase tracking-wider text-mute border-b border-hair">
                 <tr>

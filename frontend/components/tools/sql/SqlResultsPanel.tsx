@@ -224,7 +224,7 @@ export function SqlResultsPanel({ result, history, isLoading, onSelectHistory }:
   ];
 
   return (
-    <div className="bg-card rounded-2xl border border-hair flex flex-col h-full overflow-hidden">
+    <div className="bg-card rounded-2xl border-[1.5px] border-hair flex flex-col h-full overflow-hidden">
       {/* Tabs */}
       <div className="flex items-center border-b border-hair bg-paper-2/60 px-2 py-1 gap-0.5 shrink-0">
         {tabs.map((t) => (
@@ -236,7 +236,7 @@ export function SqlResultsPanel({ result, history, isLoading, onSelectHistory }:
             className={cn(
               "flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[12px] font-medium transition-all",
               tab === t.id
-                ? "bg-card text-accent-ink border border-hair"
+                ? "bg-card text-accent-ink border-[1.5px] border-hair"
                 : "text-mute hover:text-body hover:bg-card-2"
             )}
           >

@@ -295,7 +295,7 @@ export function AnnotationLayer({ width, height, onClose }: AnnotationLayerProps
       />
 
       {/* Floating Toolbar */}
-      <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-card border border-hair rounded-2xl shadow-xl flex flex-col p-2.5 pointer-events-auto min-w-[310px] select-none">
+      <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-card border-[1.5px] border-hair rounded-2xl shadow-xl flex flex-col p-2.5 pointer-events-auto min-w-[310px] select-none">
         
         {/* Tools row */}
         <div className="flex items-center justify-between gap-1 mb-2">
@@ -338,7 +338,7 @@ export function AnnotationLayer({ width, height, onClose }: AnnotationLayerProps
 
         {/* Size row (conditionally rendered) */}
         {(activeTool === "pencil" || activeTool === "eraser") && (
-          <div className="flex items-center justify-between gap-2 px-2.5 py-1.5 mt-2 bg-paper-2 rounded-xl border border-hair">
+          <div className="flex items-center justify-between gap-2 px-2.5 py-1.5 mt-2 bg-paper-2 rounded-xl border-[1.5px] border-hair">
             <span className="text-[10px] font-bold text-body uppercase tracking-wider shrink-0">
               {activeTool === "pencil" ? "Size" : "Eraser"}
             </span>

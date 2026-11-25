@@ -27,3 +27,22 @@ export function formatDistanceToNow(date: Date): string {
 export function errorMessage(e: unknown): string {
   return e instanceof Error ? e.message : typeof e === 'string' ? e : '';
 }
+
+/**
+ * Props that make a non-button element (one that holds other buttons, so it can't be a <button>)
+ * clickable from the keyboard: focusable with Tab, activated with Enter or Space.
+ */
+export function pressable(onPress: () => void) {
+  return {
+    role: 'button' as const,
+    tabIndex: 0,
+    onClick: onPress,
+    onKeyDown: (e: { key: string; target: EventTarget; currentTarget: EventTarget; preventDefault: () => void }) => {
+      if (e.target !== e.currentTarget) return; // a nested control handles its own keys
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        onPress();
+      }
+    },
+  };
+}

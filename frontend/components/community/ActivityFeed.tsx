@@ -68,7 +68,7 @@ export function ActivityFeed({
           <button
             onClick={onLoadMore}
             disabled={isLoadingMore}
-            className="px-6 py-2.5 rounded-xl border border-hair text-[13px] font-medium text-body hover:bg-paper-2 transition-colors disabled:opacity-50"
+            className="px-6 py-2.5 rounded-xl border-[1.5px] border-hair text-[13px] font-medium text-body hover:bg-paper-2 transition-colors disabled:opacity-50"
           >
             {isLoadingMore ? "Loading…" : "Load more"}
           </button>

@@ -22,14 +22,14 @@ export function CorePlacementToolsSection({ items }: { items: CoreToolItem[] }) 
           <Link
             key={item.id}
             href={item.href}
-            className="group flex flex-col justify-between bg-card border border-hair rounded-xl p-5 hover:border-line hover:shadow-[0_4px_12px_rgba(15,23,42,0.05)] transition-all duration-300 min-h-[160px]"
+            className="group flex flex-col justify-between bg-card border-[1.5px] border-hair rounded-xl p-5 hover:border-line hover:shadow-[0_4px_12px_rgba(15,23,42,0.05)] transition-all duration-300 min-h-[160px]"
           >
             <div>
               <div className="flex justify-between items-start mb-3">
                 <span className="pill pill-neutral group-hover:border-line transition-colors">
                   {item.tag}
                 </span>
-                <span className="w-8 h-8 rounded bg-paper-2 border border-hair flex items-center justify-center text-body group-hover:text-ink transition-colors group-hover:bg-card">
+                <span className="w-8 h-8 rounded bg-paper-2 border-[1.5px] border-hair flex items-center justify-center text-body group-hover:text-ink transition-colors group-hover:bg-card">
                   {/* Icon placeholder - could be mapped from item.icon */}
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>

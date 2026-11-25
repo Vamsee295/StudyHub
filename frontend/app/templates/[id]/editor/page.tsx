@@ -171,7 +171,7 @@ export default function TemplateEditorPage({ params }: { params: Promise<{ id: s
                       onChange={(e) => handleFieldChange(field.key, e.target.value)}
                       placeholder={field.placeholder}
                       rows={3}
-                      className="w-full px-3 py-2 bg-card border border-hair rounded-sm text-[13px] text-ink placeholder:text-mute focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent resize-y shadow-[0_1px_2px_rgba(0,0,0,0.02)]"
+                      className="w-full px-3 py-2 bg-card border-[1.5px] border-hair rounded-sm text-[13px] text-ink placeholder:text-mute focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent resize-y shadow-[0_1px_2px_rgba(0,0,0,0.02)]"
                     />
                   ) : (
                     <input
@@ -180,7 +180,7 @@ export default function TemplateEditorPage({ params }: { params: Promise<{ id: s
                       value={fieldValues[field.key] || ""}
                       onChange={(e) => handleFieldChange(field.key, e.target.value)}
                       placeholder={field.placeholder}
-                      className="w-full px-3 py-2 bg-card border border-hair rounded-sm text-[13px] text-ink placeholder:text-mute focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent shadow-[0_1px_2px_rgba(0,0,0,0.02)]"
+                      className="w-full px-3 py-2 bg-card border-[1.5px] border-hair rounded-sm text-[13px] text-ink placeholder:text-mute focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent shadow-[0_1px_2px_rgba(0,0,0,0.02)]"
                     />
                   )}
                 </div>
@@ -198,7 +198,7 @@ export default function TemplateEditorPage({ params }: { params: Promise<{ id: s
         <div className="w-1/2 flex flex-col bg-paper-2 overflow-y-auto">
           <div className="p-8 pb-20 flex justify-center min-h-full">
             {/* The Document Page */}
-            <div className="w-full max-w-[750px] bg-card border border-hair rounded-sm p-10 md:p-12 shrink-0">
+            <div className="w-full max-w-[750px] bg-card border-[1.5px] border-hair rounded-sm p-10 md:p-12 shrink-0">
               <div className="flex flex-col gap-8">
                 {workspaceData.structure.map((section, idx) => (
                   <div key={idx} className="flex flex-col gap-2 group relative">

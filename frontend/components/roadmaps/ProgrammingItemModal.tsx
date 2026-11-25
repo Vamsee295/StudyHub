@@ -123,7 +123,7 @@ export const ProgrammingItemModal: React.FC<ProgrammingItemModalProps> = ({
                   )}
                   <span className="text-sm font-mono text-mute">#{item.order}</span>
                 </div>
-                <h2 className="text-2xl font-bold text-ink mb-1">{item.title}</h2>
+                <h2 className="display text-[30px] mb-1">{item.title}</h2>
                 <div className="text-sm text-mute font-medium">
                   {item.category}
                 </div>
@@ -145,7 +145,7 @@ export const ProgrammingItemModal: React.FC<ProgrammingItemModalProps> = ({
                   <Lightbulb className="w-4 h-4 text-gold" />
                   {isLesson ? "Why this matters" : "Why this problem"}
                 </h3>
-                <p className="text-sm text-body leading-relaxed bg-paper-2 p-4 rounded-xl border border-hair">
+                <p className="text-sm text-body leading-relaxed bg-paper-2 p-4 rounded-xl border-[1.5px] border-hair">
                   {isLesson ? lessonItem.whyItMatters : exerciseItem.whyThisProblem}
                 </p>
               </div>
@@ -175,7 +175,7 @@ export const ProgrammingItemModal: React.FC<ProgrammingItemModalProps> = ({
                   </h3>
                   <div className="flex flex-wrap gap-2">
                     {exerciseItem.practiceSkills.map((skill, i) => (
-                      <span key={i} className="px-2.5 py-1 bg-card-2 text-body text-xs font-medium rounded-md border border-hair">
+                      <span key={i} className="px-2.5 py-1 bg-card-2 text-body text-xs font-medium rounded-md border-[1.5px] border-hair">
                         {skill}
                       </span>
                     ))}
@@ -273,7 +273,7 @@ export const ProgrammingItemModal: React.FC<ProgrammingItemModalProps> = ({
                     onChange={(e) => handleNoteChange(e.target.value)}
                     onBlur={handleNoteBlur}
                     placeholder="Write down edge cases, approaches, or things to review..."
-                    className="w-full h-32 p-4 rounded-xl border border-hair bg-paper-2 focus:bg-card text-sm text-body resize-none focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all placeholder:text-mute"
+                    className="w-full h-32 p-4 rounded-xl border-[1.5px] border-hair bg-paper-2 focus:bg-card text-sm text-body resize-none focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all placeholder:text-mute"
                   />
                   <div className="flex justify-end mt-2">
                     <span className="text-[11px] text-mute font-medium">

@@ -51,7 +51,7 @@ export function ResourcesSearchFilter({
             placeholder="Search notes, cheat sheets, interview guides..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-card border border-hair rounded-xl py-2.5 pl-10 pr-12 text-[14px] text-ink placeholder:text-mute focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all shadow-[0_1px_2px_0_rgba(0,0,0,0.02)]"
+            className="w-full bg-card border-[1.5px] border-hair rounded-xl py-2.5 pl-10 pr-12 text-[14px] text-ink placeholder:text-mute focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all"
           />
           {searchQuery ? (
             <button
@@ -62,7 +62,7 @@ export function ResourcesSearchFilter({
             </button>
           ) : (
             <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none hidden sm:block">
-              <kbd className="font-mono text-[10px] bg-paper-2 border border-hair text-body px-1.5 py-0.5 rounded shadow-[0_1px_1px_0_rgba(0,0,0,0.02)] font-semibold tracking-wider">
+              <kbd className="font-mono text-[10px] bg-paper-2 border-[1.5px] border-hair text-body px-1.5 py-0.5 rounded shadow-[0_1px_1px_0_rgba(0,0,0,0.02)] font-semibold tracking-wider">
                 ⌘K
               </kbd>
             </div>
@@ -74,14 +74,14 @@ export function ResourcesSearchFilter({
           <button
             type="button"
             onClick={() => setSortOpen((v) => !v)}
-            className="flex items-center gap-2 bg-card border border-hair hover:border-line hover:bg-paper-2/50 px-3.5 py-2.5 rounded-xl text-[13px] font-medium text-body transition-all shadow-[0_1px_2px_0_rgba(0,0,0,0.02)] cursor-pointer"
+            className="flex items-center gap-2 bg-card border-[1.5px] border-hair hover:border-line hover:bg-paper-2/50 px-3.5 py-2.5 rounded-xl text-[13px] font-medium text-body transition-all cursor-pointer"
           >
             <ArrowUpDown className="w-4 h-4 text-accent-ink" />
             <span>Sort: <strong className="text-ink font-semibold">{sortBy}</strong></span>
           </button>
 
           {sortOpen && (
-            <div className="absolute right-0 top-full mt-2 w-44 bg-card border border-hair rounded-xl shadow-xl shadow-ink/5 p-1.5 z-50 flex flex-col gap-0.5 animate-in fade-in zoom-in-95 duration-100">
+            <div className="absolute right-0 top-full mt-2 w-44 bg-card border-[1.5px] border-hair rounded-xl shadow-xl shadow-ink/5 p-1.5 z-50 flex flex-col gap-0.5 animate-in fade-in zoom-in-95 duration-100">
               {sortOptions.map((opt) => (
                 <button
                   key={opt}
@@ -117,7 +117,7 @@ export function ResourcesSearchFilter({
                 "whitespace-nowrap px-3.5 py-1.5 rounded-full text-[13px] font-medium transition-all flex items-center gap-2 cursor-pointer shrink-0",
                 isActive
                   ? "bg-ink text-paper shadow-md shadow-ink/10 ring-1 ring-ink"
-                  : "bg-card text-body border border-hair hover:border-line hover:bg-paper-2/50"
+                  : "bg-card text-body border-[1.5px] border-hair hover:border-line hover:bg-paper-2/50"
               )}
             >
               {cat.name}

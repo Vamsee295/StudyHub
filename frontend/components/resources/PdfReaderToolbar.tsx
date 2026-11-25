@@ -84,7 +84,7 @@ export function PdfReaderToolbar({
             max={pageCount || 999}
             value={currentPage}
             onChange={handlePageInput}
-            className="w-12 text-center bg-card border border-hair rounded py-0.5 text-[12px] font-mono font-semibold text-ink focus:outline-none focus:ring-1 focus:ring-accent"
+            className="w-12 text-center bg-card border-[1.5px] border-hair rounded py-0.5 text-[12px] font-mono font-semibold text-ink focus:outline-none focus:ring-1 focus:ring-accent"
           />
           <span>/ {pageCount || "—"}</span>
         </div>
@@ -100,7 +100,7 @@ export function PdfReaderToolbar({
       </div>
 
       {/* Center: Zoom Controls */}
-      <div className="flex items-center gap-1 bg-card border border-hair/80 rounded-xl px-2 py-1">
+      <div className="flex items-center gap-1 bg-card border-[1.5px] border-hair/80 rounded-xl px-2 py-1">
         <button
           onClick={onZoomOut}
           disabled={zoomLevel <= 25}

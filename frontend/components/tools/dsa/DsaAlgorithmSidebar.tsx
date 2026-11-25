@@ -20,7 +20,7 @@ export function DsaAlgorithmSidebar({ selectedAlgorithm, onSelectAlgorithm }: Ds
   };
 
   return (
-    <div className="bg-card rounded-2xl border border-hair flex flex-col h-full overflow-hidden">
+    <div className="bg-card rounded-2xl border-[1.5px] border-hair flex flex-col h-full overflow-hidden">
       <div className="p-4 border-b border-hair flex items-center gap-2">
         <GitMerge className="w-5 h-5 text-accent-ink" />
         <h3 className="font-semibold text-ink">Algorithms</h3>

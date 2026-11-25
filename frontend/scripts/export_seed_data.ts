@@ -1,12 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-import { directoryCompanies, companyWorkspaces } from '../lib/data/companiesData';
-import { learnSubjects } from '../lib/data/learnData';
-import { roadmapModules } from '../lib/data/roadmapModules';
-import { roadmap } from '../lib/data/roadmap';
-import { paths } from '../lib/data/paths';
-import { curriculumBanks } from '../lib/data/practiceData';
+import { directoryCompanies } from '../lib/data/companiesData';
 import { libraryCategories } from '../lib/data/resourcesData';
 import { RESOURCE_CATALOG } from '../lib/resources';
 
@@ -15,14 +10,9 @@ if (!fs.existsSync(outputDir)) {
     fs.mkdirSync(outputDir, { recursive: true });
 }
 
+// Only what backend/scripts/seed_data.py reads.
 const seedData = {
     companies: directoryCompanies,
-    companyWorkspaces: companyWorkspaces,
-    learnSubjects: learnSubjects,
-    roadmapModules: roadmapModules,
-    roadmapStages: roadmap,
-    learningPaths: paths,
-    practiceCurriculum: curriculumBanks,
     // the real PDF catalog, shaped like the fields seed_data.py reads
     resources: RESOURCE_CATALOG.map((r) => ({ id: r.id, title: r.title, description: r.description, track: r.category, slug: r.id, author: 'StudyHub', isVerified: false })),
     resourceCategories: libraryCategories

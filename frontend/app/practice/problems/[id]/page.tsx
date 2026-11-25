@@ -179,7 +179,7 @@ function TestCaseDetail({ tc }: { tc: TestCaseResult }) {
         <div className="text-[10px] font-semibold uppercase text-mute mb-1 tracking-wider">
           Input
         </div>
-        <div className="bg-paper-2 border border-hair rounded-lg p-3 space-y-1 text-ink">
+        <div className="bg-paper-2 border-[1.5px] border-hair rounded-lg p-3 space-y-1 text-ink">
           {Object.entries(tc.input).map(([key, val]) => (
             <div key={key}>
               <span className="text-body font-semibold">{key} = </span>
@@ -195,7 +195,7 @@ function TestCaseDetail({ tc }: { tc: TestCaseResult }) {
           <div className="text-[10px] font-semibold uppercase text-mute mb-1 tracking-wider">
             Expected Output
           </div>
-          <div className="bg-paper-2 border border-hair rounded-lg p-3 text-ink">
+          <div className="bg-paper-2 border-[1.5px] border-hair rounded-lg p-3 text-ink">
             {JSON.stringify(tc.expectedOutput)}
           </div>
         </div>
@@ -492,7 +492,7 @@ export default function ProblemWorkspace() {
                 <div className="space-y-3 pt-2">
                   <h4 className="text-[11px] uppercase tracking-wider text-body font-bold">Examples</h4>
                   {problem.visibleTests.map((tc, i) => (
-                    <div key={tc.id} className="bg-paper-2 rounded-lg p-3 font-mono text-xs space-y-1.5 border border-hair">
+                    <div key={tc.id} className="bg-paper-2 rounded-lg p-3 font-mono text-xs space-y-1.5 border-[1.5px] border-hair">
                       <div className="text-[10px] text-body uppercase font-semibold">Example {i + 1}</div>
                       <div><span className="text-body font-semibold">Input:</span>{" "}
                         {Object.entries(tc.input).map(([k, v]) => `${k} = ${JSON.stringify(v)}`).join(", ")}
@@ -706,7 +706,7 @@ export default function ProblemWorkspace() {
                       <div className="font-mono text-xs space-y-3">
                         <div>
                           <div className="text-[10px] font-semibold uppercase text-mute mb-1 tracking-wider">Input</div>
-                          <div className="bg-paper-2 border border-hair rounded-lg p-3 space-y-1 text-ink">
+                          <div className="bg-paper-2 border-[1.5px] border-hair rounded-lg p-3 space-y-1 text-ink">
                             {Object.entries(selectedTestCase.input).map(([key, val]) => (
                               <div key={key}>
                                 <span className="text-body font-semibold">{key} = </span>
@@ -717,7 +717,7 @@ export default function ProblemWorkspace() {
                         </div>
                         <div>
                           <div className="text-[10px] font-semibold uppercase text-mute mb-1 tracking-wider">Expected Output</div>
-                          <div className="bg-paper-2 border border-hair rounded-lg p-3 text-ink">
+                          <div className="bg-paper-2 border-[1.5px] border-hair rounded-lg p-3 text-ink">
                             {JSON.stringify(selectedTestCase.expectedOutput)}
                           </div>
                         </div>
