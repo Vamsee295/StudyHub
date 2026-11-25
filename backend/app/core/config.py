@@ -21,7 +21,11 @@ class Settings(BaseSettings):
 
     # Comma-separated emails allowed to change ideas board statuses
     admin_emails: str = ""
-    
+
+    # Where student code runs: "docker" (isolated container, the default) or
+    # "local" (plain host process; development only, set CODE_SANDBOX=local in .env).
+    code_sandbox: str = "docker"
+
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
 settings = Settings()

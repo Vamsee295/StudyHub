@@ -1,0 +1,8711 @@
+{
+ "ex-leap": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "year": 1960
+   },
+   "expectedOutput": true,
+   "label": "year divisible by 4 and 5 is still a leap year"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "year": 2100
+   },
+   "expectedOutput": false,
+   "label": "year divisible by 100, not divisible by 400 in common year"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "year": 1900
+   },
+   "expectedOutput": false,
+   "label": "year divisible by 100 but not by 3 is still not a leap year"
+  },
+  {
+   "id": "hidden-4",
+   "input": {
+    "year": 2000
+   },
+   "expectedOutput": true,
+   "label": "year divisible by 400 is leap year"
+  },
+  {
+   "id": "hidden-5",
+   "input": {
+    "year": 2400
+   },
+   "expectedOutput": true,
+   "label": "year divisible by 400 but not by 125 is still a leap year"
+  },
+  {
+   "id": "hidden-6",
+   "input": {
+    "year": 1800
+   },
+   "expectedOutput": false,
+   "label": "year divisible by 200, not divisible by 400 in common year"
+  }
+ ],
+ "ex-reverse-string": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "value": "I'm hungry!"
+   },
+   "expectedOutput": "!yrgnuh m'I",
+   "label": "a sentence with punctuation"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "value": "racecar"
+   },
+   "expectedOutput": "racecar",
+   "label": "a palindrome"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "value": "drawer"
+   },
+   "expectedOutput": "reward",
+   "label": "an even-sized word"
+  }
+ ],
+ "ex-raindrops": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "number": 7
+   },
+   "expectedOutput": "Plong",
+   "label": "the sound for 7 is Plong"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "number": 6
+   },
+   "expectedOutput": "Pling",
+   "label": "the sound for 6 is Pling as it has a factor 3"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "number": 8
+   },
+   "expectedOutput": "8",
+   "label": "2 to the power 3 does not make a raindrop sound as 3 is the exponent not the base"
+  },
+  {
+   "id": "hidden-4",
+   "input": {
+    "number": 9
+   },
+   "expectedOutput": "Pling",
+   "label": "the sound for 9 is Pling as it has a factor 3"
+  },
+  {
+   "id": "hidden-5",
+   "input": {
+    "number": 10
+   },
+   "expectedOutput": "Plang",
+   "label": "the sound for 10 is Plang as it has a factor 5"
+  },
+  {
+   "id": "hidden-6",
+   "input": {
+    "number": 14
+   },
+   "expectedOutput": "Plong",
+   "label": "the sound for 14 is Plong as it has a factor of 7"
+  },
+  {
+   "id": "hidden-7",
+   "input": {
+    "number": 15
+   },
+   "expectedOutput": "PlingPlang",
+   "label": "the sound for 15 is PlingPlang as it has factors 3 and 5"
+  },
+  {
+   "id": "hidden-8",
+   "input": {
+    "number": 21
+   },
+   "expectedOutput": "PlingPlong",
+   "label": "the sound for 21 is PlingPlong as it has factors 3 and 7"
+  },
+  {
+   "id": "hidden-9",
+   "input": {
+    "number": 25
+   },
+   "expectedOutput": "Plang",
+   "label": "the sound for 25 is Plang as it has a factor 5"
+  },
+  {
+   "id": "hidden-10",
+   "input": {
+    "number": 27
+   },
+   "expectedOutput": "Pling",
+   "label": "the sound for 27 is Pling as it has a factor 3"
+  },
+  {
+   "id": "hidden-11",
+   "input": {
+    "number": 35
+   },
+   "expectedOutput": "PlangPlong",
+   "label": "the sound for 35 is PlangPlong as it has factors 5 and 7"
+  },
+  {
+   "id": "hidden-12",
+   "input": {
+    "number": 49
+   },
+   "expectedOutput": "Plong",
+   "label": "the sound for 49 is Plong as it has a factor 7"
+  },
+  {
+   "id": "hidden-13",
+   "input": {
+    "number": 52
+   },
+   "expectedOutput": "52",
+   "label": "the sound for 52 is 52"
+  },
+  {
+   "id": "hidden-14",
+   "input": {
+    "number": 105
+   },
+   "expectedOutput": "PlingPlangPlong",
+   "label": "the sound for 105 is PlingPlangPlong as it has factors 3, 5 and 7"
+  },
+  {
+   "id": "hidden-15",
+   "input": {
+    "number": 3125
+   },
+   "expectedOutput": "Plang",
+   "label": "the sound for 3125 is Plang as it has a factor 5"
+  }
+ ],
+ "ex-difference-of-squares": [],
+ "ex-grains": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "square": 4
+   },
+   "expectedOutput": 8,
+   "label": "grains on square 4"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "square": 16
+   },
+   "expectedOutput": 32768,
+   "label": "grains on square 16"
+  }
+ ],
+ "ex-armstrong-numbers": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "number": 153
+   },
+   "expectedOutput": true,
+   "label": "Three-digit number that is an Armstrong number"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "number": 100
+   },
+   "expectedOutput": false,
+   "label": "Three-digit number that is not an Armstrong number"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "number": 9474
+   },
+   "expectedOutput": true,
+   "label": "Four-digit number that is an Armstrong number"
+  },
+  {
+   "id": "hidden-4",
+   "input": {
+    "number": 9475
+   },
+   "expectedOutput": false,
+   "label": "Four-digit number that is not an Armstrong number"
+  },
+  {
+   "id": "hidden-5",
+   "input": {
+    "number": 9926315
+   },
+   "expectedOutput": true,
+   "label": "Seven-digit number that is an Armstrong number"
+  },
+  {
+   "id": "hidden-6",
+   "input": {
+    "number": 9926314
+   },
+   "expectedOutput": false,
+   "label": "Seven-digit number that is not an Armstrong number"
+  }
+ ],
+ "ex-collatz-conjecture": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "number": 1000000
+   },
+   "expectedOutput": 152,
+   "label": "large number of even and odd steps"
+  }
+ ],
+ "ex-hamming": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "strand1": "GGACTGAAATCTG",
+    "strand2": "GGACTGAAATCTG"
+   },
+   "expectedOutput": 0,
+   "label": "long identical strands"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "strand1": "GGACGGATTCTG",
+    "strand2": "AGGACGGATTCT"
+   },
+   "expectedOutput": 9,
+   "label": "long different strands"
+  }
+ ],
+ "ex-pangram": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "sentence": "a quick movement of the enemy will jeopardize five gunboats"
+   },
+   "expectedOutput": false,
+   "label": "missing the letter 'x'"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "sentence": "five boxing wizards jump quickly at it"
+   },
+   "expectedOutput": false,
+   "label": "missing the letter 'h'"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "sentence": "the_quick_brown_fox_jumps_over_the_lazy_dog"
+   },
+   "expectedOutput": true,
+   "label": "with underscores"
+  },
+  {
+   "id": "hidden-4",
+   "input": {
+    "sentence": "the 1 quick brown fox jumps over the 2 lazy dogs"
+   },
+   "expectedOutput": true,
+   "label": "with numbers"
+  },
+  {
+   "id": "hidden-5",
+   "input": {
+    "sentence": "7h3 qu1ck brown fox jumps ov3r 7h3 lazy dog"
+   },
+   "expectedOutput": false,
+   "label": "missing letters replaced by numbers"
+  },
+  {
+   "id": "hidden-6",
+   "input": {
+    "sentence": "\"Five quacking Zephyrs jolt my wax bed.\""
+   },
+   "expectedOutput": true,
+   "label": "mixed case and punctuation"
+  },
+  {
+   "id": "hidden-7",
+   "input": {
+    "sentence": "abcdefghijklm ABCDEFGHIJKLM"
+   },
+   "expectedOutput": false,
+   "label": "a-m and A-M are 26 different characters but not a pangram"
+  }
+ ],
+ "ex-isogram": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "phrase": "zzyzx"
+   },
+   "expectedOutput": false,
+   "label": "word with one duplicated character from the end of the alphabet"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "phrase": "subdermatoglyphic"
+   },
+   "expectedOutput": true,
+   "label": "longest reported english isogram"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "phrase": "Alphabet"
+   },
+   "expectedOutput": false,
+   "label": "word with duplicated character in mixed case"
+  },
+  {
+   "id": "hidden-4",
+   "input": {
+    "phrase": "alphAbet"
+   },
+   "expectedOutput": false,
+   "label": "word with duplicated character in mixed case, lowercase first"
+  },
+  {
+   "id": "hidden-5",
+   "input": {
+    "phrase": "thumbscrew-japingly"
+   },
+   "expectedOutput": true,
+   "label": "hypothetical isogrammic word with hyphen"
+  },
+  {
+   "id": "hidden-6",
+   "input": {
+    "phrase": "thumbscrew-jappingly"
+   },
+   "expectedOutput": false,
+   "label": "hypothetical word with duplicated character following hyphen"
+  },
+  {
+   "id": "hidden-7",
+   "input": {
+    "phrase": "six-year-old"
+   },
+   "expectedOutput": true,
+   "label": "isogram with duplicated hyphen"
+  },
+  {
+   "id": "hidden-8",
+   "input": {
+    "phrase": "Emily Jung Schwartzkopf"
+   },
+   "expectedOutput": true,
+   "label": "made-up name that is an isogram"
+  },
+  {
+   "id": "hidden-9",
+   "input": {
+    "phrase": "accentor"
+   },
+   "expectedOutput": false,
+   "label": "duplicated character in the middle"
+  },
+  {
+   "id": "hidden-10",
+   "input": {
+    "phrase": "angola"
+   },
+   "expectedOutput": false,
+   "label": "same first and last characters"
+  },
+  {
+   "id": "hidden-11",
+   "input": {
+    "phrase": "up-to-date"
+   },
+   "expectedOutput": false,
+   "label": "word with duplicated character and with two hyphens"
+  }
+ ],
+ "ex-isbn-verifier": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "isbn": "3-598-21507-A"
+   },
+   "expectedOutput": false,
+   "label": "check digit is a character other than X"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "isbn": "4-598-21507-B"
+   },
+   "expectedOutput": false,
+   "label": "invalid check digit in isbn is not treated as zero"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "isbn": "3-598-P1581-X"
+   },
+   "expectedOutput": false,
+   "label": "invalid character in isbn is not treated as zero"
+  },
+  {
+   "id": "hidden-4",
+   "input": {
+    "isbn": "3-598-2X507-9"
+   },
+   "expectedOutput": false,
+   "label": "X is only valid as a check digit"
+  },
+  {
+   "id": "hidden-5",
+   "input": {
+    "isbn": "3-598-21508-96"
+   },
+   "expectedOutput": false,
+   "label": "only one check digit is allowed"
+  },
+  {
+   "id": "hidden-6",
+   "input": {
+    "isbn": "3-598-2X507-5"
+   },
+   "expectedOutput": false,
+   "label": "X is not substituted by the value 10"
+  },
+  {
+   "id": "hidden-7",
+   "input": {
+    "isbn": "3598215088"
+   },
+   "expectedOutput": true,
+   "label": "valid isbn without separating dashes"
+  },
+  {
+   "id": "hidden-8",
+   "input": {
+    "isbn": "359821507X"
+   },
+   "expectedOutput": true,
+   "label": "isbn without separating dashes and X as check digit"
+  },
+  {
+   "id": "hidden-9",
+   "input": {
+    "isbn": "359821507"
+   },
+   "expectedOutput": false,
+   "label": "isbn without check digit and dashes"
+  },
+  {
+   "id": "hidden-10",
+   "input": {
+    "isbn": "3598215078X"
+   },
+   "expectedOutput": false,
+   "label": "too long isbn and no dashes"
+  },
+  {
+   "id": "hidden-11",
+   "input": {
+    "isbn": "00"
+   },
+   "expectedOutput": false,
+   "label": "too short isbn"
+  },
+  {
+   "id": "hidden-12",
+   "input": {
+    "isbn": "3-598-21507"
+   },
+   "expectedOutput": false,
+   "label": "isbn without check digit"
+  },
+  {
+   "id": "hidden-13",
+   "input": {
+    "isbn": "3-598-21515-X"
+   },
+   "expectedOutput": false,
+   "label": "check digit of X should not be used for 0"
+  },
+  {
+   "id": "hidden-14",
+   "input": {
+    "isbn": ""
+   },
+   "expectedOutput": false,
+   "label": "empty isbn"
+  },
+  {
+   "id": "hidden-15",
+   "input": {
+    "isbn": "134456729"
+   },
+   "expectedOutput": false,
+   "label": "input is 9 characters"
+  },
+  {
+   "id": "hidden-16",
+   "input": {
+    "isbn": "3132P34035"
+   },
+   "expectedOutput": false,
+   "label": "invalid characters are not ignored after checking length"
+  },
+  {
+   "id": "hidden-17",
+   "input": {
+    "isbn": "3598P215088"
+   },
+   "expectedOutput": false,
+   "label": "invalid characters are not ignored before checking length"
+  },
+  {
+   "id": "hidden-18",
+   "input": {
+    "isbn": "98245726788"
+   },
+   "expectedOutput": false,
+   "label": "input is too long but contains a valid isbn"
+  }
+ ],
+ "ex-acronym": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "phrase": "GNU Image Manipulation Program"
+   },
+   "expectedOutput": "GIMP",
+   "label": "all caps word"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "phrase": "Complementary metal-oxide semiconductor"
+   },
+   "expectedOutput": "CMOS",
+   "label": "punctuation without whitespace"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "phrase": "Rolling On The Floor Laughing So Hard That My Dogs Came Over And Licked Me"
+   },
+   "expectedOutput": "ROTFLSHTMDCOALM",
+   "label": "very long abbreviation"
+  },
+  {
+   "id": "hidden-4",
+   "input": {
+    "phrase": "Something - I made up from thin air"
+   },
+   "expectedOutput": "SIMUFTA",
+   "label": "consecutive delimiters"
+  },
+  {
+   "id": "hidden-5",
+   "input": {
+    "phrase": "Halley's Comet"
+   },
+   "expectedOutput": "HC",
+   "label": "apostrophes"
+  },
+  {
+   "id": "hidden-6",
+   "input": {
+    "phrase": "The Road _Not_ Taken"
+   },
+   "expectedOutput": "TRNT",
+   "label": "underscore emphasis"
+  }
+ ],
+ "ex-bob": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "heyBob": ""
+   },
+   "expectedOutput": "Fine. Be that way!",
+   "label": "silence"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "heyBob": "Tom-ay-to, tom-aaaah-to."
+   },
+   "expectedOutput": "Whatever.",
+   "label": "stating something"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "heyBob": "You are, what, like 15?"
+   },
+   "expectedOutput": "Sure.",
+   "label": "asking a numeric question"
+  },
+  {
+   "id": "hidden-4",
+   "input": {
+    "heyBob": "fffbbcbeab?"
+   },
+   "expectedOutput": "Sure.",
+   "label": "asking gibberish"
+  },
+  {
+   "id": "hidden-5",
+   "input": {
+    "heyBob": "4?"
+   },
+   "expectedOutput": "Sure.",
+   "label": "question with no letters"
+  },
+  {
+   "id": "hidden-6",
+   "input": {
+    "heyBob": ":) ?"
+   },
+   "expectedOutput": "Sure.",
+   "label": "non-letters with question"
+  },
+  {
+   "id": "hidden-7",
+   "input": {
+    "heyBob": "Wait! Hang on. Are you going to be OK?"
+   },
+   "expectedOutput": "Sure.",
+   "label": "prattling on"
+  },
+  {
+   "id": "hidden-8",
+   "input": {
+    "heyBob": "Okay if like my  spacebar  quite a bit?   "
+   },
+   "expectedOutput": "Sure.",
+   "label": "ending with whitespace"
+  },
+  {
+   "id": "hidden-9",
+   "input": {
+    "heyBob": "\nDoes this cryogenic chamber make\n me look fat?"
+   },
+   "expectedOutput": "Sure.",
+   "label": "multiple line question"
+  },
+  {
+   "id": "hidden-10",
+   "input": {
+    "heyBob": "FCECDFCAAB"
+   },
+   "expectedOutput": "Whoa, chill out!",
+   "label": "shouting gibberish"
+  },
+  {
+   "id": "hidden-11",
+   "input": {
+    "heyBob": "DO LIONS EAT PEOPLE? AHHHHH."
+   },
+   "expectedOutput": "Whoa, chill out!",
+   "label": "shouting a statement containing a question mark"
+  },
+  {
+   "id": "hidden-12",
+   "input": {
+    "heyBob": "1, 2, 3 GO!"
+   },
+   "expectedOutput": "Whoa, chill out!",
+   "label": "shouting numbers"
+  },
+  {
+   "id": "hidden-13",
+   "input": {
+    "heyBob": "ZOMG THE %^*@#$(*^ ZOMBIES ARE COMING!!11!!1!"
+   },
+   "expectedOutput": "Whoa, chill out!",
+   "label": "shouting with special characters"
+  },
+  {
+   "id": "hidden-14",
+   "input": {
+    "heyBob": "I HATE THE DENTIST"
+   },
+   "expectedOutput": "Whoa, chill out!",
+   "label": "shouting with no exclamation mark"
+  },
+  {
+   "id": "hidden-15",
+   "input": {
+    "heyBob": "          "
+   },
+   "expectedOutput": "Fine. Be that way!",
+   "label": "prolonged silence"
+  },
+  {
+   "id": "hidden-16",
+   "input": {
+    "heyBob": "\t\t\t\t\t\t\t\t\t\t"
+   },
+   "expectedOutput": "Fine. Be that way!",
+   "label": "alternate silence"
+  },
+  {
+   "id": "hidden-17",
+   "input": {
+    "heyBob": "\n\r \t"
+   },
+   "expectedOutput": "Fine. Be that way!",
+   "label": "other whitespace"
+  },
+  {
+   "id": "hidden-18",
+   "input": {
+    "heyBob": "Hi there!"
+   },
+   "expectedOutput": "Whatever.",
+   "label": "talking forcefully"
+  },
+  {
+   "id": "hidden-19",
+   "input": {
+    "heyBob": "It's OK if you don't want to go work for NASA."
+   },
+   "expectedOutput": "Whatever.",
+   "label": "using acronyms in regular speech"
+  },
+  {
+   "id": "hidden-20",
+   "input": {
+    "heyBob": "1, 2, 3"
+   },
+   "expectedOutput": "Whatever.",
+   "label": "no letters"
+  },
+  {
+   "id": "hidden-21",
+   "input": {
+    "heyBob": "Ending with ? means a question."
+   },
+   "expectedOutput": "Whatever.",
+   "label": "statement containing question mark"
+  },
+  {
+   "id": "hidden-22",
+   "input": {
+    "heyBob": "         hmmmmmmm..."
+   },
+   "expectedOutput": "Whatever.",
+   "label": "starting with whitespace"
+  },
+  {
+   "id": "hidden-23",
+   "input": {
+    "heyBob": "This is a statement ending with whitespace      "
+   },
+   "expectedOutput": "Whatever.",
+   "label": "non-question ending with whitespace"
+  }
+ ],
+ "ex-perfect-numbers": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "number": 12
+   },
+   "expectedOutput": "abundant",
+   "label": "Smallest abundant number is classified correctly"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "number": 30
+   },
+   "expectedOutput": "abundant",
+   "label": "Medium abundant number is classified correctly"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "number": 33550335
+   },
+   "expectedOutput": "abundant",
+   "label": "Large abundant number is classified correctly"
+  },
+  {
+   "id": "hidden-4",
+   "input": {
+    "number": 196
+   },
+   "expectedOutput": "abundant",
+   "label": "Perfect square abundant number is classified correctly"
+  },
+  {
+   "id": "hidden-5",
+   "input": {
+    "number": 2
+   },
+   "expectedOutput": "deficient",
+   "label": "Smallest prime deficient number is classified correctly"
+  },
+  {
+   "id": "hidden-6",
+   "input": {
+    "number": 4
+   },
+   "expectedOutput": "deficient",
+   "label": "Smallest non-prime deficient number is classified correctly"
+  },
+  {
+   "id": "hidden-7",
+   "input": {
+    "number": 32
+   },
+   "expectedOutput": "deficient",
+   "label": "Medium deficient number is classified correctly"
+  },
+  {
+   "id": "hidden-8",
+   "input": {
+    "number": 33550337
+   },
+   "expectedOutput": "deficient",
+   "label": "Large deficient number is classified correctly"
+  },
+  {
+   "id": "hidden-9",
+   "input": {
+    "number": 1
+   },
+   "expectedOutput": "deficient",
+   "label": "Edge case (no factors other than itself) is classified correctly"
+  }
+ ],
+ "ex-square-root": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "radicand": 81
+   },
+   "expectedOutput": 9,
+   "label": "root of 81"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "radicand": 196
+   },
+   "expectedOutput": 14,
+   "label": "root of 196"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "radicand": 65025
+   },
+   "expectedOutput": 255,
+   "label": "root of 65025"
+  }
+ ],
+ "ex-sum-of-multiples": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "factors": [
+     3,
+     5
+    ],
+    "limit": 10
+   },
+   "expectedOutput": 23,
+   "label": "more than one factor with multiples within limit"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "factors": [
+     3,
+     5
+    ],
+    "limit": 100
+   },
+   "expectedOutput": 2318,
+   "label": "each multiple is only counted once"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "factors": [
+     3,
+     5
+    ],
+    "limit": 1000
+   },
+   "expectedOutput": 233168,
+   "label": "a much larger limit"
+  },
+  {
+   "id": "hidden-4",
+   "input": {
+    "factors": [
+     7,
+     13,
+     17
+    ],
+    "limit": 20
+   },
+   "expectedOutput": 51,
+   "label": "three factors"
+  },
+  {
+   "id": "hidden-5",
+   "input": {
+    "factors": [
+     4,
+     6
+    ],
+    "limit": 15
+   },
+   "expectedOutput": 30,
+   "label": "factors not relatively prime"
+  },
+  {
+   "id": "hidden-6",
+   "input": {
+    "factors": [
+     5,
+     6,
+     8
+    ],
+    "limit": 150
+   },
+   "expectedOutput": 4419,
+   "label": "some pairs of factors relatively prime and some not"
+  },
+  {
+   "id": "hidden-7",
+   "input": {
+    "factors": [
+     5,
+     25
+    ],
+    "limit": 51
+   },
+   "expectedOutput": 275,
+   "label": "one factor is a multiple of another"
+  },
+  {
+   "id": "hidden-8",
+   "input": {
+    "factors": [
+     43,
+     47
+    ],
+    "limit": 10000
+   },
+   "expectedOutput": 2203160,
+   "label": "much larger factors"
+  },
+  {
+   "id": "hidden-9",
+   "input": {
+    "factors": [
+     1
+    ],
+    "limit": 100
+   },
+   "expectedOutput": 4950,
+   "label": "all numbers are multiples of 1"
+  },
+  {
+   "id": "hidden-10",
+   "input": {
+    "factors": [],
+    "limit": 10000
+   },
+   "expectedOutput": 0,
+   "label": "no factors means an empty sum"
+  },
+  {
+   "id": "hidden-11",
+   "input": {
+    "factors": [
+     0
+    ],
+    "limit": 1
+   },
+   "expectedOutput": 0,
+   "label": "the only multiple of 0 is 0"
+  },
+  {
+   "id": "hidden-12",
+   "input": {
+    "factors": [
+     3,
+     0
+    ],
+    "limit": 4
+   },
+   "expectedOutput": 3,
+   "label": "the factor 0 does not affect the sum of multiples of other factors"
+  },
+  {
+   "id": "hidden-13",
+   "input": {
+    "factors": [
+     2,
+     3,
+     5,
+     7,
+     11
+    ],
+    "limit": 10000
+   },
+   "expectedOutput": 39614537,
+   "label": "solutions using include-exclude must extend to cardinality greater than 3"
+  }
+ ],
+ "ex-darts": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "x": 0,
+    "y": -1
+   },
+   "expectedOutput": 10,
+   "label": "On the inner circle"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "x": 0,
+    "y": 0
+   },
+   "expectedOutput": 10,
+   "label": "Exactly on center"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "x": -0.1,
+    "y": -0.1
+   },
+   "expectedOutput": 10,
+   "label": "Near the center"
+  },
+  {
+   "id": "hidden-4",
+   "input": {
+    "x": 0.7,
+    "y": 0.7
+   },
+   "expectedOutput": 10,
+   "label": "Just within the inner circle"
+  },
+  {
+   "id": "hidden-5",
+   "input": {
+    "x": 0.8,
+    "y": -0.8
+   },
+   "expectedOutput": 5,
+   "label": "Just outside the inner circle"
+  },
+  {
+   "id": "hidden-6",
+   "input": {
+    "x": -3.5,
+    "y": 3.5
+   },
+   "expectedOutput": 5,
+   "label": "Just within the middle circle"
+  },
+  {
+   "id": "hidden-7",
+   "input": {
+    "x": -3.6,
+    "y": -3.6
+   },
+   "expectedOutput": 1,
+   "label": "Just outside the middle circle"
+  },
+  {
+   "id": "hidden-8",
+   "input": {
+    "x": -7.0,
+    "y": 7.0
+   },
+   "expectedOutput": 1,
+   "label": "Just within the outer circle"
+  },
+  {
+   "id": "hidden-9",
+   "input": {
+    "x": 7.1,
+    "y": -7.1
+   },
+   "expectedOutput": 0,
+   "label": "Just outside the outer circle"
+  },
+  {
+   "id": "hidden-10",
+   "input": {
+    "x": 0.5,
+    "y": -4
+   },
+   "expectedOutput": 5,
+   "label": "Asymmetric position between the inner and middle circles"
+  }
+ ],
+ "ex-triangle": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "sides": [
+     4,
+     4,
+     4
+    ]
+   },
+   "expectedOutput": true,
+   "label": "equilateral triangles are also isosceles"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "sides": [
+     2,
+     3,
+     4
+    ]
+   },
+   "expectedOutput": false,
+   "label": "no sides are equal"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "sides": [
+     1,
+     1,
+     3
+    ]
+   },
+   "expectedOutput": false,
+   "label": "first triangle inequality violation"
+  },
+  {
+   "id": "hidden-4",
+   "input": {
+    "sides": [
+     1,
+     3,
+     1
+    ]
+   },
+   "expectedOutput": false,
+   "label": "second triangle inequality violation"
+  },
+  {
+   "id": "hidden-5",
+   "input": {
+    "sides": [
+     3,
+     1,
+     1
+    ]
+   },
+   "expectedOutput": false,
+   "label": "third triangle inequality violation"
+  }
+ ],
+ "ex-eliuds-eggs": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "number": 2000000000
+   },
+   "expectedOutput": 13,
+   "label": "13 eggs"
+  }
+ ],
+ "ex-rotational-cipher": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "text": "m",
+    "shiftKey": 13
+   },
+   "expectedOutput": "z",
+   "label": "rotate m by 13"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "text": "n",
+    "shiftKey": 13
+   },
+   "expectedOutput": "a",
+   "label": "rotate n by 13 with wrap around alphabet"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "text": "OMG",
+    "shiftKey": 5
+   },
+   "expectedOutput": "TRL",
+   "label": "rotate capital letters"
+  },
+  {
+   "id": "hidden-4",
+   "input": {
+    "text": "O M G",
+    "shiftKey": 5
+   },
+   "expectedOutput": "T R L",
+   "label": "rotate spaces"
+  },
+  {
+   "id": "hidden-5",
+   "input": {
+    "text": "Testing 1 2 3 testing",
+    "shiftKey": 4
+   },
+   "expectedOutput": "Xiwxmrk 1 2 3 xiwxmrk",
+   "label": "rotate numbers"
+  },
+  {
+   "id": "hidden-6",
+   "input": {
+    "text": "Let's eat, Grandma!",
+    "shiftKey": 21
+   },
+   "expectedOutput": "Gzo'n zvo, Bmviyhv!",
+   "label": "rotate punctuation"
+  },
+  {
+   "id": "hidden-7",
+   "input": {
+    "text": "The quick brown fox jumps over the lazy dog.",
+    "shiftKey": 13
+   },
+   "expectedOutput": "Gur dhvpx oebja sbk whzcf bire gur ynml qbt.",
+   "label": "rotate all letters"
+  }
+ ],
+ "ex-atbash-cipher": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "phrase": "O M G"
+   },
+   "expectedOutput": "lnt",
+   "label": "encode spaces"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "phrase": "mindblowingly"
+   },
+   "expectedOutput": "nrmwy oldrm tob",
+   "label": "encode mindblowingly"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "phrase": "Testing,1 2 3, testing."
+   },
+   "expectedOutput": "gvhgr mt123 gvhgr mt",
+   "label": "encode numbers"
+  },
+  {
+   "id": "hidden-4",
+   "input": {
+    "phrase": "Truth is fiction."
+   },
+   "expectedOutput": "gifgs rhurx grlm",
+   "label": "encode deep thought"
+  },
+  {
+   "id": "hidden-5",
+   "input": {
+    "phrase": "The quick brown fox jumps over the lazy dog."
+   },
+   "expectedOutput": "gsvjf rxpyi ldmul cqfnk hlevi gsvoz abwlt",
+   "label": "encode all the letters"
+  }
+ ],
+ "ex-luhn": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "value": "59"
+   },
+   "expectedOutput": true,
+   "label": "a simple valid SIN that becomes invalid if reversed"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "value": "055 444 285"
+   },
+   "expectedOutput": true,
+   "label": "a valid Canadian SIN"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "value": "055 444 286"
+   },
+   "expectedOutput": false,
+   "label": "invalid Canadian SIN"
+  },
+  {
+   "id": "hidden-4",
+   "input": {
+    "value": "8273 1232 7352 0569"
+   },
+   "expectedOutput": false,
+   "label": "invalid credit card"
+  },
+  {
+   "id": "hidden-5",
+   "input": {
+    "value": "1 2345 6789 1234 5678 9012"
+   },
+   "expectedOutput": false,
+   "label": "invalid long number with an even remainder"
+  },
+  {
+   "id": "hidden-6",
+   "input": {
+    "value": "1 2345 6789 1234 5678 9013"
+   },
+   "expectedOutput": false,
+   "label": "invalid long number with a remainder divisible by 5"
+  },
+  {
+   "id": "hidden-7",
+   "input": {
+    "value": "095 245 88"
+   },
+   "expectedOutput": true,
+   "label": "valid number with an even number of digits"
+  },
+  {
+   "id": "hidden-8",
+   "input": {
+    "value": "234 567 891 234"
+   },
+   "expectedOutput": true,
+   "label": "valid number with an odd number of spaces"
+  },
+  {
+   "id": "hidden-9",
+   "input": {
+    "value": "059a"
+   },
+   "expectedOutput": false,
+   "label": "valid strings with a non-digit added at the end become invalid"
+  },
+  {
+   "id": "hidden-10",
+   "input": {
+    "value": "055-444-285"
+   },
+   "expectedOutput": false,
+   "label": "valid strings with punctuation included become invalid"
+  },
+  {
+   "id": "hidden-11",
+   "input": {
+    "value": "055# 444$ 285"
+   },
+   "expectedOutput": false,
+   "label": "valid strings with symbols included become invalid"
+  },
+  {
+   "id": "hidden-12",
+   "input": {
+    "value": " 0"
+   },
+   "expectedOutput": false,
+   "label": "single zero with space is invalid"
+  },
+  {
+   "id": "hidden-13",
+   "input": {
+    "value": "0000 0"
+   },
+   "expectedOutput": true,
+   "label": "more than a single zero is valid"
+  },
+  {
+   "id": "hidden-14",
+   "input": {
+    "value": "091"
+   },
+   "expectedOutput": true,
+   "label": "input digit 9 is correctly converted to output digit 9"
+  },
+  {
+   "id": "hidden-15",
+   "input": {
+    "value": "9999999999 9999999999 9999999999 9999999999"
+   },
+   "expectedOutput": true,
+   "label": "very long input is valid"
+  },
+  {
+   "id": "hidden-16",
+   "input": {
+    "value": "109"
+   },
+   "expectedOutput": true,
+   "label": "valid luhn with an odd number of digits and non zero first digit"
+  },
+  {
+   "id": "hidden-17",
+   "input": {
+    "value": "055b 444 285"
+   },
+   "expectedOutput": false,
+   "label": "using ascii value for non-doubled non-digit isn't allowed"
+  },
+  {
+   "id": "hidden-18",
+   "input": {
+    "value": ":9"
+   },
+   "expectedOutput": false,
+   "label": "using ascii value for doubled non-digit isn't allowed"
+  },
+  {
+   "id": "hidden-19",
+   "input": {
+    "value": "59%59"
+   },
+   "expectedOutput": false,
+   "label": "non-numeric, non-space char in the middle with a sum that's divisible by 10 isn't allowed"
+  }
+ ],
+ "ex-scrabble-score": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "word": "at"
+   },
+   "expectedOutput": 2,
+   "label": "short word"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "word": "zoo"
+   },
+   "expectedOutput": 12,
+   "label": "short, valuable word"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "word": "street"
+   },
+   "expectedOutput": 6,
+   "label": "medium word"
+  },
+  {
+   "id": "hidden-4",
+   "input": {
+    "word": "quirky"
+   },
+   "expectedOutput": 22,
+   "label": "medium, valuable word"
+  },
+  {
+   "id": "hidden-5",
+   "input": {
+    "word": "OxyphenButazone"
+   },
+   "expectedOutput": 41,
+   "label": "long, mixed-case word"
+  },
+  {
+   "id": "hidden-6",
+   "input": {
+    "word": "pinata"
+   },
+   "expectedOutput": 8,
+   "label": "english-like word"
+  },
+  {
+   "id": "hidden-7",
+   "input": {
+    "word": ""
+   },
+   "expectedOutput": 0,
+   "label": "empty input"
+  },
+  {
+   "id": "hidden-8",
+   "input": {
+    "word": "abcdefghijklmnopqrstuvwxyz"
+   },
+   "expectedOutput": 87,
+   "label": "entire alphabet available"
+  }
+ ],
+ "ex-rna-transcription": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "dna": "T"
+   },
+   "expectedOutput": "A",
+   "label": "RNA complement of thymine is adenine"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "dna": "A"
+   },
+   "expectedOutput": "U",
+   "label": "RNA complement of adenine is uracil"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "dna": "ACGTGGTCTTAA"
+   },
+   "expectedOutput": "UGCACCAGAAUU",
+   "label": "RNA complement"
+  }
+ ],
+ "ex-binary-search": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "array": [
+     1,
+     3,
+     4,
+     6,
+     8,
+     9,
+     11
+    ],
+    "value": 11
+   },
+   "expectedOutput": 6,
+   "label": "finds a value at the end of an array"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "array": [
+     1,
+     3,
+     5,
+     8,
+     13,
+     21,
+     34,
+     55,
+     89,
+     144,
+     233,
+     377,
+     634
+    ],
+    "value": 144
+   },
+   "expectedOutput": 9,
+   "label": "finds a value in an array of odd length"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "array": [
+     1,
+     3,
+     5,
+     8,
+     13,
+     21,
+     34,
+     55,
+     89,
+     144,
+     233,
+     377
+    ],
+    "value": 21
+   },
+   "expectedOutput": 5,
+   "label": "finds a value in an array of even length"
+  }
+ ],
+ "ex-nth-prime": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "number": 10001
+   },
+   "expectedOutput": 104743,
+   "label": "big prime"
+  }
+ ],
+ "ex-prime-factors": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "value": 9
+   },
+   "expectedOutput": [
+    3,
+    3
+   ],
+   "label": "square of a prime"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "value": 4
+   },
+   "expectedOutput": [
+    2,
+    2
+   ],
+   "label": "product of first prime"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "value": 8
+   },
+   "expectedOutput": [
+    2,
+    2,
+    2
+   ],
+   "label": "cube of a prime"
+  },
+  {
+   "id": "hidden-4",
+   "input": {
+    "value": 27
+   },
+   "expectedOutput": [
+    3,
+    3,
+    3
+   ],
+   "label": "product of second prime"
+  },
+  {
+   "id": "hidden-5",
+   "input": {
+    "value": 625
+   },
+   "expectedOutput": [
+    5,
+    5,
+    5,
+    5
+   ],
+   "label": "product of third prime"
+  },
+  {
+   "id": "hidden-6",
+   "input": {
+    "value": 6
+   },
+   "expectedOutput": [
+    2,
+    3
+   ],
+   "label": "product of first and second prime"
+  },
+  {
+   "id": "hidden-7",
+   "input": {
+    "value": 12
+   },
+   "expectedOutput": [
+    2,
+    2,
+    3
+   ],
+   "label": "product of primes and non-primes"
+  },
+  {
+   "id": "hidden-8",
+   "input": {
+    "value": 901255
+   },
+   "expectedOutput": [
+    5,
+    17,
+    23,
+    461
+   ],
+   "label": "product of primes"
+  }
+ ],
+ "ex-sieve": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "limit": 13
+   },
+   "expectedOutput": [
+    2,
+    3,
+    5,
+    7,
+    11,
+    13
+   ],
+   "label": "limit is prime"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "limit": 1000
+   },
+   "expectedOutput": [
+    2,
+    3,
+    5,
+    7,
+    11,
+    13,
+    17,
+    19,
+    23,
+    29,
+    31,
+    37,
+    41,
+    43,
+    47,
+    53,
+    59,
+    61,
+    67,
+    71,
+    73,
+    79,
+    83,
+    89,
+    97,
+    101,
+    103,
+    107,
+    109,
+    113,
+    127,
+    131,
+    137,
+    139,
+    149,
+    151,
+    157,
+    163,
+    167,
+    173,
+    179,
+    181,
+    191,
+    193,
+    197,
+    199,
+    211,
+    223,
+    227,
+    229,
+    233,
+    239,
+    241,
+    251,
+    257,
+    263,
+    269,
+    271,
+    277,
+    281,
+    283,
+    293,
+    307,
+    311,
+    313,
+    317,
+    331,
+    337,
+    347,
+    349,
+    353,
+    359,
+    367,
+    373,
+    379,
+    383,
+    389,
+    397,
+    401,
+    409,
+    419,
+    421,
+    431,
+    433,
+    439,
+    443,
+    449,
+    457,
+    461,
+    463,
+    467,
+    479,
+    487,
+    491,
+    499,
+    503,
+    509,
+    521,
+    523,
+    541,
+    547,
+    557,
+    563,
+    569,
+    571,
+    577,
+    587,
+    593,
+    599,
+    601,
+    607,
+    613,
+    617,
+    619,
+    631,
+    641,
+    643,
+    647,
+    653,
+    659,
+    661,
+    673,
+    677,
+    683,
+    691,
+    701,
+    709,
+    719,
+    727,
+    733,
+    739,
+    743,
+    751,
+    757,
+    761,
+    769,
+    773,
+    787,
+    797,
+    809,
+    811,
+    821,
+    823,
+    827,
+    829,
+    839,
+    853,
+    857,
+    859,
+    863,
+    877,
+    881,
+    883,
+    887,
+    907,
+    911,
+    919,
+    929,
+    937,
+    941,
+    947,
+    953,
+    967,
+    971,
+    977,
+    983,
+    991,
+    997
+   ],
+   "label": "find primes up to 1000"
+  }
+ ],
+ "ex-series": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "series": "9142",
+    "sliceLength": 2
+   },
+   "expectedOutput": [
+    "91",
+    "14",
+    "42"
+   ],
+   "label": "slices of two overlap"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "series": "777777",
+    "sliceLength": 3
+   },
+   "expectedOutput": [
+    "777",
+    "777",
+    "777",
+    "777"
+   ],
+   "label": "slices can include duplicates"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "series": "918493904243",
+    "sliceLength": 5
+   },
+   "expectedOutput": [
+    "91849",
+    "18493",
+    "84939",
+    "49390",
+    "93904",
+    "39042",
+    "90424",
+    "04243"
+   ],
+   "label": "slices of a long series"
+  }
+ ],
+ "ex-largest-series-product": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "digits": "0123456789",
+    "span": 3
+   },
+   "expectedOutput": 504,
+   "label": "can find the largest product of 3 with numbers in order"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "digits": "1027839564",
+    "span": 3
+   },
+   "expectedOutput": 270,
+   "label": "can find the largest product of 3"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "digits": "0123456789",
+    "span": 5
+   },
+   "expectedOutput": 15120,
+   "label": "can find the largest product of 5 with numbers in order"
+  },
+  {
+   "id": "hidden-4",
+   "input": {
+    "digits": "73167176531330624919225119674426574742355349194934",
+    "span": 6
+   },
+   "expectedOutput": 23520,
+   "label": "can get the largest product of a big number"
+  },
+  {
+   "id": "hidden-5",
+   "input": {
+    "digits": "0000",
+    "span": 2
+   },
+   "expectedOutput": 0,
+   "label": "reports zero if the only digits are zero"
+  },
+  {
+   "id": "hidden-6",
+   "input": {
+    "digits": "99099",
+    "span": 3
+   },
+   "expectedOutput": 0,
+   "label": "reports zero if all spans include zero"
+  },
+  {
+   "id": "hidden-7",
+   "input": {
+    "digits": "",
+    "span": 0
+   },
+   "expectedOutput": 1,
+   "label": "reports 1 for empty string and empty product (0 span)"
+  },
+  {
+   "id": "hidden-8",
+   "input": {
+    "digits": "123",
+    "span": 0
+   },
+   "expectedOutput": 1,
+   "label": "reports 1 for nonempty string and empty product (0 span)"
+  }
+ ],
+ "ex-anagram": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "subject": "listen",
+    "candidates": [
+     "enlists",
+     "google",
+     "inlets",
+     "banana"
+    ]
+   },
+   "expectedOutput": [
+    "inlets"
+   ],
+   "label": "detects anagram"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "subject": "allergy",
+    "candidates": [
+     "gallery",
+     "ballerina",
+     "regally",
+     "clergy",
+     "largely",
+     "leading"
+    ]
+   },
+   "expectedOutput": [
+    "gallery",
+    "regally",
+    "largely"
+   ],
+   "label": "detects three anagrams"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "subject": "nose",
+    "candidates": [
+     "Eons",
+     "ONES"
+    ]
+   },
+   "expectedOutput": [
+    "Eons",
+    "ONES"
+   ],
+   "label": "detects multiple anagrams with different case"
+  },
+  {
+   "id": "hidden-4",
+   "input": {
+    "subject": "mass",
+    "candidates": [
+     "last"
+    ]
+   },
+   "expectedOutput": [],
+   "label": "does not detect non-anagrams with identical checksum"
+  },
+  {
+   "id": "hidden-5",
+   "input": {
+    "subject": "Orchestra",
+    "candidates": [
+     "cashregister",
+     "Carthorse",
+     "radishes"
+    ]
+   },
+   "expectedOutput": [
+    "Carthorse"
+   ],
+   "label": "detects anagrams case-insensitively"
+  },
+  {
+   "id": "hidden-6",
+   "input": {
+    "subject": "Orchestra",
+    "candidates": [
+     "cashregister",
+     "carthorse",
+     "radishes"
+    ]
+   },
+   "expectedOutput": [
+    "carthorse"
+   ],
+   "label": "detects anagrams using case-insensitive subject"
+  },
+  {
+   "id": "hidden-7",
+   "input": {
+    "subject": "orchestra",
+    "candidates": [
+     "cashregister",
+     "Carthorse",
+     "radishes"
+    ]
+   },
+   "expectedOutput": [
+    "Carthorse"
+   ],
+   "label": "detects anagrams using case-insensitive possible matches"
+  },
+  {
+   "id": "hidden-8",
+   "input": {
+    "subject": "go",
+    "candidates": [
+     "goGoGO"
+    ]
+   },
+   "expectedOutput": [],
+   "label": "does not detect an anagram if the original word is repeated"
+  },
+  {
+   "id": "hidden-9",
+   "input": {
+    "subject": "tapper",
+    "candidates": [
+     "patter"
+    ]
+   },
+   "expectedOutput": [],
+   "label": "anagrams must use all letters exactly once"
+  },
+  {
+   "id": "hidden-10",
+   "input": {
+    "subject": "BANANA",
+    "candidates": [
+     "BANANA"
+    ]
+   },
+   "expectedOutput": [],
+   "label": "words are not anagrams of themselves"
+  },
+  {
+   "id": "hidden-11",
+   "input": {
+    "subject": "BANANA",
+    "candidates": [
+     "Banana"
+    ]
+   },
+   "expectedOutput": [],
+   "label": "words are not anagrams of themselves even if letter case is partially different"
+  },
+  {
+   "id": "hidden-12",
+   "input": {
+    "subject": "BANANA",
+    "candidates": [
+     "banana"
+    ]
+   },
+   "expectedOutput": [],
+   "label": "words are not anagrams of themselves even if letter case is completely different"
+  },
+  {
+   "id": "hidden-13",
+   "input": {
+    "subject": "LISTEN",
+    "candidates": [
+     "LISTEN",
+     "Silent"
+    ]
+   },
+   "expectedOutput": [
+    "Silent"
+   ],
+   "label": "words other than themselves can be anagrams"
+  }
+ ],
+ "ex-matching-brackets": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "value": "}{"
+   },
+   "expectedOutput": false,
+   "label": "wrong ordered brackets"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "value": "{]"
+   },
+   "expectedOutput": false,
+   "label": "wrong closing bracket"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "value": "{ }"
+   },
+   "expectedOutput": true,
+   "label": "paired with whitespace"
+  },
+  {
+   "id": "hidden-4",
+   "input": {
+    "value": "{[])"
+   },
+   "expectedOutput": false,
+   "label": "partially paired brackets"
+  },
+  {
+   "id": "hidden-5",
+   "input": {
+    "value": "{[]}"
+   },
+   "expectedOutput": true,
+   "label": "simple nested brackets"
+  },
+  {
+   "id": "hidden-6",
+   "input": {
+    "value": "{}[]"
+   },
+   "expectedOutput": true,
+   "label": "several paired brackets"
+  },
+  {
+   "id": "hidden-7",
+   "input": {
+    "value": "([{}({}[])])"
+   },
+   "expectedOutput": true,
+   "label": "paired and nested brackets"
+  },
+  {
+   "id": "hidden-8",
+   "input": {
+    "value": "{[)][]}"
+   },
+   "expectedOutput": false,
+   "label": "unopened closing brackets"
+  },
+  {
+   "id": "hidden-9",
+   "input": {
+    "value": "([{])"
+   },
+   "expectedOutput": false,
+   "label": "unpaired and nested brackets"
+  },
+  {
+   "id": "hidden-10",
+   "input": {
+    "value": "[({]})"
+   },
+   "expectedOutput": false,
+   "label": "paired and wrong nested brackets"
+  },
+  {
+   "id": "hidden-11",
+   "input": {
+    "value": "[({}])"
+   },
+   "expectedOutput": false,
+   "label": "paired and wrong nested brackets but innermost are correct"
+  },
+  {
+   "id": "hidden-12",
+   "input": {
+    "value": "{}["
+   },
+   "expectedOutput": false,
+   "label": "paired and incomplete brackets"
+  },
+  {
+   "id": "hidden-13",
+   "input": {
+    "value": "[]]"
+   },
+   "expectedOutput": false,
+   "label": "too many closing brackets"
+  },
+  {
+   "id": "hidden-14",
+   "input": {
+    "value": ")()"
+   },
+   "expectedOutput": false,
+   "label": "early unexpected brackets"
+  },
+  {
+   "id": "hidden-15",
+   "input": {
+    "value": "{)()"
+   },
+   "expectedOutput": false,
+   "label": "early mismatched brackets"
+  },
+  {
+   "id": "hidden-16",
+   "input": {
+    "value": "(((185 + 223.85) * 15) - 543)/2"
+   },
+   "expectedOutput": true,
+   "label": "math expression"
+  },
+  {
+   "id": "hidden-17",
+   "input": {
+    "value": "\\left(\\begin{array}{cc} \\frac{1}{3} & x\\\\ \\mathrm{e}^{x} &... x^2 \\end{array}\\right)"
+   },
+   "expectedOutput": true,
+   "label": "complex latex expression"
+  }
+ ],
+ "ex-pascals-triangle": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "count": 3
+   },
+   "expectedOutput": [
+    [
+     1
+    ],
+    [
+     1,
+     1
+    ],
+    [
+     1,
+     2,
+     1
+    ]
+   ],
+   "label": "three rows"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "count": 4
+   },
+   "expectedOutput": [
+    [
+     1
+    ],
+    [
+     1,
+     1
+    ],
+    [
+     1,
+     2,
+     1
+    ],
+    [
+     1,
+     3,
+     3,
+     1
+    ]
+   ],
+   "label": "four rows"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "count": 5
+   },
+   "expectedOutput": [
+    [
+     1
+    ],
+    [
+     1,
+     1
+    ],
+    [
+     1,
+     2,
+     1
+    ],
+    [
+     1,
+     3,
+     3,
+     1
+    ],
+    [
+     1,
+     4,
+     6,
+     4,
+     1
+    ]
+   ],
+   "label": "five rows"
+  },
+  {
+   "id": "hidden-4",
+   "input": {
+    "count": 6
+   },
+   "expectedOutput": [
+    [
+     1
+    ],
+    [
+     1,
+     1
+    ],
+    [
+     1,
+     2,
+     1
+    ],
+    [
+     1,
+     3,
+     3,
+     1
+    ],
+    [
+     1,
+     4,
+     6,
+     4,
+     1
+    ],
+    [
+     1,
+     5,
+     10,
+     10,
+     5,
+     1
+    ]
+   ],
+   "label": "six rows"
+  },
+  {
+   "id": "hidden-5",
+   "input": {
+    "count": 10
+   },
+   "expectedOutput": [
+    [
+     1
+    ],
+    [
+     1,
+     1
+    ],
+    [
+     1,
+     2,
+     1
+    ],
+    [
+     1,
+     3,
+     3,
+     1
+    ],
+    [
+     1,
+     4,
+     6,
+     4,
+     1
+    ],
+    [
+     1,
+     5,
+     10,
+     10,
+     5,
+     1
+    ],
+    [
+     1,
+     6,
+     15,
+     20,
+     15,
+     6,
+     1
+    ],
+    [
+     1,
+     7,
+     21,
+     35,
+     35,
+     21,
+     7,
+     1
+    ],
+    [
+     1,
+     8,
+     28,
+     56,
+     70,
+     56,
+     28,
+     8,
+     1
+    ],
+    [
+     1,
+     9,
+     36,
+     84,
+     126,
+     126,
+     84,
+     36,
+     9,
+     1
+    ]
+   ],
+   "label": "ten rows"
+  }
+ ],
+ "ex-spiral-matrix": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "size": 3
+   },
+   "expectedOutput": [
+    [
+     1,
+     2,
+     3
+    ],
+    [
+     8,
+     9,
+     4
+    ],
+    [
+     7,
+     6,
+     5
+    ]
+   ],
+   "label": "spiral of size 3"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "size": 4
+   },
+   "expectedOutput": [
+    [
+     1,
+     2,
+     3,
+     4
+    ],
+    [
+     12,
+     13,
+     14,
+     5
+    ],
+    [
+     11,
+     16,
+     15,
+     6
+    ],
+    [
+     10,
+     9,
+     8,
+     7
+    ]
+   ],
+   "label": "spiral of size 4"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "size": 5
+   },
+   "expectedOutput": [
+    [
+     1,
+     2,
+     3,
+     4,
+     5
+    ],
+    [
+     16,
+     17,
+     18,
+     19,
+     6
+    ],
+    [
+     15,
+     24,
+     25,
+     20,
+     7
+    ],
+    [
+     14,
+     23,
+     22,
+     21,
+     8
+    ],
+    [
+     13,
+     12,
+     11,
+     10,
+     9
+    ]
+   ],
+   "label": "spiral of size 5"
+  }
+ ],
+ "ex-matrix": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "text": "1 2 3\n4 5 6\n7 8 9\n8 7 6",
+    "index": 4
+   },
+   "expectedOutput": [
+    8,
+    7,
+    6
+   ],
+   "label": "can extract row from non-square matrix with no corresponding column"
+  }
+ ],
+ "ex-all-your-base": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "inputBase": 2,
+    "digits": [
+     1,
+     0,
+     1,
+     0,
+     1,
+     0
+    ],
+    "outputBase": 10
+   },
+   "expectedOutput": [
+    4,
+    2
+   ],
+   "label": "binary to multiple decimal"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "inputBase": 10,
+    "digits": [
+     4,
+     2
+    ],
+    "outputBase": 2
+   },
+   "expectedOutput": [
+    1,
+    0,
+    1,
+    0,
+    1,
+    0
+   ],
+   "label": "decimal to binary"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "inputBase": 3,
+    "digits": [
+     1,
+     1,
+     2,
+     0
+    ],
+    "outputBase": 16
+   },
+   "expectedOutput": [
+    2,
+    10
+   ],
+   "label": "trinary to hexadecimal"
+  },
+  {
+   "id": "hidden-4",
+   "input": {
+    "inputBase": 16,
+    "digits": [
+     2,
+     10
+    ],
+    "outputBase": 3
+   },
+   "expectedOutput": [
+    1,
+    1,
+    2,
+    0
+   ],
+   "label": "hexadecimal to trinary"
+  },
+  {
+   "id": "hidden-5",
+   "input": {
+    "inputBase": 97,
+    "digits": [
+     3,
+     46,
+     60
+    ],
+    "outputBase": 73
+   },
+   "expectedOutput": [
+    6,
+    10,
+    45
+   ],
+   "label": "15-bit integer"
+  },
+  {
+   "id": "hidden-6",
+   "input": {
+    "inputBase": 2,
+    "digits": [],
+    "outputBase": 10
+   },
+   "expectedOutput": [
+    0
+   ],
+   "label": "empty list"
+  },
+  {
+   "id": "hidden-7",
+   "input": {
+    "inputBase": 10,
+    "digits": [
+     0
+    ],
+    "outputBase": 2
+   },
+   "expectedOutput": [
+    0
+   ],
+   "label": "single zero"
+  },
+  {
+   "id": "hidden-8",
+   "input": {
+    "inputBase": 10,
+    "digits": [
+     0,
+     0,
+     0
+    ],
+    "outputBase": 2
+   },
+   "expectedOutput": [
+    0
+   ],
+   "label": "multiple zeros"
+  },
+  {
+   "id": "hidden-9",
+   "input": {
+    "inputBase": 7,
+    "digits": [
+     0,
+     6,
+     0
+    ],
+    "outputBase": 10
+   },
+   "expectedOutput": [
+    4,
+    2
+   ],
+   "label": "leading zeros"
+  }
+ ],
+ "ex-roman-numerals": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "number": 4
+   },
+   "expectedOutput": "IV",
+   "label": "4 is IV"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "number": 5
+   },
+   "expectedOutput": "V",
+   "label": "5 is V"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "number": 6
+   },
+   "expectedOutput": "VI",
+   "label": "6 is VI"
+  },
+  {
+   "id": "hidden-4",
+   "input": {
+    "number": 9
+   },
+   "expectedOutput": "IX",
+   "label": "9 is IX"
+  },
+  {
+   "id": "hidden-5",
+   "input": {
+    "number": 16
+   },
+   "expectedOutput": "XVI",
+   "label": "16 is XVI"
+  },
+  {
+   "id": "hidden-6",
+   "input": {
+    "number": 27
+   },
+   "expectedOutput": "XXVII",
+   "label": "27 is XXVII"
+  },
+  {
+   "id": "hidden-7",
+   "input": {
+    "number": 48
+   },
+   "expectedOutput": "XLVIII",
+   "label": "48 is XLVIII"
+  },
+  {
+   "id": "hidden-8",
+   "input": {
+    "number": 49
+   },
+   "expectedOutput": "XLIX",
+   "label": "49 is XLIX"
+  },
+  {
+   "id": "hidden-9",
+   "input": {
+    "number": 59
+   },
+   "expectedOutput": "LIX",
+   "label": "59 is LIX"
+  },
+  {
+   "id": "hidden-10",
+   "input": {
+    "number": 66
+   },
+   "expectedOutput": "LXVI",
+   "label": "66 is LXVI"
+  },
+  {
+   "id": "hidden-11",
+   "input": {
+    "number": 93
+   },
+   "expectedOutput": "XCIII",
+   "label": "93 is XCIII"
+  },
+  {
+   "id": "hidden-12",
+   "input": {
+    "number": 141
+   },
+   "expectedOutput": "CXLI",
+   "label": "141 is CXLI"
+  },
+  {
+   "id": "hidden-13",
+   "input": {
+    "number": 163
+   },
+   "expectedOutput": "CLXIII",
+   "label": "163 is CLXIII"
+  },
+  {
+   "id": "hidden-14",
+   "input": {
+    "number": 166
+   },
+   "expectedOutput": "CLXVI",
+   "label": "166 is CLXVI"
+  },
+  {
+   "id": "hidden-15",
+   "input": {
+    "number": 402
+   },
+   "expectedOutput": "CDII",
+   "label": "402 is CDII"
+  },
+  {
+   "id": "hidden-16",
+   "input": {
+    "number": 575
+   },
+   "expectedOutput": "DLXXV",
+   "label": "575 is DLXXV"
+  },
+  {
+   "id": "hidden-17",
+   "input": {
+    "number": 666
+   },
+   "expectedOutput": "DCLXVI",
+   "label": "666 is DCLXVI"
+  },
+  {
+   "id": "hidden-18",
+   "input": {
+    "number": 911
+   },
+   "expectedOutput": "CMXI",
+   "label": "911 is CMXI"
+  },
+  {
+   "id": "hidden-19",
+   "input": {
+    "number": 1024
+   },
+   "expectedOutput": "MXXIV",
+   "label": "1024 is MXXIV"
+  },
+  {
+   "id": "hidden-20",
+   "input": {
+    "number": 1666
+   },
+   "expectedOutput": "MDCLXVI",
+   "label": "1666 is MDCLXVI"
+  },
+  {
+   "id": "hidden-21",
+   "input": {
+    "number": 3000
+   },
+   "expectedOutput": "MMM",
+   "label": "3000 is MMM"
+  },
+  {
+   "id": "hidden-22",
+   "input": {
+    "number": 3001
+   },
+   "expectedOutput": "MMMI",
+   "label": "3001 is MMMI"
+  },
+  {
+   "id": "hidden-23",
+   "input": {
+    "number": 3888
+   },
+   "expectedOutput": "MMMDCCCLXXXVIII",
+   "label": "3888 is MMMDCCCLXXXVIII"
+  },
+  {
+   "id": "hidden-24",
+   "input": {
+    "number": 3999
+   },
+   "expectedOutput": "MMMCMXCIX",
+   "label": "3999 is MMMCMXCIX"
+  }
+ ],
+ "ex-say": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "number": 20
+   },
+   "expectedOutput": "twenty",
+   "label": "twenty"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "number": 22
+   },
+   "expectedOutput": "twenty-two",
+   "label": "twenty-two"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "number": 30
+   },
+   "expectedOutput": "thirty",
+   "label": "thirty"
+  },
+  {
+   "id": "hidden-4",
+   "input": {
+    "number": 99
+   },
+   "expectedOutput": "ninety-nine",
+   "label": "ninety-nine"
+  },
+  {
+   "id": "hidden-5",
+   "input": {
+    "number": 100
+   },
+   "expectedOutput": "one hundred",
+   "label": "one hundred"
+  },
+  {
+   "id": "hidden-6",
+   "input": {
+    "number": 123
+   },
+   "expectedOutput": "one hundred twenty-three",
+   "label": "one hundred twenty-three"
+  },
+  {
+   "id": "hidden-7",
+   "input": {
+    "number": 200
+   },
+   "expectedOutput": "two hundred",
+   "label": "two hundred"
+  },
+  {
+   "id": "hidden-8",
+   "input": {
+    "number": 999
+   },
+   "expectedOutput": "nine hundred ninety-nine",
+   "label": "nine hundred ninety-nine"
+  },
+  {
+   "id": "hidden-9",
+   "input": {
+    "number": 1000
+   },
+   "expectedOutput": "one thousand",
+   "label": "one thousand"
+  },
+  {
+   "id": "hidden-10",
+   "input": {
+    "number": 1234
+   },
+   "expectedOutput": "one thousand two hundred thirty-four",
+   "label": "one thousand two hundred thirty-four"
+  },
+  {
+   "id": "hidden-11",
+   "input": {
+    "number": 1000000
+   },
+   "expectedOutput": "one million",
+   "label": "one million"
+  },
+  {
+   "id": "hidden-12",
+   "input": {
+    "number": 1002345
+   },
+   "expectedOutput": "one million two thousand three hundred forty-five",
+   "label": "one million two thousand three hundred forty-five"
+  },
+  {
+   "id": "hidden-13",
+   "input": {
+    "number": 1000000000
+   },
+   "expectedOutput": "one billion",
+   "label": "one billion"
+  }
+ ],
+ "ex-run-length-encoding": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "text": "WWWWWWWWWWWWBWWWWWWWWWWWWBBBWWWWWWWWWWWWWWWWWWWWWWWWB"
+   },
+   "expectedOutput": "12WB12W3B24WB",
+   "label": "single characters mixed with repeated characters"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "text": "  hsqq qww  "
+   },
+   "expectedOutput": "2 hs2q q2w2 ",
+   "label": "multiple whitespace mixed in string"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "text": "aabbbcccc"
+   },
+   "expectedOutput": "2a3b4c",
+   "label": "lowercase characters"
+  }
+ ],
+ "ex-crypto-square": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "plaintext": "  b "
+   },
+   "expectedOutput": "b",
+   "label": "Remove spaces"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "plaintext": "@1,%!"
+   },
+   "expectedOutput": "1",
+   "label": "Remove punctuation"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "plaintext": "This is fun!"
+   },
+   "expectedOutput": "tsf hiu isn",
+   "label": "9 character plaintext results in 3 chunks of 3 characters"
+  },
+  {
+   "id": "hidden-4",
+   "input": {
+    "plaintext": "Chill out."
+   },
+   "expectedOutput": "clu hlt io ",
+   "label": "8 character plaintext results in 3 chunks, the last one with a trailing space"
+  },
+  {
+   "id": "hidden-5",
+   "input": {
+    "plaintext": "If man was meant to stay on the ground, god would have given us roots."
+   },
+   "expectedOutput": "imtgdvs fearwer mayoogo anouuio ntnnlvt wttddes aohghn  sseoau ",
+   "label": "54 character plaintext results in 8 chunks, the last two with trailing spaces"
+  }
+ ],
+ "ex-proverb": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "lines": [
+     "nail",
+     "shoe",
+     "horse"
+    ]
+   },
+   "expectedOutput": [
+    "For want of a nail the shoe was lost.",
+    "For want of a shoe the horse was lost.",
+    "And all for the want of a nail."
+   ],
+   "label": "three pieces"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "lines": [
+     "nail",
+     "shoe",
+     "horse",
+     "rider",
+     "message",
+     "battle",
+     "kingdom"
+    ]
+   },
+   "expectedOutput": [
+    "For want of a nail the shoe was lost.",
+    "For want of a shoe the horse was lost.",
+    "For want of a horse the rider was lost.",
+    "For want of a rider the message was lost.",
+    "For want of a message the battle was lost.",
+    "For want of a battle the kingdom was lost.",
+    "And all for the want of a nail."
+   ],
+   "label": "full proverb"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "lines": [
+     "pin",
+     "gun",
+     "soldier",
+     "battle"
+    ]
+   },
+   "expectedOutput": [
+    "For want of a pin the gun was lost.",
+    "For want of a gun the soldier was lost.",
+    "For want of a soldier the battle was lost.",
+    "And all for the want of a pin."
+   ],
+   "label": "four pieces modernized"
+  }
+ ],
+ "ex-resistor-color": [],
+ "ex-resistor-color-duo": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "colors": [
+     "white",
+     "red"
+    ]
+   },
+   "expectedOutput": 92,
+   "label": "White and red"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "colors": [
+     "orange",
+     "orange"
+    ]
+   },
+   "expectedOutput": 33,
+   "label": "Orange and orange"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "colors": [
+     "green",
+     "brown",
+     "orange"
+    ]
+   },
+   "expectedOutput": 51,
+   "label": "Ignore additional colors"
+  },
+  {
+   "id": "hidden-4",
+   "input": {
+    "colors": [
+     "black",
+     "brown"
+    ]
+   },
+   "expectedOutput": 1,
+   "label": "Black and brown, one-digit"
+  }
+ ],
+ "ex-secret-handshake": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "number": 8
+   },
+   "expectedOutput": [
+    "jump"
+   ],
+   "label": "jump for 1000"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "number": 3
+   },
+   "expectedOutput": [
+    "wink",
+    "double blink"
+   ],
+   "label": "combine two actions"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "number": 19
+   },
+   "expectedOutput": [
+    "double blink",
+    "wink"
+   ],
+   "label": "reverse two actions"
+  },
+  {
+   "id": "hidden-4",
+   "input": {
+    "number": 24
+   },
+   "expectedOutput": [
+    "jump"
+   ],
+   "label": "reversing one action gives the same action"
+  },
+  {
+   "id": "hidden-5",
+   "input": {
+    "number": 16
+   },
+   "expectedOutput": [],
+   "label": "reversing no actions still gives no actions"
+  },
+  {
+   "id": "hidden-6",
+   "input": {
+    "number": 15
+   },
+   "expectedOutput": [
+    "wink",
+    "double blink",
+    "close your eyes",
+    "jump"
+   ],
+   "label": "all possible actions"
+  },
+  {
+   "id": "hidden-7",
+   "input": {
+    "number": 31
+   },
+   "expectedOutput": [
+    "jump",
+    "close your eyes",
+    "double blink",
+    "wink"
+   ],
+   "label": "reverse all possible actions"
+  },
+  {
+   "id": "hidden-8",
+   "input": {
+    "number": 0
+   },
+   "expectedOutput": [],
+   "label": "do nothing for zero"
+  }
+ ],
+ "ex-house": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "startVerse": 4,
+    "endVerse": 4
+   },
+   "expectedOutput": [
+    "This is the cat that killed the rat that ate the malt that lay in the house that Jack built."
+   ],
+   "label": "verse four - the cat that killed"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "startVerse": 5,
+    "endVerse": 5
+   },
+   "expectedOutput": [
+    "This is the dog that worried the cat that killed the rat that ate the malt that lay in the house that Jack built."
+   ],
+   "label": "verse five - the dog that worried"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "startVerse": 6,
+    "endVerse": 6
+   },
+   "expectedOutput": [
+    "This is the cow with the crumpled horn that tossed the dog that worried the cat that killed the rat that ate the malt that lay in the house that Jack built."
+   ],
+   "label": "verse six - the cow with the crumpled horn"
+  },
+  {
+   "id": "hidden-4",
+   "input": {
+    "startVerse": 7,
+    "endVerse": 7
+   },
+   "expectedOutput": [
+    "This is the maiden all forlorn that milked the cow with the crumpled horn that tossed the dog that worried the cat that killed the rat that ate the malt that lay in the house that Jack built."
+   ],
+   "label": "verse seven - the maiden all forlorn"
+  },
+  {
+   "id": "hidden-5",
+   "input": {
+    "startVerse": 8,
+    "endVerse": 8
+   },
+   "expectedOutput": [
+    "This is the man all tattered and torn that kissed the maiden all forlorn that milked the cow with the crumpled horn that tossed the dog that worried the cat that killed the rat that ate the malt that lay in the house that Jack built."
+   ],
+   "label": "verse eight - the man all tattered and torn"
+  },
+  {
+   "id": "hidden-6",
+   "input": {
+    "startVerse": 9,
+    "endVerse": 9
+   },
+   "expectedOutput": [
+    "This is the priest all shaven and shorn that married the man all tattered and torn that kissed the maiden all forlorn that milked the cow with the crumpled horn that tossed the dog that worried the cat that killed the rat that ate the malt that lay in the house that Jack built."
+   ],
+   "label": "verse nine - the priest all shaven and shorn"
+  },
+  {
+   "id": "hidden-7",
+   "input": {
+    "startVerse": 10,
+    "endVerse": 10
+   },
+   "expectedOutput": [
+    "This is the rooster that crowed in the morn that woke the priest all shaven and shorn that married the man all tattered and torn that kissed the maiden all forlorn that milked the cow with the crumpled horn that tossed the dog that worried the cat that killed the rat that ate the malt that lay in the house that Jack built."
+   ],
+   "label": "verse 10 - the rooster that crowed in the morn"
+  },
+  {
+   "id": "hidden-8",
+   "input": {
+    "startVerse": 11,
+    "endVerse": 11
+   },
+   "expectedOutput": [
+    "This is the farmer sowing his corn that kept the rooster that crowed in the morn that woke the priest all shaven and shorn that married the man all tattered and torn that kissed the maiden all forlorn that milked the cow with the crumpled horn that tossed the dog that worried the cat that killed the rat that ate the malt that lay in the house that Jack built."
+   ],
+   "label": "verse 11 - the farmer sowing his corn"
+  },
+  {
+   "id": "hidden-9",
+   "input": {
+    "startVerse": 12,
+    "endVerse": 12
+   },
+   "expectedOutput": [
+    "This is the horse and the hound and the horn that belonged to the farmer sowing his corn that kept the rooster that crowed in the morn that woke the priest all shaven and shorn that married the man all tattered and torn that kissed the maiden all forlorn that milked the cow with the crumpled horn that tossed the dog that worried the cat that killed the rat that ate the malt that lay in the house that Jack built."
+   ],
+   "label": "verse 12 - the horse and the hound and the horn"
+  },
+  {
+   "id": "hidden-10",
+   "input": {
+    "startVerse": 4,
+    "endVerse": 8
+   },
+   "expectedOutput": [
+    "This is the cat that killed the rat that ate the malt that lay in the house that Jack built.",
+    "This is the dog that worried the cat that killed the rat that ate the malt that lay in the house that Jack built.",
+    "This is the cow with the crumpled horn that tossed the dog that worried the cat that killed the rat that ate the malt that lay in the house that Jack built.",
+    "This is the maiden all forlorn that milked the cow with the crumpled horn that tossed the dog that worried the cat that killed the rat that ate the malt that lay in the house that Jack built.",
+    "This is the man all tattered and torn that kissed the maiden all forlorn that milked the cow with the crumpled horn that tossed the dog that worried the cat that killed the rat that ate the malt that lay in the house that Jack built."
+   ],
+   "label": "multiple verses"
+  },
+  {
+   "id": "hidden-11",
+   "input": {
+    "startVerse": 1,
+    "endVerse": 12
+   },
+   "expectedOutput": [
+    "This is the house that Jack built.",
+    "This is the malt that lay in the house that Jack built.",
+    "This is the rat that ate the malt that lay in the house that Jack built.",
+    "This is the cat that killed the rat that ate the malt that lay in the house that Jack built.",
+    "This is the dog that worried the cat that killed the rat that ate the malt that lay in the house that Jack built.",
+    "This is the cow with the crumpled horn that tossed the dog that worried the cat that killed the rat that ate the malt that lay in the house that Jack built.",
+    "This is the maiden all forlorn that milked the cow with the crumpled horn that tossed the dog that worried the cat that killed the rat that ate the malt that lay in the house that Jack built.",
+    "This is the man all tattered and torn that kissed the maiden all forlorn that milked the cow with the crumpled horn that tossed the dog that worried the cat that killed the rat that ate the malt that lay in the house that Jack built.",
+    "This is the priest all shaven and shorn that married the man all tattered and torn that kissed the maiden all forlorn that milked the cow with the crumpled horn that tossed the dog that worried the cat that killed the rat that ate the malt that lay in the house that Jack built.",
+    "This is the rooster that crowed in the morn that woke the priest all shaven and shorn that married the man all tattered and torn that kissed the maiden all forlorn that milked the cow with the crumpled horn that tossed the dog that worried the cat that killed the rat that ate the malt that lay in the house that Jack built.",
+    "This is the farmer sowing his corn that kept the rooster that crowed in the morn that woke the priest all shaven and shorn that married the man all tattered and torn that kissed the maiden all forlorn that milked the cow with the crumpled horn that tossed the dog that worried the cat that killed the rat that ate the malt that lay in the house that Jack built.",
+    "This is the horse and the hound and the horn that belonged to the farmer sowing his corn that kept the rooster that crowed in the morn that woke the priest all shaven and shorn that married the man all tattered and torn that kissed the maiden all forlorn that milked the cow with the crumpled horn that tossed the dog that worried the cat that killed the rat that ate the malt that lay in the house that Jack built."
+   ],
+   "label": "full rhyme"
+  }
+ ],
+ "ex-twelve-days": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "startVerse": 4,
+    "endVerse": 4
+   },
+   "expectedOutput": [
+    "On the fourth day of Christmas my true love gave to me: four Calling Birds, three French Hens, two Turtle Doves, and a Partridge in a Pear Tree."
+   ],
+   "label": "fourth day four calling birds"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "startVerse": 5,
+    "endVerse": 5
+   },
+   "expectedOutput": [
+    "On the fifth day of Christmas my true love gave to me: five Gold Rings, four Calling Birds, three French Hens, two Turtle Doves, and a Partridge in a Pear Tree."
+   ],
+   "label": "fifth day five gold rings"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "startVerse": 6,
+    "endVerse": 6
+   },
+   "expectedOutput": [
+    "On the sixth day of Christmas my true love gave to me: six Geese-a-Laying, five Gold Rings, four Calling Birds, three French Hens, two Turtle Doves, and a Partridge in a Pear Tree."
+   ],
+   "label": "sixth day six geese-a-laying"
+  },
+  {
+   "id": "hidden-4",
+   "input": {
+    "startVerse": 7,
+    "endVerse": 7
+   },
+   "expectedOutput": [
+    "On the seventh day of Christmas my true love gave to me: seven Swans-a-Swimming, six Geese-a-Laying, five Gold Rings, four Calling Birds, three French Hens, two Turtle Doves, and a Partridge in a Pear Tree."
+   ],
+   "label": "seventh day seven swans-a-swimming"
+  },
+  {
+   "id": "hidden-5",
+   "input": {
+    "startVerse": 8,
+    "endVerse": 8
+   },
+   "expectedOutput": [
+    "On the eighth day of Christmas my true love gave to me: eight Maids-a-Milking, seven Swans-a-Swimming, six Geese-a-Laying, five Gold Rings, four Calling Birds, three French Hens, two Turtle Doves, and a Partridge in a Pear Tree."
+   ],
+   "label": "eighth day eight maids-a-milking"
+  },
+  {
+   "id": "hidden-6",
+   "input": {
+    "startVerse": 9,
+    "endVerse": 9
+   },
+   "expectedOutput": [
+    "On the ninth day of Christmas my true love gave to me: nine Ladies Dancing, eight Maids-a-Milking, seven Swans-a-Swimming, six Geese-a-Laying, five Gold Rings, four Calling Birds, three French Hens, two Turtle Doves, and a Partridge in a Pear Tree."
+   ],
+   "label": "ninth day nine ladies dancing"
+  },
+  {
+   "id": "hidden-7",
+   "input": {
+    "startVerse": 10,
+    "endVerse": 10
+   },
+   "expectedOutput": [
+    "On the tenth day of Christmas my true love gave to me: ten Lords-a-Leaping, nine Ladies Dancing, eight Maids-a-Milking, seven Swans-a-Swimming, six Geese-a-Laying, five Gold Rings, four Calling Birds, three French Hens, two Turtle Doves, and a Partridge in a Pear Tree."
+   ],
+   "label": "tenth day ten lords-a-leaping"
+  },
+  {
+   "id": "hidden-8",
+   "input": {
+    "startVerse": 11,
+    "endVerse": 11
+   },
+   "expectedOutput": [
+    "On the eleventh day of Christmas my true love gave to me: eleven Pipers Piping, ten Lords-a-Leaping, nine Ladies Dancing, eight Maids-a-Milking, seven Swans-a-Swimming, six Geese-a-Laying, five Gold Rings, four Calling Birds, three French Hens, two Turtle Doves, and a Partridge in a Pear Tree."
+   ],
+   "label": "eleventh day eleven pipers piping"
+  },
+  {
+   "id": "hidden-9",
+   "input": {
+    "startVerse": 12,
+    "endVerse": 12
+   },
+   "expectedOutput": [
+    "On the twelfth day of Christmas my true love gave to me: twelve Drummers Drumming, eleven Pipers Piping, ten Lords-a-Leaping, nine Ladies Dancing, eight Maids-a-Milking, seven Swans-a-Swimming, six Geese-a-Laying, five Gold Rings, four Calling Birds, three French Hens, two Turtle Doves, and a Partridge in a Pear Tree."
+   ],
+   "label": "twelfth day twelve drummers drumming"
+  },
+  {
+   "id": "hidden-10",
+   "input": {
+    "startVerse": 1,
+    "endVerse": 3
+   },
+   "expectedOutput": [
+    "On the first day of Christmas my true love gave to me: a Partridge in a Pear Tree.",
+    "On the second day of Christmas my true love gave to me: two Turtle Doves, and a Partridge in a Pear Tree.",
+    "On the third day of Christmas my true love gave to me: three French Hens, two Turtle Doves, and a Partridge in a Pear Tree."
+   ],
+   "label": "recites first three verses of the song"
+  },
+  {
+   "id": "hidden-11",
+   "input": {
+    "startVerse": 4,
+    "endVerse": 6
+   },
+   "expectedOutput": [
+    "On the fourth day of Christmas my true love gave to me: four Calling Birds, three French Hens, two Turtle Doves, and a Partridge in a Pear Tree.",
+    "On the fifth day of Christmas my true love gave to me: five Gold Rings, four Calling Birds, three French Hens, two Turtle Doves, and a Partridge in a Pear Tree.",
+    "On the sixth day of Christmas my true love gave to me: six Geese-a-Laying, five Gold Rings, four Calling Birds, three French Hens, two Turtle Doves, and a Partridge in a Pear Tree."
+   ],
+   "label": "recites three verses from the middle of the song"
+  },
+  {
+   "id": "hidden-12",
+   "input": {
+    "startVerse": 1,
+    "endVerse": 12
+   },
+   "expectedOutput": [
+    "On the first day of Christmas my true love gave to me: a Partridge in a Pear Tree.",
+    "On the second day of Christmas my true love gave to me: two Turtle Doves, and a Partridge in a Pear Tree.",
+    "On the third day of Christmas my true love gave to me: three French Hens, two Turtle Doves, and a Partridge in a Pear Tree.",
+    "On the fourth day of Christmas my true love gave to me: four Calling Birds, three French Hens, two Turtle Doves, and a Partridge in a Pear Tree.",
+    "On the fifth day of Christmas my true love gave to me: five Gold Rings, four Calling Birds, three French Hens, two Turtle Doves, and a Partridge in a Pear Tree.",
+    "On the sixth day of Christmas my true love gave to me: six Geese-a-Laying, five Gold Rings, four Calling Birds, three French Hens, two Turtle Doves, and a Partridge in a Pear Tree.",
+    "On the seventh day of Christmas my true love gave to me: seven Swans-a-Swimming, six Geese-a-Laying, five Gold Rings, four Calling Birds, three French Hens, two Turtle Doves, and a Partridge in a Pear Tree.",
+    "On the eighth day of Christmas my true love gave to me: eight Maids-a-Milking, seven Swans-a-Swimming, six Geese-a-Laying, five Gold Rings, four Calling Birds, three French Hens, two Turtle Doves, and a Partridge in a Pear Tree.",
+    "On the ninth day of Christmas my true love gave to me: nine Ladies Dancing, eight Maids-a-Milking, seven Swans-a-Swimming, six Geese-a-Laying, five Gold Rings, four Calling Birds, three French Hens, two Turtle Doves, and a Partridge in a Pear Tree.",
+    "On the tenth day of Christmas my true love gave to me: ten Lords-a-Leaping, nine Ladies Dancing, eight Maids-a-Milking, seven Swans-a-Swimming, six Geese-a-Laying, five Gold Rings, four Calling Birds, three French Hens, two Turtle Doves, and a Partridge in a Pear Tree.",
+    "On the eleventh day of Christmas my true love gave to me: eleven Pipers Piping, ten Lords-a-Leaping, nine Ladies Dancing, eight Maids-a-Milking, seven Swans-a-Swimming, six Geese-a-Laying, five Gold Rings, four Calling Birds, three French Hens, two Turtle Doves, and a Partridge in a Pear Tree.",
+    "On the twelfth day of Christmas my true love gave to me: twelve Drummers Drumming, eleven Pipers Piping, ten Lords-a-Leaping, nine Ladies Dancing, eight Maids-a-Milking, seven Swans-a-Swimming, six Geese-a-Laying, five Gold Rings, four Calling Birds, three French Hens, two Turtle Doves, and a Partridge in a Pear Tree."
+   ],
+   "label": "recites the whole song"
+  }
+ ],
+ "ex-food-chain": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "startVerse": 4,
+    "endVerse": 4
+   },
+   "expectedOutput": [
+    "I know an old lady who swallowed a cat.",
+    "Imagine that, to swallow a cat!",
+    "She swallowed the cat to catch the bird.",
+    "She swallowed the bird to catch the spider that wriggled and jiggled and tickled inside her.",
+    "She swallowed the spider to catch the fly.",
+    "I don't know why she swallowed the fly. Perhaps she'll die."
+   ],
+   "label": "cat"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "startVerse": 5,
+    "endVerse": 5
+   },
+   "expectedOutput": [
+    "I know an old lady who swallowed a dog.",
+    "What a hog, to swallow a dog!",
+    "She swallowed the dog to catch the cat.",
+    "She swallowed the cat to catch the bird.",
+    "She swallowed the bird to catch the spider that wriggled and jiggled and tickled inside her.",
+    "She swallowed the spider to catch the fly.",
+    "I don't know why she swallowed the fly. Perhaps she'll die."
+   ],
+   "label": "dog"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "startVerse": 6,
+    "endVerse": 6
+   },
+   "expectedOutput": [
+    "I know an old lady who swallowed a goat.",
+    "Just opened her throat and swallowed a goat!",
+    "She swallowed the goat to catch the dog.",
+    "She swallowed the dog to catch the cat.",
+    "She swallowed the cat to catch the bird.",
+    "She swallowed the bird to catch the spider that wriggled and jiggled and tickled inside her.",
+    "She swallowed the spider to catch the fly.",
+    "I don't know why she swallowed the fly. Perhaps she'll die."
+   ],
+   "label": "goat"
+  },
+  {
+   "id": "hidden-4",
+   "input": {
+    "startVerse": 7,
+    "endVerse": 7
+   },
+   "expectedOutput": [
+    "I know an old lady who swallowed a cow.",
+    "I don't know how she swallowed a cow!",
+    "She swallowed the cow to catch the goat.",
+    "She swallowed the goat to catch the dog.",
+    "She swallowed the dog to catch the cat.",
+    "She swallowed the cat to catch the bird.",
+    "She swallowed the bird to catch the spider that wriggled and jiggled and tickled inside her.",
+    "She swallowed the spider to catch the fly.",
+    "I don't know why she swallowed the fly. Perhaps she'll die."
+   ],
+   "label": "cow"
+  },
+  {
+   "id": "hidden-5",
+   "input": {
+    "startVerse": 8,
+    "endVerse": 8
+   },
+   "expectedOutput": [
+    "I know an old lady who swallowed a horse.",
+    "She's dead, of course!"
+   ],
+   "label": "horse"
+  },
+  {
+   "id": "hidden-6",
+   "input": {
+    "startVerse": 1,
+    "endVerse": 3
+   },
+   "expectedOutput": [
+    "I know an old lady who swallowed a fly.",
+    "I don't know why she swallowed the fly. Perhaps she'll die.",
+    "",
+    "I know an old lady who swallowed a spider.",
+    "It wriggled and jiggled and tickled inside her.",
+    "She swallowed the spider to catch the fly.",
+    "I don't know why she swallowed the fly. Perhaps she'll die.",
+    "",
+    "I know an old lady who swallowed a bird.",
+    "How absurd to swallow a bird!",
+    "She swallowed the bird to catch the spider that wriggled and jiggled and tickled inside her.",
+    "She swallowed the spider to catch the fly.",
+    "I don't know why she swallowed the fly. Perhaps she'll die."
+   ],
+   "label": "multiple verses"
+  },
+  {
+   "id": "hidden-7",
+   "input": {
+    "startVerse": 1,
+    "endVerse": 8
+   },
+   "expectedOutput": [
+    "I know an old lady who swallowed a fly.",
+    "I don't know why she swallowed the fly. Perhaps she'll die.",
+    "",
+    "I know an old lady who swallowed a spider.",
+    "It wriggled and jiggled and tickled inside her.",
+    "She swallowed the spider to catch the fly.",
+    "I don't know why she swallowed the fly. Perhaps she'll die.",
+    "",
+    "I know an old lady who swallowed a bird.",
+    "How absurd to swallow a bird!",
+    "She swallowed the bird to catch the spider that wriggled and jiggled and tickled inside her.",
+    "She swallowed the spider to catch the fly.",
+    "I don't know why she swallowed the fly. Perhaps she'll die.",
+    "",
+    "I know an old lady who swallowed a cat.",
+    "Imagine that, to swallow a cat!",
+    "She swallowed the cat to catch the bird.",
+    "She swallowed the bird to catch the spider that wriggled and jiggled and tickled inside her.",
+    "She swallowed the spider to catch the fly.",
+    "I don't know why she swallowed the fly. Perhaps she'll die.",
+    "",
+    "I know an old lady who swallowed a dog.",
+    "What a hog, to swallow a dog!",
+    "She swallowed the dog to catch the cat.",
+    "She swallowed the cat to catch the bird.",
+    "She swallowed the bird to catch the spider that wriggled and jiggled and tickled inside her.",
+    "She swallowed the spider to catch the fly.",
+    "I don't know why she swallowed the fly. Perhaps she'll die.",
+    "",
+    "I know an old lady who swallowed a goat.",
+    "Just opened her throat and swallowed a goat!",
+    "She swallowed the goat to catch the dog.",
+    "She swallowed the dog to catch the cat.",
+    "She swallowed the cat to catch the bird.",
+    "She swallowed the bird to catch the spider that wriggled and jiggled and tickled inside her.",
+    "She swallowed the spider to catch the fly.",
+    "I don't know why she swallowed the fly. Perhaps she'll die.",
+    "",
+    "I know an old lady who swallowed a cow.",
+    "I don't know how she swallowed a cow!",
+    "She swallowed the cow to catch the goat.",
+    "She swallowed the goat to catch the dog.",
+    "She swallowed the dog to catch the cat.",
+    "She swallowed the cat to catch the bird.",
+    "She swallowed the bird to catch the spider that wriggled and jiggled and tickled inside her.",
+    "She swallowed the spider to catch the fly.",
+    "I don't know why she swallowed the fly. Perhaps she'll die.",
+    "",
+    "I know an old lady who swallowed a horse.",
+    "She's dead, of course!"
+   ],
+   "label": "full song"
+  }
+ ],
+ "ex-beer-song": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "startBottles": 1,
+    "takeDown": 1
+   },
+   "expectedOutput": [
+    "1 bottle of beer on the wall, 1 bottle of beer.",
+    "Take it down and pass it around, no more bottles of beer on the wall."
+   ],
+   "label": "verse with 1 bottle"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "startBottles": 0,
+    "takeDown": 1
+   },
+   "expectedOutput": [
+    "No more bottles of beer on the wall, no more bottles of beer.",
+    "Go to the store and buy some more, 99 bottles of beer on the wall."
+   ],
+   "label": "verse with 0 bottles"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "startBottles": 99,
+    "takeDown": 2
+   },
+   "expectedOutput": [
+    "99 bottles of beer on the wall, 99 bottles of beer.",
+    "Take one down and pass it around, 98 bottles of beer on the wall.",
+    "",
+    "98 bottles of beer on the wall, 98 bottles of beer.",
+    "Take one down and pass it around, 97 bottles of beer on the wall."
+   ],
+   "label": "first two verses"
+  },
+  {
+   "id": "hidden-4",
+   "input": {
+    "startBottles": 2,
+    "takeDown": 3
+   },
+   "expectedOutput": [
+    "2 bottles of beer on the wall, 2 bottles of beer.",
+    "Take one down and pass it around, 1 bottle of beer on the wall.",
+    "",
+    "1 bottle of beer on the wall, 1 bottle of beer.",
+    "Take it down and pass it around, no more bottles of beer on the wall.",
+    "",
+    "No more bottles of beer on the wall, no more bottles of beer.",
+    "Go to the store and buy some more, 99 bottles of beer on the wall."
+   ],
+   "label": "last three verses"
+  },
+  {
+   "id": "hidden-5",
+   "input": {
+    "startBottles": 99,
+    "takeDown": 100
+   },
+   "expectedOutput": [
+    "99 bottles of beer on the wall, 99 bottles of beer.",
+    "Take one down and pass it around, 98 bottles of beer on the wall.",
+    "",
+    "98 bottles of beer on the wall, 98 bottles of beer.",
+    "Take one down and pass it around, 97 bottles of beer on the wall.",
+    "",
+    "97 bottles of beer on the wall, 97 bottles of beer.",
+    "Take one down and pass it around, 96 bottles of beer on the wall.",
+    "",
+    "96 bottles of beer on the wall, 96 bottles of beer.",
+    "Take one down and pass it around, 95 bottles of beer on the wall.",
+    "",
+    "95 bottles of beer on the wall, 95 bottles of beer.",
+    "Take one down and pass it around, 94 bottles of beer on the wall.",
+    "",
+    "94 bottles of beer on the wall, 94 bottles of beer.",
+    "Take one down and pass it around, 93 bottles of beer on the wall.",
+    "",
+    "93 bottles of beer on the wall, 93 bottles of beer.",
+    "Take one down and pass it around, 92 bottles of beer on the wall.",
+    "",
+    "92 bottles of beer on the wall, 92 bottles of beer.",
+    "Take one down and pass it around, 91 bottles of beer on the wall.",
+    "",
+    "91 bottles of beer on the wall, 91 bottles of beer.",
+    "Take one down and pass it around, 90 bottles of beer on the wall.",
+    "",
+    "90 bottles of beer on the wall, 90 bottles of beer.",
+    "Take one down and pass it around, 89 bottles of beer on the wall.",
+    "",
+    "89 bottles of beer on the wall, 89 bottles of beer.",
+    "Take one down and pass it around, 88 bottles of beer on the wall.",
+    "",
+    "88 bottles of beer on the wall, 88 bottles of beer.",
+    "Take one down and pass it around, 87 bottles of beer on the wall.",
+    "",
+    "87 bottles of beer on the wall, 87 bottles of beer.",
+    "Take one down and pass it around, 86 bottles of beer on the wall.",
+    "",
+    "86 bottles of beer on the wall, 86 bottles of beer.",
+    "Take one down and pass it around, 85 bottles of beer on the wall.",
+    "",
+    "85 bottles of beer on the wall, 85 bottles of beer.",
+    "Take one down and pass it around, 84 bottles of beer on the wall.",
+    "",
+    "84 bottles of beer on the wall, 84 bottles of beer.",
+    "Take one down and pass it around, 83 bottles of beer on the wall.",
+    "",
+    "83 bottles of beer on the wall, 83 bottles of beer.",
+    "Take one down and pass it around, 82 bottles of beer on the wall.",
+    "",
+    "82 bottles of beer on the wall, 82 bottles of beer.",
+    "Take one down and pass it around, 81 bottles of beer on the wall.",
+    "",
+    "81 bottles of beer on the wall, 81 bottles of beer.",
+    "Take one down and pass it around, 80 bottles of beer on the wall.",
+    "",
+    "80 bottles of beer on the wall, 80 bottles of beer.",
+    "Take one down and pass it around, 79 bottles of beer on the wall.",
+    "",
+    "79 bottles of beer on the wall, 79 bottles of beer.",
+    "Take one down and pass it around, 78 bottles of beer on the wall.",
+    "",
+    "78 bottles of beer on the wall, 78 bottles of beer.",
+    "Take one down and pass it around, 77 bottles of beer on the wall.",
+    "",
+    "77 bottles of beer on the wall, 77 bottles of beer.",
+    "Take one down and pass it around, 76 bottles of beer on the wall.",
+    "",
+    "76 bottles of beer on the wall, 76 bottles of beer.",
+    "Take one down and pass it around, 75 bottles of beer on the wall.",
+    "",
+    "75 bottles of beer on the wall, 75 bottles of beer.",
+    "Take one down and pass it around, 74 bottles of beer on the wall.",
+    "",
+    "74 bottles of beer on the wall, 74 bottles of beer.",
+    "Take one down and pass it around, 73 bottles of beer on the wall.",
+    "",
+    "73 bottles of beer on the wall, 73 bottles of beer.",
+    "Take one down and pass it around, 72 bottles of beer on the wall.",
+    "",
+    "72 bottles of beer on the wall, 72 bottles of beer.",
+    "Take one down and pass it around, 71 bottles of beer on the wall.",
+    "",
+    "71 bottles of beer on the wall, 71 bottles of beer.",
+    "Take one down and pass it around, 70 bottles of beer on the wall.",
+    "",
+    "70 bottles of beer on the wall, 70 bottles of beer.",
+    "Take one down and pass it around, 69 bottles of beer on the wall.",
+    "",
+    "69 bottles of beer on the wall, 69 bottles of beer.",
+    "Take one down and pass it around, 68 bottles of beer on the wall.",
+    "",
+    "68 bottles of beer on the wall, 68 bottles of beer.",
+    "Take one down and pass it around, 67 bottles of beer on the wall.",
+    "",
+    "67 bottles of beer on the wall, 67 bottles of beer.",
+    "Take one down and pass it around, 66 bottles of beer on the wall.",
+    "",
+    "66 bottles of beer on the wall, 66 bottles of beer.",
+    "Take one down and pass it around, 65 bottles of beer on the wall.",
+    "",
+    "65 bottles of beer on the wall, 65 bottles of beer.",
+    "Take one down and pass it around, 64 bottles of beer on the wall.",
+    "",
+    "64 bottles of beer on the wall, 64 bottles of beer.",
+    "Take one down and pass it around, 63 bottles of beer on the wall.",
+    "",
+    "63 bottles of beer on the wall, 63 bottles of beer.",
+    "Take one down and pass it around, 62 bottles of beer on the wall.",
+    "",
+    "62 bottles of beer on the wall, 62 bottles of beer.",
+    "Take one down and pass it around, 61 bottles of beer on the wall.",
+    "",
+    "61 bottles of beer on the wall, 61 bottles of beer.",
+    "Take one down and pass it around, 60 bottles of beer on the wall.",
+    "",
+    "60 bottles of beer on the wall, 60 bottles of beer.",
+    "Take one down and pass it around, 59 bottles of beer on the wall.",
+    "",
+    "59 bottles of beer on the wall, 59 bottles of beer.",
+    "Take one down and pass it around, 58 bottles of beer on the wall.",
+    "",
+    "58 bottles of beer on the wall, 58 bottles of beer.",
+    "Take one down and pass it around, 57 bottles of beer on the wall.",
+    "",
+    "57 bottles of beer on the wall, 57 bottles of beer.",
+    "Take one down and pass it around, 56 bottles of beer on the wall.",
+    "",
+    "56 bottles of beer on the wall, 56 bottles of beer.",
+    "Take one down and pass it around, 55 bottles of beer on the wall.",
+    "",
+    "55 bottles of beer on the wall, 55 bottles of beer.",
+    "Take one down and pass it around, 54 bottles of beer on the wall.",
+    "",
+    "54 bottles of beer on the wall, 54 bottles of beer.",
+    "Take one down and pass it around, 53 bottles of beer on the wall.",
+    "",
+    "53 bottles of beer on the wall, 53 bottles of beer.",
+    "Take one down and pass it around, 52 bottles of beer on the wall.",
+    "",
+    "52 bottles of beer on the wall, 52 bottles of beer.",
+    "Take one down and pass it around, 51 bottles of beer on the wall.",
+    "",
+    "51 bottles of beer on the wall, 51 bottles of beer.",
+    "Take one down and pass it around, 50 bottles of beer on the wall.",
+    "",
+    "50 bottles of beer on the wall, 50 bottles of beer.",
+    "Take one down and pass it around, 49 bottles of beer on the wall.",
+    "",
+    "49 bottles of beer on the wall, 49 bottles of beer.",
+    "Take one down and pass it around, 48 bottles of beer on the wall.",
+    "",
+    "48 bottles of beer on the wall, 48 bottles of beer.",
+    "Take one down and pass it around, 47 bottles of beer on the wall.",
+    "",
+    "47 bottles of beer on the wall, 47 bottles of beer.",
+    "Take one down and pass it around, 46 bottles of beer on the wall.",
+    "",
+    "46 bottles of beer on the wall, 46 bottles of beer.",
+    "Take one down and pass it around, 45 bottles of beer on the wall.",
+    "",
+    "45 bottles of beer on the wall, 45 bottles of beer.",
+    "Take one down and pass it around, 44 bottles of beer on the wall.",
+    "",
+    "44 bottles of beer on the wall, 44 bottles of beer.",
+    "Take one down and pass it around, 43 bottles of beer on the wall.",
+    "",
+    "43 bottles of beer on the wall, 43 bottles of beer.",
+    "Take one down and pass it around, 42 bottles of beer on the wall.",
+    "",
+    "42 bottles of beer on the wall, 42 bottles of beer.",
+    "Take one down and pass it around, 41 bottles of beer on the wall.",
+    "",
+    "41 bottles of beer on the wall, 41 bottles of beer.",
+    "Take one down and pass it around, 40 bottles of beer on the wall.",
+    "",
+    "40 bottles of beer on the wall, 40 bottles of beer.",
+    "Take one down and pass it around, 39 bottles of beer on the wall.",
+    "",
+    "39 bottles of beer on the wall, 39 bottles of beer.",
+    "Take one down and pass it around, 38 bottles of beer on the wall.",
+    "",
+    "38 bottles of beer on the wall, 38 bottles of beer.",
+    "Take one down and pass it around, 37 bottles of beer on the wall.",
+    "",
+    "37 bottles of beer on the wall, 37 bottles of beer.",
+    "Take one down and pass it around, 36 bottles of beer on the wall.",
+    "",
+    "36 bottles of beer on the wall, 36 bottles of beer.",
+    "Take one down and pass it around, 35 bottles of beer on the wall.",
+    "",
+    "35 bottles of beer on the wall, 35 bottles of beer.",
+    "Take one down and pass it around, 34 bottles of beer on the wall.",
+    "",
+    "34 bottles of beer on the wall, 34 bottles of beer.",
+    "Take one down and pass it around, 33 bottles of beer on the wall.",
+    "",
+    "33 bottles of beer on the wall, 33 bottles of beer.",
+    "Take one down and pass it around, 32 bottles of beer on the wall.",
+    "",
+    "32 bottles of beer on the wall, 32 bottles of beer.",
+    "Take one down and pass it around, 31 bottles of beer on the wall.",
+    "",
+    "31 bottles of beer on the wall, 31 bottles of beer.",
+    "Take one down and pass it around, 30 bottles of beer on the wall.",
+    "",
+    "30 bottles of beer on the wall, 30 bottles of beer.",
+    "Take one down and pass it around, 29 bottles of beer on the wall.",
+    "",
+    "29 bottles of beer on the wall, 29 bottles of beer.",
+    "Take one down and pass it around, 28 bottles of beer on the wall.",
+    "",
+    "28 bottles of beer on the wall, 28 bottles of beer.",
+    "Take one down and pass it around, 27 bottles of beer on the wall.",
+    "",
+    "27 bottles of beer on the wall, 27 bottles of beer.",
+    "Take one down and pass it around, 26 bottles of beer on the wall.",
+    "",
+    "26 bottles of beer on the wall, 26 bottles of beer.",
+    "Take one down and pass it around, 25 bottles of beer on the wall.",
+    "",
+    "25 bottles of beer on the wall, 25 bottles of beer.",
+    "Take one down and pass it around, 24 bottles of beer on the wall.",
+    "",
+    "24 bottles of beer on the wall, 24 bottles of beer.",
+    "Take one down and pass it around, 23 bottles of beer on the wall.",
+    "",
+    "23 bottles of beer on the wall, 23 bottles of beer.",
+    "Take one down and pass it around, 22 bottles of beer on the wall.",
+    "",
+    "22 bottles of beer on the wall, 22 bottles of beer.",
+    "Take one down and pass it around, 21 bottles of beer on the wall.",
+    "",
+    "21 bottles of beer on the wall, 21 bottles of beer.",
+    "Take one down and pass it around, 20 bottles of beer on the wall.",
+    "",
+    "20 bottles of beer on the wall, 20 bottles of beer.",
+    "Take one down and pass it around, 19 bottles of beer on the wall.",
+    "",
+    "19 bottles of beer on the wall, 19 bottles of beer.",
+    "Take one down and pass it around, 18 bottles of beer on the wall.",
+    "",
+    "18 bottles of beer on the wall, 18 bottles of beer.",
+    "Take one down and pass it around, 17 bottles of beer on the wall.",
+    "",
+    "17 bottles of beer on the wall, 17 bottles of beer.",
+    "Take one down and pass it around, 16 bottles of beer on the wall.",
+    "",
+    "16 bottles of beer on the wall, 16 bottles of beer.",
+    "Take one down and pass it around, 15 bottles of beer on the wall.",
+    "",
+    "15 bottles of beer on the wall, 15 bottles of beer.",
+    "Take one down and pass it around, 14 bottles of beer on the wall.",
+    "",
+    "14 bottles of beer on the wall, 14 bottles of beer.",
+    "Take one down and pass it around, 13 bottles of beer on the wall.",
+    "",
+    "13 bottles of beer on the wall, 13 bottles of beer.",
+    "Take one down and pass it around, 12 bottles of beer on the wall.",
+    "",
+    "12 bottles of beer on the wall, 12 bottles of beer.",
+    "Take one down and pass it around, 11 bottles of beer on the wall.",
+    "",
+    "11 bottles of beer on the wall, 11 bottles of beer.",
+    "Take one down and pass it around, 10 bottles of beer on the wall.",
+    "",
+    "10 bottles of beer on the wall, 10 bottles of beer.",
+    "Take one down and pass it around, 9 bottles of beer on the wall.",
+    "",
+    "9 bottles of beer on the wall, 9 bottles of beer.",
+    "Take one down and pass it around, 8 bottles of beer on the wall.",
+    "",
+    "8 bottles of beer on the wall, 8 bottles of beer.",
+    "Take one down and pass it around, 7 bottles of beer on the wall.",
+    "",
+    "7 bottles of beer on the wall, 7 bottles of beer.",
+    "Take one down and pass it around, 6 bottles of beer on the wall.",
+    "",
+    "6 bottles of beer on the wall, 6 bottles of beer.",
+    "Take one down and pass it around, 5 bottles of beer on the wall.",
+    "",
+    "5 bottles of beer on the wall, 5 bottles of beer.",
+    "Take one down and pass it around, 4 bottles of beer on the wall.",
+    "",
+    "4 bottles of beer on the wall, 4 bottles of beer.",
+    "Take one down and pass it around, 3 bottles of beer on the wall.",
+    "",
+    "3 bottles of beer on the wall, 3 bottles of beer.",
+    "Take one down and pass it around, 2 bottles of beer on the wall.",
+    "",
+    "2 bottles of beer on the wall, 2 bottles of beer.",
+    "Take one down and pass it around, 1 bottle of beer on the wall.",
+    "",
+    "1 bottle of beer on the wall, 1 bottle of beer.",
+    "Take it down and pass it around, no more bottles of beer on the wall.",
+    "",
+    "No more bottles of beer on the wall, no more bottles of beer.",
+    "Go to the store and buy some more, 99 bottles of beer on the wall."
+   ],
+   "label": "all verses"
+  }
+ ],
+ "ex-diamond": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "letter": "D"
+   },
+   "expectedOutput": [
+    "   A   ",
+    "  B B  ",
+    " C   C ",
+    "D     D",
+    " C   C ",
+    "  B B  ",
+    "   A   "
+   ],
+   "label": "Smallest non-degenerate case with even diamond side length"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "letter": "Z"
+   },
+   "expectedOutput": [
+    "                         A                         ",
+    "                        B B                        ",
+    "                       C   C                       ",
+    "                      D     D                      ",
+    "                     E       E                     ",
+    "                    F         F                    ",
+    "                   G           G                   ",
+    "                  H             H                  ",
+    "                 I               I                 ",
+    "                J                 J                ",
+    "               K                   K               ",
+    "              L                     L              ",
+    "             M                       M             ",
+    "            N                         N            ",
+    "           O                           O           ",
+    "          P                             P          ",
+    "         Q                               Q         ",
+    "        R                                 R        ",
+    "       S                                   S       ",
+    "      T                                     T      ",
+    "     U                                       U     ",
+    "    V                                         V    ",
+    "   W                                           W   ",
+    "  X                                             X  ",
+    " Y                                               Y ",
+    "Z                                                 Z",
+    " Y                                               Y ",
+    "  X                                             X  ",
+    "   W                                           W   ",
+    "    V                                         V    ",
+    "     U                                       U     ",
+    "      T                                     T      ",
+    "       S                                   S       ",
+    "        R                                 R        ",
+    "         Q                               Q         ",
+    "          P                             P          ",
+    "           O                           O           ",
+    "            N                         N            ",
+    "             M                       M             ",
+    "              L                     L              ",
+    "               K                   K               ",
+    "                J                 J                ",
+    "                 I               I                 ",
+    "                  H             H                  ",
+    "                   G           G                   ",
+    "                    F         F                    ",
+    "                     E       E                     ",
+    "                      D     D                      ",
+    "                       C   C                       ",
+    "                        B B                        ",
+    "                         A                         "
+   ],
+   "label": "Largest possible diamond"
+  }
+ ],
+ "ex-kindergarten-garden": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "diagram": "VVCCGG\nVVCCGG",
+    "student": "Bob"
+   },
+   "expectedOutput": [
+    "clover",
+    "clover",
+    "clover",
+    "clover"
+   ],
+   "label": "second student's garden"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "diagram": "VVCCGG\nVVCCGG",
+    "student": "Charlie"
+   },
+   "expectedOutput": [
+    "grass",
+    "grass",
+    "grass",
+    "grass"
+   ],
+   "label": "third student's garden"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "diagram": "VRCGVVRVCGGCCGVRGCVCGCGV\nVRCCCGCRRGVCGCRVVCVGCGCV",
+    "student": "Alice"
+   },
+   "expectedOutput": [
+    "violets",
+    "radishes",
+    "violets",
+    "radishes"
+   ],
+   "label": "for Alice, first student's garden"
+  },
+  {
+   "id": "hidden-4",
+   "input": {
+    "diagram": "VRCGVVRVCGGCCGVRGCVCGCGV\nVRCCCGCRRGVCGCRVVCVGCGCV",
+    "student": "Bob"
+   },
+   "expectedOutput": [
+    "clover",
+    "grass",
+    "clover",
+    "clover"
+   ],
+   "label": "for Bob, second student's garden"
+  },
+  {
+   "id": "hidden-5",
+   "input": {
+    "diagram": "VRCGVVRVCGGCCGVRGCVCGCGV\nVRCCCGCRRGVCGCRVVCVGCGCV",
+    "student": "Charlie"
+   },
+   "expectedOutput": [
+    "violets",
+    "violets",
+    "clover",
+    "grass"
+   ],
+   "label": "for Charlie"
+  },
+  {
+   "id": "hidden-6",
+   "input": {
+    "diagram": "VRCGVVRVCGGCCGVRGCVCGCGV\nVRCCCGCRRGVCGCRVVCVGCGCV",
+    "student": "David"
+   },
+   "expectedOutput": [
+    "radishes",
+    "violets",
+    "clover",
+    "radishes"
+   ],
+   "label": "for David"
+  },
+  {
+   "id": "hidden-7",
+   "input": {
+    "diagram": "VRCGVVRVCGGCCGVRGCVCGCGV\nVRCCCGCRRGVCGCRVVCVGCGCV",
+    "student": "Eve"
+   },
+   "expectedOutput": [
+    "clover",
+    "grass",
+    "radishes",
+    "grass"
+   ],
+   "label": "for Eve"
+  },
+  {
+   "id": "hidden-8",
+   "input": {
+    "diagram": "VRCGVVRVCGGCCGVRGCVCGCGV\nVRCCCGCRRGVCGCRVVCVGCGCV",
+    "student": "Fred"
+   },
+   "expectedOutput": [
+    "grass",
+    "clover",
+    "violets",
+    "clover"
+   ],
+   "label": "for Fred"
+  },
+  {
+   "id": "hidden-9",
+   "input": {
+    "diagram": "VRCGVVRVCGGCCGVRGCVCGCGV\nVRCCCGCRRGVCGCRVVCVGCGCV",
+    "student": "Ginny"
+   },
+   "expectedOutput": [
+    "clover",
+    "grass",
+    "grass",
+    "clover"
+   ],
+   "label": "for Ginny"
+  },
+  {
+   "id": "hidden-10",
+   "input": {
+    "diagram": "VRCGVVRVCGGCCGVRGCVCGCGV\nVRCCCGCRRGVCGCRVVCVGCGCV",
+    "student": "Harriet"
+   },
+   "expectedOutput": [
+    "violets",
+    "radishes",
+    "radishes",
+    "violets"
+   ],
+   "label": "for Harriet"
+  },
+  {
+   "id": "hidden-11",
+   "input": {
+    "diagram": "VRCGVVRVCGGCCGVRGCVCGCGV\nVRCCCGCRRGVCGCRVVCVGCGCV",
+    "student": "Ileana"
+   },
+   "expectedOutput": [
+    "grass",
+    "clover",
+    "violets",
+    "clover"
+   ],
+   "label": "for Ileana"
+  },
+  {
+   "id": "hidden-12",
+   "input": {
+    "diagram": "VRCGVVRVCGGCCGVRGCVCGCGV\nVRCCCGCRRGVCGCRVVCVGCGCV",
+    "student": "Joseph"
+   },
+   "expectedOutput": [
+    "violets",
+    "clover",
+    "violets",
+    "grass"
+   ],
+   "label": "for Joseph"
+  },
+  {
+   "id": "hidden-13",
+   "input": {
+    "diagram": "VRCGVVRVCGGCCGVRGCVCGCGV\nVRCCCGCRRGVCGCRVVCVGCGCV",
+    "student": "Kincaid"
+   },
+   "expectedOutput": [
+    "grass",
+    "clover",
+    "clover",
+    "grass"
+   ],
+   "label": "for Kincaid, second to last student's garden"
+  },
+  {
+   "id": "hidden-14",
+   "input": {
+    "diagram": "VRCGVVRVCGGCCGVRGCVCGCGV\nVRCCCGCRRGVCGCRVVCVGCGCV",
+    "student": "Larry"
+   },
+   "expectedOutput": [
+    "grass",
+    "violets",
+    "clover",
+    "violets"
+   ],
+   "label": "for Larry, last student's garden"
+  }
+ ],
+ "ex-high-scores": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "scores": [
+     30,
+     70
+    ]
+   },
+   "expectedOutput": [
+    70,
+    30
+   ],
+   "label": "Personal top when there are less than 3"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "scores": [
+     40
+    ]
+   },
+   "expectedOutput": [
+    40
+   ],
+   "label": "Personal top when there is only one"
+  }
+ ],
+ "ex-change": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "coins": [
+     1,
+     4,
+     15,
+     20,
+     50
+    ],
+    "target": 23
+   },
+   "expectedOutput": [
+    4,
+    4,
+    15
+   ],
+   "label": "change with Lilliputian Coins"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "coins": [
+     1,
+     5,
+     10,
+     21,
+     25
+    ],
+    "target": 63
+   },
+   "expectedOutput": [
+    21,
+    21,
+    21
+   ],
+   "label": "change with Lower Elbonia Coins"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "coins": [
+     1,
+     2,
+     5,
+     10,
+     20,
+     50,
+     100
+    ],
+    "target": 999
+   },
+   "expectedOutput": [
+    2,
+    2,
+    5,
+    20,
+    20,
+    50,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100
+   ],
+   "label": "large target values"
+  },
+  {
+   "id": "hidden-4",
+   "input": {
+    "coins": [
+     2,
+     5,
+     10,
+     20,
+     50
+    ],
+    "target": 21
+   },
+   "expectedOutput": [
+    2,
+    2,
+    2,
+    5,
+    10
+   ],
+   "label": "possible change without unit coins available"
+  },
+  {
+   "id": "hidden-5",
+   "input": {
+    "coins": [
+     4,
+     5
+    ],
+    "target": 27
+   },
+   "expectedOutput": [
+    4,
+    4,
+    4,
+    5,
+    5,
+    5
+   ],
+   "label": "another possible change without unit coins available"
+  },
+  {
+   "id": "hidden-6",
+   "input": {
+    "coins": [
+     1,
+     10,
+     11
+    ],
+    "target": 20
+   },
+   "expectedOutput": [
+    10,
+    10
+   ],
+   "label": "a greedy approach is not optimal"
+  },
+  {
+   "id": "hidden-7",
+   "input": {
+    "coins": [
+     1,
+     5,
+     10,
+     21,
+     25
+    ],
+    "target": 0
+   },
+   "expectedOutput": [],
+   "label": "no coins make 0 change"
+  }
+ ],
+ "ex-book-store": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "basket": [
+     1,
+     2
+    ]
+   },
+   "expectedOutput": 1520,
+   "label": "Two different books"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "basket": [
+     1,
+     2,
+     3
+    ]
+   },
+   "expectedOutput": 2160,
+   "label": "Three different books"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "basket": [
+     1,
+     2,
+     3,
+     4
+    ]
+   },
+   "expectedOutput": 2560,
+   "label": "Four different books"
+  },
+  {
+   "id": "hidden-4",
+   "input": {
+    "basket": [
+     1,
+     2,
+     3,
+     4,
+     5
+    ]
+   },
+   "expectedOutput": 3000,
+   "label": "Five different books"
+  },
+  {
+   "id": "hidden-5",
+   "input": {
+    "basket": [
+     1,
+     1,
+     2,
+     2,
+     3,
+     3,
+     4,
+     5
+    ]
+   },
+   "expectedOutput": 5120,
+   "label": "Two groups of four is cheaper than group of five plus group of three"
+  },
+  {
+   "id": "hidden-6",
+   "input": {
+    "basket": [
+     1,
+     1,
+     2,
+     3,
+     4,
+     4,
+     5,
+     5
+    ]
+   },
+   "expectedOutput": 5120,
+   "label": "Two groups of four is cheaper than groups of five and three"
+  },
+  {
+   "id": "hidden-7",
+   "input": {
+    "basket": [
+     1,
+     1,
+     2,
+     2,
+     3,
+     4
+    ]
+   },
+   "expectedOutput": 4080,
+   "label": "Group of four plus group of two is cheaper than two groups of three"
+  },
+  {
+   "id": "hidden-8",
+   "input": {
+    "basket": [
+     1,
+     1,
+     2,
+     2,
+     3,
+     3,
+     4,
+     4,
+     5
+    ]
+   },
+   "expectedOutput": 5560,
+   "label": "Two each of first four books and one copy each of rest"
+  },
+  {
+   "id": "hidden-9",
+   "input": {
+    "basket": [
+     1,
+     1,
+     2,
+     2,
+     3,
+     3,
+     4,
+     4,
+     5,
+     5
+    ]
+   },
+   "expectedOutput": 6000,
+   "label": "Two copies of each book"
+  },
+  {
+   "id": "hidden-10",
+   "input": {
+    "basket": [
+     1,
+     1,
+     2,
+     2,
+     3,
+     3,
+     4,
+     4,
+     5,
+     5,
+     1
+    ]
+   },
+   "expectedOutput": 6800,
+   "label": "Three copies of first book and two each of remaining"
+  },
+  {
+   "id": "hidden-11",
+   "input": {
+    "basket": [
+     1,
+     1,
+     2,
+     2,
+     3,
+     3,
+     4,
+     4,
+     5,
+     5,
+     1,
+     2
+    ]
+   },
+   "expectedOutput": 7520,
+   "label": "Three each of first two books and two each of remaining books"
+  },
+  {
+   "id": "hidden-12",
+   "input": {
+    "basket": [
+     1,
+     1,
+     2,
+     2,
+     3,
+     3,
+     4,
+     5,
+     1,
+     1,
+     2,
+     2,
+     3,
+     3,
+     4,
+     5
+    ]
+   },
+   "expectedOutput": 10240,
+   "label": "Four groups of four are cheaper than two groups each of five and three"
+  },
+  {
+   "id": "hidden-13",
+   "input": {
+    "basket": [
+     1,
+     1,
+     1,
+     1,
+     1,
+     1,
+     2,
+     2,
+     2,
+     2,
+     2,
+     2,
+     3,
+     3,
+     3,
+     3,
+     3,
+     3,
+     4,
+     4,
+     5,
+     5
+    ]
+   },
+   "expectedOutput": 14560,
+   "label": "Check that groups of four are created properly even when there are more groups of three than groups of five"
+  },
+  {
+   "id": "hidden-14",
+   "input": {
+    "basket": [
+     1,
+     1,
+     2,
+     3,
+     4
+    ]
+   },
+   "expectedOutput": 3360,
+   "label": "One group of one and four is cheaper than one group of two and three"
+  },
+  {
+   "id": "hidden-15",
+   "input": {
+    "basket": [
+     1,
+     2,
+     2,
+     3,
+     3,
+     3,
+     4,
+     4,
+     4,
+     4,
+     5,
+     5,
+     5,
+     5,
+     5
+    ]
+   },
+   "expectedOutput": 10000,
+   "label": "One group of one and two plus three groups of four is cheaper than one group of each size"
+  }
+ ],
+ "ex-minesweeper": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "minefield": [
+     "***",
+     "***",
+     "***"
+    ]
+   },
+   "expectedOutput": [
+    "***",
+    "***",
+    "***"
+   ],
+   "label": "minefield with only mines"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "minefield": [
+     "   ",
+     " * ",
+     "   "
+    ]
+   },
+   "expectedOutput": [
+    "111",
+    "1*1",
+    "111"
+   ],
+   "label": "mine surrounded by spaces"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "minefield": [
+     "***",
+     "* *",
+     "***"
+    ]
+   },
+   "expectedOutput": [
+    "***",
+    "*8*",
+    "***"
+   ],
+   "label": "space surrounded by mines"
+  },
+  {
+   "id": "hidden-4",
+   "input": {
+    "minefield": [
+     " * * "
+    ]
+   },
+   "expectedOutput": [
+    "1*2*1"
+   ],
+   "label": "horizontal line"
+  },
+  {
+   "id": "hidden-5",
+   "input": {
+    "minefield": [
+     "*   *"
+    ]
+   },
+   "expectedOutput": [
+    "*1 1*"
+   ],
+   "label": "horizontal line, mines at edges"
+  },
+  {
+   "id": "hidden-6",
+   "input": {
+    "minefield": [
+     " ",
+     "*",
+     " ",
+     "*",
+     " "
+    ]
+   },
+   "expectedOutput": [
+    "1",
+    "*",
+    "2",
+    "*",
+    "1"
+   ],
+   "label": "vertical line"
+  },
+  {
+   "id": "hidden-7",
+   "input": {
+    "minefield": [
+     "*",
+     " ",
+     " ",
+     " ",
+     "*"
+    ]
+   },
+   "expectedOutput": [
+    "*",
+    "1",
+    " ",
+    "1",
+    "*"
+   ],
+   "label": "vertical line, mines at edges"
+  },
+  {
+   "id": "hidden-8",
+   "input": {
+    "minefield": [
+     "  *  ",
+     "  *  ",
+     "*****",
+     "  *  ",
+     "  *  "
+    ]
+   },
+   "expectedOutput": [
+    " 2*2 ",
+    "25*52",
+    "*****",
+    "25*52",
+    " 2*2 "
+   ],
+   "label": "cross"
+  },
+  {
+   "id": "hidden-9",
+   "input": {
+    "minefield": [
+     " *  * ",
+     "  *   ",
+     "    * ",
+     "   * *",
+     " *  * ",
+     "      "
+    ]
+   },
+   "expectedOutput": [
+    "1*22*1",
+    "12*322",
+    " 123*2",
+    "112*4*",
+    "1*22*2",
+    "111111"
+   ],
+   "label": "large minefield"
+  }
+ ],
+ "ex-transpose": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "lines": [
+     "ABC",
+     "123"
+    ]
+   },
+   "expectedOutput": [
+    "A1",
+    "B2",
+    "C3"
+   ],
+   "label": "simple"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "lines": [
+     "Single line."
+    ]
+   },
+   "expectedOutput": [
+    "S",
+    "i",
+    "n",
+    "g",
+    "l",
+    "e",
+    " ",
+    "l",
+    "i",
+    "n",
+    "e",
+    "."
+   ],
+   "label": "single line"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "lines": [
+     "The fourth line.",
+     "The fifth line."
+    ]
+   },
+   "expectedOutput": [
+    "TT",
+    "hh",
+    "ee",
+    "  ",
+    "ff",
+    "oi",
+    "uf",
+    "rt",
+    "th",
+    "h ",
+    " l",
+    "li",
+    "in",
+    "ne",
+    "e.",
+    "."
+   ],
+   "label": "first line longer than second line"
+  },
+  {
+   "id": "hidden-4",
+   "input": {
+    "lines": [
+     "The first line.",
+     "The second line."
+    ]
+   },
+   "expectedOutput": [
+    "TT",
+    "hh",
+    "ee",
+    "  ",
+    "fs",
+    "ie",
+    "rc",
+    "so",
+    "tn",
+    " d",
+    "l ",
+    "il",
+    "ni",
+    "en",
+    ".e",
+    " ."
+   ],
+   "label": "second line longer than first line"
+  },
+  {
+   "id": "hidden-5",
+   "input": {
+    "lines": [
+     "The longest line.",
+     "A long line.",
+     "A longer line.",
+     "A line."
+    ]
+   },
+   "expectedOutput": [
+    "TAAA",
+    "h   ",
+    "elll",
+    " ooi",
+    "lnnn",
+    "ogge",
+    "n e.",
+    "glr",
+    "ei ",
+    "snl",
+    "tei",
+    " .n",
+    "l e",
+    "i .",
+    "n",
+    "e",
+    "."
+   ],
+   "label": "mixed line length"
+  },
+  {
+   "id": "hidden-6",
+   "input": {
+    "lines": [
+     "HEART",
+     "EMBER",
+     "ABUSE",
+     "RESIN",
+     "TREND"
+    ]
+   },
+   "expectedOutput": [
+    "HEART",
+    "EMBER",
+    "ABUSE",
+    "RESIN",
+    "TREND"
+   ],
+   "label": "square"
+  },
+  {
+   "id": "hidden-7",
+   "input": {
+    "lines": [
+     "FRACTURE",
+     "OUTLINED",
+     "BLOOMING",
+     "SEPTETTE"
+    ]
+   },
+   "expectedOutput": [
+    "FOBS",
+    "RULE",
+    "ATOP",
+    "CLOT",
+    "TIME",
+    "UNIT",
+    "RENT",
+    "EDGE"
+   ],
+   "label": "rectangle"
+  },
+  {
+   "id": "hidden-8",
+   "input": {
+    "lines": [
+     "T",
+     "EE",
+     "AAA",
+     "SSSS",
+     "EEEEE",
+     "RRRRRR"
+    ]
+   },
+   "expectedOutput": [
+    "TEASER",
+    " EASER",
+    "  ASER",
+    "   SER",
+    "    ER",
+    "     R"
+   ],
+   "label": "triangle"
+  },
+  {
+   "id": "hidden-9",
+   "input": {
+    "lines": [
+     "11",
+     "2",
+     "3333",
+     "444",
+     "555555",
+     "66666"
+    ]
+   },
+   "expectedOutput": [
+    "123456",
+    "1 3456",
+    "  3456",
+    "  3 56",
+    "    56",
+    "    5"
+   ],
+   "label": "jagged triangle"
+  }
+ ],
+ "ex-phone-number": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "phrase": "12234567890"
+   },
+   "expectedOutput": "2234567890",
+   "label": "valid when 11 digits and starting with 1"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "phrase": "+1 (223) 456-7890"
+   },
+   "expectedOutput": "2234567890",
+   "label": "valid when 11 digits and starting with 1 even with punctuation"
+  }
+ ],
+ "ex-wordy": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "question": "What is 1 plus 1?"
+   },
+   "expectedOutput": 2,
+   "label": "addition"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "question": "What is 0 plus 2?"
+   },
+   "expectedOutput": 2,
+   "label": "addition with a left hand zero"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "question": "What is 3 plus 0?"
+   },
+   "expectedOutput": 3,
+   "label": "addition with a right hand zero"
+  },
+  {
+   "id": "hidden-4",
+   "input": {
+    "question": "What is 53 plus 2?"
+   },
+   "expectedOutput": 55,
+   "label": "more addition"
+  },
+  {
+   "id": "hidden-5",
+   "input": {
+    "question": "What is -1 plus -10?"
+   },
+   "expectedOutput": -11,
+   "label": "addition with negative numbers"
+  },
+  {
+   "id": "hidden-6",
+   "input": {
+    "question": "What is 123 plus 45678?"
+   },
+   "expectedOutput": 45801,
+   "label": "large addition"
+  },
+  {
+   "id": "hidden-7",
+   "input": {
+    "question": "What is 4 minus -12?"
+   },
+   "expectedOutput": 16,
+   "label": "subtraction"
+  },
+  {
+   "id": "hidden-8",
+   "input": {
+    "question": "What is -3 multiplied by 25?"
+   },
+   "expectedOutput": -75,
+   "label": "multiplication"
+  },
+  {
+   "id": "hidden-9",
+   "input": {
+    "question": "What is 33 divided by -3?"
+   },
+   "expectedOutput": -11,
+   "label": "division"
+  },
+  {
+   "id": "hidden-10",
+   "input": {
+    "question": "What is 1 plus 1 plus 1?"
+   },
+   "expectedOutput": 3,
+   "label": "multiple additions"
+  },
+  {
+   "id": "hidden-11",
+   "input": {
+    "question": "What is 1 plus 5 minus -2?"
+   },
+   "expectedOutput": 8,
+   "label": "addition and subtraction"
+  },
+  {
+   "id": "hidden-12",
+   "input": {
+    "question": "What is 20 minus 4 minus 13?"
+   },
+   "expectedOutput": 3,
+   "label": "multiple subtraction"
+  },
+  {
+   "id": "hidden-13",
+   "input": {
+    "question": "What is 17 minus 6 plus 3?"
+   },
+   "expectedOutput": 14,
+   "label": "subtraction then addition"
+  },
+  {
+   "id": "hidden-14",
+   "input": {
+    "question": "What is 2 multiplied by -2 multiplied by 3?"
+   },
+   "expectedOutput": -12,
+   "label": "multiple multiplication"
+  },
+  {
+   "id": "hidden-15",
+   "input": {
+    "question": "What is -3 plus 7 multiplied by -2?"
+   },
+   "expectedOutput": -8,
+   "label": "addition and multiplication"
+  },
+  {
+   "id": "hidden-16",
+   "input": {
+    "question": "What is -12 divided by 2 divided by -3?"
+   },
+   "expectedOutput": 2,
+   "label": "multiple division"
+  }
+ ],
+ "ex-yacht": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "dice": [
+     3,
+     1,
+     1,
+     5,
+     1
+    ],
+    "category": "ones"
+   },
+   "expectedOutput": 3,
+   "label": "Ones, out of order"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "dice": [
+     4,
+     3,
+     6,
+     5,
+     5
+    ],
+    "category": "ones"
+   },
+   "expectedOutput": 0,
+   "label": "No ones"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "dice": [
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "category": "twos"
+   },
+   "expectedOutput": 2,
+   "label": "Twos"
+  },
+  {
+   "id": "hidden-4",
+   "input": {
+    "dice": [
+     1,
+     4,
+     1,
+     4,
+     1
+    ],
+    "category": "fours"
+   },
+   "expectedOutput": 8,
+   "label": "Fours"
+  },
+  {
+   "id": "hidden-5",
+   "input": {
+    "dice": [
+     3,
+     3,
+     3,
+     3,
+     3
+    ],
+    "category": "threes"
+   },
+   "expectedOutput": 15,
+   "label": "Yacht counted as threes"
+  },
+  {
+   "id": "hidden-6",
+   "input": {
+    "dice": [
+     3,
+     3,
+     3,
+     3,
+     3
+    ],
+    "category": "fives"
+   },
+   "expectedOutput": 0,
+   "label": "Yacht of 3s counted as fives"
+  },
+  {
+   "id": "hidden-7",
+   "input": {
+    "dice": [
+     1,
+     5,
+     3,
+     5,
+     3
+    ],
+    "category": "fives"
+   },
+   "expectedOutput": 10,
+   "label": "Fives"
+  },
+  {
+   "id": "hidden-8",
+   "input": {
+    "dice": [
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "category": "sixes"
+   },
+   "expectedOutput": 6,
+   "label": "Sixes"
+  },
+  {
+   "id": "hidden-9",
+   "input": {
+    "dice": [
+     2,
+     2,
+     4,
+     4,
+     4
+    ],
+    "category": "full house"
+   },
+   "expectedOutput": 16,
+   "label": "Full house two small, three big"
+  },
+  {
+   "id": "hidden-10",
+   "input": {
+    "dice": [
+     5,
+     3,
+     3,
+     5,
+     3
+    ],
+    "category": "full house"
+   },
+   "expectedOutput": 19,
+   "label": "Full house three small, two big"
+  },
+  {
+   "id": "hidden-11",
+   "input": {
+    "dice": [
+     2,
+     2,
+     4,
+     4,
+     5
+    ],
+    "category": "full house"
+   },
+   "expectedOutput": 0,
+   "label": "Two pair is not a full house"
+  },
+  {
+   "id": "hidden-12",
+   "input": {
+    "dice": [
+     1,
+     4,
+     4,
+     4,
+     4
+    ],
+    "category": "full house"
+   },
+   "expectedOutput": 0,
+   "label": "Four of a kind is not a full house"
+  },
+  {
+   "id": "hidden-13",
+   "input": {
+    "dice": [
+     2,
+     2,
+     2,
+     2,
+     2
+    ],
+    "category": "full house"
+   },
+   "expectedOutput": 0,
+   "label": "Yacht is not a full house"
+  },
+  {
+   "id": "hidden-14",
+   "input": {
+    "dice": [
+     6,
+     6,
+     4,
+     6,
+     6
+    ],
+    "category": "four of a kind"
+   },
+   "expectedOutput": 24,
+   "label": "Four of a Kind"
+  },
+  {
+   "id": "hidden-15",
+   "input": {
+    "dice": [
+     3,
+     3,
+     3,
+     3,
+     3
+    ],
+    "category": "four of a kind"
+   },
+   "expectedOutput": 12,
+   "label": "Yacht can be scored as Four of a Kind"
+  },
+  {
+   "id": "hidden-16",
+   "input": {
+    "dice": [
+     3,
+     3,
+     3,
+     5,
+     5
+    ],
+    "category": "four of a kind"
+   },
+   "expectedOutput": 0,
+   "label": "Full house is not Four of a Kind"
+  },
+  {
+   "id": "hidden-17",
+   "input": {
+    "dice": [
+     3,
+     5,
+     4,
+     1,
+     2
+    ],
+    "category": "little straight"
+   },
+   "expectedOutput": 30,
+   "label": "Little Straight"
+  },
+  {
+   "id": "hidden-18",
+   "input": {
+    "dice": [
+     1,
+     2,
+     3,
+     4,
+     5
+    ],
+    "category": "big straight"
+   },
+   "expectedOutput": 0,
+   "label": "Little Straight as Big Straight"
+  },
+  {
+   "id": "hidden-19",
+   "input": {
+    "dice": [
+     1,
+     1,
+     2,
+     3,
+     4
+    ],
+    "category": "little straight"
+   },
+   "expectedOutput": 0,
+   "label": "Four in order but not a little straight"
+  },
+  {
+   "id": "hidden-20",
+   "input": {
+    "dice": [
+     1,
+     2,
+     3,
+     4,
+     6
+    ],
+    "category": "little straight"
+   },
+   "expectedOutput": 0,
+   "label": "No pairs but not a little straight"
+  },
+  {
+   "id": "hidden-21",
+   "input": {
+    "dice": [
+     1,
+     1,
+     3,
+     4,
+     5
+    ],
+    "category": "little straight"
+   },
+   "expectedOutput": 0,
+   "label": "Minimum is 1, maximum is 5, but not a little straight"
+  },
+  {
+   "id": "hidden-22",
+   "input": {
+    "dice": [
+     4,
+     6,
+     2,
+     5,
+     3
+    ],
+    "category": "big straight"
+   },
+   "expectedOutput": 30,
+   "label": "Big Straight"
+  },
+  {
+   "id": "hidden-23",
+   "input": {
+    "dice": [
+     6,
+     5,
+     4,
+     3,
+     2
+    ],
+    "category": "little straight"
+   },
+   "expectedOutput": 0,
+   "label": "Big Straight as little straight"
+  },
+  {
+   "id": "hidden-24",
+   "input": {
+    "dice": [
+     6,
+     5,
+     4,
+     3,
+     1
+    ],
+    "category": "big straight"
+   },
+   "expectedOutput": 0,
+   "label": "No pairs but not a big straight"
+  },
+  {
+   "id": "hidden-25",
+   "input": {
+    "dice": [
+     3,
+     3,
+     5,
+     6,
+     6
+    ],
+    "category": "choice"
+   },
+   "expectedOutput": 23,
+   "label": "Choice"
+  },
+  {
+   "id": "hidden-26",
+   "input": {
+    "dice": [
+     2,
+     2,
+     2,
+     2,
+     2
+    ],
+    "category": "choice"
+   },
+   "expectedOutput": 10,
+   "label": "Yacht as choice"
+  }
+ ],
+ "ex-protein-translation": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "strand": "UUC"
+   },
+   "expectedOutput": [
+    "Phenylalanine"
+   ],
+   "label": "Phenylalanine RNA sequence 2"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "strand": "UUA"
+   },
+   "expectedOutput": [
+    "Leucine"
+   ],
+   "label": "Leucine RNA sequence 1"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "strand": "UUG"
+   },
+   "expectedOutput": [
+    "Leucine"
+   ],
+   "label": "Leucine RNA sequence 2"
+  },
+  {
+   "id": "hidden-4",
+   "input": {
+    "strand": "UCU"
+   },
+   "expectedOutput": [
+    "Serine"
+   ],
+   "label": "Serine RNA sequence 1"
+  },
+  {
+   "id": "hidden-5",
+   "input": {
+    "strand": "UCC"
+   },
+   "expectedOutput": [
+    "Serine"
+   ],
+   "label": "Serine RNA sequence 2"
+  },
+  {
+   "id": "hidden-6",
+   "input": {
+    "strand": "UCA"
+   },
+   "expectedOutput": [
+    "Serine"
+   ],
+   "label": "Serine RNA sequence 3"
+  },
+  {
+   "id": "hidden-7",
+   "input": {
+    "strand": "UCG"
+   },
+   "expectedOutput": [
+    "Serine"
+   ],
+   "label": "Serine RNA sequence 4"
+  },
+  {
+   "id": "hidden-8",
+   "input": {
+    "strand": "UAU"
+   },
+   "expectedOutput": [
+    "Tyrosine"
+   ],
+   "label": "Tyrosine RNA sequence 1"
+  },
+  {
+   "id": "hidden-9",
+   "input": {
+    "strand": "UAC"
+   },
+   "expectedOutput": [
+    "Tyrosine"
+   ],
+   "label": "Tyrosine RNA sequence 2"
+  },
+  {
+   "id": "hidden-10",
+   "input": {
+    "strand": "UGU"
+   },
+   "expectedOutput": [
+    "Cysteine"
+   ],
+   "label": "Cysteine RNA sequence 1"
+  },
+  {
+   "id": "hidden-11",
+   "input": {
+    "strand": "UGC"
+   },
+   "expectedOutput": [
+    "Cysteine"
+   ],
+   "label": "Cysteine RNA sequence 2"
+  },
+  {
+   "id": "hidden-12",
+   "input": {
+    "strand": "UGG"
+   },
+   "expectedOutput": [
+    "Tryptophan"
+   ],
+   "label": "Tryptophan RNA sequence"
+  },
+  {
+   "id": "hidden-13",
+   "input": {
+    "strand": "UAA"
+   },
+   "expectedOutput": [],
+   "label": "STOP codon RNA sequence 1"
+  },
+  {
+   "id": "hidden-14",
+   "input": {
+    "strand": "UAG"
+   },
+   "expectedOutput": [],
+   "label": "STOP codon RNA sequence 2"
+  },
+  {
+   "id": "hidden-15",
+   "input": {
+    "strand": "UGA"
+   },
+   "expectedOutput": [],
+   "label": "STOP codon RNA sequence 3"
+  },
+  {
+   "id": "hidden-16",
+   "input": {
+    "strand": "UUUUUU"
+   },
+   "expectedOutput": [
+    "Phenylalanine",
+    "Phenylalanine"
+   ],
+   "label": "Sequence of two protein codons translates into proteins"
+  },
+  {
+   "id": "hidden-17",
+   "input": {
+    "strand": "UUAUUG"
+   },
+   "expectedOutput": [
+    "Leucine",
+    "Leucine"
+   ],
+   "label": "Sequence of two different protein codons translates into proteins"
+  },
+  {
+   "id": "hidden-18",
+   "input": {
+    "strand": "AUGUUUUGG"
+   },
+   "expectedOutput": [
+    "Methionine",
+    "Phenylalanine",
+    "Tryptophan"
+   ],
+   "label": "Translate RNA strand into correct protein list"
+  },
+  {
+   "id": "hidden-19",
+   "input": {
+    "strand": "UAGUGG"
+   },
+   "expectedOutput": [],
+   "label": "Translation stops if STOP codon at beginning of sequence"
+  },
+  {
+   "id": "hidden-20",
+   "input": {
+    "strand": "UGGUAG"
+   },
+   "expectedOutput": [
+    "Tryptophan"
+   ],
+   "label": "Translation stops if STOP codon at end of two-codon sequence"
+  },
+  {
+   "id": "hidden-21",
+   "input": {
+    "strand": "AUGUUUUAA"
+   },
+   "expectedOutput": [
+    "Methionine",
+    "Phenylalanine"
+   ],
+   "label": "Translation stops if STOP codon at end of three-codon sequence"
+  },
+  {
+   "id": "hidden-22",
+   "input": {
+    "strand": "UGGUAGUGG"
+   },
+   "expectedOutput": [
+    "Tryptophan"
+   ],
+   "label": "Translation stops if STOP codon in middle of three-codon sequence"
+  },
+  {
+   "id": "hidden-23",
+   "input": {
+    "strand": "UGGUGUUAUUAAUGGUUU"
+   },
+   "expectedOutput": [
+    "Tryptophan",
+    "Cysteine",
+    "Tyrosine"
+   ],
+   "label": "Translation stops if STOP codon in middle of six-codon sequence"
+  },
+  {
+   "id": "hidden-24",
+   "input": {
+    "strand": "AUGAUG"
+   },
+   "expectedOutput": [
+    "Methionine",
+    "Methionine"
+   ],
+   "label": "Sequence of two non-STOP codons does not translate to a STOP codon"
+  },
+  {
+   "id": "hidden-25",
+   "input": {
+    "strand": "UUCUUCUAAUGGU"
+   },
+   "expectedOutput": [
+    "Phenylalanine",
+    "Phenylalanine"
+   ],
+   "label": "Incomplete RNA sequence can translate if valid until a STOP codon"
+  }
+ ],
+ "ex-pig-latin": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "phrase": "object"
+   },
+   "expectedOutput": "objectay",
+   "label": "word beginning with o"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "phrase": "under"
+   },
+   "expectedOutput": "underay",
+   "label": "word beginning with u"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "phrase": "equal"
+   },
+   "expectedOutput": "equalay",
+   "label": "word beginning with a vowel and followed by a qu"
+  },
+  {
+   "id": "hidden-4",
+   "input": {
+    "phrase": "pig"
+   },
+   "expectedOutput": "igpay",
+   "label": "word beginning with p"
+  },
+  {
+   "id": "hidden-5",
+   "input": {
+    "phrase": "koala"
+   },
+   "expectedOutput": "oalakay",
+   "label": "word beginning with k"
+  },
+  {
+   "id": "hidden-6",
+   "input": {
+    "phrase": "xenon"
+   },
+   "expectedOutput": "enonxay",
+   "label": "word beginning with x"
+  },
+  {
+   "id": "hidden-7",
+   "input": {
+    "phrase": "qat"
+   },
+   "expectedOutput": "atqay",
+   "label": "word beginning with q without a following u"
+  },
+  {
+   "id": "hidden-8",
+   "input": {
+    "phrase": "liquid"
+   },
+   "expectedOutput": "iquidlay",
+   "label": "word beginning with consonant and vowel containing qu"
+  },
+  {
+   "id": "hidden-9",
+   "input": {
+    "phrase": "chair"
+   },
+   "expectedOutput": "airchay",
+   "label": "word beginning with ch"
+  },
+  {
+   "id": "hidden-10",
+   "input": {
+    "phrase": "queen"
+   },
+   "expectedOutput": "eenquay",
+   "label": "word beginning with qu"
+  },
+  {
+   "id": "hidden-11",
+   "input": {
+    "phrase": "square"
+   },
+   "expectedOutput": "aresquay",
+   "label": "word beginning with qu and a preceding consonant"
+  },
+  {
+   "id": "hidden-12",
+   "input": {
+    "phrase": "therapy"
+   },
+   "expectedOutput": "erapythay",
+   "label": "word beginning with th"
+  },
+  {
+   "id": "hidden-13",
+   "input": {
+    "phrase": "thrush"
+   },
+   "expectedOutput": "ushthray",
+   "label": "word beginning with thr"
+  },
+  {
+   "id": "hidden-14",
+   "input": {
+    "phrase": "school"
+   },
+   "expectedOutput": "oolschay",
+   "label": "word beginning with sch"
+  },
+  {
+   "id": "hidden-15",
+   "input": {
+    "phrase": "yttria"
+   },
+   "expectedOutput": "yttriaay",
+   "label": "word beginning with yt"
+  },
+  {
+   "id": "hidden-16",
+   "input": {
+    "phrase": "xray"
+   },
+   "expectedOutput": "xrayay",
+   "label": "word beginning with xr"
+  },
+  {
+   "id": "hidden-17",
+   "input": {
+    "phrase": "yellow"
+   },
+   "expectedOutput": "ellowyay",
+   "label": "y is treated like a consonant at the beginning of a word"
+  },
+  {
+   "id": "hidden-18",
+   "input": {
+    "phrase": "rhythm"
+   },
+   "expectedOutput": "ythmrhay",
+   "label": "y is treated like a vowel at the end of a consonant cluster"
+  },
+  {
+   "id": "hidden-19",
+   "input": {
+    "phrase": "my"
+   },
+   "expectedOutput": "ymay",
+   "label": "y as second letter in two letter word"
+  },
+  {
+   "id": "hidden-20",
+   "input": {
+    "phrase": "why do squids enjoy xrays"
+   },
+   "expectedOutput": "ywhay oday idssquay enjoyay xraysay",
+   "label": "a whole phrase"
+  }
+ ],
+ "ex-ocr-numbers": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "rows": [
+     "       _     _        _  _ ",
+     "  |  || |  || |  |  || || |",
+     "  |  ||_|  ||_|  |  ||_||_|",
+     "                           "
+    ]
+   },
+   "expectedOutput": "110101100",
+   "label": "Recognizes 110101100"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "rows": [
+     "       _     _           _ ",
+     "  |  || |  || |     || || |",
+     "  |  | _|  ||_|  |  ||_||_|",
+     "                           "
+    ]
+   },
+   "expectedOutput": "11?10?1?0",
+   "label": "Garbled numbers in a string are replaced with ?"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "rows": [
+     " _ ",
+     " _|",
+     "|_ ",
+     "   "
+    ]
+   },
+   "expectedOutput": "2",
+   "label": "Recognizes 2"
+  },
+  {
+   "id": "hidden-4",
+   "input": {
+    "rows": [
+     " _ ",
+     " _|",
+     " _|",
+     "   "
+    ]
+   },
+   "expectedOutput": "3",
+   "label": "Recognizes 3"
+  },
+  {
+   "id": "hidden-5",
+   "input": {
+    "rows": [
+     "   ",
+     "|_|",
+     "  |",
+     "   "
+    ]
+   },
+   "expectedOutput": "4",
+   "label": "Recognizes 4"
+  },
+  {
+   "id": "hidden-6",
+   "input": {
+    "rows": [
+     " _ ",
+     "|_ ",
+     " _|",
+     "   "
+    ]
+   },
+   "expectedOutput": "5",
+   "label": "Recognizes 5"
+  },
+  {
+   "id": "hidden-7",
+   "input": {
+    "rows": [
+     " _ ",
+     "|_ ",
+     "|_|",
+     "   "
+    ]
+   },
+   "expectedOutput": "6",
+   "label": "Recognizes 6"
+  },
+  {
+   "id": "hidden-8",
+   "input": {
+    "rows": [
+     " _ ",
+     "  |",
+     "  |",
+     "   "
+    ]
+   },
+   "expectedOutput": "7",
+   "label": "Recognizes 7"
+  },
+  {
+   "id": "hidden-9",
+   "input": {
+    "rows": [
+     " _ ",
+     "|_|",
+     "|_|",
+     "   "
+    ]
+   },
+   "expectedOutput": "8",
+   "label": "Recognizes 8"
+  },
+  {
+   "id": "hidden-10",
+   "input": {
+    "rows": [
+     " _ ",
+     "|_|",
+     " _|",
+     "   "
+    ]
+   },
+   "expectedOutput": "9",
+   "label": "Recognizes 9"
+  },
+  {
+   "id": "hidden-11",
+   "input": {
+    "rows": [
+     "    _  _     _  _  _  _  _  _ ",
+     "  | _| _||_||_ |_   ||_||_|| |",
+     "  ||_  _|  | _||_|  ||_| _||_|",
+     "                              "
+    ]
+   },
+   "expectedOutput": "1234567890",
+   "label": "Recognizes string of decimal numbers"
+  },
+  {
+   "id": "hidden-12",
+   "input": {
+    "rows": [
+     "    _  _ ",
+     "  | _| _|",
+     "  ||_  _|",
+     "         ",
+     "    _  _ ",
+     "|_||_ |_ ",
+     "  | _||_|",
+     "         ",
+     " _  _  _ ",
+     "  ||_||_|",
+     "  ||_| _|",
+     "         "
+    ]
+   },
+   "expectedOutput": "123,456,789",
+   "label": "Numbers separated by empty lines are recognized. Lines are joined by commas."
+  }
+ ],
+ "ex-allergies": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "item": "eggs",
+    "score": 2
+   },
+   "expectedOutput": false,
+   "label": "allergic to something, but not eggs"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "item": "eggs",
+    "score": 255
+   },
+   "expectedOutput": true,
+   "label": "allergic to everything"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "item": "peanuts",
+    "score": 0
+   },
+   "expectedOutput": false,
+   "label": "not allergic to anything"
+  },
+  {
+   "id": "hidden-4",
+   "input": {
+    "item": "peanuts",
+    "score": 2
+   },
+   "expectedOutput": true,
+   "label": "allergic only to peanuts"
+  },
+  {
+   "id": "hidden-5",
+   "input": {
+    "item": "peanuts",
+    "score": 7
+   },
+   "expectedOutput": true,
+   "label": "allergic to peanuts and something else"
+  },
+  {
+   "id": "hidden-6",
+   "input": {
+    "item": "peanuts",
+    "score": 5
+   },
+   "expectedOutput": false,
+   "label": "allergic to something, but not peanuts"
+  },
+  {
+   "id": "hidden-7",
+   "input": {
+    "item": "peanuts",
+    "score": 255
+   },
+   "expectedOutput": true,
+   "label": "allergic to everything"
+  },
+  {
+   "id": "hidden-8",
+   "input": {
+    "item": "shellfish",
+    "score": 0
+   },
+   "expectedOutput": false,
+   "label": "not allergic to anything"
+  },
+  {
+   "id": "hidden-9",
+   "input": {
+    "item": "shellfish",
+    "score": 4
+   },
+   "expectedOutput": true,
+   "label": "allergic only to shellfish"
+  },
+  {
+   "id": "hidden-10",
+   "input": {
+    "item": "shellfish",
+    "score": 14
+   },
+   "expectedOutput": true,
+   "label": "allergic to shellfish and something else"
+  },
+  {
+   "id": "hidden-11",
+   "input": {
+    "item": "shellfish",
+    "score": 10
+   },
+   "expectedOutput": false,
+   "label": "allergic to something, but not shellfish"
+  },
+  {
+   "id": "hidden-12",
+   "input": {
+    "item": "shellfish",
+    "score": 255
+   },
+   "expectedOutput": true,
+   "label": "allergic to everything"
+  },
+  {
+   "id": "hidden-13",
+   "input": {
+    "item": "strawberries",
+    "score": 0
+   },
+   "expectedOutput": false,
+   "label": "not allergic to anything"
+  },
+  {
+   "id": "hidden-14",
+   "input": {
+    "item": "strawberries",
+    "score": 8
+   },
+   "expectedOutput": true,
+   "label": "allergic only to strawberries"
+  },
+  {
+   "id": "hidden-15",
+   "input": {
+    "item": "strawberries",
+    "score": 28
+   },
+   "expectedOutput": true,
+   "label": "allergic to strawberries and something else"
+  },
+  {
+   "id": "hidden-16",
+   "input": {
+    "item": "strawberries",
+    "score": 20
+   },
+   "expectedOutput": false,
+   "label": "allergic to something, but not strawberries"
+  },
+  {
+   "id": "hidden-17",
+   "input": {
+    "item": "strawberries",
+    "score": 255
+   },
+   "expectedOutput": true,
+   "label": "allergic to everything"
+  },
+  {
+   "id": "hidden-18",
+   "input": {
+    "item": "tomatoes",
+    "score": 0
+   },
+   "expectedOutput": false,
+   "label": "not allergic to anything"
+  },
+  {
+   "id": "hidden-19",
+   "input": {
+    "item": "tomatoes",
+    "score": 16
+   },
+   "expectedOutput": true,
+   "label": "allergic only to tomatoes"
+  },
+  {
+   "id": "hidden-20",
+   "input": {
+    "item": "tomatoes",
+    "score": 56
+   },
+   "expectedOutput": true,
+   "label": "allergic to tomatoes and something else"
+  },
+  {
+   "id": "hidden-21",
+   "input": {
+    "item": "tomatoes",
+    "score": 40
+   },
+   "expectedOutput": false,
+   "label": "allergic to something, but not tomatoes"
+  },
+  {
+   "id": "hidden-22",
+   "input": {
+    "item": "tomatoes",
+    "score": 255
+   },
+   "expectedOutput": true,
+   "label": "allergic to everything"
+  },
+  {
+   "id": "hidden-23",
+   "input": {
+    "item": "chocolate",
+    "score": 0
+   },
+   "expectedOutput": false,
+   "label": "not allergic to anything"
+  },
+  {
+   "id": "hidden-24",
+   "input": {
+    "item": "chocolate",
+    "score": 32
+   },
+   "expectedOutput": true,
+   "label": "allergic only to chocolate"
+  },
+  {
+   "id": "hidden-25",
+   "input": {
+    "item": "chocolate",
+    "score": 112
+   },
+   "expectedOutput": true,
+   "label": "allergic to chocolate and something else"
+  },
+  {
+   "id": "hidden-26",
+   "input": {
+    "item": "chocolate",
+    "score": 80
+   },
+   "expectedOutput": false,
+   "label": "allergic to something, but not chocolate"
+  },
+  {
+   "id": "hidden-27",
+   "input": {
+    "item": "chocolate",
+    "score": 255
+   },
+   "expectedOutput": true,
+   "label": "allergic to everything"
+  },
+  {
+   "id": "hidden-28",
+   "input": {
+    "item": "pollen",
+    "score": 0
+   },
+   "expectedOutput": false,
+   "label": "not allergic to anything"
+  },
+  {
+   "id": "hidden-29",
+   "input": {
+    "item": "pollen",
+    "score": 64
+   },
+   "expectedOutput": true,
+   "label": "allergic only to pollen"
+  },
+  {
+   "id": "hidden-30",
+   "input": {
+    "item": "pollen",
+    "score": 224
+   },
+   "expectedOutput": true,
+   "label": "allergic to pollen and something else"
+  },
+  {
+   "id": "hidden-31",
+   "input": {
+    "item": "pollen",
+    "score": 160
+   },
+   "expectedOutput": false,
+   "label": "allergic to something, but not pollen"
+  },
+  {
+   "id": "hidden-32",
+   "input": {
+    "item": "pollen",
+    "score": 255
+   },
+   "expectedOutput": true,
+   "label": "allergic to everything"
+  },
+  {
+   "id": "hidden-33",
+   "input": {
+    "item": "cats",
+    "score": 0
+   },
+   "expectedOutput": false,
+   "label": "not allergic to anything"
+  },
+  {
+   "id": "hidden-34",
+   "input": {
+    "item": "cats",
+    "score": 128
+   },
+   "expectedOutput": true,
+   "label": "allergic only to cats"
+  },
+  {
+   "id": "hidden-35",
+   "input": {
+    "item": "cats",
+    "score": 192
+   },
+   "expectedOutput": true,
+   "label": "allergic to cats and something else"
+  },
+  {
+   "id": "hidden-36",
+   "input": {
+    "item": "cats",
+    "score": 64
+   },
+   "expectedOutput": false,
+   "label": "allergic to something, but not cats"
+  },
+  {
+   "id": "hidden-37",
+   "input": {
+    "item": "cats",
+    "score": 255
+   },
+   "expectedOutput": true,
+   "label": "allergic to everything"
+  }
+ ],
+ "ex-space-age": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "planet": "Mars",
+    "seconds": 2129871239
+   },
+   "expectedOutput": 35.88,
+   "label": "age on Mars"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "planet": "Jupiter",
+    "seconds": 901876382
+   },
+   "expectedOutput": 2.41,
+   "label": "age on Jupiter"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "planet": "Saturn",
+    "seconds": 2000000000
+   },
+   "expectedOutput": 2.15,
+   "label": "age on Saturn"
+  },
+  {
+   "id": "hidden-4",
+   "input": {
+    "planet": "Uranus",
+    "seconds": 1210123456
+   },
+   "expectedOutput": 0.46,
+   "label": "age on Uranus"
+  },
+  {
+   "id": "hidden-5",
+   "input": {
+    "planet": "Neptune",
+    "seconds": 1821023456
+   },
+   "expectedOutput": 0.35,
+   "label": "age on Neptune"
+  }
+ ],
+ "ex-gigasecond": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "moment": "2015-01-24T22:00:00"
+   },
+   "expectedOutput": "2046-10-02T23:46:40",
+   "label": "full time specified"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "moment": "2015-01-24T23:59:59"
+   },
+   "expectedOutput": "2046-10-03T01:46:39",
+   "label": "full time with day roll-over"
+  }
+ ],
+ "ex-pythagorean-triplet": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "n": 1001
+   },
+   "expectedOutput": [],
+   "label": "no matching triplets for 1001"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "n": 90
+   },
+   "expectedOutput": [
+    [
+     9,
+     40,
+     41
+    ],
+    [
+     15,
+     36,
+     39
+    ]
+   ],
+   "label": "returns all matching triplets"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "n": 840
+   },
+   "expectedOutput": [
+    [
+     40,
+     399,
+     401
+    ],
+    [
+     56,
+     390,
+     394
+    ],
+    [
+     105,
+     360,
+     375
+    ],
+    [
+     120,
+     350,
+     370
+    ],
+    [
+     140,
+     336,
+     364
+    ],
+    [
+     168,
+     315,
+     357
+    ],
+    [
+     210,
+     280,
+     350
+    ],
+    [
+     240,
+     252,
+     348
+    ]
+   ],
+   "label": "several matching triplets"
+  },
+  {
+   "id": "hidden-4",
+   "input": {
+    "n": 30000
+   },
+   "expectedOutput": [
+    [
+     1200,
+     14375,
+     14425
+    ],
+    [
+     1875,
+     14000,
+     14125
+    ],
+    [
+     5000,
+     12000,
+     13000
+    ],
+    [
+     6000,
+     11250,
+     12750
+    ],
+    [
+     7500,
+     10000,
+     12500
+    ]
+   ],
+   "label": "triplets for large number"
+  }
+ ],
+ "ex-sublist": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "listOne": [
+     1,
+     2,
+     3
+    ],
+    "listTwo": [
+     1,
+     2,
+     3
+    ]
+   },
+   "expectedOutput": "equal",
+   "label": "list equals itself"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "listOne": [
+     1,
+     2,
+     3
+    ],
+    "listTwo": [
+     2,
+     3,
+     4
+    ]
+   },
+   "expectedOutput": "unequal",
+   "label": "different lists"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "listOne": [
+     1,
+     2,
+     5
+    ],
+    "listTwo": [
+     0,
+     1,
+     2,
+     3,
+     1,
+     2,
+     5,
+     6
+    ]
+   },
+   "expectedOutput": "sublist",
+   "label": "false start"
+  },
+  {
+   "id": "hidden-4",
+   "input": {
+    "listOne": [
+     1,
+     1,
+     2
+    ],
+    "listTwo": [
+     0,
+     1,
+     1,
+     1,
+     2,
+     1,
+     2
+    ]
+   },
+   "expectedOutput": "sublist",
+   "label": "consecutive"
+  },
+  {
+   "id": "hidden-5",
+   "input": {
+    "listOne": [
+     0,
+     1,
+     2
+    ],
+    "listTwo": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5
+    ]
+   },
+   "expectedOutput": "sublist",
+   "label": "sublist at start"
+  },
+  {
+   "id": "hidden-6",
+   "input": {
+    "listOne": [
+     2,
+     3,
+     4
+    ],
+    "listTwo": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5
+    ]
+   },
+   "expectedOutput": "sublist",
+   "label": "sublist in middle"
+  },
+  {
+   "id": "hidden-7",
+   "input": {
+    "listOne": [
+     3,
+     4,
+     5
+    ],
+    "listTwo": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5
+    ]
+   },
+   "expectedOutput": "sublist",
+   "label": "sublist at end"
+  },
+  {
+   "id": "hidden-8",
+   "input": {
+    "listOne": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5
+    ],
+    "listTwo": [
+     0,
+     1,
+     2
+    ]
+   },
+   "expectedOutput": "superlist",
+   "label": "at start of superlist"
+  },
+  {
+   "id": "hidden-9",
+   "input": {
+    "listOne": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5
+    ],
+    "listTwo": [
+     2,
+     3
+    ]
+   },
+   "expectedOutput": "superlist",
+   "label": "in middle of superlist"
+  },
+  {
+   "id": "hidden-10",
+   "input": {
+    "listOne": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5
+    ],
+    "listTwo": [
+     3,
+     4,
+     5
+    ]
+   },
+   "expectedOutput": "superlist",
+   "label": "at end of superlist"
+  },
+  {
+   "id": "hidden-11",
+   "input": {
+    "listOne": [
+     1,
+     3
+    ],
+    "listTwo": [
+     1,
+     2,
+     3
+    ]
+   },
+   "expectedOutput": "unequal",
+   "label": "first list missing element from second list"
+  },
+  {
+   "id": "hidden-12",
+   "input": {
+    "listOne": [
+     1,
+     2,
+     3
+    ],
+    "listTwo": [
+     1,
+     3
+    ]
+   },
+   "expectedOutput": "unequal",
+   "label": "second list missing element from first list"
+  },
+  {
+   "id": "hidden-13",
+   "input": {
+    "listOne": [
+     1,
+     2
+    ],
+    "listTwo": [
+     1,
+     22
+    ]
+   },
+   "expectedOutput": "unequal",
+   "label": "first list missing additional digits from second list"
+  },
+  {
+   "id": "hidden-14",
+   "input": {
+    "listOne": [
+     1,
+     2,
+     3
+    ],
+    "listTwo": [
+     3,
+     2,
+     1
+    ]
+   },
+   "expectedOutput": "unequal",
+   "label": "order matters to a list"
+  },
+  {
+   "id": "hidden-15",
+   "input": {
+    "listOne": [
+     1,
+     0,
+     1
+    ],
+    "listTwo": [
+     10,
+     1
+    ]
+   },
+   "expectedOutput": "unequal",
+   "label": "same digits but different numbers"
+  }
+ ],
+ "ex-rail-fence-cipher": [],
+ "ex-variable-length-quantity": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "integers": [
+     127
+    ]
+   },
+   "expectedOutput": [
+    127
+   ],
+   "label": "largest single byte"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "integers": [
+     128
+    ]
+   },
+   "expectedOutput": [
+    129,
+    0
+   ],
+   "label": "smallest double byte"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "integers": [
+     8192
+    ]
+   },
+   "expectedOutput": [
+    192,
+    0
+   ],
+   "label": "arbitrary double byte"
+  },
+  {
+   "id": "hidden-4",
+   "input": {
+    "integers": [
+     173
+    ]
+   },
+   "expectedOutput": [
+    129,
+    45
+   ],
+   "label": "asymmetric double byte"
+  },
+  {
+   "id": "hidden-5",
+   "input": {
+    "integers": [
+     16383
+    ]
+   },
+   "expectedOutput": [
+    255,
+    127
+   ],
+   "label": "largest double byte"
+  },
+  {
+   "id": "hidden-6",
+   "input": {
+    "integers": [
+     16384
+    ]
+   },
+   "expectedOutput": [
+    129,
+    128,
+    0
+   ],
+   "label": "smallest triple byte"
+  },
+  {
+   "id": "hidden-7",
+   "input": {
+    "integers": [
+     1048576
+    ]
+   },
+   "expectedOutput": [
+    192,
+    128,
+    0
+   ],
+   "label": "arbitrary triple byte"
+  },
+  {
+   "id": "hidden-8",
+   "input": {
+    "integers": [
+     120220
+    ]
+   },
+   "expectedOutput": [
+    135,
+    171,
+    28
+   ],
+   "label": "asymmetric triple byte"
+  },
+  {
+   "id": "hidden-9",
+   "input": {
+    "integers": [
+     2097151
+    ]
+   },
+   "expectedOutput": [
+    255,
+    255,
+    127
+   ],
+   "label": "largest triple byte"
+  },
+  {
+   "id": "hidden-10",
+   "input": {
+    "integers": [
+     2097152
+    ]
+   },
+   "expectedOutput": [
+    129,
+    128,
+    128,
+    0
+   ],
+   "label": "smallest quadruple byte"
+  },
+  {
+   "id": "hidden-11",
+   "input": {
+    "integers": [
+     134217728
+    ]
+   },
+   "expectedOutput": [
+    192,
+    128,
+    128,
+    0
+   ],
+   "label": "arbitrary quadruple byte"
+  },
+  {
+   "id": "hidden-12",
+   "input": {
+    "integers": [
+     3503876
+    ]
+   },
+   "expectedOutput": [
+    129,
+    213,
+    238,
+    4
+   ],
+   "label": "asymmetric quadruple byte"
+  },
+  {
+   "id": "hidden-13",
+   "input": {
+    "integers": [
+     268435455
+    ]
+   },
+   "expectedOutput": [
+    255,
+    255,
+    255,
+    127
+   ],
+   "label": "largest quadruple byte"
+  },
+  {
+   "id": "hidden-14",
+   "input": {
+    "integers": [
+     268435456
+    ]
+   },
+   "expectedOutput": [
+    129,
+    128,
+    128,
+    128,
+    0
+   ],
+   "label": "smallest quintuple byte"
+  },
+  {
+   "id": "hidden-15",
+   "input": {
+    "integers": [
+     64,
+     127
+    ]
+   },
+   "expectedOutput": [
+    64,
+    127
+   ],
+   "label": "two single-byte values"
+  },
+  {
+   "id": "hidden-16",
+   "input": {
+    "integers": [
+     16384,
+     1193046
+    ]
+   },
+   "expectedOutput": [
+    129,
+    128,
+    0,
+    200,
+    232,
+    86
+   ],
+   "label": "two multi-byte values"
+  },
+  {
+   "id": "hidden-17",
+   "input": {
+    "integers": [
+     8192,
+     1193046,
+     268435455,
+     0,
+     16383,
+     16384
+    ]
+   },
+   "expectedOutput": [
+    192,
+    0,
+    200,
+    232,
+    86,
+    255,
+    255,
+    255,
+    127,
+    0,
+    255,
+    127,
+    129,
+    128,
+    0
+   ],
+   "label": "many multi-byte values"
+  }
+ ],
+ "ex-binary": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "binary": "11"
+   },
+   "expectedOutput": 3,
+   "label": "binary 11 is decimal 3"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "binary": "100"
+   },
+   "expectedOutput": 4,
+   "label": "binary 100 is decimal 4"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "binary": "1001"
+   },
+   "expectedOutput": 9,
+   "label": "binary 1001 is decimal 9"
+  },
+  {
+   "id": "hidden-4",
+   "input": {
+    "binary": "11010"
+   },
+   "expectedOutput": 26,
+   "label": "binary 11010 is decimal 26"
+  },
+  {
+   "id": "hidden-5",
+   "input": {
+    "binary": "10001101000"
+   },
+   "expectedOutput": 1128,
+   "label": "binary 10001101000 is decimal 1128"
+  },
+  {
+   "id": "hidden-6",
+   "input": {
+    "binary": "000011111"
+   },
+   "expectedOutput": 31,
+   "label": "binary ignores leading zeros"
+  }
+ ],
+ "ex-line-up": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "name": "Attakullakulla",
+    "number": 6
+   },
+   "expectedOutput": "Attakullakulla, you are the 6th customer we serve today. Thank you!",
+   "label": "format non-exceptional ordinal numeral 6"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "name": "Kate",
+    "number": 7
+   },
+   "expectedOutput": "Kate, you are the 7th customer we serve today. Thank you!",
+   "label": "format non-exceptional ordinal numeral 7"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "name": "Maximiliano",
+    "number": 8
+   },
+   "expectedOutput": "Maximiliano, you are the 8th customer we serve today. Thank you!",
+   "label": "format non-exceptional ordinal numeral 8"
+  },
+  {
+   "id": "hidden-4",
+   "input": {
+    "name": "Mary",
+    "number": 1
+   },
+   "expectedOutput": "Mary, you are the 1st customer we serve today. Thank you!",
+   "label": "format exceptional ordinal numeral 1"
+  },
+  {
+   "id": "hidden-5",
+   "input": {
+    "name": "Haruto",
+    "number": 2
+   },
+   "expectedOutput": "Haruto, you are the 2nd customer we serve today. Thank you!",
+   "label": "format exceptional ordinal numeral 2"
+  },
+  {
+   "id": "hidden-6",
+   "input": {
+    "name": "Henriette",
+    "number": 3
+   },
+   "expectedOutput": "Henriette, you are the 3rd customer we serve today. Thank you!",
+   "label": "format exceptional ordinal numeral 3"
+  },
+  {
+   "id": "hidden-7",
+   "input": {
+    "name": "Alvarez",
+    "number": 10
+   },
+   "expectedOutput": "Alvarez, you are the 10th customer we serve today. Thank you!",
+   "label": "format smallest two digit non-exceptional ordinal numeral 10"
+  },
+  {
+   "id": "hidden-8",
+   "input": {
+    "name": "Jacqueline",
+    "number": 11
+   },
+   "expectedOutput": "Jacqueline, you are the 11th customer we serve today. Thank you!",
+   "label": "format non-exceptional ordinal numeral 11"
+  },
+  {
+   "id": "hidden-9",
+   "input": {
+    "name": "Juan",
+    "number": 12
+   },
+   "expectedOutput": "Juan, you are the 12th customer we serve today. Thank you!",
+   "label": "format non-exceptional ordinal numeral 12"
+  },
+  {
+   "id": "hidden-10",
+   "input": {
+    "name": "Patricia",
+    "number": 13
+   },
+   "expectedOutput": "Patricia, you are the 13th customer we serve today. Thank you!",
+   "label": "format non-exceptional ordinal numeral 13"
+  },
+  {
+   "id": "hidden-11",
+   "input": {
+    "name": "Washi",
+    "number": 21
+   },
+   "expectedOutput": "Washi, you are the 21st customer we serve today. Thank you!",
+   "label": "format exceptional ordinal numeral 21"
+  },
+  {
+   "id": "hidden-12",
+   "input": {
+    "name": "Ingrid",
+    "number": 22
+   },
+   "expectedOutput": "Ingrid, you are the 22nd customer we serve today. Thank you!",
+   "label": "format exceptional ordinal numeral 22 ending in nd even though it is a multiple of 11"
+  },
+  {
+   "id": "hidden-13",
+   "input": {
+    "name": "Mario",
+    "number": 33
+   },
+   "expectedOutput": "Mario, you are the 33rd customer we serve today. Thank you!",
+   "label": "format exceptional ordinal numeral 33 ending in rd even though it is a multiple of 11"
+  },
+  {
+   "id": "hidden-14",
+   "input": {
+    "name": "Quentin",
+    "number": 52
+   },
+   "expectedOutput": "Quentin, you are the 52nd customer we serve today. Thank you!",
+   "label": "format exceptional ordinal numeral 52 ending in nd even though it is a multiple of 13"
+  },
+  {
+   "id": "hidden-15",
+   "input": {
+    "name": "Nayra",
+    "number": 62
+   },
+   "expectedOutput": "Nayra, you are the 62nd customer we serve today. Thank you!",
+   "label": "format exceptional ordinal numeral 62"
+  },
+  {
+   "id": "hidden-16",
+   "input": {
+    "name": "Ugo",
+    "number": 72
+   },
+   "expectedOutput": "Ugo, you are the 72nd customer we serve today. Thank you!",
+   "label": "format exceptional ordinal numeral 72 ending in nd even though it is a multiple of 12"
+  },
+  {
+   "id": "hidden-17",
+   "input": {
+    "name": "Boris",
+    "number": 91
+   },
+   "expectedOutput": "Boris, you are the 91st customer we serve today. Thank you!",
+   "label": "format exceptional ordinal numeral 91 ending in st even though it is a multiple of 13"
+  },
+  {
+   "id": "hidden-18",
+   "input": {
+    "name": "John",
+    "number": 100
+   },
+   "expectedOutput": "John, you are the 100th customer we serve today. Thank you!",
+   "label": "format non-exceptional ordinal numeral 100"
+  },
+  {
+   "id": "hidden-19",
+   "input": {
+    "name": "Zeinab",
+    "number": 101
+   },
+   "expectedOutput": "Zeinab, you are the 101st customer we serve today. Thank you!",
+   "label": "format exceptional ordinal numeral 101"
+  },
+  {
+   "id": "hidden-20",
+   "input": {
+    "name": "Knud",
+    "number": 112
+   },
+   "expectedOutput": "Knud, you are the 112th customer we serve today. Thank you!",
+   "label": "format non-exceptional ordinal numeral 112"
+  },
+  {
+   "id": "hidden-21",
+   "input": {
+    "name": "Yma",
+    "number": 123
+   },
+   "expectedOutput": "Yma, you are the 123rd customer we serve today. Thank you!",
+   "label": "format exceptional ordinal numeral 123"
+  },
+  {
+   "id": "hidden-22",
+   "input": {
+    "name": "Elias",
+    "number": 972
+   },
+   "expectedOutput": "Elias, you are the 972nd customer we serve today. Thank you!",
+   "label": "format large number 972 ending in nd even though it is a multiple of 12"
+  }
+ ],
+ "ex-game-of-life": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "matrix": [
+     [
+      1,
+      0,
+      1
+     ],
+     [
+      1,
+      0,
+      1
+     ],
+     [
+      1,
+      0,
+      1
+     ]
+    ]
+   },
+   "expectedOutput": [
+    [
+     0,
+     0,
+     0
+    ],
+    [
+     1,
+     0,
+     1
+    ],
+    [
+     0,
+     0,
+     0
+    ]
+   ],
+   "label": "live cells with two live neighbors stay alive"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "matrix": [
+     [
+      0,
+      1,
+      0
+     ],
+     [
+      1,
+      0,
+      0
+     ],
+     [
+      1,
+      1,
+      0
+     ]
+    ]
+   },
+   "expectedOutput": [
+    [
+     0,
+     0,
+     0
+    ],
+    [
+     1,
+     0,
+     0
+    ],
+    [
+     1,
+     1,
+     0
+    ]
+   ],
+   "label": "live cells with three live neighbors stay alive"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "matrix": [
+     [
+      1,
+      1,
+      0
+     ],
+     [
+      0,
+      0,
+      0
+     ],
+     [
+      1,
+      0,
+      0
+     ]
+    ]
+   },
+   "expectedOutput": [
+    [
+     0,
+     0,
+     0
+    ],
+    [
+     1,
+     1,
+     0
+    ],
+    [
+     0,
+     0,
+     0
+    ]
+   ],
+   "label": "dead cells with three live neighbors become alive"
+  },
+  {
+   "id": "hidden-4",
+   "input": {
+    "matrix": [
+     [
+      1,
+      1,
+      1
+     ],
+     [
+      1,
+      1,
+      1
+     ],
+     [
+      1,
+      1,
+      1
+     ]
+    ]
+   },
+   "expectedOutput": [
+    [
+     1,
+     0,
+     1
+    ],
+    [
+     0,
+     0,
+     0
+    ],
+    [
+     1,
+     0,
+     1
+    ]
+   ],
+   "label": "live cells with four or more neighbors die"
+  },
+  {
+   "id": "hidden-5",
+   "input": {
+    "matrix": [
+     [
+      1,
+      1,
+      0,
+      1,
+      1,
+      0,
+      0,
+      0
+     ],
+     [
+      1,
+      0,
+      1,
+      1,
+      0,
+      0,
+      0,
+      0
+     ],
+     [
+      1,
+      1,
+      1,
+      0,
+      0,
+      1,
+      1,
+      1
+     ],
+     [
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      1,
+      0
+     ],
+     [
+      1,
+      0,
+      0,
+      0,
+      1,
+      1,
+      0,
+      0
+     ],
+     [
+      1,
+      1,
+      0,
+      0,
+      0,
+      1,
+      1,
+      1
+     ],
+     [
+      0,
+      0,
+      1,
+      0,
+      1,
+      0,
+      0,
+      1
+     ],
+     [
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      1
+     ]
+    ]
+   },
+   "expectedOutput": [
+    [
+     1,
+     1,
+     0,
+     1,
+     1,
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0,
+     0,
+     0,
+     1,
+     1,
+     0
+    ],
+    [
+     1,
+     0,
+     1,
+     1,
+     1,
+     1,
+     0,
+     1
+    ],
+    [
+     1,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     1
+    ],
+    [
+     1,
+     1,
+     0,
+     0,
+     1,
+     0,
+     0,
+     1
+    ],
+    [
+     1,
+     1,
+     0,
+     1,
+     0,
+     0,
+     0,
+     1
+    ],
+    [
+     1,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     1,
+     1
+    ]
+   ],
+   "label": "bigger matrix"
+  }
+ ],
+ "ex-flower-field": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "garden": [
+     "***",
+     "***",
+     "***"
+    ]
+   },
+   "expectedOutput": [
+    "***",
+    "***",
+    "***"
+   ],
+   "label": "garden full of flowers"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "garden": [
+     "   ",
+     " * ",
+     "   "
+    ]
+   },
+   "expectedOutput": [
+    "111",
+    "1*1",
+    "111"
+   ],
+   "label": "flower surrounded by spaces"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "garden": [
+     "***",
+     "* *",
+     "***"
+    ]
+   },
+   "expectedOutput": [
+    "***",
+    "*8*",
+    "***"
+   ],
+   "label": "space surrounded by flowers"
+  },
+  {
+   "id": "hidden-4",
+   "input": {
+    "garden": [
+     " * * "
+    ]
+   },
+   "expectedOutput": [
+    "1*2*1"
+   ],
+   "label": "horizontal line"
+  },
+  {
+   "id": "hidden-5",
+   "input": {
+    "garden": [
+     "*   *"
+    ]
+   },
+   "expectedOutput": [
+    "*1 1*"
+   ],
+   "label": "horizontal line, flowers at edges"
+  },
+  {
+   "id": "hidden-6",
+   "input": {
+    "garden": [
+     " ",
+     "*",
+     " ",
+     "*",
+     " "
+    ]
+   },
+   "expectedOutput": [
+    "1",
+    "*",
+    "2",
+    "*",
+    "1"
+   ],
+   "label": "vertical line"
+  },
+  {
+   "id": "hidden-7",
+   "input": {
+    "garden": [
+     "*",
+     " ",
+     " ",
+     " ",
+     "*"
+    ]
+   },
+   "expectedOutput": [
+    "*",
+    "1",
+    " ",
+    "1",
+    "*"
+   ],
+   "label": "vertical line, flowers at edges"
+  },
+  {
+   "id": "hidden-8",
+   "input": {
+    "garden": [
+     "  *  ",
+     "  *  ",
+     "*****",
+     "  *  ",
+     "  *  "
+    ]
+   },
+   "expectedOutput": [
+    " 2*2 ",
+    "25*52",
+    "*****",
+    "25*52",
+    " 2*2 "
+   ],
+   "label": "cross"
+  },
+  {
+   "id": "hidden-9",
+   "input": {
+    "garden": [
+     " *  * ",
+     "  *   ",
+     "    * ",
+     "   * *",
+     " *  * ",
+     "      "
+    ]
+   },
+   "expectedOutput": [
+    "1*22*1",
+    "12*322",
+    " 123*2",
+    "112*4*",
+    "1*22*2",
+    "111111"
+   ],
+   "label": "large garden"
+  },
+  {
+   "id": "hidden-10",
+   "input": {
+    "garden": [
+     " ** "
+    ]
+   },
+   "expectedOutput": [
+    "1**1"
+   ],
+   "label": "multiple adjacent flowers"
+  }
+ ],
+ "ex-rectangles": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "lines": [
+     "+-+",
+     "| |",
+     "+-+"
+    ]
+   },
+   "expectedOutput": 1,
+   "label": "one rectangle"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "lines": [
+     "  +-+",
+     "  | |",
+     "+-+-+",
+     "| |  ",
+     "+-+  "
+    ]
+   },
+   "expectedOutput": 2,
+   "label": "two rectangles without shared parts"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "lines": [
+     "  +-+",
+     "  | |",
+     "+-+-+",
+     "| | |",
+     "+-+-+"
+    ]
+   },
+   "expectedOutput": 5,
+   "label": "five rectangles with shared parts"
+  },
+  {
+   "id": "hidden-4",
+   "input": {
+    "lines": [
+     "+--+",
+     "+--+"
+    ]
+   },
+   "expectedOutput": 1,
+   "label": "rectangle of height 1 is counted"
+  },
+  {
+   "id": "hidden-5",
+   "input": {
+    "lines": [
+     "++",
+     "||",
+     "++"
+    ]
+   },
+   "expectedOutput": 1,
+   "label": "rectangle of width 1 is counted"
+  },
+  {
+   "id": "hidden-6",
+   "input": {
+    "lines": [
+     "++",
+     "++"
+    ]
+   },
+   "expectedOutput": 1,
+   "label": "1x1 square is counted"
+  },
+  {
+   "id": "hidden-7",
+   "input": {
+    "lines": [
+     "  +-+",
+     "    |",
+     "+-+-+",
+     "| | -",
+     "+-+-+"
+    ]
+   },
+   "expectedOutput": 1,
+   "label": "only complete rectangles are counted"
+  },
+  {
+   "id": "hidden-8",
+   "input": {
+    "lines": [
+     "+------+----+",
+     "|      |    |",
+     "+---+--+    |",
+     "|   |       |",
+     "+---+-------+"
+    ]
+   },
+   "expectedOutput": 3,
+   "label": "rectangles can be of different sizes"
+  },
+  {
+   "id": "hidden-9",
+   "input": {
+    "lines": [
+     "+------+----+",
+     "|      |    |",
+     "+------+    |",
+     "|   |       |",
+     "+---+-------+"
+    ]
+   },
+   "expectedOutput": 2,
+   "label": "corner is required for a rectangle to be complete"
+  },
+  {
+   "id": "hidden-10",
+   "input": {
+    "lines": [
+     "+---+--+----+",
+     "|   +--+----+",
+     "+---+--+    |",
+     "|   +--+----+",
+     "+---+--+--+-+",
+     "+---+--+--+-+",
+     "+------+  | |",
+     "          +-+"
+    ]
+   },
+   "expectedOutput": 60,
+   "label": "large input with many rectangles"
+  },
+  {
+   "id": "hidden-11",
+   "input": {
+    "lines": [
+     "+-+ +-+",
+     "| | | |",
+     "+-+-+-+",
+     "  | |  ",
+     "+-+-+-+",
+     "| | | |",
+     "+-+ +-+"
+    ]
+   },
+   "expectedOutput": 5,
+   "label": "rectangles must have four sides"
+  }
+ ],
+ "ex-tournament": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "rows": [
+     "Blithering Badgers;Allegoric Alaskans;win"
+    ]
+   },
+   "expectedOutput": [
+    "Team                           | MP |  W |  D |  L |  P",
+    "Blithering Badgers             |  1 |  1 |  0 |  0 |  3",
+    "Allegoric Alaskans             |  1 |  0 |  0 |  1 |  0"
+   ],
+   "label": "a different team can win"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "rows": [
+     "Allegoric Alaskans;Blithering Badgers;draw"
+    ]
+   },
+   "expectedOutput": [
+    "Team                           | MP |  W |  D |  L |  P",
+    "Allegoric Alaskans             |  1 |  0 |  1 |  0 |  1",
+    "Blithering Badgers             |  1 |  0 |  1 |  0 |  1"
+   ],
+   "label": "a draw is one point each"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "rows": [
+     "Allegoric Alaskans;Blithering Badgers;win",
+     "Allegoric Alaskans;Blithering Badgers;win"
+    ]
+   },
+   "expectedOutput": [
+    "Team                           | MP |  W |  D |  L |  P",
+    "Allegoric Alaskans             |  2 |  2 |  0 |  0 |  6",
+    "Blithering Badgers             |  2 |  0 |  0 |  2 |  0"
+   ],
+   "label": "There can be more than one match"
+  },
+  {
+   "id": "hidden-4",
+   "input": {
+    "rows": [
+     "Allegoric Alaskans;Blithering Badgers;loss",
+     "Allegoric Alaskans;Blithering Badgers;win"
+    ]
+   },
+   "expectedOutput": [
+    "Team                           | MP |  W |  D |  L |  P",
+    "Allegoric Alaskans             |  2 |  1 |  0 |  1 |  3",
+    "Blithering Badgers             |  2 |  1 |  0 |  1 |  3"
+   ],
+   "label": "There can be more than one winner"
+  },
+  {
+   "id": "hidden-5",
+   "input": {
+    "rows": [
+     "Allegoric Alaskans;Blithering Badgers;win",
+     "Blithering Badgers;Courageous Californians;win",
+     "Courageous Californians;Allegoric Alaskans;loss"
+    ]
+   },
+   "expectedOutput": [
+    "Team                           | MP |  W |  D |  L |  P",
+    "Allegoric Alaskans             |  2 |  2 |  0 |  0 |  6",
+    "Blithering Badgers             |  2 |  1 |  0 |  1 |  3",
+    "Courageous Californians        |  2 |  0 |  0 |  2 |  0"
+   ],
+   "label": "There can be more than two teams"
+  },
+  {
+   "id": "hidden-6",
+   "input": {
+    "rows": [
+     "Allegoric Alaskans;Blithering Badgers;win",
+     "Devastating Donkeys;Courageous Californians;draw",
+     "Devastating Donkeys;Allegoric Alaskans;win",
+     "Courageous Californians;Blithering Badgers;loss",
+     "Blithering Badgers;Devastating Donkeys;loss",
+     "Allegoric Alaskans;Courageous Californians;win"
+    ]
+   },
+   "expectedOutput": [
+    "Team                           | MP |  W |  D |  L |  P",
+    "Devastating Donkeys            |  3 |  2 |  1 |  0 |  7",
+    "Allegoric Alaskans             |  3 |  2 |  0 |  1 |  6",
+    "Blithering Badgers             |  3 |  1 |  0 |  2 |  3",
+    "Courageous Californians        |  3 |  0 |  1 |  2 |  1"
+   ],
+   "label": "typical input"
+  },
+  {
+   "id": "hidden-7",
+   "input": {
+    "rows": [
+     "Allegoric Alaskans;Blithering Badgers;loss",
+     "Devastating Donkeys;Allegoric Alaskans;loss",
+     "Courageous Californians;Blithering Badgers;draw",
+     "Allegoric Alaskans;Courageous Californians;win"
+    ]
+   },
+   "expectedOutput": [
+    "Team                           | MP |  W |  D |  L |  P",
+    "Allegoric Alaskans             |  3 |  2 |  0 |  1 |  6",
+    "Blithering Badgers             |  2 |  1 |  1 |  0 |  4",
+    "Courageous Californians        |  2 |  0 |  1 |  1 |  1",
+    "Devastating Donkeys            |  1 |  0 |  0 |  1 |  0"
+   ],
+   "label": "incomplete competition (not all pairs have played)"
+  },
+  {
+   "id": "hidden-8",
+   "input": {
+    "rows": [
+     "Courageous Californians;Devastating Donkeys;win",
+     "Allegoric Alaskans;Blithering Badgers;win",
+     "Devastating Donkeys;Allegoric Alaskans;loss",
+     "Courageous Californians;Blithering Badgers;win",
+     "Blithering Badgers;Devastating Donkeys;draw",
+     "Allegoric Alaskans;Courageous Californians;draw"
+    ]
+   },
+   "expectedOutput": [
+    "Team                           | MP |  W |  D |  L |  P",
+    "Allegoric Alaskans             |  3 |  2 |  1 |  0 |  7",
+    "Courageous Californians        |  3 |  2 |  1 |  0 |  7",
+    "Blithering Badgers             |  3 |  0 |  1 |  2 |  1",
+    "Devastating Donkeys            |  3 |  0 |  1 |  2 |  1"
+   ],
+   "label": "ties broken alphabetically"
+  },
+  {
+   "id": "hidden-9",
+   "input": {
+    "rows": [
+     "Devastating Donkeys;Blithering Badgers;win",
+     "Devastating Donkeys;Blithering Badgers;win",
+     "Devastating Donkeys;Blithering Badgers;win",
+     "Devastating Donkeys;Blithering Badgers;win",
+     "Blithering Badgers;Devastating Donkeys;win"
+    ]
+   },
+   "expectedOutput": [
+    "Team                           | MP |  W |  D |  L |  P",
+    "Devastating Donkeys            |  5 |  4 |  0 |  1 | 12",
+    "Blithering Badgers             |  5 |  1 |  0 |  4 |  3"
+   ],
+   "label": "ensure points sorted numerically"
+  }
+ ],
+ "ex-bottle-song": [
+  {
+   "id": "hidden-1",
+   "input": {
+    "startBottles": 1,
+    "takeDown": 1
+   },
+   "expectedOutput": [
+    "One green bottle hanging on the wall,",
+    "One green bottle hanging on the wall,",
+    "And if one green bottle should accidentally fall,",
+    "There'll be no green bottles hanging on the wall."
+   ],
+   "label": "verse with 1 bottle"
+  },
+  {
+   "id": "hidden-2",
+   "input": {
+    "startBottles": 10,
+    "takeDown": 2
+   },
+   "expectedOutput": [
+    "Ten green bottles hanging on the wall,",
+    "Ten green bottles hanging on the wall,",
+    "And if one green bottle should accidentally fall,",
+    "There'll be nine green bottles hanging on the wall.",
+    "",
+    "Nine green bottles hanging on the wall,",
+    "Nine green bottles hanging on the wall,",
+    "And if one green bottle should accidentally fall,",
+    "There'll be eight green bottles hanging on the wall."
+   ],
+   "label": "first two verses"
+  },
+  {
+   "id": "hidden-3",
+   "input": {
+    "startBottles": 3,
+    "takeDown": 3
+   },
+   "expectedOutput": [
+    "Three green bottles hanging on the wall,",
+    "Three green bottles hanging on the wall,",
+    "And if one green bottle should accidentally fall,",
+    "There'll be two green bottles hanging on the wall.",
+    "",
+    "Two green bottles hanging on the wall,",
+    "Two green bottles hanging on the wall,",
+    "And if one green bottle should accidentally fall,",
+    "There'll be one green bottle hanging on the wall.",
+    "",
+    "One green bottle hanging on the wall,",
+    "One green bottle hanging on the wall,",
+    "And if one green bottle should accidentally fall,",
+    "There'll be no green bottles hanging on the wall."
+   ],
+   "label": "last three verses"
+  },
+  {
+   "id": "hidden-4",
+   "input": {
+    "startBottles": 10,
+    "takeDown": 10
+   },
+   "expectedOutput": [
+    "Ten green bottles hanging on the wall,",
+    "Ten green bottles hanging on the wall,",
+    "And if one green bottle should accidentally fall,",
+    "There'll be nine green bottles hanging on the wall.",
+    "",
+    "Nine green bottles hanging on the wall,",
+    "Nine green bottles hanging on the wall,",
+    "And if one green bottle should accidentally fall,",
+    "There'll be eight green bottles hanging on the wall.",
+    "",
+    "Eight green bottles hanging on the wall,",
+    "Eight green bottles hanging on the wall,",
+    "And if one green bottle should accidentally fall,",
+    "There'll be seven green bottles hanging on the wall.",
+    "",
+    "Seven green bottles hanging on the wall,",
+    "Seven green bottles hanging on the wall,",
+    "And if one green bottle should accidentally fall,",
+    "There'll be six green bottles hanging on the wall.",
+    "",
+    "Six green bottles hanging on the wall,",
+    "Six green bottles hanging on the wall,",
+    "And if one green bottle should accidentally fall,",
+    "There'll be five green bottles hanging on the wall.",
+    "",
+    "Five green bottles hanging on the wall,",
+    "Five green bottles hanging on the wall,",
+    "And if one green bottle should accidentally fall,",
+    "There'll be four green bottles hanging on the wall.",
+    "",
+    "Four green bottles hanging on the wall,",
+    "Four green bottles hanging on the wall,",
+    "And if one green bottle should accidentally fall,",
+    "There'll be three green bottles hanging on the wall.",
+    "",
+    "Three green bottles hanging on the wall,",
+    "Three green bottles hanging on the wall,",
+    "And if one green bottle should accidentally fall,",
+    "There'll be two green bottles hanging on the wall.",
+    "",
+    "Two green bottles hanging on the wall,",
+    "Two green bottles hanging on the wall,",
+    "And if one green bottle should accidentally fall,",
+    "There'll be one green bottle hanging on the wall.",
+    "",
+    "One green bottle hanging on the wall,",
+    "One green bottle hanging on the wall,",
+    "And if one green bottle should accidentally fall,",
+    "There'll be no green bottles hanging on the wall."
+   ],
+   "label": "all verses"
+  }
+ ]
+}

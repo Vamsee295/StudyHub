@@ -63,7 +63,7 @@ export default function SearchDialog({ onClose }: { onClose: () => void }) {
         onKeyDown={onKeyDown}
         className="pop-in brut flex max-h-[75vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl bg-card"
       >
-        <div className="flex items-center gap-2 border-b-[1.5px] border-hair px-4">
+        <div className="flex items-center gap-2 border-b-[1.5px] border-hair px-4 transition-colors focus-within:border-accent">
           <Search aria-hidden="true" className="size-4 shrink-0 text-accent" />
           <input
             ref={inputRef}

@@ -76,6 +76,17 @@ GROQ_MODEL=llama3-70b-8192
 
 # CORS Frontend Allowed Origin
 FRONTEND_URL=http://localhost:3000
+
+# Where student code runs. Default "docker": every compile/run is a throwaway container
+# (no network, read-only filesystem, memory/CPU/process limits, non-root).
+# "local" runs it as a plain host process: development only, never in production.
+# CODE_SANDBOX=local
+```
+
+Docker mode needs the runner images pulled once:
+
+```bash
+docker pull python:3.12-slim eclipse-temurin:21-jdk gcc:13
 ```
 
 ---

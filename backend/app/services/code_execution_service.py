@@ -4,13 +4,14 @@ Supports Python 3, Java 21, C (GCC), and C++ (G++).
 """
 
 import os
-import sys
 import time
 import subprocess
 import tempfile
 import logging
 from pathlib import Path
 from typing import List, Dict, Any, Optional
+
+from app.services.sandbox import run_sandboxed
 
 logger = logging.getLogger(__name__)
 
@@ -19,13 +20,6 @@ COMPILE_TIMEOUT_SECONDS = 10.0
 
 
 class CodeExecutionService:
-    def __init__(self):
-        self.python_bin = sys.executable
-        self.javac_bin = "javac"
-        self.java_bin = "java"
-        self.gcc_bin = "gcc"
-        self.gpp_bin = "g++"
-
     def execute_project(
         self,
         language: str,
@@ -119,42 +113,34 @@ class CodeExecutionService:
             elif lang == "cpp":
                 return self._run_cpp(temp_path, entry_path, stdin, start_time)
 
-    def _run_python(self, cwd: Path, entry_path: Path, stdin: str, start_time: float) -> Dict[str, Any]:
+    # Every compile and run goes through run_sandboxed (Docker unless CODE_SANDBOX=local),
+    # with paths relative to the project dir so they mean the same thing inside the container.
+
+    @staticmethod
+    def _rel(cwd: Path, files) -> List[str]:
+        return [f.relative_to(cwd).as_posix() for f in files]
+
+    def _compile(self, cmd: List[str], cwd: Path, start_time: float) -> Optional[Dict[str, Any]]:
+        """Returns an error result if compilation fails, else None."""
         try:
-            proc = subprocess.Popen(
-                [self.python_bin, str(entry_path.name)],
-                cwd=str(cwd),
-                stdin=subprocess.PIPE,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                text=True,
-                encoding="utf-8",
-                errors="replace",
-            )
-            stdout, stderr = proc.communicate(input=stdin, timeout=TIMEOUT_SECONDS)
-            elapsed = round(time.perf_counter() - start_time, 2)
-
-            if proc.returncode != 0:
-                return {
-                    "status": "runtime_error",
-                    "stdout": stdout,
-                    "stderr": stderr,
-                    "compileError": None,
-                    "executionTime": elapsed,
-                    "memory": "14.2 MB",
-                }
-
-            return {
-                "status": "accepted",
-                "stdout": stdout,
-                "stderr": stderr,
-                "compileError": None,
-                "executionTime": elapsed,
-                "memory": "14.2 MB",
-            }
+            proc = run_sandboxed(cmd, str(cwd), timeout=COMPILE_TIMEOUT_SECONDS)
         except subprocess.TimeoutExpired:
-            proc.kill()
-            proc.communicate()  # reap so Windows releases the temp dir
+            proc = subprocess.CompletedProcess(cmd, 1, "", f"Compilation timed out ({COMPILE_TIMEOUT_SECONDS}s limit).")
+        if proc.returncode == 0:
+            return None
+        return {
+            "status": "compile_error",
+            "stdout": "",
+            "stderr": proc.stderr,
+            "compileError": proc.stderr,
+            "executionTime": round(time.perf_counter() - start_time, 2),
+            "memory": "--",
+        }
+
+    def _execute(self, cmd: List[str], cwd: Path, stdin: str, start_time: float, memory: str) -> Dict[str, Any]:
+        try:
+            proc = run_sandboxed(cmd, str(cwd), input=stdin, timeout=TIMEOUT_SECONDS)
+        except subprocess.TimeoutExpired:
             return {
                 "status": "timeout",
                 "stdout": "",
@@ -164,248 +150,34 @@ class CodeExecutionService:
                 "memory": "--",
             }
         except Exception as e:
-            return {
-                "status": "error",
-                "stdout": "",
-                "stderr": str(e),
-                "compileError": None,
-                "executionTime": 0.0,
-                "memory": "--",
-            }
+            return {"status": "error", "stdout": "", "stderr": str(e), "compileError": None,
+                    "executionTime": 0.0, "memory": "--"}
+        return {
+            "status": "accepted" if proc.returncode == 0 else "runtime_error",
+            "stdout": proc.stdout,
+            "stderr": proc.stderr,
+            "compileError": None,
+            "executionTime": round(time.perf_counter() - start_time, 2),
+            "memory": memory,
+        }
+
+    def _run_python(self, cwd: Path, entry_path: Path, stdin: str, start_time: float) -> Dict[str, Any]:
+        return self._execute(["python", entry_path.relative_to(cwd).as_posix()], cwd, stdin, start_time, "14.2 MB")
 
     def _run_java(self, cwd: Path, entry_path: Path, stdin: str, start_time: float) -> Dict[str, Any]:
-        # Compile all .java files
-        java_files = list(cwd.glob("**/*.java"))
-        file_args = [str(f) for f in java_files]
-
-        compile_proc = subprocess.run(
-            [self.javac_bin, "-encoding", "UTF-8"] + file_args,
-            cwd=str(cwd),
-            capture_output=True,
-            text=True,
-            timeout=COMPILE_TIMEOUT_SECONDS,
-            encoding="utf-8",
-            errors="replace",
-        )
-
-        if compile_proc.returncode != 0:
-            return {
-                "status": "compile_error",
-                "stdout": "",
-                "stderr": compile_proc.stderr,
-                "compileError": compile_proc.stderr,
-                "executionTime": round(time.perf_counter() - start_time, 2),
-                "memory": "--",
-            }
-
-        # Determine class name from entry file
-        # If entry is "Main.java", class is "Main"
-        rel_entry = entry_path.relative_to(cwd)
-        class_name = str(rel_entry.with_suffix("")).replace("/", ".").replace("\\", ".")
-
-        try:
-            run_proc = subprocess.Popen(
-                [self.java_bin, "-cp", str(cwd), class_name],
-                cwd=str(cwd),
-                stdin=subprocess.PIPE,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                text=True,
-                encoding="utf-8",
-                errors="replace",
-            )
-            stdout, stderr = run_proc.communicate(input=stdin, timeout=TIMEOUT_SECONDS)
-            elapsed = round(time.perf_counter() - start_time, 2)
-
-            if run_proc.returncode != 0:
-                return {
-                    "status": "runtime_error",
-                    "stdout": stdout,
-                    "stderr": stderr,
-                    "compileError": None,
-                    "executionTime": elapsed,
-                    "memory": "28.5 MB",
-                }
-
-            return {
-                "status": "accepted",
-                "stdout": stdout,
-                "stderr": stderr,
-                "compileError": None,
-                "executionTime": elapsed,
-                "memory": "28.5 MB",
-            }
-        except subprocess.TimeoutExpired:
-            run_proc.kill()
-            run_proc.communicate()  # reap so Windows releases the temp dir
-            return {
-                "status": "timeout",
-                "stdout": "",
-                "stderr": f"Time Limit Exceeded: Process terminated after {TIMEOUT_SECONDS}s.",
-                "compileError": None,
-                "executionTime": TIMEOUT_SECONDS,
-                "memory": "--",
-            }
-        except Exception as e:
-            return {
-                "status": "error",
-                "stdout": "",
-                "stderr": str(e),
-                "compileError": None,
-                "executionTime": 0.0,
-                "memory": "--",
-            }
+        files = self._rel(cwd, cwd.glob("**/*.java"))
+        err = self._compile(["javac", "-encoding", "UTF-8"] + files, cwd, start_time)
+        if err:
+            return err
+        class_name = entry_path.relative_to(cwd).with_suffix("").as_posix().replace("/", ".")
+        return self._execute(["java", "-cp", ".", class_name], cwd, stdin, start_time, "28.5 MB")
 
     def _run_c(self, cwd: Path, entry_path: Path, stdin: str, start_time: float) -> Dict[str, Any]:
-        c_files = list(cwd.glob("**/*.c"))
-        out_bin = cwd / "program.exe"
-
-        compile_proc = subprocess.run(
-            [self.gcc_bin, "-O2", "-Wall"] + [str(f) for f in c_files] + ["-o", str(out_bin)],
-            cwd=str(cwd),
-            capture_output=True,
-            text=True,
-            timeout=COMPILE_TIMEOUT_SECONDS,
-            encoding="utf-8",
-            errors="replace",
-        )
-
-        if compile_proc.returncode != 0:
-            return {
-                "status": "compile_error",
-                "stdout": "",
-                "stderr": compile_proc.stderr,
-                "compileError": compile_proc.stderr,
-                "executionTime": round(time.perf_counter() - start_time, 2),
-                "memory": "--",
-            }
-
-        try:
-            run_proc = subprocess.Popen(
-                [str(out_bin)],
-                cwd=str(cwd),
-                stdin=subprocess.PIPE,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                text=True,
-                encoding="utf-8",
-                errors="replace",
-            )
-            stdout, stderr = run_proc.communicate(input=stdin, timeout=TIMEOUT_SECONDS)
-            elapsed = round(time.perf_counter() - start_time, 2)
-
-            if run_proc.returncode != 0:
-                return {
-                    "status": "runtime_error",
-                    "stdout": stdout,
-                    "stderr": stderr,
-                    "compileError": None,
-                    "executionTime": elapsed,
-                    "memory": "4.2 MB",
-                }
-
-            return {
-                "status": "accepted",
-                "stdout": stdout,
-                "stderr": stderr,
-                "compileError": None,
-                "executionTime": elapsed,
-                "memory": "4.2 MB",
-            }
-        except subprocess.TimeoutExpired:
-            run_proc.kill()
-            run_proc.communicate()  # reap so Windows releases the temp dir
-            return {
-                "status": "timeout",
-                "stdout": "",
-                "stderr": f"Time Limit Exceeded: Process terminated after {TIMEOUT_SECONDS}s.",
-                "compileError": None,
-                "executionTime": TIMEOUT_SECONDS,
-                "memory": "--",
-            }
-        except Exception as e:
-            return {
-                "status": "error",
-                "stdout": "",
-                "stderr": str(e),
-                "compileError": None,
-                "executionTime": 0.0,
-                "memory": "--",
-            }
+        files = self._rel(cwd, cwd.glob("**/*.c"))
+        err = self._compile(["gcc", "-O2", "-Wall"] + files + ["-o", "program"], cwd, start_time)
+        return err or self._execute(["./program"], cwd, stdin, start_time, "4.2 MB")
 
     def _run_cpp(self, cwd: Path, entry_path: Path, stdin: str, start_time: float) -> Dict[str, Any]:
-        cpp_files = list(cwd.glob("**/*.cpp")) + list(cwd.glob("**/*.cc")) + list(cwd.glob("**/*.cxx"))
-        out_bin = cwd / "program.exe"
-
-        compile_proc = subprocess.run(
-            [self.gpp_bin, "-O2", "-std=c++17", "-Wall"] + [str(f) for f in cpp_files] + ["-o", str(out_bin)],
-            cwd=str(cwd),
-            capture_output=True,
-            text=True,
-            timeout=COMPILE_TIMEOUT_SECONDS,
-            encoding="utf-8",
-            errors="replace",
-        )
-
-        if compile_proc.returncode != 0:
-            return {
-                "status": "compile_error",
-                "stdout": "",
-                "stderr": compile_proc.stderr,
-                "compileError": compile_proc.stderr,
-                "executionTime": round(time.perf_counter() - start_time, 2),
-                "memory": "--",
-            }
-
-        try:
-            run_proc = subprocess.Popen(
-                [str(out_bin)],
-                cwd=str(cwd),
-                stdin=subprocess.PIPE,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                text=True,
-                encoding="utf-8",
-                errors="replace",
-            )
-            stdout, stderr = run_proc.communicate(input=stdin, timeout=TIMEOUT_SECONDS)
-            elapsed = round(time.perf_counter() - start_time, 2)
-
-            if run_proc.returncode != 0:
-                return {
-                    "status": "runtime_error",
-                    "stdout": stdout,
-                    "stderr": stderr,
-                    "compileError": None,
-                    "executionTime": elapsed,
-                    "memory": "6.8 MB",
-                }
-
-            return {
-                "status": "accepted",
-                "stdout": stdout,
-                "stderr": stderr,
-                "compileError": None,
-                "executionTime": elapsed,
-                "memory": "6.8 MB",
-            }
-        except subprocess.TimeoutExpired:
-            run_proc.kill()
-            run_proc.communicate()  # reap so Windows releases the temp dir
-            return {
-                "status": "timeout",
-                "stdout": "",
-                "stderr": f"Time Limit Exceeded: Process terminated after {TIMEOUT_SECONDS}s.",
-                "compileError": None,
-                "executionTime": TIMEOUT_SECONDS,
-                "memory": "--",
-            }
-        except Exception as e:
-            return {
-                "status": "error",
-                "stdout": "",
-                "stderr": str(e),
-                "compileError": None,
-                "executionTime": 0.0,
-                "memory": "--",
-            }
+        files = self._rel(cwd, [*cwd.glob("**/*.cpp"), *cwd.glob("**/*.cc"), *cwd.glob("**/*.cxx")])
+        err = self._compile(["g++", "-O2", "-std=c++17", "-Wall"] + files + ["-o", "program"], cwd, start_time)
+        return err or self._execute(["./program"], cwd, stdin, start_time, "6.8 MB")

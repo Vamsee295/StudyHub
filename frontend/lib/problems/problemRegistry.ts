@@ -1,6 +1,7 @@
 import { FunctionSignature, TestCase } from "../execution/executionTypes";
 import { dsaCatalog } from "../data/dsaCatalog";
 import { companiesForProblem } from "../data/askedIn";
+import ladder from "./ladder.json";
 
 export interface ProblemDefinition {
   id: string;
@@ -18,6 +19,10 @@ export interface ProblemDefinition {
   functionSignature: FunctionSignature;
   visibleTests: TestCase[];
   hiddenTests: TestCase[];
+  /** Beginner warm-up ladder position (problems imported by scripts/import-exercism.py). */
+  ladder?: number;
+  hiddenCount?: number;
+  source?: { name: string; license: string; url: string };
 }
 
 export function generateStarterCode(sig: FunctionSignature, language: string = "java"): string {
@@ -26,13 +31,21 @@ export function generateStarterCode(sig: FunctionSignature, language: string = "
     return `class ${sig.className}:\n    def ${sig.methodName}(self, ${params}):\n        # Write your solution here\n        pass\n`;
   }
   if (language === "cpp") {
-    const typeMapping: Record<string, string> = {
+    const valueTypes: Record<string, string> = {
       "int": "int",
-      "int[]": "vector<int>&",
-      "string": "string",
+      "double": "double",
       "boolean": "bool",
+      "String": "string",
+      "string": "string",
+      "int[]": "vector<int>",
+      "String[]": "vector<string>",
+      "int[][]": "vector<vector<int>>",
     };
-    const returnType = typeMapping[sig.returnType] || sig.returnType;
+    // Containers are passed by reference, returned by value.
+    const typeMapping: Record<string, string> = Object.fromEntries(
+      Object.entries(valueTypes).map(([k, v]) => [k, v.startsWith("vector") ? `${v}&` : v])
+    );
+    const returnType = valueTypes[sig.returnType] || sig.returnType;
     const params = sig.parameters.map((p) => `${typeMapping[p.type] || p.type} ${p.name}`).join(", ");
     return `class ${sig.className} {\npublic:\n    ${returnType} ${sig.methodName}(${params}) {\n        // Write your solution here\n        \n    }\n};`;
   }
@@ -706,6 +719,9 @@ export const problems: Record<string, ProblemDefinition> = {
 
 // "Reported in interviews at" tags come from module-level research in lib/data/askedIn.ts.
 for (const p of Object.values(problems)) p.companies = companiesForProblem(p.topics);
+
+// Warm-ups from exercism: no company tags, they are fundamentals practice, not interview reports.
+Object.assign(problems, ladder as unknown as Record<string, ProblemDefinition>);
 
 export const getProblem = (id: string): ProblemDefinition | null => {
   if (problems[id]) {

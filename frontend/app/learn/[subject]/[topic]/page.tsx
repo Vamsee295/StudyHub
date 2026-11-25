@@ -19,6 +19,8 @@ import {
   Lightbulb,
   ListChecks,
   Loader2,
+  PanelLeftClose,
+  PanelLeftOpen,
 } from "lucide-react";
 import { getProblem } from "@/lib/problems/problemRegistry";
 import { getCourseBySlug } from "@/lib/data/courses";
@@ -426,6 +428,22 @@ export default function TopicPage() {
   // Reading bar: `here` is where the reader is now, `furthest` the deepest point reached (saved as the lesson's progress).
   const [here, setHere] = useState(0);
   const [furthest, setFurthest] = useState(0);
+  // Course outline (desktop): open by default, the reader's choice is remembered on this device.
+  // Safe to read on first render: the outline only renders after the lesson loads on the client.
+  const [outlineOpen, setOutlineOpen] = useState(() => {
+    try {
+      return typeof window === "undefined" || localStorage.getItem("lesson-outline") !== "closed";
+    } catch {
+      return true;
+    }
+  });
+  const toggleOutline = () =>
+    setOutlineOpen((open) => {
+      try {
+        localStorage.setItem("lesson-outline", open ? "closed" : "open");
+      } catch {}
+      return !open;
+    });
   const savedRef = useRef({ id: "", pct: 0, done: false });
 
   // new lesson: back to the top of the reading pane
@@ -620,7 +638,7 @@ export default function TopicPage() {
   return (
     <div className="flex h-full min-w-0 overflow-hidden">
       {/* course outline */}
-      <aside aria-label="Course outline" className="hidden h-full w-[300px] shrink-0 flex-col border-r-[2.4px] border-line bg-paper lg:flex">
+      <aside aria-label="Course outline" className={clsx("hidden h-full w-[300px] shrink-0 flex-col border-r-[2.4px] border-line bg-paper", outlineOpen && "lg:flex")}>
         <div className="shrink-0 border-b-[1.5px] border-hair p-5">
           <Link href={`/learn/${subject.slug}`} className="mb-2 inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-wider text-mute hover:text-ink">
             <ArrowLeft className="size-3" /> Course
@@ -659,10 +677,23 @@ export default function TopicPage() {
 
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden bg-card">
         <header className="relative flex shrink-0 flex-wrap items-center justify-between gap-3 border-b-[1.5px] border-hair px-5 py-3 md:px-10">
+          <div className="flex min-w-0 items-center gap-3">
+          <button
+            type="button"
+            onClick={toggleOutline}
+            aria-label={outlineOpen ? "Hide course outline" : "Show course outline"}
+            aria-expanded={outlineOpen}
+            title={outlineOpen ? "Hide course outline" : "Show course outline"}
+            className="tap hidden shrink-0 items-center gap-1.5 rounded-lg border-[1.5px] border-hair px-2.5 py-1.5 font-mono text-[11px] uppercase tracking-wider text-body hover:border-ink hover:text-ink lg:inline-flex"
+          >
+            {outlineOpen ? <PanelLeftClose className="size-4" /> : <PanelLeftOpen className="size-4" />}
+            Outline
+          </button>
           <Link href={`/learn/${subject.slug}`} className="min-w-0 truncate font-mono text-[12px] uppercase tracking-wider text-mute hover:text-ink lg:pointer-events-none">
             <span className="lg:hidden">← </span>
             {currentModule.title} · {position}/{total}
           </Link>
+          </div>
           <div className="flex shrink-0 items-center gap-3">
             <span className="font-mono text-[12px] tabular-nums text-mute">
               <span className="sm:hidden">{isCompleted ? "" : `${read}%`}</span>

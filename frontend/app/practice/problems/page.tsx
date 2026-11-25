@@ -46,6 +46,7 @@ export default function ProblemBankPage() {
         return {
           id: p.id,
           number: Number(p.id) || 0,
+          ladder: p.ladder,
           title: p.title,
           difficulty: p.difficulty,
           status,
@@ -53,7 +54,8 @@ export default function ProblemBankPage() {
           companies: p.companies || [],
         };
       })
-      .sort((a, b) => a.number - b.number);
+      // Warm-up ladder first (in ladder order), then interview problems by number.
+      .sort((a, b) => (a.ladder ?? 1e9) - (b.ladder ?? 1e9) || a.number - b.number);
   }, [statuses]);
 
   // Derived counts
@@ -229,7 +231,7 @@ export default function ProblemBankPage() {
                   </td>
                   <td className="py-3 pr-4">
                     <Link href={`/practice/problems/${prob.id}`} className="flex items-baseline gap-2.5">
-                      <span className="w-8 shrink-0 font-mono text-[12px] text-mute">{String(prob.number).padStart(2, "0")}</span>
+                      <span className="w-8 shrink-0 font-mono text-[12px] text-mute">{prob.ladder ? `W${String(prob.ladder).padStart(2, "0")}` : String(prob.number).padStart(2, "0")}</span>
                       <span className="text-[15px] font-semibold group-hover:text-accent-ink">{prob.title}</span>
                     </Link>
                   </td>

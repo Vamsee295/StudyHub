@@ -14,6 +14,12 @@ client = TestClient(app)
 
 
 # ── Runner sandbox ────────────────────────────────────────────────────────────
+# These cover the local (development) mode; Docker isolation is in test_sandbox_docker.py.
+
+@pytest.fixture(autouse=True)
+def _local_sandbox(monkeypatch):
+    monkeypatch.setattr(sandbox.settings, "code_sandbox", "local")
+
 
 def test_sandbox_hides_server_env(tmp_path, monkeypatch):
     monkeypatch.setenv("GROQ_API_KEY", "super-secret")

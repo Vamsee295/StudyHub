@@ -474,8 +474,15 @@ export default function ProblemWorkspace() {
             {/* Problem Body */}
             <article className="space-y-5 text-[16px] leading-relaxed">
               {problem.description?.map((p, idx) => (
-                <p key={idx}>{p}</p>
+                <p key={idx} className="whitespace-pre-wrap">{p}</p>
               ))}
+              {problem.source && (
+                <p className="text-[13px] text-mute">
+                  Problem statement and tests from{" "}
+                  <a href={problem.source.url} target="_blank" rel="noreferrer" className="underline">{problem.source.name}</a>
+                  {" "}· © Exercism, {problem.source.license} License.
+                </p>
+              )}
 
               {problem.objective && (
                 <div className="space-y-1.5 rounded-xl border-[1.5px] border-hair bg-paper-2 p-4">

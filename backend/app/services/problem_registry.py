@@ -1,3 +1,6 @@
+import json
+from pathlib import Path
+
 HIDDEN_TESTS = {
     "1": [
         {
@@ -124,6 +127,12 @@ HIDDEN_TESTS = {
         }
     ]
 }
+
+# Beginner ladder imported from exercism (frontend/scripts/import-exercism.py).
+HIDDEN_TESTS.update(json.loads(
+    (Path(__file__).resolve().parents[2] / "data" / "ladder_hidden_tests.json").read_text(encoding="utf-8")
+))
+
 
 def get_hidden_tests(problem_id: str):
     return HIDDEN_TESTS.get(problem_id, [])

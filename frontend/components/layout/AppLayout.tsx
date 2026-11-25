@@ -319,17 +319,19 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         className="fixed inset-y-0 left-0 z-40 hidden w-[var(--sb)] flex-col border-r-[2.4px] border-line bg-paper transition-[width] duration-200 [view-transition-name:sidebar] md:flex"
         aria-label="Main navigation"
       >
-        <div className={clsx("flex h-16 shrink-0 items-center gap-2", rail ? "justify-center px-2" : "justify-between pl-4 pr-3")}>
+        <div className={clsx("flex shrink-0 items-center gap-2", rail ? "flex-col justify-center px-2 pb-2 pt-4" : "h-16 justify-between pl-4 pr-3")}>
           <StudyHubLogo href="/dashboard" size="sm" iconOnly={rail} />
-          {!rail && (
+          {/* Toggle stays at the top in both states (the bottom corner is covered by overlays) */}
+          {!narrow && (
             <button
               type="button"
-              onClick={() => setCollapsed(true)}
-              aria-label="Collapse sidebar (Ctrl+B)"
-              title="Collapse sidebar (Ctrl+B)"
+              onClick={() => setCollapsed((c) => !c)}
+              aria-label={collapsed ? "Expand sidebar (Ctrl+B)" : "Collapse sidebar (Ctrl+B)"}
+              aria-expanded={!collapsed}
+              title={collapsed ? "Expand sidebar (Ctrl+B)" : "Collapse sidebar (Ctrl+B)"}
               className="tap grid size-8 place-items-center rounded-lg text-ink/60 hover:bg-ink/[0.06] hover:text-ink"
             >
-              <PanelLeftClose className="size-[18px]" />
+              {collapsed ? <PanelLeftOpen className="size-[18px]" /> : <PanelLeftClose className="size-[18px]" />}
             </button>
           )}
         </div>
@@ -382,17 +384,6 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             isLoading={isLoading}
             placement="left-3 bottom-full mb-2"
           />
-          {collapsed && !narrow && (
-            <button
-              type="button"
-              onClick={() => setCollapsed(false)}
-              aria-label="Expand sidebar (Ctrl+B)"
-              title="Expand sidebar (Ctrl+B)"
-              className="tap grid size-8 place-items-center rounded-lg text-ink/60 hover:bg-ink/[0.06] hover:text-ink"
-            >
-              <PanelLeftOpen className="size-[18px]" />
-            </button>
-          )}
         </div>
       </aside>
 

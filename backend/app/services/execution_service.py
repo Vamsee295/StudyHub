@@ -7,6 +7,8 @@ import sys
 from pydantic import BaseModel
 from typing import List, Dict, Any, Optional
 
+from app.services.sandbox import run_sandboxed
+
 
 class ParameterDef(BaseModel):
     name: str
@@ -232,7 +234,7 @@ def compare_output(expected: Any, actual: Any) -> bool:
 
 
 def execute_java(request: ExecutionRequest) -> ExecutionResult:
-    """Compile and run Java code in an isolated Docker container."""
+    """Compile and run Java code via the sandbox (Docker unless CODE_SANDBOX=local)."""
     with tempfile.TemporaryDirectory() as tmpdir:
         # ── Write files ────────────────────────────────────────────────────
         listnode_path = os.path.join(tmpdir, "ListNode.java")
@@ -290,9 +292,7 @@ def execute_java(request: ExecutionRequest) -> ExecutionResult:
         ]
 
         try:
-            compile_res = subprocess.run(
-                compile_cmd, capture_output=True, text=True, timeout=30, cwd=tmpdir
-            )
+            compile_res = run_sandboxed(compile_cmd, tmpdir, timeout=30)
             if compile_res.returncode != 0:
                 error_text = (compile_res.stderr.strip() or compile_res.stdout.strip())
                 markers = _parse_javac_output(error_text)
@@ -319,9 +319,7 @@ def execute_java(request: ExecutionRequest) -> ExecutionResult:
         ]
 
         try:
-            exec_res = subprocess.run(
-                exec_cmd, capture_output=True, text=True, timeout=6, cwd=tmpdir
-            )
+            exec_res = run_sandboxed(exec_cmd, tmpdir, timeout=6)
         except subprocess.TimeoutExpired:
             return ExecutionResult(
                 status="time_limit",
@@ -444,12 +442,10 @@ def execute_python(request: ExecutionRequest) -> ExecutionResult:
         with open(sol_path, "w", encoding="utf-8") as f:
             f.write(harness_code)
 
-        exec_cmd = [sys.executable, "main.py"]
+        exec_cmd = ["python", "main.py"]
 
         try:
-            exec_res = subprocess.run(
-                exec_cmd, capture_output=True, text=True, timeout=6, cwd=tmpdir
-            )
+            exec_res = run_sandboxed(exec_cmd, tmpdir, timeout=6)
         except subprocess.TimeoutExpired:
             return ExecutionResult(
                 status="time_limit", passedTests=0, totalTests=len(request.testCases),
@@ -510,8 +506,15 @@ def _cpp_print_for_type(return_type: str, var_name: str = "res") -> str:
             }}
             std::cout << "]";"""
     elif return_type == "String":
+        return f"std::cout << _q({var_name});"
+    elif return_type == "String[]":
         return f"""
-            std::cout << "\"" << {var_name} << "\"";"""
+            std::cout << "[";
+            for (size_t _i = 0; _i < {var_name}.size(); _i++) {{
+                std::cout << _q({var_name}[_i]);
+                if (_i < {var_name}.size() - 1) std::cout << ", ";
+            }}
+            std::cout << "]";"""
     elif return_type == "boolean":
         return f"""
             std::cout << ({var_name} ? "true" : "false");"""
@@ -560,6 +563,16 @@ def generate_cpp_test_harness(request: ExecutionRequest) -> str:
 
 using namespace std;
 
+static string _q(const string& s) {{  // JSON-quote a string for the result line
+    string o = "\\"";
+    for (char c : s) {{
+        if (c == '"' || c == '\\\\') {{ o += '\\\\'; o += c; }}
+        else if (c == '\\n') o += "\\\\n";
+        else o += c;
+    }}
+    return o + "\\"";
+}}
+
 {request.code}
 
 int main() {{
@@ -580,9 +593,7 @@ def execute_cpp(request: ExecutionRequest) -> ExecutionResult:
         compile_cmd = ["g++", "-O2", "-std=c++17", "main.cpp", "-o", "main"]
 
         try:
-            compile_res = subprocess.run(
-                compile_cmd, capture_output=True, text=True, timeout=30, cwd=tmpdir
-            )
+            compile_res = run_sandboxed(compile_cmd, tmpdir, timeout=30)
             if compile_res.returncode != 0:
                 error_text = (compile_res.stderr.strip() or compile_res.stdout.strip())
                 # Just return raw compiler error for C++ for now
@@ -602,13 +613,10 @@ def execute_cpp(request: ExecutionRequest) -> ExecutionResult:
                 compilerError="Compilation timed out (30s limit).",
             )
 
-        exe_name = "main" if sys.platform != "win32" else "main.exe"
-        exec_cmd = [os.path.join(tmpdir, exe_name)]
+        exec_cmd = ["./main"]
 
         try:
-            exec_res = subprocess.run(
-                exec_cmd, capture_output=True, text=True, timeout=6, cwd=tmpdir
-            )
+            exec_res = run_sandboxed(exec_cmd, tmpdir, timeout=6)
         except subprocess.TimeoutExpired:
             return ExecutionResult(
                 status="time_limit", passedTests=0, totalTests=len(request.testCases),

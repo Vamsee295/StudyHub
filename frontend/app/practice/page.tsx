@@ -32,7 +32,7 @@ const spaces: { href: string; title: string; body: string; tags: string[]; icon:
   {
     href: "/practice/problems",
     title: "Problems",
-    body: `${totalProblems} interview problems with tests, hints and a review after you submit.`,
+    body: `${totalProblems} problems (beginner warm-ups to interview level) with tests, hints and a review after you submit.`,
     tags: ["Arrays", "Linked lists", "DP"],
     icon: ListChecks,
     cta: "Browse problems",

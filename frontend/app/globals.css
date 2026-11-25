@@ -132,13 +132,16 @@ body {
   color: var(--paper);
 }
 
-*:focus {
-  outline: none;
-}
-*:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 3px;
-  border-radius: 4px;
+/* Base layer, so an element can opt out with `outline-none` and style focus itself. */
+@layer base {
+  *:focus {
+    outline: none;
+  }
+  *:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
 }
 
 * {
@@ -253,8 +256,11 @@ main {
 }
 
 /* small icon buttons get a ~44px touch area */
-.tap {
-  position: relative;
+/* In the base layer so positioning utilities (absolute, fixed) on a .tap element still win. */
+@layer base {
+  .tap {
+    position: relative;
+  }
 }
 .tap::after {
   content: "";
