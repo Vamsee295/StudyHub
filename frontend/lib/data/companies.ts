@@ -51,7 +51,7 @@ export const companies: Company[] = [
   },
   {
     name: "Infosys",
-    roleTag: "Specialist Progr.",
+    roleTag: "Specialist Programmer",
     segment: "High-Volume IT",
     description:
       "Online screening followed by algorithmic puzzles and a technical deep-dive for the specialist track.",

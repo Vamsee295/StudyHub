@@ -11,6 +11,7 @@ function useRevealOnScroll(ref: RefObject<HTMLElement | null>, waitClass: string
   useEffect(() => {
     const el = ref.current;
     if (!el || el.getBoundingClientRect().top < window.innerHeight) return; // already visible: leave it be
+    if (window.location.hash) return; // opened on an anchor (/#faq): the browser jumps there, so show everything
     el.classList.add(waitClass);
     const io = new IntersectionObserver(
       ([entry]) => {
@@ -109,7 +110,7 @@ export function Ticker({ items }: { items: string[] }) {
         {track.map((item, i) => (
           <span key={i} className="display flex shrink-0 items-center gap-6 whitespace-nowrap px-6 text-[26px] sm:text-[32px]">
             {item}
-            <span className="text-[20px] text-accent">✦</span>
+            <span aria-hidden className="size-3 rotate-45 bg-accent" />
           </span>
         ))}
       </div>

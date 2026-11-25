@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { ArrowRight, Plus } from "lucide-react";
-import { featuredProblem } from "@/lib/data/practice";
+import { problems } from "@/lib/problems/problemRegistry";
+import { ALL_COURSES } from "@/lib/data/courses";
+import { BOX_INTERVAL_DAYS } from "@/lib/learn/study";
+import { ProductTour, type TourData } from "./ProductTour";
 import { roadmap } from "@/lib/data/roadmap";
 import { lastVerified } from "@/lib/data/companies";
 import { paths } from "@/lib/data/paths";
@@ -22,9 +25,12 @@ function Nav() {
   return (
     <header className="sticky top-0 z-30 border-b-[2.4px] border-line bg-paper/95 backdrop-blur">
       <div className={`${wrap} flex h-16 items-center gap-4`}>
-        <StudyHubLogo href="/" size="md" />
-        <span className="label-cond hidden -rotate-3 rounded-md border-2 border-line bg-gold px-2 py-0.5 text-[12px] text-[#191614] sm:inline">Free</span>
+        <StudyHubLogo href="/" size="md" prefetch={false} />
+        <span className="label-cond hidden -rotate-3 rounded-md border-2 border-line bg-gold px-2 py-0.5 text-[13px] text-[#191614] sm:inline">Free</span>
         <nav aria-label="Sections" className="label-cond ml-auto hidden items-center gap-7 text-[16px] md:flex">
+          <a href="#inside" className="hover:text-accent-ink">
+            Inside
+          </a>
           <a href="#how" className="hover:text-accent-ink">
             How it works
           </a>
@@ -67,10 +73,60 @@ function Numbers({ stats }: { stats: LandingStats }) {
             <dd className="display text-[52px] leading-none tabular-nums">
               <CountUp to={it.n} />
             </dd>
-            <dt className="mt-2 font-mono text-[12px] uppercase tracking-wider text-mute">{it.label}</dt>
+            <dt className="mt-2 font-mono text-[13px] uppercase tracking-wider text-mute">{it.label}</dt>
           </div>
         ))}
       </dl>
+    </section>
+  );
+}
+
+// ---------- Inside StudyHub: the product window, filled from real content ----------
+function tourData(): TourData {
+  const course = ALL_COURSES.find((c) => c.slug === "dsa")!;
+  const mod = course.modules[0];
+  const lesson = mod.lessons.find((l) => l.slug === "big-o-notation") ?? mod.lessons[0];
+  const firstPara = (lesson.content.theory ?? lesson.description ?? "").split("\n\n")[0].trim();
+  const checks = course.modules.flatMap((m) => m.lessons).flatMap((l) => (l.content.sections ?? []).filter((s) => s.type === "quickCheck" && s.question));
+  const question = checks[0]?.question ?? lesson.content.quickCheck?.question ?? "What does Big-O notation describe?";
+  return {
+    course: course.title,
+    module: mod.title,
+    lessons: mod.lessons.slice(0, 4).map((l) => ({ title: l.title.split(":")[0], minutes: l.estimatedMinutes })),
+    lesson: { title: lesson.title.split(":")[0], minutes: lesson.estimatedMinutes, intro: firstPara },
+    problem: {
+      id: featured.id,
+      title: featured.title,
+      difficulty: featured.difficulty,
+      statement: featured.description[0],
+      tests: featured.visibleTests.slice(0, 3).map((t) => ({
+        input: `nums = ${JSON.stringify((t.input as { nums: number[] }).nums)}`,
+        output: JSON.stringify(t.expectedOutput),
+      })),
+    },
+    review: { question, days: BOX_INTERVAL_DAYS.filter((n) => n > 0) },
+  };
+}
+
+function Inside() {
+  return (
+    <section id="inside" className={`${wrap} scroll-mt-20 py-20 md:py-28`}>
+      <div className="mb-10 grid items-end gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.8fr)]">
+        <Reveal>
+          <h2 className="display text-[48px] leading-[0.92] md:text-[72px]">
+            Read it. Practice it. <span className="hl">Keep it.</span>
+          </h2>
+        </Reveal>
+        <Reveal delay={0.08}>
+          <p className="max-w-[46ch] text-[18px] leading-relaxed text-body">
+            Lessons that remember where you stopped, problems you run in the browser, and a review queue that brings back what you missed until it sticks.
+          </p>
+        </Reveal>
+      </div>
+      <Reveal delay={0.12}>
+        <ProductTour data={tourData()} />
+      </Reveal>
+      <p className="mt-4 text-[13px] text-mute">The learner&apos;s progress here is a sample. The lessons, the problem, its tests and the review intervals are the real ones.</p>
     </section>
   );
 }
@@ -97,7 +153,7 @@ function TrackList() {
         <li key={p.slug}>
           <Link prefetch={false} href="/roadmaps" className="group flex items-center justify-between gap-4 px-5 py-4 hover:bg-card-2">
             <span className="label-cond text-[19px]">{p.name}</span>
-            <span className="flex items-center gap-2 font-mono text-[12px] uppercase text-mute">
+            <span className="flex items-center gap-2 font-mono text-[13px] uppercase text-mute">
               {p.weeks.replace(" Prep", "")}
               <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" aria-hidden />
             </span>
@@ -108,55 +164,55 @@ function TrackList() {
   );
 }
 
-function ProblemCard({ stats }: { stats: LandingStats }) {
+// A real problem from the problem set (lib/problems/problemRegistry.ts), shown as it appears in practice.
+const featured = problems["15"]; // 3Sum
+const firstCase = featured.visibleTests[0];
+
+function ProblemCard() {
   return (
     <div className="space-y-5">
-      <div className="brut overflow-hidden rounded-2xl bg-night text-[#f5efe6]">
-        <div className="flex items-center gap-1.5 border-b border-white/10 px-4 py-2.5 font-mono text-[12px] text-[#f5efe6]/60">
+      <Link data-ui prefetch={false} href={`/practice/problems/${featured.id}`} className="brut brut-hover no-press block overflow-hidden rounded-2xl bg-night text-[#f5efe6]">
+        <div className="flex items-center gap-1.5 border-b border-white/10 px-4 py-2.5 font-mono text-[13px] text-[#f5efe6]/60">
           <i className="size-2.5 rounded-full bg-[#ff5f56]" />
           <i className="size-2.5 rounded-full bg-[#ffbd2e]" />
           <i className="size-2.5 rounded-full bg-[#27c93f]" />
-          <span className="ml-2">practice · {featuredProblem.difficulty}</span>
+          <span className="ml-2">problem set · {featured.difficulty}</span>
         </div>
         <div className="p-5 font-mono text-[13.5px] leading-relaxed sm:p-6">
-          <p className="text-[15.5px] font-bold">{featuredProblem.title}</p>
-          <p className="mt-2 text-[#f5efe6]/65">{featuredProblem.statement}</p>
+          <p className="text-[15.5px] font-bold">{featured.title}</p>
+          <p className="mt-2 max-w-[60ch] text-[#f5efe6]/65">{featured.description[0]}</p>
           <p className="mt-4">
             <span className="text-[#e07a52]">in </span>
-            {featuredProblem.example.input}
+            nums = {JSON.stringify(firstCase.input.nums)}
           </p>
           <p>
             <span className="text-[#e07a52]">out </span>
-            {featuredProblem.example.output}
+            {JSON.stringify(firstCase.expectedOutput)}
           </p>
-          <p className="mt-4 text-[#f5efe6]/50">seen at {featuredProblem.seenAt.join(", ")}</p>
+          <p className="mt-4 text-[#f5efe6]/50">{featured.topics.join(" · ")}</p>
         </div>
-      </div>
-      <ul className="grid grid-cols-3 gap-3">
-        {[
-          { n: stats.problems, l: "coding problems" },
-          { n: stats.quiz, l: "quiz questions" },
-          { n: stats.labs, l: "labs" },
-        ].map((x) => (
-          <li key={x.l} className="rounded-2xl border-[1.5px] border-hair bg-card px-4 py-3">
-            <span className="display block text-[30px]">{x.n.toLocaleString("en-IN")}</span>
-            <span className="text-[13px] text-body">{x.l}</span>
-          </li>
-        ))}
-      </ul>
+      </Link>
+
     </div>
   );
 }
 
-function HowItWorks({ stats }: { stats: LandingStats }) {
+function HowItWorks() {
   return (
     <section id="how" className={`${wrap} scroll-mt-20 pb-12 pt-8`}>
-      <Reveal className="mb-12 flex flex-wrap items-end justify-between gap-6">
-        <h2 className="display text-[48px] md:text-[64px]">
-          How it <span className="hl">works</span>
-        </h2>
-        <p className="note -rotate-2 text-[1.5rem]">not another random playlist. a plan.</p>
-      </Reveal>
+      <div className="mb-12 grid items-end gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.8fr)]">
+        <Reveal>
+          <p className="note -rotate-2 text-[1.5rem]">not another random playlist. a plan.</p>
+          <h2 className="display mt-2 text-[48px] leading-[0.92] md:text-[72px]">
+            How it <span className="hl">works</span>
+          </h2>
+        </Reveal>
+        <Reveal delay={0.08}>
+          <p className="max-w-[46ch] text-[18px] leading-relaxed text-body">
+            Three steps, in the order placement season tests you: pick the job, learn the subjects it needs, then practice on the kind of questions its rounds ask.
+          </p>
+        </Reveal>
+      </div>
 
       <Step n={1} title="Choose the role you want." aside={<TrackList />}>
         <p>Each track is built for one job and says how many weeks to plan for and which subjects matter for it.</p>
@@ -166,7 +222,7 @@ function HowItWorks({ stats }: { stats: LandingStats }) {
         <p>Placement prep in {roadmap.length} stages, from programming basics to system design. Each one builds on the last.</p>
         <p>Every stage has notes, a sample interview question and the companies that test it, so you know why you&apos;re studying it.</p>
       </Step>
-      <Step n={3} title="Practise what the rounds test." aside={<ProblemCard stats={stats} />}>
+      <Step n={3} title="Practice what the rounds test." aside={<ProblemCard />}>
         <p>
           Coding problems with hints and a review, a quiz after every lesson, timed mock tests per subject, and labs where you can watch an algorithm run.
         </p>
@@ -196,7 +252,7 @@ function Tools() {
             Tools that run <br />
             in your browser
           </h2>
-          <p className="font-mono text-[12px] uppercase tracking-wider text-[#f5efe6]/55">nothing to install</p>
+          <p className="font-mono text-[13px] uppercase tracking-wider text-[#f5efe6]/55">nothing to install</p>
         </Reveal>
         <ul className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {tools.map((x, i) => (
@@ -274,7 +330,7 @@ function Closing() {
         </Link>
       </div>
       <div className="border-t-[1.5px] border-hair">
-        <div className={`${wrap} flex flex-wrap items-center justify-between gap-4 py-6 font-mono text-[12px] uppercase tracking-wider text-mute`}>
+        <div className={`${wrap} flex flex-wrap items-center justify-between gap-4 py-6 font-mono text-[13px] uppercase tracking-wider text-mute`}>
           <span>© {new Date().getFullYear()} StudyHub</span>
           <nav className="flex flex-wrap gap-6" aria-label="Footer">
             <Link prefetch={false} href="/learn" className="hover:text-ink">
@@ -304,7 +360,8 @@ export function Landing({ stats }: { stats: LandingStats }) {
         <Hero />
         <Ticker items={stats.subjects} />
         <Numbers stats={stats} />
-        <HowItWorks stats={stats} />
+        <Inside />
+        <HowItWorks />
         <Tools />
         <Faq />
       </main>

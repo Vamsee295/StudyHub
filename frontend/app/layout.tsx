@@ -1,16 +1,15 @@
 import type { Metadata, Viewport } from "next";
 import { Anton, Barlow_Condensed, Caveat, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import { AuthProvider } from "@/components/providers/AuthProvider";
-import { ProfileProvider } from "@/components/providers/ProfileProvider";
-import { OnboardingGuard } from "@/components/providers/OnboardingGuard";
-import { SyncManager } from "@/components/providers/SyncManager";
 import { THEME_SCRIPT } from "@/lib/theme-script";
+import { Providers } from "@/components/providers/Providers";
 
 const inter = Inter({ variable: "--font-inter", subsets: ["latin"], display: "swap" });
 const anton = Anton({ variable: "--font-anton", subsets: ["latin"], weight: "400", display: "swap" });
-const barlow = Barlow_Condensed({ variable: "--font-barlow", subsets: ["latin"], weight: ["600", "700"], display: "swap" });
-const caveat = Caveat({ variable: "--font-caveat", subsets: ["latin"], display: "swap" });
+// Only the weights the UI uses: .label-cond is 700, .note is 400 (each extra weight is another download).
+const barlow = Barlow_Condensed({ variable: "--font-barlow", subsets: ["latin"], weight: "700", display: "swap" });
+// Caveat only draws small decorative notes, so it is not preloaded (it would compete with the headline font).
+const caveat = Caveat({ variable: "--font-caveat", subsets: ["latin"], weight: "400", display: "swap", preload: false });
 const mono = JetBrains_Mono({ variable: "--font-mono-jb", subsets: ["latin"], display: "swap" });
 const fonts = [inter, anton, barlow, caveat, mono].map((f) => f.variable).join(" ");
 
@@ -41,12 +40,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
       </head>
       <body className="antialiased">
-        <AuthProvider>
-          <ProfileProvider>
-            <SyncManager />
-            <OnboardingGuard>{children}</OnboardingGuard>
-          </ProfileProvider>
-        </AuthProvider>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

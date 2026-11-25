@@ -304,6 +304,18 @@ main {
   scale: 1 1;
 }
 
+/* landing company deck: the current company's tick fills while it is on show */
+.deck-tick {
+  width: 100%;
+  transform-origin: left;
+  animation: deck-tick linear both;
+}
+@keyframes deck-tick {
+  from {
+    scale: 0 1;
+  }
+}
+
 /* landing ticker (components/landing/motion.tsx) */
 .ticker-track {
   animation: ticker 36s linear infinite;

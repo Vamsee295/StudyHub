@@ -51,3 +51,6 @@ __pycache__/
 
 # local SQLite databases (test data)
 pathward.db
+
+# design inspector output
+.taste-skill/

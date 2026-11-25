@@ -6,6 +6,7 @@ import { clsx } from "clsx";
 
 interface StudyHubLogoProps {
   href?: string;
+  prefetch?: boolean;
   size?: "sm" | "md" | "lg" | "xl";
   showBadge?: boolean;
   badgeText?: string;
@@ -35,6 +36,7 @@ export function StudyHubEmblem({ size = "md", className }: { size?: "sm" | "md" 
 
 export function StudyHubLogo({
   href = "/dashboard",
+  prefetch,
   size = "md",
   showBadge = false,
   badgeText = "",
@@ -83,7 +85,7 @@ export function StudyHubLogo({
 
   if (href) {
     return (
-      <Link href={href} className="inline-flex items-center no-underline">
+      <Link href={href} prefetch={prefetch} className="inline-flex items-center no-underline">
         {content}
       </Link>
     );

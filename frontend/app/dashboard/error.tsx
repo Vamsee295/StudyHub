@@ -19,7 +19,7 @@ export default function DashboardError({
       <div className="w-12 h-12 rounded-full bg-danger-soft text-danger flex items-center justify-center mb-4">
         <AlertCircle className="w-6 h-6" />
       </div>
-      <h2 className="text-xl font-cond font-semibold text-ink mb-2">
+      <h2 className="label-cond mb-2 text-[22px]">
         Unable to load dashboard
       </h2>
       <p className="text-sm text-body mb-6 max-w-md">
