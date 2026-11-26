@@ -30,7 +30,7 @@ APP_GUIDE: list[tuple[str, str, str]] = [
     ("Tools", "/tools", "Placement tools: aptitude timer, CGPA to percentage converter, company prep guides, DSA visualizer, interview simulator, placement readiness calculator, SQL playground, STAR answer builder for behavioural questions, and technical interview questions."),
     ("Templates", "/templates", "Ready-made, ATS-friendly resumes for roles like software engineer, frontend, backend, data analyst and fresher; edit them with your own details, check the ATS match against a job description, rewrite with AI, then download PDF or LaTeX or open in Overleaf. Also cover letters, emails and other placement templates."),
     ("Resources", "/resources", "Curated study links and materials, plus your saved resources."),
-    ("Study with me", "/study-with-me", "Focus timer for study sessions; logged time appears in your activity."),
+    ("Community", "/community", "Discussion board: ask questions, share wins and resources, upvote what helps, reply and @-mention people. Daily study logs live here too."),
     ("Companies", "/companies", "Company pages with hiring process and preparation notes."),
     ("Profile progress", "/profile/progress", "Your heatmap of solved problems and studied lessons, and overall progress."),
     ("Settings", "/settings", "Account, appearance (light and dark theme), notifications, data export and account deletion."),

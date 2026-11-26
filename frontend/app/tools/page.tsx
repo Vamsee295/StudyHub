@@ -3,10 +3,13 @@
 import { useState } from "react";
 import Link from "next/link";
 import { clsx } from "clsx";
-import { ArrowRight, Calculator, Code2, FileText, Gauge, MessageSquareText, Building2, Timer, Layers, Star, Database, type LucideIcon } from "lucide-react";
+import { ArrowRight, Calculator, Code2, FileText, Gauge, MessageSquareText, Building2, Timer, Layers, Star, Database, ExternalLink, FlaskConical, type LucideIcon } from "lucide-react";
 import { PageHeader, Section } from "@/components/ui/Page";
 import { TOOLS, TOOL_GROUPS, type ToolItem } from "@/lib/data/toolsData";
 import { recentToolItems } from "@/lib/tools/recentTools";
+import { ToolPath } from "@/components/tools/ToolPath";
+import { EXTERNAL_TOOLS } from "@/lib/data/toolGuides";
+import { LABS } from "@/lib/labs/catalog";
 
 const ICONS: Record<string, LucideIcon> = {
   "/tools/interview-simulator": MessageSquareText,
@@ -109,6 +112,10 @@ export default function ToolsPage() {
         </Section>
       )}
 
+      <Section kicker="New here? Start with this" title="Which tool, when">
+        <ToolPath />
+      </Section>
+
       <Section kicker={TOOL_GROUPS[0].blurb} title="Interview prep">
         <div className="grid gap-5 lg:grid-cols-[1.25fr_1fr]">
           {interview[0] && <ToolCard tool={interview[0]} feature />}
@@ -146,6 +153,41 @@ export default function ToolsPage() {
 
       <Section kicker={TOOL_GROUPS[3].blurb} title="Calculators & trackers">
         <CalculatorRow tools={calculators} />
+      </Section>
+
+      <Section kicker="Learn it, then play with it" title="Interactive labs">
+        <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {LABS.map((l) => (
+            <li key={l.slug}>
+              <Link href={`/labs/${l.slug}`} className="group flex h-full flex-col rounded-2xl border-[1.5px] border-hair bg-card p-4 transition-colors hover:border-ink/40">
+                <span className="flex items-center justify-between gap-2 font-mono text-[11px] uppercase tracking-wider text-mute">
+                  <span className="inline-flex items-center gap-1.5">
+                    <FlaskConical aria-hidden className="size-3.5 text-accent-ink" /> {l.course}
+                  </span>
+                  <ArrowRight aria-hidden className="size-4 transition-transform group-hover:translate-x-0.5" />
+                </span>
+                <span className="mt-2 text-[16px] font-semibold group-hover:text-accent-ink">{l.title}</span>
+                <span className="mt-1 text-[13.5px] leading-relaxed text-body">{l.description}</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </Section>
+
+      <Section kicker="Free, elsewhere" title="More tools that pair well">
+        <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {EXTERNAL_TOOLS.map((t) => (
+            <li key={t.url}>
+              <a href={t.url} target="_blank" rel="noopener noreferrer" className="group flex h-full flex-col rounded-2xl border-[1.5px] border-hair bg-card p-4 transition-colors hover:border-ink/40">
+                <span className="flex items-center justify-between gap-2 text-[15px] font-semibold group-hover:text-accent-ink">
+                  {t.title}
+                  <ExternalLink aria-hidden className="size-3.5 shrink-0 text-mute" />
+                </span>
+                <span className="mt-1 text-[13.5px] text-body">{t.why}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
       </Section>
     </div>
   );

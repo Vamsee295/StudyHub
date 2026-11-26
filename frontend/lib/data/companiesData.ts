@@ -290,6 +290,100 @@ export const companyWorkspaces: Record<string, CompanyWorkspaceDetail> = {
   }
 };
 
+// Directory companies: commonly reported campus processes (public placement reports and prep guides).
+// Rounds vary by year, role and campus, as the page says.
+Object.assign(companyWorkspaces, {
+  atlassian: {
+    id: "atlassian", name: "Atlassian", monogram: "AT", category: "Product Engineering",
+    locations: ["Bengaluru"], targetRole: "Software Engineer (Graduate)", recruitmentWindow: "Campus Cycle",
+    hiringStages: [
+      { stageNumber: 1, title: "Online Assessment (OA)", description: "Timed coding problems on data structures and algorithms.", duration: "90 Mins", tags: ["Arrays", "Strings", "Graphs"] },
+      { stageNumber: 2, title: "Coding Interview", description: "Problem solving with working, readable code and test cases.", duration: "60 Mins", tags: ["DSA", "Problem Solving"] },
+      { stageNumber: 3, title: "Code Design", description: "Design and extend a small system in code: classes, interfaces, extensibility.", duration: "60 Mins", tags: ["LLD", "Design Patterns"] },
+      { stageNumber: 4, title: "Values Interview", description: "Behavioural questions mapped to Atlassian's company values.", duration: "45 Mins", tags: ["Values", "Behavioral"] },
+    ],
+    questionWeights: [{ topic: "Graphs & BFS/DFS" }, { topic: "Object-Oriented Design" }, { topic: "Hash Maps" }, { topic: "Company values (STAR)" }],
+    recentQuestions: [
+      { id: "at-1", title: "Course Schedule", domain: "Graphs", difficulty: "Medium", description: "Decide whether all courses can be finished given prerequisite pairs: cycle detection with topological sort." },
+      { id: "at-2", title: "Top K Frequent Words", domain: "Heaps / Hashing", difficulty: "Medium", description: "Return the k most frequent words, ties broken alphabetically." },
+    ],
+  },
+  uber: {
+    id: "uber", name: "Uber", monogram: "U", category: "Product Engineering",
+    locations: ["Bengaluru", "Hyderabad"], targetRole: "Software Engineer 1", recruitmentWindow: "Campus Cycle",
+    hiringStages: [
+      { stageNumber: 1, title: "Online Assessment (OA)", description: "Medium to hard algorithmic problems under time pressure.", duration: "90 Mins", tags: ["Graphs", "DP"] },
+      { stageNumber: 2, title: "DSA Interview 1", description: "Problem solving and optimisation with complexity analysis.", duration: "60 Mins", tags: ["DSA", "Heaps"] },
+      { stageNumber: 3, title: "DSA Interview 2", description: "Harder problem or follow-ups on trees and graphs.", duration: "60 Mins", tags: ["Trees", "Graphs"] },
+      { stageNumber: 4, title: "Design Round", description: "Low-level or light system design depending on the role.", duration: "60 Mins", tags: ["LLD", "System Design"] },
+      { stageNumber: 5, title: "Hiring Manager", description: "Projects, ownership and collaboration.", duration: "45 Mins", tags: ["Behavioral", "Projects"] },
+    ],
+    questionWeights: [{ topic: "Graphs & Shortest Paths" }, { topic: "Dynamic Programming" }, { topic: "Heaps" }, { topic: "Design basics" }],
+    recentQuestions: [
+      { id: "ub-1", title: "Rotting Oranges", domain: "Graphs", difficulty: "Medium", description: "Multi-source BFS on a grid to find how long until every orange rots." },
+      { id: "ub-2", title: "Meeting Rooms II", domain: "Heaps / Intervals", difficulty: "Medium", description: "Minimum number of rooms needed for a set of meetings." },
+    ],
+  },
+  infosys: {
+    id: "infosys", name: "Infosys", monogram: "IN", category: "High-Volume IT",
+    locations: ["Pan-India"], targetRole: "Systems Engineer / Specialist Programmer", recruitmentWindow: "Campus Cycle",
+    hiringStages: [
+      { stageNumber: 1, title: "Online Test", description: "Quantitative aptitude, logical reasoning, verbal ability and pseudocode; higher roles add coding problems.", duration: "100 Mins", tags: ["Aptitude", "Logic", "Verbal", "Pseudocode"] },
+      { stageNumber: 2, title: "Technical Interview", description: "Core CS, a language of your choice, SQL basics and your projects.", duration: "30 Mins", tags: ["Core CS", "SQL", "Projects"] },
+      { stageNumber: 3, title: "HR Interview", description: "Communication, relocation and willingness to learn.", duration: "15 Mins", tags: ["HR"] },
+    ],
+    questionWeights: [{ topic: "Quantitative Aptitude" }, { topic: "Logical Reasoning" }, { topic: "OOP & SQL basics" }, { topic: "Project discussion" }],
+    recentQuestions: [
+      { id: "in-1", title: "Second Largest Distinct Number", domain: "Arrays", difficulty: "Easy", description: "Find the second largest distinct value in one pass." },
+      { id: "in-2", title: "Palindrome Number", domain: "Basics", difficulty: "Easy", description: "Check whether an integer reads the same backwards, without converting to a string." },
+    ],
+  },
+  cognizant: {
+    id: "cognizant", name: "Cognizant", monogram: "CTS", category: "High-Volume IT",
+    locations: ["Pan-India"], targetRole: "GenC / GenC Elevate", recruitmentWindow: "Campus Cycle",
+    hiringStages: [
+      { stageNumber: 1, title: "Aptitude + Coding Assessment", description: "Quantitative, logical and verbal sections; Elevate and higher tracks add coding problems.", duration: "120 Mins", tags: ["Aptitude", "Logic", "Verbal", "Arrays"] },
+      { stageNumber: 2, title: "Technical Interview", description: "OOP, DBMS/SQL, basic data structures and your projects.", duration: "30 Mins", tags: ["Core CS", "SQL", "Projects"] },
+      { stageNumber: 3, title: "HR Interview", description: "Communication and fit.", duration: "15 Mins", tags: ["HR"] },
+    ],
+    questionWeights: [{ topic: "Aptitude" }, { topic: "OOP concepts" }, { topic: "SQL joins & group by" }, { topic: "Basic arrays & strings" }],
+    recentQuestions: [
+      { id: "cts-1", title: "Missing Number", domain: "Arrays", difficulty: "Easy", description: "Find the one number missing from 0..n using a sum or XOR trick." },
+      { id: "cts-2", title: "Valid Parentheses", domain: "Stack", difficulty: "Easy", description: "Check whether every bracket is closed in the right order." },
+    ],
+  },
+  "goldman-sachs": {
+    id: "goldman-sachs", name: "Goldman Sachs", monogram: "GS", category: "FinTech & Consulting",
+    locations: ["Bengaluru", "Hyderabad"], targetRole: "Technology Analyst", recruitmentWindow: "Campus Cycle",
+    hiringStages: [
+      { stageNumber: 1, title: "Online Assessment (OA)", description: "Coding problems plus maths, probability and reasoning questions.", duration: "120 Mins", tags: ["Arrays", "Math", "Aptitude"] },
+      { stageNumber: 2, title: "Technical Interview 1", description: "Data structures and problem solving.", duration: "60 Mins", tags: ["DSA", "DP"] },
+      { stageNumber: 3, title: "Technical Interview 2", description: "Core CS (OS, DBMS), OOP and puzzles.", duration: "60 Mins", tags: ["Core CS", "SQL", "Puzzle"] },
+      { stageNumber: 4, title: "HR / Fit", description: "Motivation, teamwork and why finance technology.", duration: "30 Mins", tags: ["Behavioral"] },
+    ],
+    questionWeights: [{ topic: "Dynamic Programming" }, { topic: "Probability & Maths" }, { topic: "Arrays & Strings" }, { topic: "OS & DBMS" }],
+    recentQuestions: [
+      { id: "gs-1", title: "Best Time to Buy and Sell Stock", domain: "Arrays", difficulty: "Easy", description: "Maximum profit from one buy and one later sell." },
+      { id: "gs-2", title: "Coin Change", domain: "Dynamic Programming", difficulty: "Medium", description: "Fewest coins to make an amount, or -1 if impossible." },
+    ],
+  },
+  razorpay: {
+    id: "razorpay", name: "Razorpay", monogram: "RZ", category: "High-Growth Startup",
+    locations: ["Bengaluru"], targetRole: "SDE-1", recruitmentWindow: "Campus Cycle",
+    hiringStages: [
+      { stageNumber: 1, title: "DSA Round", description: "Problem solving with clean code and complexity analysis.", duration: "60 Mins", tags: ["DSA", "Arrays", "Hash Maps"] },
+      { stageNumber: 2, title: "Machine Coding", description: "Build a small working module end to end in limited time.", duration: "90 Mins", tags: ["Machine Coding", "LLD"] },
+      { stageNumber: 3, title: "Design Discussion", description: "Extend your machine-coding solution or design a small service.", duration: "60 Mins", tags: ["System Design", "Database"] },
+      { stageNumber: 4, title: "Hiring Manager", description: "Ownership, projects and culture fit.", duration: "45 Mins", tags: ["Behavioral", "Projects"] },
+    ],
+    questionWeights: [{ topic: "Machine coding" }, { topic: "Hash Maps & Arrays" }, { topic: "Low-level design" }, { topic: "Databases basics" }],
+    recentQuestions: [
+      { id: "rz-1", title: "Subarray Sum Equals K", domain: "Hashing", difficulty: "Medium", description: "Count subarrays that sum to k using prefix sums and a hash map." },
+      { id: "rz-2", title: "Merge Intervals", domain: "Sorting", difficulty: "Medium", description: "Merge all overlapping intervals after sorting by start." },
+    ],
+  },
+} satisfies Record<string, CompanyWorkspaceDetail>);
+
 export const directoryCompanies: DirectoryCompany[] = [
   {
     id: "atlassian",

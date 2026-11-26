@@ -385,6 +385,19 @@ function AuthForm() {
               )}
             </button>
           </motion.div>
+          {mode === "signup" && (
+            <p className="text-center text-[12.5px] leading-relaxed text-mute">
+              By creating an account you agree to our{" "}
+              <Link href="/terms" target="_blank" className="font-semibold text-accent-ink hover:underline">
+                Terms
+              </Link>{" "}
+              and{" "}
+              <Link href="/privacy" target="_blank" className="font-semibold text-accent-ink hover:underline">
+                Privacy Policy
+              </Link>
+              .
+            </p>
+          )}
         </form>
 
         <motion.p className="mt-6 text-center text-[14px] text-body">

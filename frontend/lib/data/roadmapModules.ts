@@ -268,7 +268,7 @@ export const roadmapModules: RoadmapModule[] = [
     why: "Interviewers spend a large part of most rounds on your projects. A small project you understand completely beats a big one you can't explain.",
     howTo: [],
     steps: [
-      { title: "Pick a problem you care about", detail: "Something with real users or real data, even if the only user is you.", link: { label: "Browse project ideas", href: "/ideas" } },
+      { title: "Pick a problem you care about", detail: "Something with real users or real data, even if the only user is you." },
       { title: "Build the smallest working version", detail: "One feature end to end: interface, API and database. Commit to Git from the first day." },
       { title: "Add what interviewers ask about", detail: "Sign-in, input validation and error handling, a few tests, and a deployed link." },
       { title: "Write it up", detail: "A README covering the architecture, your decisions and trade-offs, and what you would change at ten times the users.", link: { label: "Project documentation templates", href: "/templates" } },
@@ -288,10 +288,9 @@ export const roadmapModules: RoadmapModule[] = [
       { title: "The Twelve-Factor App", href: "https://12factor.net/", kind: "Free guide", source: "12factor.net" },
     ],
     practice: [
-      { label: "Project ideas board", href: "/ideas" },
       { label: "Project documentation templates", href: "/templates" },
     ],
-    learn: { label: "Browse project ideas", href: "/ideas" },
+    learn: { label: "Project documentation templates", href: "/templates" },
     interviewQuestion: {
       question: "How would you make a payment endpoint safe to retry, so a network timeout never charges a customer twice?",
       answer:

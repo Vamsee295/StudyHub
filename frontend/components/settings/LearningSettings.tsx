@@ -164,6 +164,9 @@ const notificationTypes: { id: string; label: string; hint: string }[] = [
   { id: "DSA_MILESTONE", label: "Problem milestones", hint: "Solved counts like 10, 50, 100." },
   { id: "NEW_RESOURCE", label: "New resources", hint: "Notes and guides added to the library." },
   { id: "PLACEMENT_UPDATE", label: "Placement updates", hint: "Company and hiring news." },
+  { id: "POST_LIKED", label: "Likes on your posts", hint: "Someone upvotes what you posted in Community." },
+  { id: "POST_REPLY", label: "Replies to your posts", hint: "Someone replies to what you posted in Community." },
+  { id: "MENTION", label: "Mentions", hint: "Someone @-mentions you in a Community reply." },
 ];
 
 const batches = [

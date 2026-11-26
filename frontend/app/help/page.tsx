@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
-import { ArrowRight, Lightbulb, Plus, Search } from "lucide-react";
+import { Mail, Plus, Search } from "lucide-react";
 import { PageHeader } from "@/components/ui/Page";
 import { buttonClass } from "@/components/ui/Button";
 import { lastVerified } from "@/lib/data/companies";
+import { LEGAL_CONTACT_EMAIL } from "@/components/legal/LegalPage";
 
 // Answers describe what the app actually does today; update them when behaviour changes.
 const faqs: { q: string; a: string }[] = [
@@ -76,14 +76,15 @@ export default function HelpPage() {
         </div>
 
         <aside className="brut rounded-2xl bg-card p-6">
-          <Lightbulb className="size-6 text-accent" aria-hidden />
+          <Mail className="size-6 text-accent" aria-hidden />
           <h2 className="display mt-3 text-[28px]">Something broken or missing?</h2>
           <p className="mt-2 text-[15px] leading-relaxed text-body">
-            Post it on the ideas board. Bugs and feature requests go to the same place, and you can see what&apos;s planned and shipped.
+            Email us with bugs, feature requests or questions about your account and data. Include the page you were on and what you expected.
           </p>
-          <Link href="/ideas" className={`${buttonClass("primary", "sm")} mt-5`}>
-            Open the ideas board <ArrowRight className="size-4" />
-          </Link>
+          <a href={`mailto:${LEGAL_CONTACT_EMAIL}?subject=StudyHub%20feedback`} className={`${buttonClass("primary", "sm")} mt-5`}>
+            Email support
+          </a>
+          <p className="mt-3 break-all font-mono text-[12px] text-mute">{LEGAL_CONTACT_EMAIL}</p>
         </aside>
       </div>
     </div>

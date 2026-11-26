@@ -13,7 +13,6 @@ from app.models.daily_plans import DailyPlan, DailyPlanItem
 from app.models.resume_analysis import ResumeAnalysis
 from app.models.community import LearningActivity, CommunityPost, PostLike, PostComment, UserFollow
 from app.models.ai import AIUsageLog
-from app.models.ideas import Idea, IdeaVote
 from app.models.study_logs import StudyLog
 from app.models.user_sync import UserSyncData
 from app.models.submissions import CodeSubmission

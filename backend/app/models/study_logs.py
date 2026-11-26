@@ -11,7 +11,7 @@ def generate_uuid():
 
 class StudyLog(Base):
     """
-    A learner's published daily log for Study With Me. Only exists when the learner chooses to
+    A learner's published daily log on the Community board. Only exists when the learner chooses to
     publish; the draft is computed on the fly from lesson completions and never stored.
     `lessons` is a snapshot taken at publish time so the log stays stable if courses change.
     """

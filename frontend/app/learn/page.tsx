@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { clsx } from "clsx";
 import { ArrowRight, Bookmark, BookOpen, Briefcase, Code, Share2, Terminal } from "lucide-react";
 import { DailyCard } from "@/components/learn/DailyCard";
+import { BeginnerPath } from "@/components/learn/BeginnerPath";
 import { PageHeader, Section, Progress } from "@/components/ui/Page";
 import { buttonClass } from "@/components/ui/Button";
 import { learnService, LearningSubject } from "@/lib/services/learnService";
@@ -66,13 +67,28 @@ export default function LearnPage() {
             </div>
           </Link>
         ) : (
-          <div className="flex flex-col justify-center rounded-2xl border-[1.5px] border-dashed border-hair p-6">
-            <p className="eyebrow mb-2">Start here</p>
-            <p className="text-[15px] text-body">Pick any subject below. Your place is saved as you go.</p>
-          </div>
+          <Link href="/learn/programming-fundamentals/what-is-programming" className="brut brut-hover no-press group flex flex-col rounded-2xl bg-card p-6 md:p-8">
+            <p className="eyebrow mb-3">Never coded before? Start here</p>
+            <h2 className="display text-[34px] md:text-[44px]">What is programming?</h2>
+            <p className="mt-2 max-w-2xl text-[15px] text-body">
+              Lesson 1 of Programming Fundamentals assumes nothing. Every lesson has a picture of the idea, plain-words explanations and practice from easy to hard.
+            </p>
+            <span className={clsx(buttonClass("accent"), "mt-6 self-start")}>
+              Start lesson 1 <ArrowRight className="size-4" />
+            </span>
+          </Link>
         )}
         <DailyCard />
       </div>
+
+      {subjects.length > 0 && (
+        <Section title="From zero to pro" kicker="Your path">
+          <p className="-mt-2 mb-5 max-w-2xl text-[15px] text-body">
+            Not sure what to learn first? Go stage by stage. Each subject starts at beginner level and builds to interview level.
+          </p>
+          <BeginnerPath subjects={subjects} />
+        </Section>
+      )}
 
       <Section title="The catalogue" kicker="Subjects">
         <div role="tablist" aria-label="Filter subjects" className="no-scrollbar -mx-4 mb-5 flex gap-2 overflow-x-auto px-4 md:mx-0 md:px-0">

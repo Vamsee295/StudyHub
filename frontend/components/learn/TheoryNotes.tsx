@@ -1,5 +1,6 @@
 import { Fragment, ReactNode } from "react";
 import { BookOpen, Library, type LucideIcon } from "lucide-react";
+import { Diagram, Figure } from "./Diagram";
 
 /** Reading typography shared by lesson theory and lesson blocks (DESIGN §3: 17px / 1.75, max ~68ch). */
 export const prose = {
@@ -22,8 +23,9 @@ export function LessonHeading({ icon: Icon = BookOpen, children }: { icon?: Luci
 }
 
 // Renders the markdown subset used by lesson theory: ## / ### headings, paragraphs,
-// - and 1. lists, > callouts, | tables |, ``` or ~~~ code fences, **bold**, `code`, [links](url).
-// Builds React elements directly (no HTML injection).
+// - and 1. lists, > callouts, | tables |, ``` or ~~~ code fences, **bold**, `code`, [links](url),
+// ```mermaid diagrams, and images on their own line: ![alt](url "caption").
+// Builds React elements directly (no HTML injection; Mermaid sanitises its own SVG).
 
 function inline(text: string): ReactNode[] {
   const out: ReactNode[] = [];
@@ -69,9 +71,16 @@ function blocks(md: string): ReactNode[] {
       while (i < lines.length && !lines[i].startsWith(fence)) code.push(lines[i++]);
       i++;
       out.push(
-        <pre key={key} tabIndex={0} className={prose.pre}><code>{code.join("\n")}</code></pre>
+        /^(```|~~~)\s*mermaid/.test(line)
+          ? <Diagram key={key} code={code.join("\n")} />
+          : <pre key={key} tabIndex={0} className={prose.pre}><code>{code.join("\n")}</code></pre>
       );
       continue;
+    }
+    const img = line.trim().match(/^!\[([^\]]*)\]\((\S+?)(?:\s+"([^"]*)")?\)$/);
+    if (img) {
+      out.push(<Figure key={key} alt={img[1]} src={img[2]} caption={img[3]} />);
+      i++; continue;
     }
     if (line.startsWith("### ")) {
       out.push(<h4 key={key} className="label-cond mt-2 text-[19px]">{inline(line.slice(4))}</h4>);
@@ -124,7 +133,7 @@ function blocks(md: string): ReactNode[] {
       continue;
     }
     const para: string[] = [];
-    while (i < lines.length && lines[i].trim() && !/^(#{2,3} |```|~~~|\||> |- |\d+\. )/.test(lines[i])) para.push(lines[i++]);
+    while (i < lines.length && lines[i].trim() && !/^(#{2,3} |```|~~~|\||> |- |\d+\. |!\[)/.test(lines[i])) para.push(lines[i++]);
     out.push(<p key={key} className={prose.p}>{inline(para.join(" "))}</p>);
   }
   return out;

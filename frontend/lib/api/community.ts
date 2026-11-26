@@ -10,6 +10,8 @@ import type {
   LikeResponse,
   FollowResponse,
   LearningActivityOut,
+  UserSummary,
+  CommunityAuthor,
 } from '@/lib/types/community';
 import type { ActivityType } from '@/lib/types/community';
 
@@ -21,10 +23,13 @@ export const communityApi = {
     filter: FeedFilter = 'all',
     limit = 20,
     offset = 0,
+    userId?: string,
+    opts: { category?: string; sort?: 'new' | 'top' } = {},
   ): Promise<FeedResponse> => {
-    return apiClient.get(
-      `${BASE}/feed?filter=${filter}&limit=${limit}&offset=${offset}`,
-    );
+    const qs = new URLSearchParams({ filter, limit: String(limit), offset: String(offset), sort: opts.sort ?? 'new' });
+    if (userId) qs.set('user_id', userId);
+    if (opts.category) qs.set('category', opts.category);
+    return apiClient.get(`${BASE}/feed?${qs}`);
   },
 
   getPublicFeed: async (
@@ -41,6 +46,17 @@ export const communityApi = {
   createPost: async (payload: CreatePostPayload): Promise<CommunityPost> => {
     return apiClient.post(`${BASE}/posts`, payload);
   },
+
+  getPost: (postId: string): Promise<CommunityPost> => apiClient.get(`${BASE}/posts/${postId}`),
+
+  deletePost: (postId: string): Promise<void> => apiClient.delete(`${BASE}/posts/${postId}`),
+
+  // ─── Learners ─────────────────────────────────────────────────────────────
+  getUser: (userId: string): Promise<UserSummary> => apiClient.get(`${BASE}/users/${userId}`),
+
+  getSuggestions: (limit = 5): Promise<UserSummary[]> => apiClient.get(`${BASE}/suggestions?limit=${limit}`),
+
+  searchLearners: (q: string): Promise<CommunityAuthor[]> => apiClient.get(`${BASE}/learners?q=${encodeURIComponent(q)}`),
 
   // ─── Likes ────────────────────────────────────────────────────────────────
   toggleLike: async (postId: string): Promise<LikeResponse> => {

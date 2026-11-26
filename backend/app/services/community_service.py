@@ -1,7 +1,7 @@
 """
 Community Service
 =================
-Business logic for the Study With Me learning activity feed.
+Business logic for the Community board (discussions, questions, wins and resources).
 All database reads use single efficient queries with joins to avoid N+1 issues.
 Server-side pagination is enforced — feeds are never fully loaded.
 """
@@ -9,16 +9,17 @@ Server-side pagination is enforced — feeds are never fully loaded.
 from datetime import datetime, date, timedelta
 from typing import List, Optional, Tuple
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, func, and_, desc, delete
+from sqlalchemy import select, func, and_, desc, delete, or_, literal
 from sqlalchemy.orm import selectinload
 
 from app.models.community import LearningActivity, CommunityPost, PostLike, PostComment, UserFollow
 from app.models.profile import Profile
+from app.services import notify_service
 from app.schemas.community import (
     LearningActivityCreate, CommunityPostCreate,
     AuthorOut, LearningActivityOut, CommunityPostOut,
     PostCommentCreate, PostCommentOut, DateGroup, FeedResponse,
-    CommunityStats,
+    CommunityStats, UserSummary,
 )
 
 
@@ -30,6 +31,20 @@ ACTIVITY_TYPE_VALUES = {
     "LEARNING_COMPLETED", "PROBLEM_SOLVED", "RESOURCE_SHARED",
     "PROJECT_SHARED", "COURSE_COMPLETED", "MILESTONE", "CUSTOM_POST",
 }
+
+# Board post types. Posts store their type in post_type; older posts used "custom" (now discussion)
+# and "activity" (an auto/learning post, now a win).
+CATEGORIES = ("question", "discussion", "win", "resource")
+CATEGORY_ALIASES = {"discussion": ("discussion", "custom"), "win": ("win", "activity"),
+                    "question": ("question",), "resource": ("resource",)}
+
+
+def category_of(post_type: Optional[str]) -> str:
+    for cat, names in CATEGORY_ALIASES.items():
+        if post_type in names:
+            return cat
+    return "discussion"
+
 
 FILTER_TAG_MAP = {
     "dsa":       ["dsa", "arrays", "dp", "graphs", "trees", "sorting", "strings", "binary-search"],
@@ -83,6 +98,96 @@ def _activity_out(a: Optional[LearningActivity]) -> Optional[LearningActivityOut
     )
 
 
+def normalize_tags(tags: Optional[str]) -> Optional[str]:
+    """'Java, #OOP ,java' -> 'java,oop' (lowercase, no '#', no duplicates, at most 8)."""
+    out: List[str] = []
+    for t in (tags or "").split(","):
+        t = t.strip().lstrip("#").lower().replace(" ", "-")[:30]
+        if t and t not in out:
+            out.append(t)
+    return ",".join(out[:8]) or None
+
+
+def _has_tag(tag: str):
+    tag = tag.strip().lstrip("#").lower()
+    return (literal(",") + func.lower(func.coalesce(CommunityPost.tags, "")) + literal(",")).like(f"%,{tag},%")
+
+
+async def _posts_out(session: AsyncSession, posts: List[CommunityPost], viewer_id: Optional[str]) -> List[CommunityPostOut]:
+    """Posts with authors, counts, and the viewer's like / follow state, in a fixed number of queries."""
+    if not posts:
+        return []
+    post_ids = [p.id for p in posts]
+    user_ids = list({p.user_id for p in posts})
+    profile_map = {p.id: p for p in (await session.execute(select(Profile).where(Profile.id.in_(user_ids)))).scalars()}
+    likes = dict((await session.execute(
+        select(PostLike.post_id, func.count(PostLike.id)).where(PostLike.post_id.in_(post_ids)).group_by(PostLike.post_id))).all())
+    comments = dict((await session.execute(
+        select(PostComment.post_id, func.count(PostComment.id)).where(PostComment.post_id.in_(post_ids)).group_by(PostComment.post_id))).all())
+    liked: set = set()
+    followed: set = set()
+    if viewer_id:
+        liked = set((await session.execute(
+            select(PostLike.post_id).where(PostLike.post_id.in_(post_ids), PostLike.user_id == viewer_id))).scalars())
+        followed = set((await session.execute(
+            select(UserFollow.following_id).where(UserFollow.follower_id == viewer_id, UserFollow.following_id.in_(user_ids)))).scalars())
+    return [
+        CommunityPostOut(
+            id=p.id, user_id=p.user_id, content=p.content, post_type=p.post_type, tags=p.tags,
+            visibility=p.visibility, created_at=p.created_at, updated_at=p.updated_at,
+            author=_author_from_profile(profile_map.get(p.user_id)), activity=_activity_out(p.activity),
+            like_count=likes.get(p.id, 0), comment_count=comments.get(p.id, 0),
+            user_has_liked=p.id in liked, author_followed=p.user_id in followed,
+            is_mine=bool(viewer_id and p.user_id == viewer_id),
+        )
+        for p in posts
+    ]
+
+
+def _snippet(text: str, n: int = 60) -> str:
+    text = " ".join((text or "").split())
+    return text if len(text) <= n else text[: n - 1].rstrip() + "…"
+
+
+async def _notify_author(session: AsyncSession, post: CommunityPost, actor_id: str, type_: str, title: str, what: str) -> None:
+    """Tell a post's author that someone else interacted with it (never yourself)."""
+    if post.user_id == actor_id:
+        return
+    actor = await session.get(Profile, actor_id)
+    name = (actor.full_name if actor and actor.full_name else "A learner")
+    notify_service.notify(post.user_id, type_, title, f"{name} {what}", f"/community?post={post.id}")
+
+
+async def _notify_mentions(session: AsyncSession, post: CommunityPost, actor_id: str, content: str, mention_ids: List[str]) -> None:
+    """Notify learners @-mentioned in a reply. Only names actually written in the text count, so nobody can be
+    pinged silently; you can't mention yourself, and the post's author already gets the reply notification."""
+    ids = {i for i in mention_ids if i not in (actor_id, post.user_id)}
+    if not ids:
+        return
+    actor = await session.get(Profile, actor_id)
+    name = actor.full_name if actor and actor.full_name else "A learner"
+    text = content.lower()
+    for p in (await session.execute(select(Profile).where(Profile.id.in_(ids)))).scalars():
+        if p.full_name and f"@{p.full_name.lower()}" in text:
+            notify_service.notify(p.id, "MENTION", "New mention", f'{name} mentioned you: "{_snippet(content)}"',
+                                  f"/community?post={post.id}")
+
+
+async def search_learners(session: AsyncSession, q: str, viewer_id: Optional[str], limit: int = 6) -> List[AuthorOut]:
+    """Learners whose name matches, for the @ picker. Only people active in the community (a public post or
+    a reply) are searchable, and their names are already public there."""
+    q = q.strip()
+    if not q:
+        return []
+    active = select(CommunityPost.user_id).where(CommunityPost.visibility == "public").union(select(PostComment.user_id))
+    like = f"%{q.lower()}%"
+    stmt = (select(Profile).where(Profile.id.in_(active), func.lower(Profile.full_name).like(like))
+            .order_by(Profile.full_name).limit(limit))
+    if viewer_id:
+        stmt = stmt.where(Profile.id != viewer_id)
+    return [_author_from_profile(p) for p in (await session.execute(stmt)).scalars()]
+
+
 # ---------------------------------------------------------------------------
 # Core Feed Query
 # ---------------------------------------------------------------------------
@@ -93,6 +198,9 @@ async def get_feed(
     filter_by: str = "all",
     limit: int = 20,
     offset: int = 0,
+    author_id: Optional[str] = None,
+    category: Optional[str] = None,
+    sort: str = "new",
 ) -> FeedResponse:
     """
     Retrieve paginated community posts for the feed.
@@ -105,6 +213,11 @@ async def get_feed(
         .order_by(desc(CommunityPost.created_at))
     )
 
+    if author_id:
+        stmt = stmt.where(CommunityPost.user_id == author_id)
+    if category in CATEGORY_ALIASES:
+        stmt = stmt.where(CommunityPost.post_type.in_(CATEGORY_ALIASES[category]))
+
     # "Following" filter
     if filter_by == "following" and current_user_id:
         following_subq = select(UserFollow.following_id).where(
@@ -116,13 +229,22 @@ async def get_feed(
     elif filter_by in FILTER_TAG_MAP:
         tag_patterns = FILTER_TAG_MAP[filter_by]
         tag_conditions = [CommunityPost.tags.ilike(f"%{t}%") for t in tag_patterns]
-        from sqlalchemy import or_
         stmt = stmt.where(or_(*tag_conditions))
+
+    # One exact hashtag, e.g. "tag:arrays" (from a #arrays link or a trending tag)
+    elif filter_by.startswith("tag:") and filter_by[4:].strip():
+        stmt = stmt.where(_has_tag(filter_by[4:]))
 
     # Count total before pagination
     count_stmt = select(func.count()).select_from(stmt.subquery())
     total_result = await session.execute(count_stmt)
     total = total_result.scalar() or 0
+
+    # "Top": most upvoted first (newest breaks ties)
+    if sort == "top":
+        votes = (select(PostLike.post_id, func.count(PostLike.id).label("n")).group_by(PostLike.post_id).subquery())
+        stmt = (stmt.outerjoin(votes, votes.c.post_id == CommunityPost.id)
+                .order_by(None).order_by(func.coalesce(votes.c.n, 0).desc(), desc(CommunityPost.created_at)))
 
     # Apply pagination
     stmt = stmt.offset(offset).limit(limit)
@@ -136,72 +258,17 @@ async def get_feed(
     if not posts:
         return FeedResponse(groups=[], total=total, has_more=False, next_offset=None)
 
-    # Batch-load authors
-    user_ids = list({p.user_id for p in posts})
-    profile_result = await session.execute(
-        select(Profile).where(Profile.id.in_(user_ids))
-    )
-    profile_map = {p.id: p for p in profile_result.scalars().all()}
+    post_outs = await _posts_out(session, posts, current_user_id)
 
-    # Batch-load like counts
-    post_ids = [p.id for p in posts]
-    like_count_result = await session.execute(
-        select(PostLike.post_id, func.count(PostLike.id).label("cnt"))
-        .where(PostLike.post_id.in_(post_ids))
-        .group_by(PostLike.post_id)
-    )
-    like_count_map = {row.post_id: row.cnt for row in like_count_result}
-
-    # Batch-load comment counts
-    comment_count_result = await session.execute(
-        select(PostComment.post_id, func.count(PostComment.id).label("cnt"))
-        .where(PostComment.post_id.in_(post_ids))
-        .group_by(PostComment.post_id)
-    )
-    comment_count_map = {row.post_id: row.cnt for row in comment_count_result}
-
-    # Batch-load current user's likes
-    liked_set: set = set()
-    if current_user_id:
-        liked_result = await session.execute(
-            select(PostLike.post_id)
-            .where(PostLike.post_id.in_(post_ids), PostLike.user_id == current_user_id)
-        )
-        liked_set = {row.post_id for row in liked_result}
-
-    # Build post output objects
-    post_outs: List[CommunityPostOut] = []
-    for p in posts:
-        post_outs.append(CommunityPostOut(
-            id=p.id,
-            user_id=p.user_id,
-            content=p.content,
-            post_type=p.post_type,
-            tags=p.tags,
-            visibility=p.visibility,
-            created_at=p.created_at,
-            updated_at=p.updated_at,
-            author=_author_from_profile(profile_map.get(p.user_id)),
-            activity=_activity_out(p.activity),
-            like_count=like_count_map.get(p.id, 0),
-            comment_count=comment_count_map.get(p.id, 0),
-            user_has_liked=p.id in liked_set,
-        ))
-
-    # Group by date
-    from collections import defaultdict
-    groups_dict: dict = defaultdict(list)
+    # Group consecutive posts from the same day, keeping the query's order (date order for "new",
+    # vote order for "top" — re-sorting groups by date here would undo "top")
+    groups: List[DateGroup] = []
     for po in post_outs:
         d = po.created_at.date()
-        groups_dict[d].append(po)
-
-    groups: List[DateGroup] = []
-    for d in sorted(groups_dict.keys(), reverse=True):
-        groups.append(DateGroup(
-            label=_label_for_date(d),
-            date=d.isoformat(),
-            posts=groups_dict[d],
-        ))
+        if groups and groups[-1].date == d.isoformat():
+            groups[-1].posts.append(po)
+        else:
+            groups.append(DateGroup(label=_label_for_date(d), date=d.isoformat(), posts=[po]))
 
     has_more = (offset + limit) < total
     return FeedResponse(
@@ -222,6 +289,9 @@ async def create_post(
     data: CommunityPostCreate,
 ) -> CommunityPostOut:
     activity = None
+    tags = normalize_tags(data.tags)
+    if data.post_type not in CATEGORIES + ("custom",):
+        raise ValueError(f"Invalid post type: {data.post_type}")
 
     # If the post has an activity type, create a LearningActivity record first
     if data.activity_type and data.activity_title:
@@ -237,7 +307,7 @@ async def create_post(
             topic_slug=data.topic_slug,
             problem_id=data.problem_id,
             resource_id=data.resource_id,
-            tags=data.tags,
+            tags=tags,
             visibility=data.visibility,
         )
         session.add(activity)
@@ -246,34 +316,79 @@ async def create_post(
     post = CommunityPost(
         user_id=user_id,
         content=data.content,
-        post_type="activity" if activity else "custom",
-        tags=data.tags,
+        post_type="win" if activity else data.post_type,
+        tags=tags,
         visibility=data.visibility,
         activity_id=activity.id if activity else None,
     )
     session.add(post)
     await session.commit()
-    await session.refresh(post)
+    post = (await session.execute(
+        select(CommunityPost).options(selectinload(CommunityPost.activity)).where(CommunityPost.id == post.id))).scalar_one()
+    return (await _posts_out(session, [post], user_id))[0]
 
-    # Load author profile
-    profile_result = await session.execute(select(Profile).where(Profile.id == user_id))
-    profile = profile_result.scalars().first()
 
-    return CommunityPostOut(
-        id=post.id,
-        user_id=post.user_id,
-        content=post.content,
-        post_type=post.post_type,
-        tags=post.tags,
-        visibility=post.visibility,
-        created_at=post.created_at,
-        updated_at=post.updated_at,
+async def get_post(session: AsyncSession, post_id: str, viewer_id: Optional[str]) -> Optional[CommunityPostOut]:
+    post = (await session.execute(
+        select(CommunityPost).options(selectinload(CommunityPost.activity))
+        .where(CommunityPost.id == post_id, CommunityPost.visibility == "public"))).scalars().first()
+    return (await _posts_out(session, [post], viewer_id))[0] if post else None
+
+
+async def delete_post(session: AsyncSession, post_id: str, user_id: str) -> None:
+    """Deletes your own post, its likes and replies, and the activity it wraps."""
+    post = await session.get(CommunityPost, post_id)
+    if not post:
+        raise ValueError("Post not found")
+    if post.user_id != user_id:
+        raise PermissionError("You can only delete your own posts")
+    await session.execute(delete(PostLike).where(PostLike.post_id == post_id))
+    await session.execute(delete(PostComment).where(PostComment.post_id == post_id))
+    activity_id = post.activity_id
+    await session.delete(post)
+    if activity_id:
+        await session.execute(delete(LearningActivity).where(LearningActivity.id == activity_id))
+    await session.commit()
+
+
+# ---------------------------------------------------------------------------
+# Learner profiles and suggestions
+# ---------------------------------------------------------------------------
+
+async def _count(session: AsyncSession, model, *where) -> int:
+    return (await session.execute(select(func.count()).select_from(model).where(*where))).scalar_one()
+
+
+async def user_summary(session: AsyncSession, user_id: str, viewer_id: Optional[str]) -> Optional[UserSummary]:
+    profile = await session.get(Profile, user_id)
+    if not profile:
+        return None
+    return UserSummary(
         author=_author_from_profile(profile),
-        activity=_activity_out(activity),
-        like_count=0,
-        comment_count=0,
-        user_has_liked=False,
+        post_count=await _count(session, CommunityPost, CommunityPost.user_id == user_id, CommunityPost.visibility == "public"),
+        followers=await _count(session, UserFollow, UserFollow.following_id == user_id),
+        following=await _count(session, UserFollow, UserFollow.follower_id == user_id),
+        is_following=bool(viewer_id) and await _count(
+            session, UserFollow, UserFollow.follower_id == viewer_id, UserFollow.following_id == user_id) > 0,
+        is_me=viewer_id == user_id,
     )
+
+
+async def suggestions(session: AsyncSession, viewer_id: Optional[str], limit: int = 5) -> List[UserSummary]:
+    """Learners who posted most in the last 14 days, minus you and people you already follow."""
+    since = datetime.utcnow() - timedelta(days=14)
+    stmt = (select(CommunityPost.user_id, func.count().label("n"))
+            .where(CommunityPost.visibility == "public", CommunityPost.created_at >= since)
+            .group_by(CommunityPost.user_id).order_by(desc("n")).limit(limit))
+    if viewer_id:
+        stmt = stmt.where(CommunityPost.user_id != viewer_id, CommunityPost.user_id.not_in(
+            select(UserFollow.following_id).where(UserFollow.follower_id == viewer_id)))
+    out = []
+    for uid, _ in (await session.execute(stmt)).all():
+        summary = await user_summary(session, uid, viewer_id)
+        if summary:
+            out.append(summary)
+    return out
 
 
 # ---------------------------------------------------------------------------
@@ -302,7 +417,7 @@ async def log_activity(
         problem_id=data.problem_id,
         resource_id=data.resource_id,
         roadmap_id=data.roadmap_id,
-        tags=data.tags,
+        tags=normalize_tags(data.tags),
         visibility=data.visibility,
     )
     session.add(activity)
@@ -313,7 +428,7 @@ async def log_activity(
             user_id=user_id,
             content=data.description or data.title,
             post_type="activity",
-            tags=data.tags,
+            tags=activity.tags,
             visibility="public",
             activity_id=activity.id,
         )
@@ -353,6 +468,8 @@ async def toggle_like(
         now_liked = True
 
     await session.commit()
+    if now_liked:
+        await _notify_author(session, post, user_id, "POST_LIKED", "New like", f'liked your post "{_snippet(post.content)}"')
 
     count_result = await session.execute(
         select(func.count(PostLike.id)).where(PostLike.post_id == post_id)
@@ -406,13 +523,16 @@ async def create_comment(
     data: PostCommentCreate,
 ) -> PostCommentOut:
     post_result = await session.execute(select(CommunityPost).where(CommunityPost.id == post_id))
-    if not post_result.scalars().first():
+    post = post_result.scalars().first()
+    if not post:
         raise ValueError("Post not found")
 
     comment = PostComment(post_id=post_id, user_id=user_id, content=data.content)
     session.add(comment)
     await session.commit()
     await session.refresh(comment)
+    await _notify_author(session, post, user_id, "POST_REPLY", "New reply", f'replied: "{_snippet(data.content)}"')
+    await _notify_mentions(session, post, user_id, data.content, data.mention_ids)
 
     profile_result = await session.execute(select(Profile).where(Profile.id == user_id))
     profile = profile_result.scalars().first()
@@ -470,6 +590,11 @@ async def toggle_follow(
     else:
         session.add(UserFollow(follower_id=follower_id, following_id=following_id))
         await session.commit()
+        follower = await session.get(Profile, follower_id)
+        name = follower.full_name if follower and follower.full_name else "A learner"
+        # one unread notice per follower, so follow / unfollow / follow doesn't stack up
+        notify_service.notify(following_id, "NEW_FOLLOWER", "New follower", f"{name} started following you",
+                              f"/community?user={follower_id}")
         return True, "Followed"
 
 
@@ -508,8 +633,13 @@ async def get_stats(session: AsyncSession) -> CommunityStats:
                     tag_freq[t] = tag_freq.get(t, 0) + 1
     trending = [t for t, _ in sorted(tag_freq.items(), key=lambda x: -x[1])[:8]]
 
+    by_type = dict((await session.execute(
+        select(CommunityPost.post_type, func.count()).where(CommunityPost.visibility == "public").group_by(CommunityPost.post_type))).all())
+    category_counts = {c: sum(by_type.get(n, 0) for n in CATEGORY_ALIASES[c]) for c in CATEGORIES}
+
     return CommunityStats(
         active_today=active_today,
         total_posts=total_posts,
         trending_tags=trending,
+        category_counts=category_counts,
     )

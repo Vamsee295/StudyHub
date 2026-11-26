@@ -5,7 +5,10 @@ create table public.notifications (
   user_id uuid not null references auth.users(id) on delete cascade,
   title text not null,
   message text not null,
-  type text not null check (type in ('LESSON_COMPLETED','COURSE_MILESTONE','DSA_PROBLEM_SOLVED','DSA_MILESTONE','NEW_RESOURCE','PLACEMENT_UPDATE','SYSTEM')),
+  -- POST_LIKED / POST_REPLY / NEW_FOLLOWER / MENTION added by migrations notifications_community_types,
+  -- notifications_new_follower_type and notifications_mention_type
+  -- (sent by the backend, see app/services/notify_service.py)
+  type text not null constraint notifications_type_check check (type in ('LESSON_COMPLETED','COURSE_MILESTONE','DSA_PROBLEM_SOLVED','DSA_MILESTONE','NEW_RESOURCE','PLACEMENT_UPDATE','SYSTEM','POST_LIKED','POST_REPLY','NEW_FOLLOWER','MENTION')),
   read boolean not null default false,
   link text,
   created_at timestamptz not null default now()
@@ -18,6 +21,10 @@ create policy "read own notifications" on public.notifications for select to aut
 create policy "create own notifications" on public.notifications for insert to authenticated with check ((select auth.uid()) = user_id);
 create policy "update own notifications" on public.notifications for update to authenticated using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id);
 grant select, insert, update on public.notifications to authenticated;
+
+-- Dismiss / Clear all in the bell (migration notifications_delete).
+create policy "delete own notifications" on public.notifications for delete to authenticated using ((select auth.uid()) = user_id);
+grant delete on public.notifications to authenticated;
 
 -- live updates for the bell
 alter publication supabase_realtime add table public.notifications;

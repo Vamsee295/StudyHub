@@ -2,6 +2,7 @@ import { InterviewProblem } from "@/types";
 import { Code2 } from "lucide-react";
 import Link from "next/link";
 import { clsx } from "clsx";
+import { fallbackFor, problemIdForTitle } from "@/lib/data/companyPrep";
 
 interface RecentInterviewQuestionsProps {
   questions: InterviewProblem[];
@@ -13,7 +14,7 @@ export function RecentInterviewQuestions({ questions, companyName }: RecentInter
     <div className="flex flex-col gap-4">
       <div>
         <h3 className="label-cond text-[20px]">Problems in the style {companyName} asks</h3>
-        <p className="text-[13px] text-body">Classic problems on the topics this company tests. Practise them in the problem set.</p>
+        <p className="text-[13px] text-body">Classic problems on the topics this company tests. Where we have the problem, solve it right here.</p>
       </div>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -35,9 +36,18 @@ export function RecentInterviewQuestions({ questions, companyName }: RecentInter
               </div>
               <h4 className="text-[15px] font-semibold leading-snug">{q.title}</h4>
               <p className="line-clamp-2 text-[13px] leading-relaxed text-body">{q.description}</p>
-              <Link href="/practice/problems" className="mt-auto inline-flex items-center gap-1.5 border-t-[1.5px] border-hair pt-3 font-mono text-[12px] uppercase tracking-wider text-accent-ink hover:underline">
-                <Code2 aria-hidden className="size-3.5" /> Problem set
-              </Link>
+              {(() => {
+                const id = problemIdForTitle(q.title);
+                const fallback = fallbackFor(q.domain);
+                return (
+                  <Link
+                    href={id ? `/practice/problems/${id}` : fallback.href}
+                    className="mt-auto inline-flex items-center gap-1.5 border-t-[1.5px] border-hair pt-3 font-mono text-[12px] uppercase tracking-wider text-accent-ink hover:underline"
+                  >
+                    <Code2 aria-hidden className="size-3.5" /> {id ? "Solve it" : fallback.label}
+                  </Link>
+                );
+              })()}
             </div>
           );
         })}

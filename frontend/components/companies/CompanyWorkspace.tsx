@@ -2,6 +2,7 @@ import { CompanyWorkspaceDetail } from "@/types";
 import { HiringPipeline } from "./HiringPipeline";
 import { QuestionWeighting } from "./QuestionWeighting";
 import { RecentInterviewQuestions } from "./RecentInterviewQuestions";
+import { CompanyPrepPlan } from "./CompanyPrepPlan";
 import { Terminal, MapPin, Target, ArrowRight } from "lucide-react";
 import { buttonClass } from "@/components/ui/Button";
 import Link from "next/link";
@@ -63,7 +64,8 @@ export function CompanyWorkspace({ workspace }: CompanyWorkspaceProps) {
 
       <hr className="border-hair" />
 
-      {/* Competency Diagnostics */}
+      {/* The rounds as a picture, and what to study for each */}
+      <CompanyPrepPlan workspace={workspace} />
 
       <hr className="border-hair" />
 

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { recordToolUse } from "@/lib/tools/recentTools";
+import { ToolGuidePanel } from "./ToolGuidePanel";
 
 interface ToolWorkspaceHeaderProps {
   title: string;
@@ -22,6 +23,7 @@ export function ToolWorkspaceHeader({ title, description, badge, actions }: Tool
   }, [pathname]);
 
   return (
+    <>
     <header className="mb-8 flex flex-col justify-between gap-5 md:flex-row md:items-end">
       <div className="min-w-0">
         <Link href="/tools" className="mb-5 inline-flex items-center gap-1.5 font-mono text-[12px] uppercase tracking-wider text-mute hover:text-ink">
@@ -33,5 +35,7 @@ export function ToolWorkspaceHeader({ title, description, badge, actions }: Tool
       </div>
       {actions && <div className="flex shrink-0 items-center gap-3">{actions}</div>}
     </header>
+    <ToolGuidePanel />
+    </>
   );
 }

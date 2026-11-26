@@ -6,16 +6,18 @@ import { useState, useCallback, useEffect, type ReactNode } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
-  ArrowLeft, Building, Target, Lightbulb, Tag,
+  ArrowLeft, Building, Target, Lightbulb, Tag, Compass,
   Play, UploadCloud, ChevronDown, RotateCcw, CheckCircle2, XCircle, ListChecks,
   Terminal, Loader2, AlertTriangle, Clock, MemoryStick, ChevronLeft, ChevronRight, Shuffle, FileText, History, NotebookPen
 } from "lucide-react";
 import { clsx } from "clsx";
 import Editor, { type Monaco, type OnMount } from "@monaco-editor/react";
-import { getProblem, generateStarterCode, problemOrder } from "@/lib/problems/problemRegistry";
+import { getProblem, generateStarterCode, problemOrder, categoryOf } from "@/lib/problems/problemRegistry";
+import { PatternGuideCard } from "@/components/practice/PatternGuideCard";
 import { SubmissionsPanel } from "@/components/practice/SubmissionsPanel";
 import { ProblemNotes } from "@/components/practice/ProblemNotes";
 import { problemStorage } from "@/lib/problems/problemStorage";
+import { trackProblemSolve } from "@/lib/notify";
 import { logSubmission } from "@/lib/problems/submissions";
 import { executeCode, explainError } from "@/lib/execution/executionClient";
 import { MONACO_THEME, defineMonacoTheme } from "@/lib/monacoTheme";
@@ -300,7 +302,7 @@ export function ProblemWorkspace({
     setAdoptedDefault(editorPrefs.language);
     if (!draft) setLanguage(editorPrefs.language);
   }
-  const [panel, setPanel] = useState<"topics" | "companies" | "hint" | null>(null);
+  const [panel, setPanel] = useState<"topics" | "companies" | "hint" | "pattern" | null>(null);
   // Left panel tabs, like LeetCode's Description / Submissions; ?submission=<id> opens one directly
   const [openSubmission, setOpenSubmission] = useState<string | null>(() =>
     typeof window === "undefined" ? null : new URLSearchParams(window.location.search).get("submission")
@@ -431,6 +433,7 @@ export function ProblemWorkspace({
       setExecResult(result);
       setHasRun(true);
       onResult?.({ kind: "submit", accepted: result.status === "accepted", language });
+      const notifySolve = trackProblemSolve(problemId); // snapshot before the submission marks it solved
       logSubmission({ id: problemId, v: result.status, l: language, p: result.passedTests, n: result.totalTests });
       if (result.submissionId) {
         // show the submissions list with the new one on top; its details load only when clicked
@@ -445,6 +448,7 @@ export function ProblemWorkspace({
         problemStorage.setStatus(problemId, "attempted");
       }
       setStatus(problemStorage.getStatus(problemId));
+      notifySolve(result.status === "accepted");
     } catch (err) {
       setExecError(errorMessage(err) || "Submission service unavailable. Is the backend running?");
     } finally {
@@ -628,6 +632,9 @@ export function ProblemWorkspace({
                     <Lightbulb className="size-3.5" /> Hint
                   </button>
                 )}
+                <button type="button" onClick={() => setPanel(panel === "pattern" ? null : "pattern")} aria-expanded={panel === "pattern"} className={chipCls(panel === "pattern")}>
+                  <Compass className="size-3.5" /> Pattern: {categoryOf(problem)}
+                </button>
               </div>
               {panel === "topics" && (
                 <div className="fade-in flex flex-wrap gap-1.5">
@@ -641,6 +648,7 @@ export function ProblemWorkspace({
                   Topic reported at {problem.companies.join(", ")}. <span className="text-mute">{ASKED_IN_CAVEAT}</span>
                 </p>
               )}
+              {panel === "pattern" && <PatternGuideCard category={categoryOf(problem)} compact />}
               {panel === "hint" && problem.hint && (
                 <div className="fade-in rounded-xl border-[1.5px] border-warning-line bg-warning-soft p-3.5 text-[14px] leading-relaxed text-ink">{problem.hint}</div>
               )}

@@ -16,6 +16,8 @@ import {
   TerminalSquare,
 } from "lucide-react";
 import { DailyCard } from "@/components/learn/DailyCard";
+import { DashboardJourney } from "@/components/dashboard/DashboardJourney";
+import { ActivityHeatmap } from "@/components/profile/ActivityHeatmap";
 import { courseProgress } from "@/lib/learn/progress";
 import { PageHeader, Section, Progress } from "@/components/ui/Page";
 import { buttonClass } from "@/components/ui/Button";
@@ -127,6 +129,14 @@ export default function DashboardPage() {
             </div>
             <Progress value={cont.progress} label="Lesson read" className="mt-6" />
           </div>
+
+          <DashboardJourney targetCompanies={profile?.targets?.companies ?? []} />
+
+          <Section title="Your consistency" kicker="Activity" href="/profile/progress">
+            <div className="rounded-2xl border-[1.5px] border-hair bg-card p-4 md:p-5">
+              <ActivityHeatmap weeks={26} compact />
+            </div>
+          </Section>
 
           <Section title="Your subjects" kicker="Progress" href="/learn">
             <div className="grid grid-cols-2 gap-5 sm:grid-cols-3">

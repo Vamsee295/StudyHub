@@ -52,7 +52,7 @@ class LearningActivity(Base):
 
 class CommunityPost(Base):
     """
-    A published post in the Study With Me feed. May wrap a LearningActivity
+    A published post on the Community board. May wrap a LearningActivity
     (auto-generated) or be a standalone custom progress post.
     """
     __tablename__ = "community_posts"
@@ -62,7 +62,7 @@ class CommunityPost(Base):
     activity_id = Column(String, ForeignKey("learning_activities.id", ondelete="SET NULL"), nullable=True)
 
     content     = Column(Text, nullable=False)
-    post_type   = Column(String, default="custom")   # activity | custom
+    post_type   = Column(String, default="discussion")   # question | discussion | win | resource (legacy: custom, activity)
     tags        = Column(String, nullable=True)       # comma-separated
 
     # Visibility mirrors the wrapped activity visibility (or can be overridden)

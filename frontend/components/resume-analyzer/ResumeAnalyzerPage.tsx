@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, FileCheck2, ShieldCheck } from "lucide-react";
 import Link from "next/link";
@@ -10,6 +10,8 @@ import { getResumeRequestFormData, resumeAnalysisApi } from "@/lib/resume-analyz
 import { validateResumeRequest } from "@/lib/resume-analyzer/validation";
 import { ROLE_OPTIONS } from "./TargetRoleFields";
 import { ResumeInputForm } from "./ResumeInputForm";
+import { ToolGuidePanel } from "@/components/tools/shared/ToolGuidePanel";
+import { recordToolUse } from "@/lib/tools/recentTools";
 
 const blankTarget: ResumeAnalysisTarget = {
   company: "",
@@ -28,6 +30,8 @@ function getRoleFromProfile(value: string): Pick<ResumeAnalysisTarget, "role" | 
 
 export function ResumeAnalyzerPage() {
   const router = useRouter();
+  // counts towards "recently used" and the Tools path, like the other tools
+  useEffect(() => recordToolUse("/tools/resume-analyzer"), []);
   const { draftProfile, isLoading } = useProfile();
   const [request, setRequest] = useState<ResumeAnalysisRequest>({
     source: "pdf",
@@ -154,6 +158,8 @@ export function ResumeAnalyzerPage() {
           </div>
         </div>
       </header>
+
+      <ToolGuidePanel />
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_260px] items-start">
         <main className="rounded-lg border-[1.5px] border-hair bg-card p-4 shadow-[0_1px_2px_-1px_rgba(15,23,42,0.04)] sm:p-6">

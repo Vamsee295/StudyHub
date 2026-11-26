@@ -25,8 +25,6 @@ class Settings(BaseSettings):
     # CORS
     frontend_url: str = "http://localhost:3000"
 
-    # Comma-separated emails allowed to change ideas board statuses
-    admin_emails: str = ""
 
     # Where student code runs: "docker" (isolated container, the default) or
     # "local" (plain host process; development only, set CODE_SANDBOX=local in .env).

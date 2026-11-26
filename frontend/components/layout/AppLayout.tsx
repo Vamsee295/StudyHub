@@ -19,14 +19,13 @@ import {
   LayoutDashboard,
   Library,
   LifeBuoy,
-  Lightbulb,
   ListChecks,
   Loader2,
   PanelLeftClose,
   PanelLeftOpen,
   Route,
   Settings,
-  Timer,
+  MessagesSquare,
   UserRound,
   Wrench,
   type LucideIcon,
@@ -53,7 +52,7 @@ const groups: { title: string; items: NavItem[] }[] = [
     items: [
       ["/dashboard", "Dashboard", LayoutDashboard],
       ["/learn/daily", "Daily", CalendarCheck],
-      ["/study-with-me", "Study With Me", Timer],
+      ["/community", "Community", MessagesSquare],
     ],
   },
   {
@@ -85,7 +84,6 @@ const groups: { title: string; items: NavItem[] }[] = [
   },
 ];
 const utility: NavItem[] = [
-  ["/ideas", "Ideas", Lightbulb],
   ["/help", "Help", LifeBuoy],
   ["/settings", "Settings", Settings],
 ];
@@ -140,7 +138,6 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const [mobileProfileOpen, setMobileProfileOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [notifications, setNotifications] = useState<AppNotification[]>([]);
-  const [unreadCount, setUnreadCount] = useState(0);
   const [isLoadingNotifications, setIsLoadingNotifications] = useState(true);
 
   useEffect(() => {
@@ -176,12 +173,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     if (!mounted || !user?.id) return;
     (async () => {
       try {
-        const [notifs, unread] = await Promise.all([
-          notificationService.getNotifications(),
-          notificationService.getUnreadCount(),
-        ]);
-        setNotifications(notifs);
-        setUnreadCount(unread);
+        setNotifications(await notificationService.getNotifications());
       } catch (err) {
         console.error("Failed to load notifications", err);
       } finally {
@@ -189,8 +181,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       }
     })();
     return notificationService.subscribeToNotifications(user.id, (n) => {
-      setNotifications((prev) => [n, ...prev]);
-      setUnreadCount((prev) => prev + 1);
+      setNotifications((prev) => (prev.some((p) => p.id === n.id) ? prev : [n, ...prev]));
     });
   }, [mounted, user?.id]);
 
@@ -199,26 +190,28 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const muted = new Set(studyPrefs.mutedNotifications);
   const isMuted = (n: AppNotification) => n.type !== "SYSTEM" && muted.has(n.type);
   const shownNotifications = muted.size ? notifications.filter((n) => !isMuted(n)) : notifications;
-  const shownUnread = Math.max(0, unreadCount - notifications.filter((n) => !n.read && isMuted(n)).length);
+  // counted from the list (latest 50) so the badge can't drift from what the menu shows
+  const shownUnread = shownNotifications.filter((n) => !n.read).length;
 
-  const handleMarkAsRead = async (id: string) => {
-    try {
-      await notificationService.markAsRead(id);
-      setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)));
-      setUnreadCount((prev) => Math.max(0, prev - 1));
-    } catch (err) {
-      console.error("Failed to mark as read", err);
-    }
+  // Optimistic: the menu updates at once, the server catches up (the service logs failures).
+  const handleMarkAsRead = (id: string) => {
+    setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)));
+    notificationService.markAsRead(id);
   };
 
-  const handleMarkAllAsRead = async () => {
-    try {
-      await notificationService.markAllAsRead();
-      setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
-      setUnreadCount(0);
-    } catch (err) {
-      console.error("Failed to mark all as read", err);
-    }
+  const handleMarkAllAsRead = () => {
+    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+    notificationService.markAllAsRead();
+  };
+
+  const handleDelete = (id: string) => {
+    setNotifications((prev) => prev.filter((n) => n.id !== id));
+    notificationService.deleteNotification(id);
+  };
+
+  const handleClearAll = () => {
+    setNotifications([]);
+    notificationService.clearAll();
   };
 
   const handleSignOut = async () => {
@@ -288,6 +281,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     <button
       type="button"
       onClick={toggle}
+      data-notif-bell
       aria-label={shownUnread ? `Notifications, ${shownUnread} unread` : "Notifications"}
       aria-expanded={open}
       className={clsx(
@@ -312,6 +306,8 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       isLoading={isLoadingNotifications}
       onMarkAsRead={handleMarkAsRead}
       onMarkAllAsRead={handleMarkAllAsRead}
+      onDelete={handleDelete}
+      onClearAll={handleClearAll}
       onNavigate={(link) => router.push(link)}
       placement={placement}
     />
@@ -443,11 +439,14 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           <footer className="mx-auto flex max-w-[1200px] flex-wrap items-center justify-between gap-3 border-t-[1.5px] border-hair px-4 py-6 pb-28 font-mono text-[11px] uppercase tracking-wider text-mute md:px-8 md:pb-6">
             <span>StudyHub · placement prep, mapped</span>
             <span className="flex gap-4">
-              <Link href="/ideas" className="text-accent-ink hover:underline">
-                Ideas board
-              </Link>
               <Link href="/help" className="hover:text-ink">
                 Help
+              </Link>
+              <Link href="/privacy" className="hover:text-ink">
+                Privacy
+              </Link>
+              <Link href="/terms" className="hover:text-ink">
+                Terms
               </Link>
             </span>
           </footer>

@@ -1,5 +1,5 @@
 """
-Study With Me daily logs.
+Community daily study logs.
 
 A draft is computed from the learner's own lesson completions on a local calendar date and is
 never stored. Publishing snapshots that draft (plus an optional note) into study_logs, which the

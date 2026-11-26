@@ -20,7 +20,8 @@ export type FeedFilter =
   | 'aptitude'
   | 'interview'
   | 'resources'
-  | 'projects';
+  | 'projects'
+  | `tag:${string}`;
 
 export interface CommunityAuthor {
   id: string;
@@ -59,6 +60,17 @@ export interface CommunityPost {
   like_count: number;
   comment_count: number;
   user_has_liked: boolean;
+  author_followed: boolean;
+  is_mine: boolean;
+}
+
+export interface UserSummary {
+  author: CommunityAuthor;
+  post_count: number;
+  followers: number;
+  following: number;
+  is_following: boolean;
+  is_me: boolean;
 }
 
 export interface DateGroup {
@@ -87,6 +99,7 @@ export interface CommunityStats {
   active_today: number;
   total_posts: number;
   trending_tags: string[];
+  category_counts?: Record<string, number>; // question / discussion / win / resource
 }
 
 export interface CreatePostPayload {
@@ -104,6 +117,7 @@ export interface CreatePostPayload {
 
 export interface CreateCommentPayload {
   content: string;
+  mention_ids?: string[];
 }
 
 export interface LikeResponse {
@@ -149,7 +163,7 @@ export function activityLink(activity: LearningActivityOut): string | null {
         return `/learn/${activity.subject_slug}`;
       return '/learn';
     case 'PROBLEM_SOLVED':
-      return activity.problem_id ? `/practice` : '/practice';
+      return activity.problem_id ? `/practice/problems/${activity.problem_id}` : '/practice/problems';
     case 'RESOURCE_SHARED':
       return '/resources';
     case 'PROJECT_SHARED':

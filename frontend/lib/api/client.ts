@@ -144,6 +144,8 @@ async function fetchAPI(endpoint: string, options: RequestInit) {
     }
     throw new Error(errorMsg);
   }
-  
+
+  // 204 No Content (deletes) has no body to parse
+  if (response.status === 204) return undefined;
   return response.json();
 }

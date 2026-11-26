@@ -76,7 +76,7 @@ Every figure below is counted from the content in this repository at build time,
 <td width="50%" valign="top">
 
 ### 🛠️ Tools and labs
-Resume analyser, interview simulator, STAR builder, DSA visualiser, SQL playground, aptitude timer, CGPA converter, readiness calculator, tech-question drills and *Study with me* focus sessions, plus 5 OS / networking / systems labs (CPU scheduling, page replacement, subnetting, Big-O, capacity estimation).
+Resume analyser, interview simulator, STAR builder, DSA visualiser, SQL playground, aptitude timer, CGPA converter, readiness calculator, tech-question drills plus 5 OS / networking / systems labs (CPU scheduling, page replacement, subnetting, Big-O, capacity estimation).
 
 </td>
 </tr>
@@ -90,7 +90,7 @@ Resume analyser, interview simulator, STAR builder, DSA visualiser, SQL playgrou
 - **Real accounts**: Supabase auth, password change that re-checks the current password, and full account deletion (`DELETE /api/profile` removes the login and every row the user owns).
 - **Cross-device sync**: lesson progress, notes, bookmarks, test history and settings sync through the API with last-write-wins per key.
 - **Notifications**: a realtime bell backed by a Supabase table with row-level security.
-- **Ideas board** with votes and admin statuses, and daily *Study with me* logs.
+- **Community** board: questions, discussions, wins and resources with upvotes, replies, @-mentions and daily study logs.
 - **Themes**: Paper and Dark, chosen before first paint (no flash), plus an in-app *Reduce motion* switch.
 - **Accessibility**: skip link, every control reachable by keyboard, accessible names on every button and link, AA contrast, reduced-motion support.
 

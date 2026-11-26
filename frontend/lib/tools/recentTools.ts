@@ -46,3 +46,13 @@ export function recentToolItems(limit = 3): ContinueToolItem[] {
     };
   });
 }
+
+/** How many times this browser has opened a tool (0 if never). */
+export function toolVisitCount(href: string): number {
+  return read().find((v) => v.href === href)?.count ?? 0;
+}
+
+/** Tools this browser has opened at least once. */
+export function usedTools(): Set<string> {
+  return new Set(read().map((v) => v.href));
+}

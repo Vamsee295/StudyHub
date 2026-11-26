@@ -1,5 +1,5 @@
 """
-Study With Me daily logs
+Community daily study logs
 ========================
 GET    /api/community/logs/draft?date=&tz=      your auto-filled log for a local date (signed in, private)
 PUT    /api/community/logs/{date}?tz=           publish or update your log (signed in)

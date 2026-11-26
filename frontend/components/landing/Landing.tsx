@@ -247,7 +247,7 @@ const tools = [
   { t: "Interview simulator", d: "Answer technical questions against the clock.", href: "/tools/interview-simulator" },
   { t: "DSA visualiser", d: "Watch sorting and searching algorithms run, one comparison at a time.", href: "/tools/dsa-visualizer" },
   { t: "STAR builder", d: "Shape your behavioural answers before the HR round.", href: "/tools/star-builder" },
-  { t: "Study with me", d: "Timed focus sessions, so the hours add up.", href: "/study-with-me" },
+  { t: "Community", d: "Ask questions, share wins, and vote up what helps.", href: "/community" },
 ];
 
 function Tools() {
@@ -351,6 +351,12 @@ function Closing() {
             </Link>
             <Link prefetch={false} href="/help" className="hover:text-ink">
               Help
+            </Link>
+            <Link prefetch={false} href="/privacy" className="hover:text-ink">
+              Privacy
+            </Link>
+            <Link prefetch={false} href="/terms" className="hover:text-ink">
+              Terms
             </Link>
           </nav>
         </div>

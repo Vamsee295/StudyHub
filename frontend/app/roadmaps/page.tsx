@@ -13,6 +13,9 @@ import { questionBank } from "@/lib/learn/study";
 import { PageHeader, Progress } from "@/components/ui/Page";
 import { buttonClass } from "@/components/ui/Button";
 import { DsaRoadmapView } from "@/components/roadmaps/DsaRoadmapView";
+import { RoadmapOverview, type PlanItem } from "@/components/roadmaps/RoadmapOverview";
+import { Diagram } from "@/components/learn/Diagram";
+import { SELF_PACED_HOURS, STAGE_PLAIN, stageNeighbourhood, type MapStage } from "@/lib/roadmap/visuals";
 
 type Status = "completed" | "in-progress" | "upcoming";
 type Store = ReturnType<typeof getStoredProgress>;
@@ -369,7 +372,7 @@ function LinkList({ items }: { items: { href: string; title: string; meta?: stri
   );
 }
 
-function StageDetail({ stage, store }: { stage: Stage; store: Store }) {
+function StageDetail({ stage, store, mapStages }: { stage: Stage; store: Store; mapStages: MapStage[] }) {
   const meta = [
     stage.tracked && `${stage.courseList.reduce((n, c) => n + c.modules.length, 0)} modules`,
     stage.tracked && `${stage.lessonCount} lessons`,
@@ -411,6 +414,14 @@ function StageDetail({ stage, store }: { stage: Stage; store: Store }) {
           )}
         </div>
       </header>
+
+      {STAGE_PLAIN[stage.slug] && (
+        <section className="flex min-w-0 flex-col gap-3 border-b-[1.5px] border-hair py-8">
+          <p className="eyebrow">In plain words</p>
+          <p className="max-w-[64ch] text-[17px] leading-relaxed text-ink">{STAGE_PLAIN[stage.slug]}</p>
+          <Diagram code={stageNeighbourhood(stage.slug, mapStages)} caption="What to finish before this stage, and what it opens up." />
+        </section>
+      )}
 
       <section className={clsx("grid gap-8 border-b-[1.5px] border-hair py-8 md:gap-10", stage.howTo.length > 0 && "md:grid-cols-2")}>
         <div className="max-w-[64ch]">
@@ -509,6 +520,17 @@ function RoadmapContent() {
   const lessonsDone = stages.reduce((n, s) => n + s.done, 0);
   const lessonsTotal = stages.reduce((n, s) => n + s.lessonCount, 0);
   const stagesDone = stages.filter((s) => s.status === "completed").length;
+  // you are here: the first stage in order that isn't finished
+  const currentSlug = stages.find((s) => s.status !== "completed")?.slug;
+  const mapStages: PlanItem[] = stages.map((s) => ({
+    slug: s.slug,
+    name: stageName(s),
+    phase: s.phase,
+    done: s.status === "completed",
+    current: s.slug === currentSlug,
+    hoursLeft: s.tracked ? (s.minutes * (1 - s.pct / 100)) / 60 : (SELF_PACED_HOURS[s.slug] ?? 0),
+    estimated: !s.tracked,
+  }));
 
   return (
     <div className="w-full min-w-0">
@@ -531,6 +553,8 @@ function RoadmapContent() {
         </dl>
       </PageHeader>
 
+      <RoadmapOverview items={mapStages} />
+
       <StageChips stages={stages} active={stage.slug} onPick={pick} />
 
       <div className="grid items-start gap-10 lg:grid-cols-[272px_minmax(0,1fr)] xl:gap-14">
@@ -546,8 +570,8 @@ function RoadmapContent() {
           </dl>
         </aside>
 
-        <div id="stage" className="scroll-mt-6">
-          <StageDetail key={stage.slug} stage={stage} store={store} />
+        <div id="stage" className="min-w-0 scroll-mt-6">
+          <StageDetail key={stage.slug} stage={stage} store={store} mapStages={mapStages} />
         </div>
       </div>
     </div>

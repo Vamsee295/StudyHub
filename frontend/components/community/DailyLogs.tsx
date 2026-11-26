@@ -136,7 +136,7 @@ function MyLog({ date, onChange }: { date: string; onChange: () => void }) {
           <div className="flex flex-wrap items-center gap-2">
             <button type="button" onClick={publish} disabled={busy || !canPublish}
               className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-accent text-paper text-[13px] font-semibold hover:bg-accent-ink disabled:opacity-50 ${focusRing}`}>
-              {busy && <Loader2 aria-hidden="true" className="w-4 h-4 animate-spin" />} {published ? "Update public log" : "Publish to Study With Me"}
+              {busy && <Loader2 aria-hidden="true" className="w-4 h-4 animate-spin" />} {published ? "Update public log" : "Publish to Community"}
             </button>
             {published && (
               <button type="button" onClick={unpublish} disabled={busy}
@@ -223,7 +223,7 @@ export function DailyLogs() {
       {user && <MyLog date={date} onChange={refreshAll} />}
       {!user && !authLoading && (
         <p className="p-4 rounded-xl border border-dashed border-hair text-[14px] text-body">
-          <Link href="/login?redirect=/study-with-me" className={`text-accent-ink font-semibold underline rounded ${focusRing}`}>Sign in</Link> to keep a daily log. It fills in from the lessons you complete, and you decide whether to publish it.
+          <Link href="/login?redirect=/community" className={`text-accent-ink font-semibold underline rounded ${focusRing}`}>Sign in</Link> to keep a daily log. It fills in from the lessons you complete, and you decide whether to publish it.
         </p>
       )}
 

@@ -28,7 +28,11 @@ const tabs: { id: TabType; name: string; icon: React.ComponentType<{ className?:
 export default function SettingsPage() {
   const { user } = useAuth();
   const { draftProfile: profile } = useProfile();
-  const [activeTab, setActiveTab] = useState<TabType>("account");
+  // ?tab=learning (e.g. from the notification menu) opens that tab; client-only render, so location is readable
+  const [activeTab, setActiveTab] = useState<TabType>(() => {
+    const t = new URLSearchParams(window.location.search).get("tab");
+    return tabs.some((x) => x.id === t) ? (t as TabType) : "account";
+  });
 
   // Profile plus everything StudyHub keeps on this device (progress, notes, bookmarks, review queue,
   // preferences). Sign-in tokens are left out so the file is safe to keep or share.

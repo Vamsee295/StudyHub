@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
-import { Search, CheckCircle2, Circle, CircleDot, ArrowRight } from "lucide-react";
+import { Search, CheckCircle2, Circle, CircleDot, ArrowRight, Compass } from "lucide-react";
 import { clsx } from "clsx";
 
 import { CATEGORY_ORDER, categoryOf, problemOrder, problems as registryProblems, type ProblemCategory } from "@/lib/problems/problemRegistry";
@@ -10,6 +10,7 @@ import { problemStorage, ProblemStatus } from "@/lib/problems/problemStorage";
 import { ASKED_IN_CAVEAT, COMPANY_PROFILES } from "@/lib/data/askedIn";
 import { PageHeader } from "@/components/ui/Page";
 import { Badge } from "@/components/ui/Badge";
+import { PatternGuideCard } from "@/components/practice/PatternGuideCard";
 
 export default function ProblemBankPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -18,7 +19,12 @@ export default function ProblemBankPage() {
   // client-only render (AppLayout), so local statuses are readable on first render
   const [statuses, setStatuses] = useState<Record<string, ProblemStatus>>(() => problemStorage.getAllStatuses());
   const [activeCompany, setActiveCompany] = useState<string>("all");
-  const [activeTopic, setActiveTopic] = useState<ProblemCategory | "all">("all");
+  // ?topic=Arrays (from the Practice path) opens on that topic; client-only render, so location is readable
+  const [activeTopic, setActiveTopic] = useState<ProblemCategory | "all">(() => {
+    const t = new URLSearchParams(window.location.search).get("topic");
+    return (CATEGORY_ORDER as readonly string[]).includes(t ?? "") ? (t as ProblemCategory) : "all";
+  });
+  const [openGuide, setOpenGuide] = useState<ProblemCategory | null>(null);
 
   useEffect(() => {
     const handleUpdate = () => {
@@ -243,7 +249,15 @@ export default function ProblemBankPage() {
                           <span className="mr-2 font-mono text-[12px] text-mute">{String(CATEGORY_ORDER.indexOf(cat) + 1).padStart(2, "0")}</span>
                           {cat}
                         </span>
-                        <span className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-wider text-mute">
+                        <span className="flex items-center gap-3 font-mono text-[11px] uppercase tracking-wider text-mute">
+                          <button
+                            type="button"
+                            onClick={() => setOpenGuide(openGuide === cat ? null : cat)}
+                            aria-expanded={openGuide === cat}
+                            className="inline-flex items-center gap-1 rounded-full border-[1.5px] border-hair px-2.5 py-1 font-sans text-[12px] font-semibold normal-case tracking-normal text-accent-ink hover:border-accent"
+                          >
+                            <Compass className="size-3.5" /> {openGuide === cat ? "Hide guide" : "How it works"}
+                          </button>
                           <span aria-hidden className="h-1.5 w-20 overflow-hidden rounded-full bg-hair">
                             <span className="block h-full rounded-full bg-note" style={{ width: `${(100 * solved) / all.length}%` }} />
                           </span>
@@ -252,6 +266,16 @@ export default function ProblemBankPage() {
                       </span>
                     </th>
                   </tr>
+                  {openGuide === cat && (
+                    <tr>
+                      <td colSpan={6} className="pb-4">
+                        {/* contain: the wide diagram scrolls inside its frame instead of stretching the table */}
+                        <div className="[contain:inline-size]">
+                          <PatternGuideCard category={cat} />
+                        </div>
+                      </td>
+                    </tr>
+                  )}
                   {rows.map((prob, i) => (
                     <tr key={prob.id} className="group border-b-[1.5px] border-hair hover:bg-card-2">
                       <td className="py-3 pl-1">

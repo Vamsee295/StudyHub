@@ -7,6 +7,9 @@ import { CompanyWorkspace } from "@/components/companies/CompanyWorkspace";
 import { CompanyDirectory } from "@/components/companies/CompanyDirectory";
 import { RecentlyExploredTable } from "@/components/companies/RecentlyExploredTable";
 import { AskedInSection } from "@/components/companies/AskedInSection";
+import { HiringBasics } from "@/components/companies/HiringBasics";
+import { INTERVIEW_RESOURCES } from "@/lib/data/companyPrep";
+import { ExternalLink } from "lucide-react";
 
 import { 
   targetCompanies, 
@@ -100,6 +103,8 @@ export default function CompaniesPage() {
         setActiveSegment={setActiveSegment}
       />
 
+      {searchQuery === "" && <HiringBasics />}
+
       {searchQuery === "" && <AskedInSection />}
 
       <div className="flex flex-col gap-10 md:gap-14">
@@ -128,6 +133,26 @@ export default function CompaniesPage() {
 
         {searchQuery === "" && (
           <RecentlyExploredTable history={recentHistory} onClear={handleClearHistory} onSelect={handleSelectCompany} />
+        )}
+
+        {searchQuery === "" && (
+          <section aria-labelledby="interview-resources">
+            <p className="eyebrow">Resources</p>
+            <h2 id="interview-resources" className="display mt-1 text-[30px]">Prepare for any interview, free</h2>
+            <ul className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+              {INTERVIEW_RESOURCES.map((r) => (
+                <li key={r.url}>
+                  <a href={r.url} target="_blank" rel="noopener noreferrer" className="group flex h-full flex-col rounded-2xl border-[1.5px] border-hair bg-card p-4 transition-colors hover:border-ink/40">
+                    <span className="flex items-center justify-between gap-2 text-[15px] font-semibold group-hover:text-accent-ink">
+                      {r.title}
+                      <ExternalLink aria-hidden className="size-3.5 shrink-0 text-mute" />
+                    </span>
+                    <span className="mt-1 text-[13.5px] text-body">{r.why}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
         )}
       </div>
     </div>

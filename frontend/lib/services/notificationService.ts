@@ -7,6 +7,10 @@ export type NotificationType =
   | 'DSA_MILESTONE' 
   | 'NEW_RESOURCE' 
   | 'PLACEMENT_UPDATE' 
+  | 'POST_LIKED'   // created by the backend when someone likes your Community post
+  | 'POST_REPLY'   // ...or replies to it
+  | 'NEW_FOLLOWER' // ...or starts following you
+  | 'MENTION'      // ...or @-mentions you in a reply
   | 'SYSTEM';
 
 export interface AppNotification {
@@ -53,32 +57,6 @@ export const notificationService = {
     } catch (err) {
       console.warn('[NotificationService] Unexpected error fetching notifications:', err);
       return [];
-    }
-  },
-
-  /**
-   * Get unread count for the current user
-   */
-  async getUnreadCount(): Promise<number> {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return 0;
-
-      const { count, error } = await supabase
-        .from('notifications')
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', user.id)
-        .eq('read', false);
-
-      if (error) {
-        console.warn('[NotificationService] Could not fetch unread count:', error.message || error);
-        return 0;
-      }
-
-      return count || 0;
-    } catch (err) {
-      console.warn('[NotificationService] Unexpected error fetching unread count:', err);
-      return 0;
     }
   },
 
@@ -148,6 +126,28 @@ export const notificationService = {
     } catch (err) {
       console.warn('[NotificationService] Unexpected error marking all as read:', err);
     }
+  },
+
+  /** Create a notification for whoever is signed in (no-op when signed out). */
+  async notify(data: Omit<CreateNotificationDTO, 'userId'>): Promise<void> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) await this.createNotification({ ...data, userId: user.id });
+  },
+
+  /** Delete one notification. Returns false when nothing was deleted (e.g. the delete policy is missing). */
+  async deleteNotification(notificationId: string): Promise<boolean> {
+    const { data, error } = await supabase.from('notifications').delete().eq('id', notificationId).select('id');
+    if (error) console.warn('[NotificationService] Error deleting notification:', error.message || error);
+    return !error && (data?.length ?? 0) > 0;
+  },
+
+  /** Delete every notification for the signed-in user. */
+  async clearAll(): Promise<boolean> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return false;
+    const { error } = await supabase.from('notifications').delete().eq('user_id', user.id);
+    if (error) console.warn('[NotificationService] Error clearing notifications:', error.message || error);
+    return !error;
   },
 
   /**

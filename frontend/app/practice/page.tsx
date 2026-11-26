@@ -2,9 +2,11 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { ArrowRight, Clock, Code2, Database, Flame, ListChecks, type LucideIcon } from "lucide-react";
+import { ArrowRight, Code2, Database, ExternalLink, Flame, ListChecks, type LucideIcon } from "lucide-react";
 import { PageHeader, Section } from "@/components/ui/Page";
-import { practiceApi, PracticeSet } from "@/lib/api/practice";
+import { PracticePath } from "@/components/practice/PracticePath";
+import { PRACTICE_RESOURCES } from "@/lib/data/patterns";
+import { practiceApi } from "@/lib/api/practice";
 import { problemStorage } from "@/lib/problems/problemStorage";
 import { problems } from "@/lib/problems/problemRegistry";
 import { activityByDay, streakOf } from "@/lib/activity";
@@ -12,8 +14,6 @@ import { dateKey } from "@/lib/learn/dailyCode";
 
 // Backend timestamps are naive UTC
 const parseUtc = (s: string) => new Date(/[zZ]|[+-]\d\d:?\d\d$/.test(s) ? s : `${s}Z`);
-
-type MappedSession = { id: string; title: string; score: number; totalQuestions: number; durationStr: string; completedDate: string; track: string };
 
 const totalProblems = Object.keys(problems).length;
 
@@ -47,8 +47,6 @@ const spaces: { href: string; title: string; body: string; tags: string[]; icon:
 export default function PracticeHubPage() {
   // client-only render (AppLayout), so local problem progress is readable on first render
   const [solved] = useState(() => Object.values(problemStorage.getAllStatuses()).filter((s) => s === "solved").length);
-  const [recent, setRecent] = useState<MappedSession[]>([]);
-  const [sprints, setSprints] = useState<PracticeSet[]>([]);
   // Practice days: a problem solved or the daily problem solved (local), plus finished sprints (from the server).
   const [localDays] = useState(() => {
     const m = activityByDay();
@@ -60,26 +58,8 @@ export default function PracticeHubPage() {
 
   useEffect(() => {
     practiceApi
-      .getPracticeSets()
-      .then((res) => setSprints(res.sets ?? []))
-      .catch((err) => console.error("Failed to load practice sets", err));
-    practiceApi
       .getLedger()
-      .then((res) => {
-        if (!res.ledger) return;
-        setSprintDays(res.ledger.map((l) => dateKey(parseUtc(l.completed_at))));
-        setRecent(
-          res.ledger.slice(0, 5).map((l) => ({
-            id: l.id,
-            title: l.title,
-            score: l.score,
-            totalQuestions: l.total_questions,
-            durationStr: `${Math.round(l.duration_seconds / 60)}m ${l.duration_seconds % 60}s`,
-            completedDate: parseUtc(l.completed_at).toLocaleDateString(),
-            track: l.domain,
-          }))
-        );
-      })
+      .then((res) => res.ledger && setSprintDays(res.ledger.map((l) => dateKey(parseUtc(l.completed_at)))))
       .catch((err) => console.error("Failed to load practice ledger", err));
   }, []);
 
@@ -126,55 +106,27 @@ export default function PracticeHubPage() {
         ))}
       </div>
 
-      {sprints.length > 0 && (
-        <Section title="Timed sprints" kicker="Against the clock">
-          <ul className="border-t-[1.5px] border-hair">
-            {sprints.map((s) => (
-              <li key={s.id} className="border-b-[1.5px] border-hair">
-                <Link href={`/practice/session/${s.id}`} className="group flex items-center gap-4 px-1 py-3 hover:bg-card-2 md:px-2">
-                  <span className="min-w-0 flex-1">
-                    <span className="block text-[15px] font-medium group-hover:text-accent-ink">{s.title}</span>
-                    <span className="font-mono text-[11px] uppercase tracking-wider text-mute">
-                      {s.domain} · {s.difficulty}
-                    </span>
-                  </span>
-                  <span className="flex items-center gap-1 font-mono text-[12px] text-mute">
-                    <Clock className="size-3.5" aria-hidden /> {s.estimated_minutes} min
-                  </span>
-                  <ArrowRight className="size-4 text-mute transition-transform group-hover:translate-x-0.5" aria-hidden />
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </Section>
-      )}
+      <Section title="From zero to pro" kicker="Your path">
+        <p className="-mt-2 mb-5 max-w-2xl text-[15px] text-body">
+          Practise topics in this order, easy problems first. Every topic has a guide with a picture of the pattern: open &ldquo;How it works&rdquo; on the problem list, or &ldquo;Pattern&rdquo; inside any problem.
+        </p>
+        <PracticePath />
+      </Section>
 
-      <Section title="Recent sessions" kicker="History">
-        {recent.length > 0 ? (
-          <ul className="border-t-[1.5px] border-hair">
-            {recent.map((s) => (
-              <li key={s.id} className="border-b-[1.5px] border-hair">
-                <Link href={`/practice/review/${s.id}`} className="group flex items-center gap-4 px-1 py-3 hover:bg-card-2 md:px-2">
-                  <span className="min-w-0 flex-1">
-                    <span className="block truncate text-[15px] font-medium group-hover:text-accent-ink">{s.title}</span>
-                    <span className="font-mono text-[11px] uppercase tracking-wider text-mute">
-                      {s.track} · {s.completedDate} · {s.durationStr}
-                    </span>
-                  </span>
-                  <span className="display text-[26px] tabular-nums">
-                    {s.score}
-                    <span className="text-[16px] text-mute">/{s.totalQuestions}</span>
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <div className="rounded-2xl border-[1.5px] border-dashed border-hair p-8 text-center">
-            <p className="note mb-1">nothing yet</p>
-            <p className="text-[15px] text-body">Finished sprints show up here with their score.</p>
-          </div>
-        )}
+      <Section title="Practise more, free" kicker="Resources">
+        <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {PRACTICE_RESOURCES.map((r) => (
+            <li key={r.url}>
+              <a href={r.url} target="_blank" rel="noopener noreferrer" className="group flex h-full flex-col rounded-2xl border-[1.5px] border-hair bg-card p-4 transition-colors hover:border-ink/40">
+                <span className="flex items-center justify-between gap-2 text-[15px] font-semibold group-hover:text-accent-ink">
+                  {r.title}
+                  <ExternalLink aria-hidden className="size-3.5 shrink-0 text-mute" />
+                </span>
+                <span className="mt-1 text-[13.5px] text-body">{r.why}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
       </Section>
     </>
   );

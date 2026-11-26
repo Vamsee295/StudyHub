@@ -1,8 +1,13 @@
 """
-Community API Routes — Study With Me
+Community API Routes — the Community board
 =====================================
-GET  /api/community/feed
+GET  /api/community/feed?filter=&user_id=&category=&sort=   filter: all | <topic> | tag:<hashtag>; sort: new | top
 POST /api/community/posts
+GET  /api/community/posts/{post_id}
+DELETE /api/community/posts/{post_id}      (author only)
+GET  /api/community/users/{user_id}        profile summary: counts and follow state
+GET  /api/community/suggestions            learners to follow
+GET  /api/community/learners?q=            name search for the @ picker in replies
 POST /api/community/posts/{post_id}/like
 DELETE /api/community/posts/{post_id}/like
 GET  /api/community/posts/{post_id}/comments
@@ -23,7 +28,7 @@ from app.schemas.community import (
     CommunityPostCreate, CommunityPostOut,
     PostCommentCreate, PostCommentOut,
     LearningActivityCreate, LearningActivityOut,
-    FeedResponse, CommunityStats,
+    FeedResponse, CommunityStats, UserSummary, AuthorOut,
 )
 from app.services import community_service
 
@@ -52,6 +57,9 @@ async def get_feed(
     filter: str = Query("all"),
     limit: int = Query(20, ge=1, le=50),
     offset: int = Query(0, ge=0),
+    user_id: Optional[str] = Query(None, description="only this learner's posts"),
+    category: Optional[str] = Query(None, description="question | discussion | win | resource"),
+    sort: str = Query("new", pattern="^(new|top)$"),
     user: Optional[Any] = Depends(get_optional_user),
 ):
     async with AsyncSessionLocal() as session:
@@ -61,6 +69,9 @@ async def get_feed(
             filter_by=filter,
             limit=limit,
             offset=offset,
+            author_id=user_id,
+            category=category,
+            sort=sort,
         )
 
 
@@ -97,6 +108,51 @@ async def create_post(
             raise HTTPException(status_code=400, detail=str(e))
 
 
+@router.get("/posts/{post_id}", response_model=CommunityPostOut)
+async def get_post(post_id: str, user: Optional[Any] = Depends(get_optional_user)):
+    async with AsyncSessionLocal() as session:
+        post = await community_service.get_post(session, post_id, user.id if user else None)
+    if not post:
+        raise HTTPException(status_code=404, detail="Post not found")
+    return post
+
+
+@router.delete("/posts/{post_id}", status_code=204)
+async def delete_post(post_id: str, user: Any = Depends(get_current_user)):
+    async with AsyncSessionLocal() as session:
+        try:
+            await community_service.delete_post(session, post_id, user.id)
+        except ValueError as e:
+            raise HTTPException(status_code=404, detail=str(e))
+        except PermissionError as e:
+            raise HTTPException(status_code=403, detail=str(e))
+
+
+# ---------------------------------------------------------------------------
+# Learner profiles
+# ---------------------------------------------------------------------------
+
+@router.get("/users/{user_id}", response_model=UserSummary)
+async def get_user(user_id: str, user: Optional[Any] = Depends(get_optional_user)):
+    async with AsyncSessionLocal() as session:
+        summary = await community_service.user_summary(session, user_id, user.id if user else None)
+    if not summary:
+        raise HTTPException(status_code=404, detail="Learner not found")
+    return summary
+
+
+@router.get("/learners", response_model=list[AuthorOut])
+async def search_learners(q: str = Query(..., min_length=1, max_length=50), user: Optional[Any] = Depends(get_optional_user)):
+    async with AsyncSessionLocal() as session:
+        return await community_service.search_learners(session, q, user.id if user else None)
+
+
+@router.get("/suggestions", response_model=list[UserSummary])
+async def get_suggestions(limit: int = Query(5, ge=1, le=10), user: Optional[Any] = Depends(get_optional_user)):
+    async with AsyncSessionLocal() as session:
+        return await community_service.suggestions(session, user.id if user else None, limit)
+
+
 # ---------------------------------------------------------------------------
 # Likes
 # ---------------------------------------------------------------------------
@@ -130,7 +186,6 @@ async def get_comments(
     post_id: str,
     limit: int = Query(50, ge=1, le=100),
     offset: int = Query(0, ge=0),
-    user: Any = Depends(get_current_user),
 ):
     async with AsyncSessionLocal() as session:
         return await community_service.get_comments(session, post_id, limit, offset)

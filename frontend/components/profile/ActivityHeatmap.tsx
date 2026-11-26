@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useId, useState } from "react";
-import { activityByDay, activityCount, bestStreakOf, streakOf, type ActivityMap } from "@/lib/activity";
+import { useEffect, useId, useRef, useState } from "react";
+import { activityByDay, activityCount, bestStreakOf, streakOf, type ActivityMap, type DayActivity } from "@/lib/activity";
 import { dateKey, dayNumber, keyFromDayNumber } from "@/lib/learn/dailyCode";
 import { SUBMISSIONS_EVENT } from "@/lib/problems/submissions";
 import { SYNCED_EVENT } from "@/lib/sync/userSync";
@@ -29,12 +29,38 @@ function describe(key: string, m: ActivityMap) {
   return `${pretty(key)}: ${parts.join(", ")}`;
 }
 
+const plural = (n: number, w: string) => `${n} ${w}${n === 1 ? "" : "s"}`;
+
+// tooltip headline, GitHub-style: "3 problems solved" / "No activity"
+function headline(d?: DayActivity) {
+  if (!d || activityCount(d) === 0) return "No activity";
+  const solved = Math.max(d.problems, d.daily ? 1 : 0);
+  if (solved) return `${plural(solved, "problem")} solved`;
+  const n = activityCount(d);
+  return n === 1 ? "1 activity" : `${n} activities`;
+}
+
+function detail(d?: DayActivity) {
+  if (!d) return "";
+  return [d.submissions && `${plural(d.submissions, "submission")} (${d.accepted} accepted)`, d.lessons && plural(d.lessons, "lesson"), d.daily && "daily ✓"]
+    .filter(Boolean)
+    .join(" · ");
+}
+
 /** Activity, one square per day: lessons completed, code submissions and the daily problem. `weeks` sets the span. */
 export function ActivityHeatmap({ weeks: WEEKS = 53, compact = false }: { weeks?: number; compact?: boolean }) {
   // client-only render (AppLayout), so local progress is readable on first render
   const [{ m, today }, setData] = useState(() => ({ m: activityByDay(), today: dateKey() }));
   const [hover, setHover] = useState<string | null>(null);
+  const [tip, setTip] = useState<{ key: string; x: number; y: number } | null>(null);
+  const scroller = useRef<HTMLDivElement>(null);
   const headingId = useId();
+
+  // open on the newest weeks (today sits at the right edge), like GitHub
+  useEffect(() => {
+    const el = scroller.current;
+    if (el) el.scrollLeft = el.scrollWidth;
+  }, []);
   const span = WEEKS >= 52 ? "in the last year" : `in the last ${WEEKS} weeks`;
 
   // a new submission, or data synced from another device, redraws the map
@@ -64,6 +90,8 @@ export function ActivityHeatmap({ weeks: WEEKS = 53, compact = false }: { weeks?
     const prev = w === 0 ? null : new Date(`${keyFromDayNumber(start + (w - 1) * 7)}T00:00:00`);
     if (!prev || prev.getMonth() !== first.getMonth()) monthLabels.push({ x: w * (CELL + GAP), label: MONTHS[first.getMonth()] });
   }
+  // like GitHub: a partial first month too close to the next label is dropped so "JulAug" can't collide
+  if (monthLabels.length > 1 && monthLabels[1].x - monthLabels[0].x < 3 * (CELL + GAP)) monthLabels.shift();
   const W = WEEKS * (CELL + GAP);
   const H = 7 * (CELL + GAP);
 
@@ -89,8 +117,16 @@ export function ActivityHeatmap({ weeks: WEEKS = 53, compact = false }: { weeks?
         </dl>
       </div>
 
-      <div className="overflow-x-auto pb-1">
-        <svg viewBox={`-28 -18 ${W + 28} ${H + 18}`} width={compact ? "100%" : W + 28} height={compact ? undefined : H + 18} role="img" aria-label={`${total} activities on ${activeDays.length} days ${span}`} className="block">
+      <div ref={scroller} className="overflow-x-auto pb-1" onScroll={() => setTip(null)}>
+        <svg
+          viewBox={`-28 -18 ${W + 28} ${H + 18}`}
+          width={compact ? "100%" : W + 28}
+          height={compact ? undefined : H + 18}
+          style={compact ? { maxWidth: (W + 28) * 1.25 } : undefined}
+          role="img"
+          aria-label={`${total} activities on ${activeDays.length} days ${span}`}
+          className="block"
+        >
           {monthLabels.map((ml) => (
             <text key={`${ml.label}-${ml.x}`} x={ml.x} y={-6} fontSize="10" fill="var(--mute)" style={{ fontFamily: "var(--font-mono-jb), ui-monospace, monospace" }}>
               {ml.label}
@@ -117,15 +153,37 @@ export function ActivityHeatmap({ weeks: WEEKS = 53, compact = false }: { weeks?
                 fillOpacity={ALPHA[lv]}
                 stroke={n === end ? "var(--ink)" : "none"}
                 strokeWidth={1.5}
-                onMouseEnter={() => setHover(key)}
-                onMouseLeave={() => setHover(null)}
-              >
-                <title>{describe(key, m)}</title>
-              </rect>
+                onMouseEnter={(e) => {
+                  const r = e.currentTarget.getBoundingClientRect();
+                  setHover(key);
+                  setTip({ key, x: r.left + r.width / 2, y: r.top });
+                }}
+                onMouseLeave={() => {
+                  setHover(null);
+                  setTip(null);
+                }}
+              />
             );
           })}
         </svg>
       </div>
+
+      {tip && (
+        // fixed so the scroll container can't clip it; sits centred above the hovered square
+        <div
+          role="tooltip"
+          className="pointer-events-none fixed z-50 whitespace-nowrap rounded-md bg-ink px-2.5 py-1.5 text-[12px] text-card shadow-lg"
+          // centred over the square, but pinned left/right near the screen edges so it never runs off
+          style={{
+            left: tip.x,
+            top: tip.y - 6,
+            transform: `translate(${tip.x < 160 ? "-12px" : tip.x > window.innerWidth - 160 ? "calc(-100% + 12px)" : "-50%"}, -100%)`,
+          }}
+        >
+          <span className="font-semibold">{headline(m[tip.key])}</span> on {pretty(tip.key)}
+          {detail(m[tip.key]) && <span className="mt-0.5 block text-[11px] opacity-75">{detail(m[tip.key])}</span>}
+        </div>
+      )}
 
       <div className="mt-3 flex flex-wrap items-center justify-between gap-3 text-[12px] text-mute">
         <p aria-live="polite" className="min-h-[1.25rem]">

@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { clsx } from "clsx";
-import { ArrowLeft, ArrowRight, ChevronRight, ClipboardCheck, FileText, ListOrdered, Loader2, RotateCcw } from "lucide-react";
+import { ArrowLeft, ArrowRight, ChevronRight, ClipboardCheck, ExternalLink, FileText, ListOrdered, Loader2, RotateCcw } from "lucide-react";
+import { COURSE_RESOURCES } from "@/lib/data/learnResources";
 import { learnService, SubjectDetails } from "@/lib/services/learnService";
 import { dueItems, getReviewItems } from "@/lib/learn/study";
 import { AskedInChips } from "@/components/learn/AskedIn";
@@ -167,6 +168,26 @@ export default function SubjectPage() {
           })}
         </ol>
       </Section>
+
+      {(COURSE_RESOURCES[subject.slug] ?? []).length > 0 && (
+        <Section title="Go deeper, free" kicker="Resources">
+          <p className="-mt-2 mb-5 max-w-2xl text-[15px] text-body">Hand-picked free courses, books, tools and GitHub repos to practise more or see the topic another way.</p>
+          <ul className="grid gap-3 sm:grid-cols-2">
+            {COURSE_RESOURCES[subject.slug].map((r) => (
+              <li key={r.url}>
+                <a href={r.url} target="_blank" rel="noopener noreferrer" className="group flex h-full flex-col rounded-2xl border-[1.5px] border-hair bg-card p-4 transition-colors hover:border-ink/40">
+                  <span className="flex items-center justify-between gap-2 font-mono text-[11px] uppercase tracking-wider text-mute">
+                    {r.kind}
+                    <ExternalLink aria-hidden className="size-3.5" />
+                  </span>
+                  <span className="mt-1.5 text-[15px] font-semibold group-hover:text-accent-ink">{r.title}</span>
+                  <span className="mt-1 text-[13.5px] text-body">{r.why}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </Section>
+      )}
     </>
   );
 }

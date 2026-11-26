@@ -31,13 +31,15 @@ import { labForLesson } from "@/lib/labs/catalog";
 import { AskedInChips } from "@/components/learn/AskedIn";
 import { LessonBookmarkButton } from "@/components/learn/LessonBookmarkButton";
 import { LessonPrereqs } from "@/components/learn/LessonPrereqs";
+import { PictureIt } from "@/components/learn/PictureIt";
+import { PracticeLadder } from "@/components/learn/PracticeLadder";
+import { visualFor } from "@/lib/data/visuals";
 import { LessonDot } from "@/components/learn/LessonDot";
 import { Badge } from "@/components/ui/Badge";
 import { optionClass } from "@/components/learn/optionClass";
 import { buttonClass } from "@/components/ui/Button";
 import { Progress } from "@/components/ui/Page";
-import { notificationService } from "@/lib/services/notificationService";
-import { useAuth } from "@/components/providers/AuthProvider";
+import { trackLessonCompletion } from "@/lib/notify";
 
 /* eslint-disable @typescript-eslint/no-explicit-any -- lesson content is authored JSON with many block shapes */
 
@@ -424,7 +426,6 @@ export default function TopicPage() {
   const params = useParams();
   const subjectSlug = params.subject as string;
   const topicSlug = params.topic as string;
-  const { user } = useAuth();
 
   const [subject, setSubject] = useState<SubjectDetails | null>(null);
   const [topic, setTopic] = useState<TopicContent | null>(null);
@@ -599,16 +600,9 @@ export default function TopicPage() {
   const markComplete = async () => {
     try {
       setUpdating(true);
+      const notifyDone = trackLessonCompletion(topic.id, topic.title, `/learn/${subjectSlug}/${topicSlug}`);
       await learnService.updateTopicProgress(topic.id, "completed");
-      if (user?.id) {
-        notificationService.createNotification({
-          userId: user.id,
-          title: "Lesson Completed",
-          message: `You completed "${topic.title}".`,
-          type: "LESSON_COMPLETED",
-          link: `/learn/${subjectSlug}/${topicSlug}`,
-        });
-      }
+      notifyDone();
       savedRef.current = { ...savedRef.current, pct: 100, done: true };
       setFurthest(100);
       setTopic({ ...topic, status: "completed" });
@@ -758,6 +752,7 @@ export default function TopicPage() {
 
             {content ? (
               <>
+                {visualFor(subjectSlug, topicSlug) && <PictureIt visual={visualFor(subjectSlug, topicSlug)!} />}
                 {content.theory && <TheoryNotes markdown={content.theory} />}
                 {labForLesson(subjectSlug, topicSlug).map((lab) => (
                   <Link key={lab.slug} href={`/labs/${lab.slug}`} className="brut brut-hover no-press flex items-center gap-4 rounded-2xl bg-card p-5">
@@ -772,6 +767,7 @@ export default function TopicPage() {
                 {sections.map((section, idx) => (
                   <SectionRenderer key={idx} section={section} subjectSlug={subjectSlug} />
                 ))}
+                {!sections.some((s) => s.type === "practice") && <PracticeLadder course={subjectSlug} lesson={topicSlug} />}
                 {content.sources?.length > 0 && <LessonSources sources={content.sources} />}
               </>
             ) : (

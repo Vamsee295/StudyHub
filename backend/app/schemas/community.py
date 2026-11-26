@@ -53,9 +53,9 @@ class LearningActivityOut(BaseModel):
 # Community Post
 # ---------------------------------------------------------------------------
 class CommunityPostCreate(BaseModel):
-    content: str = Field(..., min_length=1, max_length=2000)
+    content: str = Field(..., min_length=1, max_length=2000)   # first line is the title on the board
     tags: Optional[str] = Field(None, max_length=200)
-    post_type: str = "custom"
+    post_type: str = "discussion"   # question | discussion | win | resource
     visibility: str = "public"
     # Optional: link to an existing learning activity
     activity_type: Optional[str] = None
@@ -82,6 +82,8 @@ class CommunityPostOut(BaseModel):
     like_count: int = 0
     comment_count: int = 0
     user_has_liked: bool = False
+    author_followed: bool = False   # the viewer follows this post's author
+    is_mine: bool = False
 
     model_config = {"from_attributes": True}
 
@@ -91,6 +93,8 @@ class CommunityPostOut(BaseModel):
 # ---------------------------------------------------------------------------
 class PostCommentCreate(BaseModel):
     content: str = Field(..., min_length=1, max_length=1000)
+    # learners picked with @ in the reply box; each is notified if "@Their Name" is really in the text
+    mention_ids: List[str] = Field(default_factory=list, max_length=5)
 
 
 class PostCommentOut(BaseModel):
@@ -127,6 +131,19 @@ class CommunityStats(BaseModel):
     active_today: int
     total_posts: int
     trending_tags: List[str]
+    category_counts: dict = {}   # question / discussion / win / resource -> public posts
+
+
+# ---------------------------------------------------------------------------
+# Learner profile summary (profile header, who to follow)
+# ---------------------------------------------------------------------------
+class UserSummary(BaseModel):
+    author: AuthorOut
+    post_count: int
+    followers: int
+    following: int
+    is_following: bool = False
+    is_me: bool = False
 
 
 # ---------------------------------------------------------------------------
