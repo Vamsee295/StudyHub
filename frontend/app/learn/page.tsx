@@ -7,6 +7,7 @@ import { clsx } from "clsx";
 import { ArrowRight, Bookmark, BookOpen, Briefcase, Code, Share2, Terminal } from "lucide-react";
 import { DailyCard } from "@/components/learn/DailyCard";
 import { BeginnerPath } from "@/components/learn/BeginnerPath";
+import { InterviewDemand } from "@/components/learn/InterviewDemand";
 import { PageHeader, Section, Progress } from "@/components/ui/Page";
 import { buttonClass } from "@/components/ui/Button";
 import { learnService, LearningSubject } from "@/lib/services/learnService";
@@ -89,6 +90,13 @@ export default function LearnPage() {
           <BeginnerPath subjects={subjects} />
         </Section>
       )}
+
+      <Section title="What interviews actually test" kicker="Real interview data">
+        <p className="-mt-2 mb-5 max-w-2xl text-[15px] text-body">
+          Topics ranked by how often they appear in the coding questions candidates report from real company interviews. Learn the top of this list well before the bottom.
+        </p>
+        <InterviewDemand />
+      </Section>
 
       <Section title="The catalogue" kicker="Subjects">
         <div role="tablist" aria-label="Filter subjects" className="no-scrollbar -mx-4 mb-5 flex gap-2 overflow-x-auto px-4 md:mx-0 md:px-0">

@@ -16,12 +16,14 @@ import {
   TerminalSquare,
 } from "lucide-react";
 import { DailyCard } from "@/components/learn/DailyCard";
-import { DashboardJourney } from "@/components/dashboard/DashboardJourney";
-import { ActivityHeatmap } from "@/components/profile/ActivityHeatmap";
 import { courseProgress } from "@/lib/learn/progress";
 import { PageHeader, Section, Progress } from "@/components/ui/Page";
 import { buttonClass } from "@/components/ui/Button";
 import { dashboardApi } from "@/lib/api/dashboard";
+import { useStudyPrefs } from "@/lib/prefs";
+import { companyWorkspaces } from "@/lib/data/companiesData";
+
+const MASS_HIRERS = Object.values(companyWorkspaces).filter((c) => c.category === "High-Volume IT");
 import { useAuth } from "@/components/providers/AuthProvider";
 import { useProfile } from "@/components/providers/ProfileProvider";
 
@@ -86,6 +88,10 @@ export default function DashboardPage() {
     subtitle: company ? `Rounds, topics and practice for ${company}.` : "Track companies to tailor your interview prep.",
   };
 
+  // "Placement updates" (hiring news) on in Settings → show the mass recruiters instead of the single target
+  const [studyPrefs] = useStudyPrefs();
+  const hiringNews = !studyPrefs.mutedNotifications.includes("PLACEMENT_UPDATE");
+
   const toggleTask = async (taskId: number) => {
     setData((prev: any) => {
       if (!prev?.today_plan?.tasks) return prev;
@@ -129,14 +135,6 @@ export default function DashboardPage() {
             </div>
             <Progress value={cont.progress} label="Lesson read" className="mt-6" />
           </div>
-
-          <DashboardJourney targetCompanies={profile?.targets?.companies ?? []} />
-
-          <Section title="Your consistency" kicker="Activity" href="/profile/progress">
-            <div className="rounded-2xl border-[1.5px] border-hair bg-card p-4 md:p-5">
-              <ActivityHeatmap weeks={26} compact />
-            </div>
-          </Section>
 
           <Section title="Your subjects" kicker="Progress" href="/learn">
             <div className="grid grid-cols-2 gap-5 sm:grid-cols-3">
@@ -195,15 +193,47 @@ export default function DashboardPage() {
           </section>
 
           <section className="rounded-2xl bg-night p-5 text-[#f5efe6]">
-            <p className="font-mono text-[12px] uppercase tracking-[0.08em] text-[#e07a52]">Upcoming target</p>
-            <h3 className="display mt-2 text-[28px]">{target.title}</h3>
-            <p className="mt-1 text-[14px] text-[#f5efe6]/70">{target.subtitle}</p>
-            <Link
-              href={company ? "/roadmaps" : "/profile/target-companies"}
-              className="label-cond mt-4 inline-flex items-center gap-1 text-[16px] text-[#e07a52] hover:underline"
-            >
-              {company ? "View roadmap" : "Choose companies"} <ArrowRight className="size-4" />
-            </Link>
+            {hiringNews ? (
+              <>
+                <p className="font-mono text-[12px] uppercase tracking-[0.08em] text-[#e07a52]">Mass hiring</p>
+                <h3 className="display mt-2 text-[28px]">Big fresher recruiters</h3>
+                <p className="mt-1 text-[14px] text-[#f5efe6]/70">They hire thousands of freshers every cycle. Know their tests before the drive opens.</p>
+                <ul className="mt-3 divide-y divide-[#f5efe6]/15">
+                  {MASS_HIRERS.map((c) => (
+                    <li key={c.id}>
+                      <Link href={`/companies?company=${c.id}`} className="group flex items-center gap-3 py-2.5">
+                        <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-[#f5efe6]/10 font-mono text-[11px] font-bold">{c.monogram}</span>
+                        <span className="min-w-0 flex-1">
+                          <span className="block text-[14.5px] font-semibold group-hover:text-[#e07a52]">{c.name}</span>
+                          <span className="block truncate text-[12px] text-[#f5efe6]/60">
+                            {c.targetRole} · {c.hiringStages[0]?.title}
+                          </span>
+                        </span>
+                        <ArrowRight className="size-4 shrink-0 text-[#e07a52] transition-transform group-hover:translate-x-0.5" aria-hidden />
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+                <p className="mt-3 text-[11.5px] text-[#f5efe6]/50">
+                  Shown because hiring news is on.{" "}
+                  <Link href="/settings" className="underline hover:text-[#e07a52]">
+                    Change
+                  </Link>
+                </p>
+              </>
+            ) : (
+              <>
+                <p className="font-mono text-[12px] uppercase tracking-[0.08em] text-[#e07a52]">Upcoming target</p>
+                <h3 className="display mt-2 text-[28px]">{target.title}</h3>
+                <p className="mt-1 text-[14px] text-[#f5efe6]/70">{target.subtitle}</p>
+                <Link
+                  href={company ? "/roadmaps" : "/profile/target-companies"}
+                  className="label-cond mt-4 inline-flex items-center gap-1 text-[16px] text-[#e07a52] hover:underline"
+                >
+                  {company ? "View roadmap" : "Choose companies"} <ArrowRight className="size-4" />
+                </Link>
+              </>
+            )}
           </section>
 
           <section>

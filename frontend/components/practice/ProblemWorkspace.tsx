@@ -1,7 +1,6 @@
 "use client";
 
 import { useEditorPrefs } from "@/lib/prefs";
-import { ASKED_IN_CAVEAT } from "@/lib/data/askedIn";
 import { useState, useCallback, useEffect, type ReactNode } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -12,7 +11,7 @@ import {
 } from "lucide-react";
 import { clsx } from "clsx";
 import Editor, { type Monaco, type OnMount } from "@monaco-editor/react";
-import { getProblem, generateStarterCode, problemOrder, categoryOf } from "@/lib/problems/problemRegistry";
+import { getProblem, generateStarterCode, problemOrder, categoryOf, askedAt } from "@/lib/problems/problemRegistry";
 import { PatternGuideCard } from "@/components/practice/PatternGuideCard";
 import { SubmissionsPanel } from "@/components/practice/SubmissionsPanel";
 import { ProblemNotes } from "@/components/practice/ProblemNotes";
@@ -624,7 +623,7 @@ export function ProblemWorkspace({
                 )}
                 {problem.companies && problem.companies.length > 0 && (
                   <button type="button" onClick={() => setPanel(panel === "companies" ? null : "companies")} aria-expanded={panel === "companies"} className={chipCls(panel === "companies")}>
-                    <Building className="size-3.5" /> Companies
+                    <Building className="size-3.5" /> Asked at {problem.companies.length}
                   </button>
                 )}
                 {problem.hint && (
@@ -644,9 +643,26 @@ export function ProblemWorkspace({
                 </div>
               )}
               {panel === "companies" && problem.companies && (
-                <p className="fade-in text-[13px] text-body" title={ASKED_IN_CAVEAT}>
-                  Topic reported at {problem.companies.join(", ")}. <span className="text-mute">{ASKED_IN_CAVEAT}</span>
-                </p>
+                <div className="fade-in flex flex-col gap-2">
+                  <p className="text-[13px] text-body">
+                    Candidates reported this question at {problem.companies.length} {problem.companies.length === 1 ? "company" : "companies"}, most often first:
+                  </p>
+                  <ul className="flex flex-wrap gap-1.5">
+                    {askedAt(problem.id).map((c) => (
+                      <li key={c.id}>
+                        <Link
+                          href={`/companies?company=${c.id}`}
+                          title={`Reported frequency ${c.frequency} of 100${c.recency === 0 ? ", reported in the last 30 days" : ""}`}
+                          className="inline-flex items-center gap-1 rounded-full border-[1.5px] border-hair px-2.5 py-0.5 text-[12.5px] text-body hover:border-ink/40 hover:text-ink"
+                        >
+                          {c.name}
+                          {c.recency === 0 && <span aria-label="reported recently" className="size-1.5 rounded-full bg-accent" />}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="text-[12px] text-mute">A dot means reported in the last 30 days. From LeetCode&apos;s company tags.</p>
+                </div>
               )}
               {panel === "pattern" && <PatternGuideCard category={categoryOf(problem)} compact />}
               {panel === "hint" && problem.hint && (

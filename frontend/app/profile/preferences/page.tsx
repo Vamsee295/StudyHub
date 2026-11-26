@@ -1,4 +1,5 @@
 "use client";
+import { PageGuide } from "@/components/ui/PageGuide";
 
 import { Avatar } from "@/components/ui/Avatar";
 import React, { useState } from "react";
@@ -94,6 +95,8 @@ export default function ProfilePreferencesPage() {
           </Link>
         </div>
       </div>
+
+      <PageGuide />
 
       {/* TOP OVERVIEW CARD */}
       <div className="bg-card border-[1.5px] border-hair rounded-2xl p-6 sm:p-8 mb-8">

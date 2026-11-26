@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowRight, Code2, Database, ExternalLink, Flame, ListChecks, type LucideIcon } from "lucide-react";
 import { PageHeader, Section } from "@/components/ui/Page";
 import { PracticePath } from "@/components/practice/PracticePath";
+import { AskedInInterviews } from "@/components/practice/AskedInInterviews";
 import { PRACTICE_RESOURCES } from "@/lib/data/patterns";
 import { practiceApi } from "@/lib/api/practice";
 import { problemStorage } from "@/lib/problems/problemStorage";
@@ -16,13 +17,14 @@ import { dateKey } from "@/lib/learn/dailyCode";
 const parseUtc = (s: string) => new Date(/[zZ]|[+-]\d\d:?\d\d$/.test(s) ? s : `${s}Z`);
 
 const totalProblems = Object.keys(problems).length;
+const askedProblems = Object.values(problems).filter((p) => p.companies?.length).length;
 
 const spaces: { href: string; title: string; body: string; tags: string[]; icon: LucideIcon; cta: string }[] = [
   {
     href: "/practice/problems",
     title: "Problems",
-    body: `${totalProblems} problems (beginner warm-ups to interview level) with tests, hints and a review after you submit.`,
-    tags: ["Arrays", "Linked lists", "DP"],
+    body: `${totalProblems} problems, from beginner warm-ups to interview level, with tests and hints. ${askedProblems} of them have been reported in real interviews.`,
+    tags: ["Arrays", "Graphs", "DP"],
     icon: ListChecks,
     cta: "Browse problems",
   },
@@ -112,6 +114,8 @@ export default function PracticeHubPage() {
         </p>
         <PracticePath />
       </Section>
+
+      <AskedInInterviews />
 
       <Section title="Practise more, free" kicker="Resources">
         <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">

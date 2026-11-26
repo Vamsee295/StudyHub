@@ -162,7 +162,7 @@ export const INTERVIEW_RESOURCES: { title: string; url: string; why: string }[] 
 /** A Mermaid diagram of a company's rounds, from its hiring stages. */
 export function stagesDiagram(stages: { stageNumber: number; title: string; duration: string }[]): string {
   const clean = (s: string) => s.replace(/"/g, "#quot;").replace(/&/g, "and");
-  const nodes = stages.map((s) => `  S${s.stageNumber}["${s.stageNumber}. ${clean(s.title)}<br/>${clean(s.duration)}"]`);
+  const nodes = stages.map((s) => `  S${s.stageNumber}["Round ${s.stageNumber} · ${clean(s.title)}<br/>${clean(s.duration)}"]`);
   const chain = stages.map((s) => `S${s.stageNumber}`).join(" --> ");
   return ["flowchart LR", ...nodes, `  ${chain} --> OFFER(["Offer"])`].join("\n");
 }

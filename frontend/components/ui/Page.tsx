@@ -2,6 +2,7 @@ import Link from "next/link";
 import { clsx } from "clsx";
 import { ArrowRight } from "lucide-react";
 import type { ReactNode } from "react";
+import { PageGuide } from "@/components/ui/PageGuide";
 
 /** Editorial page header (Mimo): mono eyebrow, big Anton title with an optional rust word block, handwritten note. */
 export function PageHeader({
@@ -18,6 +19,7 @@ export function PageHeader({
   children?: ReactNode;
 }) {
   return (
+    <>
     <header className="mb-8 flex flex-wrap items-end justify-between gap-4">
       <div className="min-w-0 flex-1">
         {eyebrow && <p className="eyebrow mb-2">{eyebrow}</p>}
@@ -34,6 +36,9 @@ export function PageHeader({
       </div>
       {children && <div className="flex items-center gap-3 max-md:w-full">{children}</div>}
     </header>
+    {/* "how this page works", for pages registered in lib/data/pageGuides.ts */}
+    <PageGuide />
+    </>
   );
 }
 

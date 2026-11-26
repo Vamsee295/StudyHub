@@ -11,17 +11,25 @@ import { HiringBasics } from "@/components/companies/HiringBasics";
 import { INTERVIEW_RESOURCES } from "@/lib/data/companyPrep";
 import { ExternalLink } from "lucide-react";
 
-import { 
-  targetCompanies, 
-  companyWorkspaces, 
-  directoryCompanies,
-} from "@/lib/data/companiesData";
+import { companyWorkspaces } from "@/lib/data/companiesData";
+import { COMPANIES, companyById, companyByName } from "@/lib/data/companyData";
+import { useProfile } from "@/components/providers/ProfileProvider";
 import { RecentCompanyLog } from "@/types";
+
+const POPULAR = ["google", "microsoft", "amazon", "tcs-prime"];
 
 export default function CompaniesPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeSegment, setActiveSegment] = useState("All Companies");
-  const [selectedCompanyId, setSelectedCompanyId] = useState("microsoft");
+  // ?company=infosys (e.g. from the dashboard) opens that workspace; client-only render, so location is readable
+  const [selectedCompanyId, setSelectedCompanyId] = useState(() => {
+    const id = new URLSearchParams(window.location.search).get("company");
+    return id && companyById(id) ? id : "google";
+  });
+  // the learner's own target companies from their profile, else popular ones
+  const { draftProfile: profile } = useProfile();
+  const mine = (profile?.targets?.companies ?? []).map(companyByName).filter((c): c is NonNullable<typeof c> => !!c);
+  const targets = [...new Map((mine.length ? mine : POPULAR.map(companyById)).filter((c) => !!c).map((c) => [c!.id, c!])).values()].slice(0, 4);
   // AppLayout renders pages only on the client, so localStorage is safe to read here.
   const [recentHistory, setRecentHistory] = useState<RecentCompanyLog[]>(() => {
     try {
@@ -33,6 +41,19 @@ export default function CompaniesPage() {
   });
 
   const workspaceRef = useRef<HTMLDivElement>(null);
+  // opening a company while searching or filtering still shows it
+  const [opened, setOpened] = useState(false);
+
+  // a ?company= link (from the dashboard, a profile, a shared URL) lands on that company
+  useEffect(() => {
+    if (!new URLSearchParams(window.location.search).get("company") || window.location.hash) return;
+    const go = () => workspaceRef.current?.scrollIntoView({ block: "start" });
+    go();
+    // diagrams above draw a moment later and push the workspace down; land on it again unless the reader scrolled
+    const y = window.scrollY;
+    const t = setTimeout(() => Math.abs(window.scrollY - y) < 4 && go(), 900);
+    return () => clearTimeout(t);
+  }, []);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -51,14 +72,11 @@ export default function CompaniesPage() {
   // Update history when selecting a new company (if it exists in directory or targets)
   const handleSelectCompany = (id: string) => {
     setSelectedCompanyId(id);
-    
-    // Scroll to workspace
-    if (workspaceRef.current) {
-      workspaceRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
+    setOpened(true);
+    // scroll once the workspace has rendered (it may not exist yet while filtering)
+    requestAnimationFrame(() => workspaceRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }));
 
-    // Add to history if valid workspace exists
-    const workspace = companyWorkspaces[id];
+    const workspace = companyById(id);
     if (workspace) {
       setRecentHistory(prev => {
         // Remove if already exists to move to top
@@ -66,7 +84,7 @@ export default function CompaniesPage() {
         const newEntry: RecentCompanyLog = {
           id: workspace.id,
           name: workspace.name,
-          targetRole: workspace.targetRole,
+          targetRole: companyWorkspaces[id]?.targetRole ?? workspace.segment,
           viewedAt: Date.now(),
         };
         const updated = [newEntry, ...filtered].slice(0, 5); // Keep last 5
@@ -83,15 +101,16 @@ export default function CompaniesPage() {
 
   // Filter Directory
   const filteredDirectory = useMemo(() => {
-    return directoryCompanies.filter(c => {
-      const matchSearch = c.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          c.roles.some(r => r.toLowerCase().includes(searchQuery.toLowerCase()));
-      const matchSegment = activeSegment === "All Companies" || c.segmentFilter === activeSegment;
+    const q = searchQuery.trim().toLowerCase();
+    return COMPANIES.filter(c => {
+      const matchSearch = !q || c.name.toLowerCase().includes(q) || c.topTopics.some(t => t.toLowerCase().includes(q));
+      const matchSegment = activeSegment === "All Companies" || c.segment === activeSegment;
       return matchSearch && matchSegment;
     });
   }, [searchQuery, activeSegment]);
 
-  const activeWorkspace = companyWorkspaces[selectedCompanyId];
+  const activeCompany = companyById(selectedCompanyId);
+  const unfiltered = searchQuery === "" && activeSegment === "All Companies";
 
 
   return (
@@ -108,21 +127,14 @@ export default function CompaniesPage() {
       {searchQuery === "" && <AskedInSection />}
 
       <div className="flex flex-col gap-10 md:gap-14">
-        {/* Only show target and workspace if search is empty, otherwise just show directory filter results */}
-        {searchQuery === "" && activeSegment === "All Companies" && (
-          <>
-            <TargetCompaniesSection
-              targets={targetCompanies}
-              selectedId={selectedCompanyId}
-              onSelect={handleSelectCompany}
-            />
+        {unfiltered && (
+          <TargetCompaniesSection targets={targets} personal={mine.length > 0} selectedId={selectedCompanyId} onSelect={handleSelectCompany} />
+        )}
 
-            {activeWorkspace && (
-              <div ref={workspaceRef} className="scroll-mt-24">
-                <CompanyWorkspace workspace={activeWorkspace} />
-              </div>
-            )}
-          </>
+        {activeCompany && (unfiltered || opened) && (
+          <div ref={workspaceRef} className="scroll-mt-24">
+            <CompanyWorkspace company={activeCompany} curated={companyWorkspaces[activeCompany.id]} />
+          </div>
         )}
 
         <CompanyDirectory

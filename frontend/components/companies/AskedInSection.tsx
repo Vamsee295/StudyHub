@@ -18,7 +18,8 @@ export function AskedInSection() {
   });
   const [selected, setSelected] = useState(linked ?? COMPANY_PROFILES[0].id);
   useEffect(() => {
-    if (linked) document.getElementById("asked-in")?.scrollIntoView({ block: "start" });
+    // only for links aimed here (…#asked-in); a plain ?company= link opens the company's workspace instead
+    if (linked && window.location.hash === "#asked-in") document.getElementById("asked-in")?.scrollIntoView({ block: "start" });
   }, [linked]);
 
   const company = COMPANY_PROFILES.find((c) => c.id === selected)!;

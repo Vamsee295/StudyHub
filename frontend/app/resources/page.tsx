@@ -1,4 +1,5 @@
 "use client";
+import { PageGuide } from "@/components/ui/PageGuide";
 
 import { useState, useEffect, useMemo } from "react";
 
@@ -114,6 +115,10 @@ export default function ResourcesPage() {
   return (
     <div className="relative mx-auto flex w-full min-w-0 max-w-[1440px] flex-col gap-10 pb-24 md:gap-14">
       <ResourcesHeader savedCount={store.stats.saved} recentCount={store.stats.recent} completedCount={store.stats.completed} />
+      {/* the page's gap-10 spaces it; drop the guide's own bottom margin */}
+      <div className="-mb-8 md:-mb-12">
+        <PageGuide />
+      </div>
 
       <ResourcesSearchFilter
         searchQuery={searchQuery}

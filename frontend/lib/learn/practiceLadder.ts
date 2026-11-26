@@ -33,6 +33,12 @@ const MAP: [RegExp, ProblemCategory[]][] = [
   [/^dsa\/(dp-introduction|one-dimensional-dp|knapsack-01|two-dimensional-dp|longest-increasing-subsequence)$/, ["Dynamic Programming"]],
 ];
 
+/** The problem topics a lesson practises, or [] when none fits. */
+export function categoriesFor(course: string, lesson: string): ProblemCategory[] {
+  const key = `${course}/${lesson}`;
+  return MAP.find(([re]) => re.test(key))?.[1] ?? [];
+}
+
 /** Small stable hash so lessons sharing a topic get different problems. */
 function seed(s: string) {
   let h = 0;
@@ -54,14 +60,13 @@ export interface Ladder {
 
 /** Two easy, two medium and one hard problem for the lesson, or null when no problem topic fits. */
 export function ladderFor(course: string, lesson: string): Ladder | null {
-  const key = `${course}/${lesson}`;
-  const categories = MAP.find(([re]) => re.test(key))?.[1];
-  if (!categories) return null;
+  const categories = categoriesFor(course, lesson);
+  if (!categories.length) return null;
   const all = Object.values(problems).filter((p) => categories.includes(categoryOf(p)));
   // warm-up ladder problems first (they're the gentlest), then by id for a stable order
   const sorted = (d: ProblemDefinition["difficulty"]) =>
     all.filter((p) => p.difficulty === d).sort((a, b) => (a.ladder ?? 1e9) - (b.ladder ?? 1e9) || a.id.localeCompare(b.id));
-  const s = seed(key);
+  const s = seed(`${course}/${lesson}`);
   const ladder = { categories, easy: pick(sorted("Easy"), 2, s), medium: pick(sorted("Medium"), 2, s), hard: pick(sorted("Hard"), 1, s) };
   return ladder.easy.length + ladder.medium.length + ladder.hard.length ? ladder : null;
 }

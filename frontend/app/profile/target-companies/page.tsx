@@ -1,99 +1,50 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
+import { ArrowRight, Building2, Plus, Search, Trash2, X } from "lucide-react";
 import { PageHeader } from "@/components/ui/Page";
 import { buttonClass } from "@/components/ui/Button";
-import { Building2, Plus, Trash2, ExternalLink, Search } from "lucide-react";
-import { targetCompanies, directoryCompanies } from "@/lib/data/companiesData";
 import { ProfileNavTabs } from "@/components/profile/ProfileNavTabs";
-import { CompanyTarget } from "@/types";
 import { useProfile } from "@/components/providers/ProfileProvider";
+import { CompanyLogo } from "@/components/companies/CompanyLogo";
+import { COMPANIES, SEGMENTS, companyByName } from "@/lib/data/companyData";
+
+const LEGACY_KEY = "pathward_tracked_companies_list"; // older builds kept the list here as objects with a name
 
 export default function TargetCompaniesPage() {
   const { draftProfile, updateDraft, saveProfile } = useProfile();
-  // Start from this browser's saved list, else from the targets in your profile (set during onboarding).
-  // Client-only render (AppLayout), so localStorage is readable on first render.
-  const [trackedList, setTrackedList] = useState<CompanyTarget[]>(() => {
+  // Company names, as stored in the profile. Client-only render (AppLayout), so localStorage is readable here.
+  const [names, setNames] = useState<string[]>(() => {
     try {
-      const saved = localStorage.getItem("pathward_tracked_companies_list");
-      if (saved) return JSON.parse(saved);
+      const saved = JSON.parse(localStorage.getItem(LEGACY_KEY) ?? "null");
+      if (Array.isArray(saved)) return saved.map((x: string | { name: string }) => (typeof x === "string" ? x : x.name));
     } catch {}
-    return (draftProfile.targets?.companies ?? []).map(
-      (name): CompanyTarget =>
-        targetCompanies.find((t) => t.name.toLowerCase() === name.toLowerCase()) ?? {
-          id: name.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
-          name,
-          monogram: name.slice(0, 2).toUpperCase(),
-          segment: "Product MNC",
-          tier: "Tier-1",
-          roles: ["Software Engineer"],
-        }
-    );
+    return draftProfile.targets?.companies ?? [];
   });
-  const [searchFilter, setSearchFilter] = useState("");
-  const [addModalOpen, setAddModalOpen] = useState(false);
+  const [filter, setFilter] = useState("");
+  const [adding, setAdding] = useState(false);
+  const [pick, setPick] = useState("");
 
-  const saveTrackedList = (updated: CompanyTarget[]) => {
-    setTrackedList(updated);
-    if (typeof window !== "undefined") {
-      localStorage.setItem("pathward_tracked_companies_list", JSON.stringify(updated));
-      // Also sync company names to user profile
-      updateDraft({
-        targets: {
-          ...draftProfile.targets,
-          companies: updated.map(c => c.name)
-        }
-      });
-      saveProfile().catch(console.error);
-    }
+  const save = (next: string[]) => {
+    setNames(next);
+    localStorage.setItem(LEGACY_KEY, JSON.stringify(next));
+    updateDraft({ targets: { ...draftProfile.targets, companies: next } });
+    saveProfile().catch(console.error);
   };
 
-  const handleUntrack = (id: string) => {
-    const updated = trackedList.filter(c => c.id !== id);
-    saveTrackedList(updated);
-  };
-
-  const handleAddCompany = (companyId: string) => {
-    if (!companyId) return;
-    const exists = trackedList.some(c => c.id === companyId);
-    if (exists) return;
-
-    // Find in directory or fallback
-    const found = directoryCompanies.find(d => d.id === companyId);
-    const newTarget: CompanyTarget = found ? {
-      id: found.id,
-      name: found.name,
-      monogram: found.monogram,
-      segment: (found.segment as CompanyTarget["segment"]) || "Product MNC",
-      tier: found.difficulty || "Tier-1",
-      roles: found.roles,
-    } : {
-      id: companyId,
-      name: companyId,
-      monogram: companyId.slice(0, 2).toUpperCase(),
-      segment: "Product MNC",
-      tier: "Tier-1",
-      roles: ["Software Engineer"],
-    };
-
-    saveTrackedList([...trackedList, newTarget]);
-    setAddModalOpen(false);
-  };
-
-  const filtered = trackedList.filter(c => 
-    c.name.toLowerCase().includes(searchFilter.toLowerCase()) ||
-    c.roles.some(r => r.toLowerCase().includes(searchFilter.toLowerCase()))
-  );
-
+  const tracked = names.map((name) => ({ name, entry: companyByName(name) }));
+  const trackedIds = new Set(tracked.map((t) => t.entry?.id).filter(Boolean));
+  const shown = tracked.filter((t) => t.name.toLowerCase().includes(filter.toLowerCase()));
+  const q = pick.trim().toLowerCase();
+  const choices = COMPANIES.filter((c) => !trackedIds.has(c.id) && (!q || c.name.toLowerCase().includes(q)));
 
   return (
     <div className="w-full min-w-0">
-      {/* SECTION TABS */}
       <ProfileNavTabs />
 
       <PageHeader eyebrow="Profile" title="Target" hl="companies">
-        <button onClick={() => setAddModalOpen(true)} className={buttonClass("primary", "sm")}>
+        <button onClick={() => setAdding(true)} className={buttonClass("primary", "sm")}>
           <Plus className="size-4" /> Add company
         </button>
         <Link href="/companies" className={buttonClass("secondary", "sm")}>
@@ -101,140 +52,133 @@ export default function TargetCompaniesPage() {
         </Link>
       </PageHeader>
 
-      {/* SEARCH AND FILTER BAR */}
-      <div className="flex items-center justify-between gap-4 mb-6">
-        <div className="relative flex-1 max-w-md">
-          <Search className="w-4 h-4 text-mute absolute left-3 top-1/2 -translate-y-1/2" />
-          <input
-            type="text"
-            placeholder="Search tracked companies or roles..."
-            value={searchFilter}
-            onChange={(e) => setSearchFilter(e.target.value)}
-            className="field w-full pl-9 text-xs"
-          />
-        </div>
-        <span className="text-xs font-mono text-body">
-          Showing {filtered.length} of {trackedList.length} companies
-        </span>
-      </div>
-
-      {/* COMPANIES LIST */}
-      {filtered.length === 0 ? (
-        <div className="bg-card border-[1.5px] border-hair rounded-2xl p-12 text-center">
-          <Building2 className="w-12 h-12 text-ink/30 mx-auto mb-3" />
-          <h3 className="text-base font-bold text-ink">No companies tracked yet</h3>
-          <p className="text-xs text-body max-w-sm mx-auto mt-1 mb-4">
-            Select organizations from the StudyHub directory to track hiring requirements and test pattern alignment.
-          </p>
-          <button
-            onClick={() => setAddModalOpen(true)}
-            className="btn-primary text-xs h-9 px-4 inline-flex items-center gap-2 cursor-pointer"
-          >
-            <Plus className="w-3.5 h-3.5" /> Add First Company
-          </button>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          {filtered.map((company) => (
-            <div
-              key={company.id}
-              className="bg-card border-[1.5px] border-hair hover:border-line rounded-2xl p-6 transition-all flex flex-col justify-between group"
-            >
-              <div>
-                <div className="flex items-start justify-between gap-4 mb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-11 h-11 rounded-xl bg-card-2 border-[1.5px] border-hair text-ink font-bold text-lg flex items-center justify-center shrink-0">
-                      {company.monogram}
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <h3 className="text-base font-bold text-ink">{company.name}</h3>
-                        <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-card-2 text-body font-semibold">
-                          {company.tier}
-                        </span>
-                      </div>
-                      <span className="text-xs text-body font-medium">
-                        {company.segment}
-                      </span>
-                    </div>
-                  </div>
-
-                  <button
-                    onClick={() => handleUntrack(company.id)}
-                    title="Remove from tracked list"
-                    className="p-1.5 rounded-lg text-mute hover:text-danger hover:bg-danger-soft transition-colors cursor-pointer"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </div>
-
-                {/* Roles and Recruiter Highlight */}
-                <div className="space-y-3">
-                  <div>
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-mute block mb-1">
-                      Targeted Positions
-                    </span>
-                    <div className="flex flex-wrap gap-1.5">
-                      {company.roles.map(r => (
-                        <span key={r} className="text-xs px-2.5 py-0.5 rounded-md bg-paper-2 text-ink font-medium border-[1.5px] border-hair/60">
-                          {r}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-6 flex items-center justify-end gap-4 border-t-[1.5px] border-hair pt-4">
-                <Link
-                  href="/companies"
-                  className="btn-secondary text-xs h-8 px-3 shrink-0 flex items-center gap-1.5"
-                >
-                  Workspace <ExternalLink className="w-3 h-3" />
-                </Link>
-              </div>
-            </div>
-          ))}
+      {names.length > 0 && (
+        <div className="mb-6 flex items-center justify-between gap-4">
+          <label className="relative max-w-md flex-1">
+            <span className="sr-only">Search your companies</span>
+            <Search aria-hidden className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-mute" />
+            <input type="text" placeholder="Search your companies" value={filter} onChange={(e) => setFilter(e.target.value)} className="field w-full pl-9" />
+          </label>
+          <span className="font-mono text-xs text-body">
+            {shown.length} of {names.length}
+          </span>
         </div>
       )}
 
-      {/* ADD COMPANY POPUP SELECTOR */}
-      {addModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
-          <div className="bg-card rounded-2xl border-[1.5px] border-hair shadow-2xl p-6 w-full max-w-md">
-            <h3 className="text-base font-bold text-ink mb-1">Add Company to Target Tracker</h3>
-            <p className="text-xs text-mute mb-4">Pick a company to track.</p>
-
-            <div className="space-y-3 max-h-60 overflow-y-auto pr-1">
-              {directoryCompanies
-                .filter(d => !trackedList.some(t => t.id === d.id))
-                .map((comp) => (
-                  <button
-                    key={comp.id}
-                    onClick={() => handleAddCompany(comp.id)}
-                    className="w-full flex items-center justify-between p-3 rounded-xl border-[1.5px] border-hair hover:border-accent hover:bg-accent-soft/50 transition-all text-left group cursor-pointer"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-card-2 font-bold flex items-center justify-center text-xs text-body">
-                        {comp.monogram}
-                      </div>
-                      <div>
-                        <div className="text-xs font-bold text-ink group-hover:text-accent-ink">{comp.name}</div>
-                        <div className="text-[11px] text-mute">{comp.segment} • {comp.difficulty}</div>
-                      </div>
+      {names.length === 0 ? (
+        <div className="rounded-2xl border-[1.5px] border-hair bg-card p-12 text-center">
+          <Building2 className="mx-auto mb-3 size-12 text-ink/30" />
+          <h3 className="text-base font-bold text-ink">No companies yet</h3>
+          <p className="mx-auto mb-4 mt-1 max-w-sm text-[13px] text-body">
+            Pick the companies you&apos;re aiming for. Their questions, rounds and openings then show up first on Companies and your dashboard.
+          </p>
+          <button onClick={() => setAdding(true)} className={buttonClass("primary", "sm")}>
+            <Plus className="size-4" /> Add your first company
+          </button>
+        </div>
+      ) : (
+        <ul className="grid grid-cols-1 gap-5 md:grid-cols-2">
+          {shown.map(({ name, entry }) => (
+            <li key={name} className="flex flex-col gap-4 rounded-2xl border-[1.5px] border-hair bg-card p-5">
+              <div className="flex items-start gap-3">
+                <CompanyLogo company={entry ?? { name, facts: {} }} size={44} />
+                <div className="min-w-0 flex-1">
+                  <h3 className="text-base font-bold text-ink">{entry?.name ?? name}</h3>
+                  <p className="text-[13px] text-body">{entry ? [entry.segment, entry.facts.hq].filter(Boolean).join(" · ") : "Not in our directory yet"}</p>
+                </div>
+                <button
+                  onClick={() => save(names.filter((n) => n !== name))}
+                  aria-label={`Stop tracking ${name}`}
+                  title="Remove"
+                  className="rounded-lg p-1.5 text-mute transition-colors hover:bg-danger-soft hover:text-danger"
+                >
+                  <Trash2 className="size-4" />
+                </button>
+              </div>
+              {entry ? (
+                <>
+                  <dl className="grid grid-cols-2 gap-2">
+                    <div className="rounded-lg border-[1.5px] border-hair bg-paper p-2.5">
+                      <dt className="text-[10px] font-semibold uppercase tracking-wider text-mute">Questions reported</dt>
+                      <dd className="font-mono text-[15px] font-semibold">{entry.counts.total.toLocaleString()}</dd>
                     </div>
-                    <Plus className="w-4 h-4 text-mute group-hover:text-accent-ink" />
-                  </button>
-                ))}
-            </div>
+                    <div className="rounded-lg border-[1.5px] border-hair bg-paper p-2.5">
+                      <dt className="text-[10px] font-semibold uppercase tracking-wider text-mute">Last 3 months</dt>
+                      <dd className="font-mono text-[15px] font-semibold">{entry.counts.d90}</dd>
+                    </div>
+                  </dl>
+                  <div className="flex flex-wrap gap-1.5">
+                    {entry.topTopics.slice(0, 4).map((t) => (
+                      <span key={t} className="rounded-md border-[1.5px] border-hair bg-paper-2 px-2 py-0.5 text-[12px] text-body">
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+                  <Link
+                    href={`/companies?company=${entry.id}`}
+                    className="mt-auto inline-flex items-center gap-1.5 self-end font-mono text-[12px] uppercase tracking-wider text-accent-ink hover:underline"
+                  >
+                    Questions and rounds <ArrowRight className="size-3.5" />
+                  </Link>
+                </>
+              ) : (
+                <p className="text-[13px] text-mute">We don&apos;t have interview data for this company yet. It still counts as one of your targets.</p>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
 
-            <div className="flex justify-end gap-2 mt-6 pt-4 border-t border-hair">
-              <button
-                onClick={() => setAddModalOpen(false)}
-                className="btn-secondary text-xs h-8 px-4"
-              >
-                Cancel
+      {adding && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={(e) => e.target === e.currentTarget && setAdding(false)}>
+          <div role="dialog" aria-modal="true" aria-labelledby="add-company" className="flex max-h-[85dvh] w-full max-w-lg flex-col rounded-2xl border-[1.5px] border-hair bg-card shadow-2xl">
+            <div className="flex items-center gap-2 border-b-[1.5px] border-hair px-5 py-4">
+              <h3 id="add-company" className="text-base font-bold text-ink">
+                Add a company
+              </h3>
+              <button onClick={() => setAdding(false)} aria-label="Close" className="ml-auto rounded-full p-1 text-mute hover:text-ink">
+                <X className="size-4" />
               </button>
+            </div>
+            <div className="px-5 pt-4">
+              <label className="relative block">
+                <span className="sr-only">Search companies</span>
+                <Search aria-hidden className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-mute" />
+                <input autoFocus type="text" placeholder={`Search ${COMPANIES.length} companies`} value={pick} onChange={(e) => setPick(e.target.value)} className="field w-full pl-9" />
+              </label>
+            </div>
+            <div className="flex-1 overflow-y-auto px-5 pb-5 pt-3">
+              {choices.length === 0 && <p className="py-6 text-center text-[13px] text-mute">No company matches &ldquo;{pick}&rdquo;.</p>}
+              {SEGMENTS.map((seg) => {
+                const group = choices.filter((c) => c.segment === seg);
+                if (!group.length) return null;
+                return (
+                  <div key={seg} className="mt-3 first:mt-0">
+                    <p className="eyebrow mb-1.5">{seg}</p>
+                    <ul className="flex flex-col gap-1.5">
+                      {group.map((c) => (
+                        <li key={c.id}>
+                          <button
+                            onClick={() => {
+                              save([...names, c.name]);
+                              setPick("");
+                              setAdding(false);
+                            }}
+                            className="group flex w-full items-center gap-3 rounded-xl border-[1.5px] border-hair p-2.5 text-left transition-colors hover:border-accent"
+                          >
+                            <CompanyLogo company={c} size={32} />
+                            <span className="min-w-0 flex-1">
+                              <span className="block text-[14px] font-semibold text-ink group-hover:text-accent-ink">{c.name}</span>
+                              <span className="block text-[12px] text-mute">{c.counts.total.toLocaleString()} questions reported</span>
+                            </span>
+                            <Plus className="size-4 text-mute group-hover:text-accent-ink" />
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>

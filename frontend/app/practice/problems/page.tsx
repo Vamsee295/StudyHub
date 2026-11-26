@@ -7,7 +7,6 @@ import { clsx } from "clsx";
 
 import { CATEGORY_ORDER, categoryOf, problemOrder, problems as registryProblems, type ProblemCategory } from "@/lib/problems/problemRegistry";
 import { problemStorage, ProblemStatus } from "@/lib/problems/problemStorage";
-import { ASKED_IN_CAVEAT, COMPANY_PROFILES } from "@/lib/data/askedIn";
 import { PageHeader } from "@/components/ui/Page";
 import { Badge } from "@/components/ui/Badge";
 import { PatternGuideCard } from "@/components/practice/PatternGuideCard";
@@ -18,7 +17,8 @@ export default function ProblemBankPage() {
   const [activeDifficulty, setActiveDifficulty] = useState<"all" | "easy" | "medium" | "hard">("all");
   // client-only render (AppLayout), so local statuses are readable on first render
   const [statuses, setStatuses] = useState<Record<string, ProblemStatus>>(() => problemStorage.getAllStatuses());
-  const [activeCompany, setActiveCompany] = useState<string>("all");
+  // ?company=Google (from a company's page) opens on that company's questions
+  const [activeCompany, setActiveCompany] = useState<string>(() => new URLSearchParams(window.location.search).get("company") ?? "all");
   // ?topic=Arrays (from the Practice path) opens on that topic; client-only render, so location is readable
   const [activeTopic, setActiveTopic] = useState<ProblemCategory | "all">(() => {
     const t = new URLSearchParams(window.location.search).get("topic");
@@ -134,7 +134,11 @@ export default function ProblemBankPage() {
     ["medium", "Medium", mediumCount],
     ["hard", "Hard", hardCount],
   ] as const;
-  const companyChips = COMPANY_PROFILES.map((c) => ({ name: c.name, count: allProblems.filter((p) => p.companies.includes(c.name)).length })).filter((c) => c.count > 0);
+  // every company that asks at least one of these problems, the ones asking the most first
+  const companyCounts = new Map<string, number>();
+  for (const p of allProblems) for (const c of p.companies) companyCounts.set(c, (companyCounts.get(c) ?? 0) + 1);
+  const companyChips = [...companyCounts].map(([name, count]) => ({ name, count })).sort((a, b) => b.count - a.count);
+  const askedCount = allProblems.filter((p) => p.companies.length > 0).length;
 
   return (
     <>
@@ -203,9 +207,9 @@ export default function ProblemBankPage() {
               ))}
             </div>
             <p className="mt-2 text-[12px] text-mute">
-              Company tags mean the company is reported to test the topic, not this exact question. {ASKED_IN_CAVEAT}{" "}
-              <Link href="/companies#asked-in" className="underline hover:text-ink">
-                Sources
+              {askedCount} of these problems have been reported in real interviews. A company tag means candidates reported this exact question there, from LeetCode&apos;s company tags.{" "}
+              <Link href="/companies" className="underline hover:text-ink">
+                See each company
               </Link>
             </p>
           </div>
@@ -222,7 +226,7 @@ export default function ProblemBankPage() {
               <th className="py-2.5 font-medium">Problem</th>
               <th className="w-24 py-2.5 font-medium">Level</th>
               <th className="hidden py-2.5 font-medium md:table-cell">Topics</th>
-              <th className="hidden py-2.5 font-medium lg:table-cell">Reported at</th>
+              <th className="hidden py-2.5 font-medium lg:table-cell">Asked at</th>
               <th className="w-8 py-2.5">
                 <span className="sr-only">Open</span>
               </th>
@@ -308,8 +312,8 @@ export default function ProblemBankPage() {
                         <span className="text-[13px] text-body">{prob.topics.join(" · ")}</span>
                       </td>
                       <td className="hidden py-3 pr-4 lg:table-cell">
-                        <span title={ASKED_IN_CAVEAT} className="text-[13px] text-mute">
-                          {prob.companies.join(", ") || "–"}
+                        <span title={prob.companies.join(", ")} className="text-[13px] text-mute">
+                          {prob.companies.length === 0 ? "–" : prob.companies.slice(0, 2).join(", ") + (prob.companies.length > 2 ? ` +${prob.companies.length - 2}` : "")}
                         </span>
                       </td>
                       <td className="py-3 pr-1 text-right">

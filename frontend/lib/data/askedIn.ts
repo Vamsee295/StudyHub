@@ -115,13 +115,4 @@ export function dsaModulesForTopics(topics: string[]): string[] {
   return [...found];
 }
 
-/** Company names reported to cover a DSA problem, from its topics. Falls back to whole-course coverage. */
-export function companiesForProblem(topics: string[]): string[] {
-  const mods = dsaModulesForTopics(topics);
-  const list = mods.length
-    ? COMPANY_PROFILES.filter((p) => mods.some((m) => covers(p, "dsa", m)))
-    : COMPANY_PROFILES.filter((p) => p.areas.some((a) => a.course === "dsa" && a.modules === "*"));
-  return list.map((p) => p.name);
-}
-
 export { DSA_CORE };

@@ -43,6 +43,7 @@ import { StudyHubLogo } from "@/components/ui/StudyHubLogo";
 import { SearchLauncher } from "@/components/learn/SearchLauncher";
 import { applyTheme } from "@/lib/theme";
 import { AskDialog } from "@/components/ui/AskDialog";
+import { WorkspaceGuideButton } from "@/components/ui/PageGuide";
 
 type NavItem = readonly [href: string, label: string, icon: LucideIcon];
 
@@ -456,6 +457,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       <AskDialog />
       {/* not in the code editors, where it would cover Run and Submit */}
       {(!isWorkspace || isLesson) && <Assistant />}
+      {isWorkspace && !isLesson && <WorkspaceGuideButton />}
 
       {/* ── Phone tab bar (hidden in full-screen workspaces) ── */}
       {!isWorkspace && (

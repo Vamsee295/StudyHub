@@ -1,6 +1,7 @@
 import { Search } from "lucide-react";
 import { clsx } from "clsx";
 import { PageHeader } from "@/components/ui/Page";
+import { SEGMENTS } from "@/lib/data/companyData";
 
 interface CompaniesHeaderProps {
   searchQuery: string;
@@ -9,7 +10,7 @@ interface CompaniesHeaderProps {
   setActiveSegment: (val: string) => void;
 }
 
-const segments = ["All Companies", "Product", "Service & IT", "High-Growth Startup", "Mass Hiring / NQT"];
+const segments = ["All Companies", ...SEGMENTS];
 
 export function CompaniesHeader({ searchQuery, setSearchQuery, activeSegment, setActiveSegment }: CompaniesHeaderProps) {
   return (
@@ -21,7 +22,7 @@ export function CompaniesHeader({ searchQuery, setSearchQuery, activeSegment, se
           <Search aria-hidden className="absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-mute" />
           <input
             type="text"
-            placeholder="Search companies, roles, or topics"
+            placeholder="Search companies or topics"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="field w-full pl-10"

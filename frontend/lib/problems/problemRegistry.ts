@@ -1,8 +1,8 @@
 import { FunctionSignature, TestCase } from "../execution/executionTypes";
 import { dsaCatalog } from "../data/dsaCatalog";
-import { companiesForProblem } from "../data/askedIn";
 import ladder from "./ladder.json";
 import core from "./core.json";
+import askedBy from "./askedBy.json";
 
 /** Topic sections of the problem set, in the order a beginner should learn them. */
 export const CATEGORY_ORDER = [
@@ -806,8 +806,24 @@ export const problems: Record<string, ProblemDefinition> = {
 // Core topic-wise set, generated with tested expected outputs by scripts/build-core-problems.py.
 Object.assign(problems, core as unknown as Record<string, ProblemDefinition>);
 
-// "Reported in interviews at" tags come from module-level research in lib/data/askedIn.ts.
-for (const p of Object.values(problems)) p.companies = companiesForProblem(p.topics);
+// Which companies ask each problem: real interview reports (LeetCode company tags), joined by title in
+// scripts/import-company-data.py. Most frequently reported first.
+export interface AskedAt {
+  id: string; // company id, as on /companies
+  name: string;
+  frequency: number; // 0–100, relative to that company's most-asked question
+  recency: 0 | 1 | 2 | 3; // most recently reported: last 30 days, 3 months, 6 months, older
+}
+const ASKED = askedBy as unknown as { companies: [string, string][]; problems: Record<string, [number, number, number][]> };
+export function askedAt(problemId: string): AskedAt[] {
+  return (ASKED.problems[problemId] ?? []).map(([ci, frequency, recency]) => ({
+    id: ASKED.companies[ci][0],
+    name: ASKED.companies[ci][1],
+    frequency,
+    recency: recency as AskedAt["recency"],
+  }));
+}
+for (const p of Object.values(problems)) p.companies = askedAt(p.id).map((c) => c.name);
 
 // Warm-ups from exercism: no company tags, they are fundamentals practice, not interview reports.
 // Song lyrics, text generation and trivia don't build problem-solving skill, so they're left out.
@@ -850,7 +866,7 @@ export const getProblem = (id: string): ProblemDefinition | null => {
     title: catalogItem.title,
     difficulty: diffCap,
     topics: catalogItem.tags || [catalogItem.primaryTopic],
-    companies: companiesForProblem(catalogItem.tags || [catalogItem.primaryTopic]),
+    companies: [],
     description: [
       catalogItem.whyThisProblem,
       `Solve the ${catalogItem.title} problem using optimal ${catalogItem.primaryTopic} algorithms.`

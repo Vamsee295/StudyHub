@@ -1,0 +1,5238 @@
+{
+ "asOf": "2026-10-21",
+ "source": "https://github.com/liquidslr/leetcode-company-wise-problems",
+ "companies": [
+  {
+   "id": "google",
+   "name": "Google",
+   "segment": "Product",
+   "careers": "https://www.google.com/about/careers/applications/",
+   "jobs": null,
+   "facts": {
+    "summary": "Google LLC is an American multinational technology corporation focused on information technology, online advertising, search engine technology, email, cloud computing, software, quantum computing, e-commerce, consumer electronics, and artificial intelligence (AI). It has been referred to as \"the most powerful company in the world\" by the BBC, and is one of the world's most valuable brands.",
+    "wikipedia": "https://en.wikipedia.org/wiki/Google",
+    "founded": "1998",
+    "hq": "Mountain View",
+    "employees": 187000,
+    "employeesYear": "2022",
+    "website": "https://about.google/",
+    "logo": "Google 2026 logo.svg"
+   },
+   "counts": {
+    "total": 2324,
+    "easy": 158,
+    "medium": 264,
+    "hard": 84,
+    "d30": 154,
+    "d90": 452
+   },
+   "topTopics": [
+    "Array",
+    "String",
+    "Hash Table",
+    "Math",
+    "Dynamic Programming",
+    "Sorting"
+   ]
+  },
+  {
+   "id": "microsoft",
+   "name": "Microsoft",
+   "segment": "Product",
+   "careers": "https://careers.microsoft.com/",
+   "jobs": null,
+   "facts": {
+    "summary": "Microsoft Corporation is an American multinational technology conglomerate headquartered in Redmond, Washington. The company became influential in the rise of personal computers through software like Windows and has since expanded into areas such as Internet services, cloud computing, artificial intelligence, and video gaming, among others.",
+    "wikipedia": "https://en.wikipedia.org/wiki/Microsoft",
+    "founded": "1975",
+    "hq": "Redmond",
+    "employees": 228000,
+    "employeesYear": "2024",
+    "website": "https://www.microsoft.com/",
+    "logo": "Microsoft logo (2012).svg"
+   },
+   "counts": {
+    "total": 1371,
+    "easy": 119,
+    "medium": 194,
+    "hard": 47,
+    "d30": 47,
+    "d90": 207
+   },
+   "topTopics": [
+    "Array",
+    "String",
+    "Hash Table",
+    "Dynamic Programming",
+    "Two Pointers",
+    "Math"
+   ]
+  },
+  {
+   "id": "amazon",
+   "name": "Amazon",
+   "segment": "Product",
+   "careers": "https://www.amazon.jobs/",
+   "jobs": null,
+   "facts": {
+    "summary": "Amazon.com, Inc. (doing business as Amazon) is an American multinational conglomerate engaged in e-commerce, retail, cloud computing, online advertising, digital streaming, entertainment, supermarkets, and artificial intelligence.",
+    "wikipedia": "https://en.wikipedia.org/wiki/Amazon_%28company%29",
+    "founded": "1994",
+    "hq": "Seattle",
+    "employees": 1500000,
+    "employeesYear": "2023",
+    "website": "https://www.amazon.com/",
+    "logo": "Amazon 2024.svg"
+   },
+   "counts": {
+    "total": 2015,
+    "easy": 142,
+    "medium": 281,
+    "hard": 74,
+    "d30": 114,
+    "d90": 443
+   },
+   "topTopics": [
+    "Array",
+    "Hash Table",
+    "String",
+    "Sorting",
+    "Dynamic Programming",
+    "Math"
+   ]
+  },
+  {
+   "id": "meta",
+   "name": "Meta",
+   "segment": "Product",
+   "careers": "https://www.metacareers.com/",
+   "jobs": null,
+   "facts": {
+    "summary": "Meta Platforms, Inc. (doing business as Meta), headquartered in Menlo Park, California, is an American multinational technology company and is one of the Big Tech companies.",
+    "wikipedia": "https://en.wikipedia.org/wiki/Meta_Platforms",
+    "founded": "2004",
+    "hq": "Menlo Park",
+    "employees": 58604,
+    "employeesYear": "2020",
+    "website": "https://www.meta.com/",
+    "logo": "Meta Platforms Inc. logo.svg"
+   },
+   "counts": {
+    "total": 1396,
+    "easy": 98,
+    "medium": 200,
+    "hard": 43,
+    "d30": 27,
+    "d90": 162
+   },
+   "topTopics": [
+    "Array",
+    "String",
+    "Hash Table",
+    "Two Pointers",
+    "Depth-First Search",
+    "Math"
+   ]
+  },
+  {
+   "id": "apple",
+   "name": "Apple",
+   "segment": "Product",
+   "careers": "https://www.apple.com/careers/",
+   "jobs": null,
+   "facts": {
+    "summary": "Apple Inc. is an American multinational technology company headquartered in Cupertino, California, in Silicon Valley, and known for consumer electronics, software and online services.",
+    "wikipedia": "https://en.wikipedia.org/wiki/Apple_Inc.",
+    "founded": "1976",
+    "hq": "Cupertino",
+    "employees": 164000,
+    "employeesYear": "2022",
+    "website": "https://apple.com/at/",
+    "logo": "Apple logo black.svg"
+   },
+   "counts": {
+    "total": 282,
+    "easy": 68,
+    "medium": 170,
+    "hard": 44,
+    "d30": 4,
+    "d90": 26
+   },
+   "topTopics": [
+    "Array",
+    "String",
+    "Hash Table",
+    "Two Pointers",
+    "Dynamic Programming",
+    "Depth-First Search"
+   ]
+  },
+  {
+   "id": "adobe",
+   "name": "Adobe",
+   "segment": "Product",
+   "careers": "https://careers.adobe.com/",
+   "jobs": null,
+   "facts": {
+    "summary": "Adobe Inc. ( ə-DOH-bee), formerly Adobe Systems Incorporated, is an American multinational computer software company based in San Jose, California.",
+    "wikipedia": "https://en.wikipedia.org/wiki/Adobe_Inc.",
+    "founded": "1982",
+    "hq": "San Jose",
+    "employees": 25988,
+    "employeesYear": "2021",
+    "website": "https://www.adobe.com/",
+    "logo": "Adobe Corporate wordmark.svg"
+   },
+   "counts": {
+    "total": 147,
+    "easy": 31,
+    "medium": 92,
+    "hard": 24,
+    "d30": 2,
+    "d90": 8
+   },
+   "topTopics": [
+    "Array",
+    "String",
+    "Hash Table",
+    "Dynamic Programming",
+    "Math",
+    "Depth-First Search"
+   ]
+  },
+  {
+   "id": "oracle",
+   "name": "Oracle",
+   "segment": "Product",
+   "careers": "https://careers.oracle.com/",
+   "jobs": null,
+   "facts": {
+    "summary": "Oracle Corporation is an American multinational technology company headquartered in Austin, Texas. Co-founded in Santa Clara, California, in 1977 by Bob Miner, Ed Oates, and current chairman of the board and chief technology officer Larry Ellison, Oracle is among the 50 largest companies in the world by market cap, and ranked 52nd on the Forbes Global 2000 as of 2026.",
+    "wikipedia": "https://en.wikipedia.org/wiki/Oracle_Corporation",
+    "founded": "1977",
+    "hq": "Austin",
+    "employees": 162000,
+    "employeesYear": "2025",
+    "website": "https://www.oracle.com/",
+    "logo": "Oracle logo.svg"
+   },
+   "counts": {
+    "total": 282,
+    "easy": 51,
+    "medium": 182,
+    "hard": 49,
+    "d30": 3,
+    "d90": 10
+   },
+   "topTopics": [
+    "Array",
+    "String",
+    "Hash Table",
+    "Dynamic Programming",
+    "Depth-First Search",
+    "Sorting"
+   ]
+  },
+  {
+   "id": "salesforce",
+   "name": "Salesforce",
+   "segment": "Product",
+   "careers": "https://careers.salesforce.com/",
+   "jobs": null,
+   "facts": {
+    "summary": "Salesforce, Inc. is an American software company headquartered in San Francisco, California; the company develops customer relationship management (CRM) software and market it through a subscription business model (software as a service, SaaS).",
+    "wikipedia": "https://en.wikipedia.org/wiki/Salesforce",
+    "founded": "1999",
+    "hq": "Salesforce Tower",
+    "employees": 35000,
+    "employeesYear": "2019",
+    "website": "https://www.salesforce.com",
+    "logo": "Salesforce.com logo.svg"
+   },
+   "counts": {
+    "total": 196,
+    "easy": 25,
+    "medium": 120,
+    "hard": 51,
+    "d30": 2,
+    "d90": 11
+   },
+   "topTopics": [
+    "Array",
+    "String",
+    "Hash Table",
+    "Dynamic Programming",
+    "Sorting",
+    "Depth-First Search"
+   ]
+  },
+  {
+   "id": "atlassian",
+   "name": "Atlassian",
+   "segment": "Product",
+   "careers": "https://www.atlassian.com/company/careers",
+   "jobs": null,
+   "facts": {
+    "summary": "Atlassian () is a multinational proprietary software company headquartered in Sydney, Australia, that specialises in collaboration tools designed primarily for software development and project management. Founded in Sydney in 2002, the company has over 12,000 employees across 14 countries.",
+    "wikipedia": "https://en.wikipedia.org/wiki/Atlassian",
+    "founded": "2002",
+    "hq": "341 George Street, Sydney",
+    "employees": 13241,
+    "employeesYear": "2026",
+    "website": "https://www.atlassian.com/",
+    "logo": "Atlassian-logo.svg"
+   },
+   "counts": {
+    "total": 57,
+    "easy": 5,
+    "medium": 37,
+    "hard": 15,
+    "d30": 0,
+    "d90": 2
+   },
+   "topTopics": [
+    "Array",
+    "Hash Table",
+    "String",
+    "Sorting",
+    "Dynamic Programming",
+    "Design"
+   ]
+  },
+  {
+   "id": "uber",
+   "name": "Uber",
+   "segment": "Product",
+   "careers": "https://www.uber.com/careers/",
+   "jobs": null,
+   "facts": {
+    "summary": "Uber Technologies, Inc. is an American multinational transportation company that provides ride-hailing services, courier services, food delivery, and freight transport.",
+    "wikipedia": "https://en.wikipedia.org/wiki/Uber",
+    "founded": "2009",
+    "hq": "San Francisco",
+    "employees": 12000,
+    "employeesYear": "2017",
+    "website": "https://www.uber.com/",
+    "logo": "Uber logo 2018.svg"
+   },
+   "counts": {
+    "total": 336,
+    "easy": 36,
+    "medium": 177,
+    "hard": 87,
+    "d30": 1,
+    "d90": 5
+   },
+   "topTopics": [
+    "Array",
+    "String",
+    "Hash Table",
+    "Breadth-First Search",
+    "Dynamic Programming",
+    "Depth-First Search"
+   ]
+  },
+  {
+   "id": "linkedin",
+   "name": "LinkedIn",
+   "segment": "Product",
+   "careers": "https://careers.linkedin.com/",
+   "jobs": null,
+   "facts": {
+    "summary": "LinkedIn is an American business and employment-oriented social networking service by Microsoft. The platform is primarily used for professional networking and career development, as it allows job seekers to post their CVs and employers to post their job listings.",
+    "wikipedia": "https://en.wikipedia.org/wiki/LinkedIn",
+    "founded": "2002",
+    "hq": "Sunnyvale",
+    "website": "https://www.linkedin.com",
+    "logo": "LinkedIn 2021.svg"
+   },
+   "counts": {
+    "total": 171,
+    "easy": 25,
+    "medium": 110,
+    "hard": 36,
+    "d30": 6,
+    "d90": 15
+   },
+   "topTopics": [
+    "Array",
+    "Hash Table",
+    "String",
+    "Depth-First Search",
+    "Breadth-First Search",
+    "Tree"
+   ]
+  },
+  {
+   "id": "intuit",
+   "name": "Intuit",
+   "segment": "Product",
+   "careers": "https://jobs.intuit.com/",
+   "jobs": null,
+   "facts": {
+    "summary": "Intuit Inc. is an American financial technology company that develops financial software and services, including TurboTax and QuickBooks.",
+    "wikipedia": "https://en.wikipedia.org/wiki/Intuit",
+    "founded": "1983",
+    "hq": "Mountain View",
+    "website": "https://www.intuit.com/",
+    "logo": "Intuit logo 2022.svg"
+   },
+   "counts": {
+    "total": 56,
+    "easy": 7,
+    "medium": 30,
+    "hard": 19,
+    "d30": 0,
+    "d90": 4
+   },
+   "topTopics": [
+    "Array",
+    "Dynamic Programming",
+    "String",
+    "Hash Table",
+    "Breadth-First Search",
+    "Sorting"
+   ]
+  },
+  {
+   "id": "cisco",
+   "name": "Cisco",
+   "segment": "Product",
+   "careers": "https://jobs.cisco.com/",
+   "jobs": null,
+   "facts": {
+    "summary": "Cisco Systems, Inc., doing business as Cisco (, SISS-koh), is an American multinational technology conglomerate corporation that develops, manufactures, and sells hardware, software, telecommunications equipment, and other high-technology services and products focused on networking, cybersecurity and AI. Cisco specializes in specific tech markets, such as the Internet of things (IoT), domain security, videoconferencing, and energy management, including products such as Webex, OpenDNS, Jabber, and Jasper. The company is headquartered in San Jose, California, and, as of June 29, 2026, has a market capitalization of $461 billion.",
+    "wikipedia": "https://en.wikipedia.org/wiki/Cisco",
+    "founded": "1984",
+    "hq": "San Jose",
+    "employees": 86200,
+    "employeesYear": "2025",
+    "website": "https://www.cisco.com/",
+    "logo": "Cisco logo blue 2016.svg"
+   },
+   "counts": {
+    "total": 77,
+    "easy": 18,
+    "medium": 45,
+    "hard": 14,
+    "d30": 0,
+    "d90": 1
+   },
+   "topTopics": [
+    "Array",
+    "String",
+    "Hash Table",
+    "Two Pointers",
+    "Math",
+    "Dynamic Programming"
+   ]
+  },
+  {
+   "id": "nvidia",
+   "name": "Nvidia",
+   "segment": "Product",
+   "careers": "https://www.nvidia.com/en-us/about-nvidia/careers/",
+   "jobs": null,
+   "facts": {
+    "summary": "Nvidia Corporation ( en-VID-ee-ə) is an American multinational technology company headquartered in Santa Clara, California. The company develops graphics processing units (GPUs), systems on chips (SoCs), and application programming interfaces (APIs) for gaming, data science, high-performance computing, artificial intelligence (AI) hardware, and mobile and automotive applications.",
+    "wikipedia": "https://en.wikipedia.org/wiki/Nvidia",
+    "founded": "1993",
+    "hq": "Santa Clara",
+    "employees": 42000,
+    "employeesYear": "2026",
+    "website": "https://www.nvidia.com/",
+    "logo": "NVIDIA logo.svg"
+   },
+   "counts": {
+    "total": 131,
+    "easy": 30,
+    "medium": 85,
+    "hard": 16,
+    "d30": 2,
+    "d90": 10
+   },
+   "topTopics": [
+    "Array",
+    "String",
+    "Hash Table",
+    "Sorting",
+    "Two Pointers",
+    "Dynamic Programming"
+   ]
+  },
+  {
+   "id": "qualcomm",
+   "name": "Qualcomm",
+   "segment": "Product",
+   "careers": "https://careers.qualcomm.com/",
+   "jobs": null,
+   "facts": {
+    "summary": "Qualcomm Incorporated () is an American multinational technology corporation headquartered in San Diego, California. The company develops and designs technologies for global communications and computing, including next-generation mobile networks, smart devices, and semiconductors — such as mobile processors and artificial intelligence chips.",
+    "wikipedia": "https://en.wikipedia.org/wiki/Qualcomm",
+    "founded": "1985",
+    "hq": "San Diego",
+    "employees": 45000,
+    "employeesYear": "2021",
+    "website": "https://www.qualcomm.com/",
+    "logo": "Qualcomm-Logo.svg"
+   },
+   "counts": {
+    "total": 52,
+    "easy": 23,
+    "medium": 22,
+    "hard": 7,
+    "d30": 0,
+    "d90": 0
+   },
+   "topTopics": [
+    "Array",
+    "Two Pointers",
+    "String",
+    "Linked List",
+    "Math",
+    "Dynamic Programming"
+   ]
+  },
+  {
+   "id": "samsung",
+   "name": "Samsung",
+   "segment": "Product",
+   "careers": "https://www.samsung.com/in/about-us/careers/",
+   "jobs": null,
+   "facts": {
+    "summary": "Samsung Electronics Co., Ltd. (SEC; stylized as SΛMSUNG; Korean: 삼성전자) is a South Korean multinational consumer electronics and semiconductor corporation founded in 1969 and headquartered in Yeongtong District, Suwon, South Korea.",
+    "wikipedia": "https://en.wikipedia.org/wiki/Samsung_Electronics",
+    "founded": "1969",
+    "hq": "Suwon",
+    "employees": 109541,
+    "employeesYear": "2021",
+    "website": "https://samsung.com/",
+    "logo": "Samsung wordmark.svg"
+   },
+   "counts": {
+    "total": 55,
+    "easy": 8,
+    "medium": 30,
+    "hard": 17,
+    "d30": 0,
+    "d90": 0
+   },
+   "topTopics": [
+    "Array",
+    "Dynamic Programming",
+    "Two Pointers",
+    "Sorting",
+    "Breadth-First Search",
+    "Heap (Priority Queue)"
+   ]
+  },
+  {
+   "id": "walmart",
+   "name": "Walmart Global Tech",
+   "segment": "Product",
+   "careers": "https://careers.walmart.com/",
+   "jobs": null,
+   "facts": {
+    "summary": "Walmart Inc. is an American multinational omnichannel retail corporation that operates a chain of hypermarkets (also called supercenters), discount department stores, grocery stores, pharmacies, gas stations, and e-commerce platforms in the United States and 19 other countries.",
+    "wikipedia": "https://en.wikipedia.org/wiki/Walmart",
+    "founded": "1962",
+    "hq": "Bentonville",
+    "employees": 2300000,
+    "employeesYear": "2021",
+    "website": "https://www.walmart.com/",
+    "logo": "Walmart logo (2025).svg"
+   },
+   "counts": {
+    "total": 135,
+    "easy": 21,
+    "medium": 90,
+    "hard": 24,
+    "d30": 2,
+    "d90": 6
+   },
+   "topTopics": [
+    "Array",
+    "String",
+    "Hash Table",
+    "Sorting",
+    "Two Pointers",
+    "Dynamic Programming"
+   ]
+  },
+  {
+   "id": "servicenow",
+   "name": "ServiceNow",
+   "segment": "Product",
+   "careers": "https://careers.servicenow.com/",
+   "jobs": null,
+   "facts": {
+    "summary": "ServiceNow, Inc. is an American software company that supplies cloud computing platforms for the creation and management of automated business workflows.",
+    "wikipedia": "https://en.wikipedia.org/wiki/ServiceNow",
+    "founded": "2004",
+    "hq": "Santa Clara",
+    "employees": 10371,
+    "employeesYear": "2019",
+    "website": "https://www.servicenow.com",
+    "logo": "ServiceNow logo.svg"
+   },
+   "counts": {
+    "total": 65,
+    "easy": 6,
+    "medium": 45,
+    "hard": 14,
+    "d30": 0,
+    "d90": 1
+   },
+   "topTopics": [
+    "Array",
+    "Hash Table",
+    "String",
+    "Dynamic Programming",
+    "Two Pointers",
+    "Breadth-First Search"
+   ]
+  },
+  {
+   "id": "sap",
+   "name": "SAP",
+   "segment": "Product",
+   "careers": "https://jobs.sap.com/",
+   "jobs": null,
+   "facts": {
+    "summary": "SAP SE (; German pronunciation: [ɛsʔaːˈpeː] ) is a German multinational software company based in Walldorf, Baden-Württemberg, that is the world's largest vendor of enterprise software. In June 2025, it was the largest European company by market capitalization, as well as one of the 30 most valuable publicly traded companies in the world.",
+    "wikipedia": "https://en.wikipedia.org/wiki/SAP",
+    "founded": "1972",
+    "hq": "Walldorf",
+    "employees": 106043,
+    "employeesYear": "2023",
+    "website": "https://www.sap.com/",
+    "logo": "SAP 2011 logo.svg"
+   },
+   "counts": {
+    "total": 34,
+    "easy": 13,
+    "medium": 16,
+    "hard": 5,
+    "d30": 0,
+    "d90": 0
+   },
+   "topTopics": [
+    "Array",
+    "Hash Table",
+    "String",
+    "Math",
+    "Dynamic Programming",
+    "Two Pointers"
+   ]
+  },
+  {
+   "id": "nutanix",
+   "name": "Nutanix",
+   "segment": "Product",
+   "careers": "https://www.nutanix.com/company/careers",
+   "jobs": null,
+   "facts": {
+    "summary": "Nutanix, Inc. is an American cloud computing company that develops software for datacenters and hybrid multi-cloud deployments.",
+    "wikipedia": "https://en.wikipedia.org/wiki/Nutanix",
+    "founded": "2009",
+    "hq": "San Jose",
+    "website": "http://www.nutanix.com/",
+    "logo": "NutanixLogo.png"
+   },
+   "counts": {
+    "total": 70,
+    "easy": 3,
+    "medium": 49,
+    "hard": 18,
+    "d30": 0,
+    "d90": 4
+   },
+   "topTopics": [
+    "Array",
+    "Hash Table",
+    "Depth-First Search",
+    "String",
+    "Dynamic Programming",
+    "Greedy"
+   ]
+  },
+  {
+   "id": "zoho",
+   "name": "Zoho",
+   "segment": "Product",
+   "careers": "https://www.zoho.com/careers/",
+   "jobs": null,
+   "facts": {
+    "summary": "Zoho Corporation is a technology company founded by Sridhar Vembu. It is based in Austin, Texas and Chennai, India.",
+    "wikipedia": "https://en.wikipedia.org/wiki/Zoho_Corporation",
+    "founded": "1996",
+    "hq": "India",
+    "website": "https://www.zoho.com/",
+    "logo": "ZOHO logo 2023.svg"
+   },
+   "counts": {
+    "total": 144,
+    "easy": 53,
+    "medium": 77,
+    "hard": 14,
+    "d30": 0,
+    "d90": 3
+   },
+   "topTopics": [
+    "Array",
+    "String",
+    "Hash Table",
+    "Dynamic Programming",
+    "Math",
+    "Sorting"
+   ]
+  },
+  {
+   "id": "sprinklr",
+   "name": "Sprinklr",
+   "segment": "Product",
+   "careers": "https://www.sprinklr.com/careers/",
+   "jobs": null,
+   "facts": {
+    "summary": "Sprinklr is an American software company that develops a software as a service (SaaS) customer experience management (CXM) platform. The company's software, also called Sprinklr, combines different applications for social media marketing, social advertising, content management, collaboration, employee advocacy, customer care, social media research, and social media monitoring.",
+    "wikipedia": "https://en.wikipedia.org/wiki/Sprinklr",
+    "founded": "2009",
+    "hq": "New York City",
+    "website": "http://www.sprinklr.com"
+   },
+   "counts": {
+    "total": 45,
+    "easy": 1,
+    "medium": 22,
+    "hard": 22,
+    "d30": 0,
+    "d90": 1
+   },
+   "topTopics": [
+    "Array",
+    "Dynamic Programming",
+    "String",
+    "Hash Table",
+    "Stack",
+    "Tree"
+   ]
+  },
+  {
+   "id": "media-net",
+   "name": "Media.net",
+   "segment": "Product",
+   "careers": "https://careers.media.net/",
+   "jobs": null,
+   "facts": {
+    "summary": "Media.net is a contextual advertising network. On August 21, 2016, Miteno Communication Technology (also known as Shuzhi.AI), a Chinese consortium, acquired Media.net for US$900 million.",
+    "wikipedia": "https://en.wikipedia.org/wiki/Media.net",
+    "founded": "2010",
+    "hq": "Dubai",
+    "website": "https://www.media.net"
+   },
+   "counts": {
+    "total": 39,
+    "easy": 5,
+    "medium": 18,
+    "hard": 16,
+    "d30": 2,
+    "d90": 2
+   },
+   "topTopics": [
+    "Array",
+    "Dynamic Programming",
+    "Depth-First Search",
+    "Hash Table",
+    "Bit Manipulation",
+    "Math"
+   ]
+  },
+  {
+   "id": "goldman-sachs",
+   "name": "Goldman Sachs",
+   "segment": "FinTech & Trading",
+   "careers": "https://www.goldmansachs.com/careers/",
+   "jobs": null,
+   "facts": {
+    "summary": "The Goldman Sachs Group, Inc. ( SAKS) is an American multinational investment bank and financial services company.",
+    "wikipedia": "https://en.wikipedia.org/wiki/Goldman_Sachs",
+    "founded": "1869",
+    "hq": "200 West Street",
+    "employees": 34400,
+    "employeesYear": "2016",
+    "website": "https://www.goldmansachs.com/",
+    "logo": "Goldman Sachs logo.svg"
+   },
+   "counts": {
+    "total": 246,
+    "easy": 42,
+    "medium": 159,
+    "hard": 45,
+    "d30": 2,
+    "d90": 18
+   },
+   "topTopics": [
+    "Array",
+    "String",
+    "Dynamic Programming",
+    "Hash Table",
+    "Sorting",
+    "Binary Search"
+   ]
+  },
+  {
+   "id": "morgan-stanley",
+   "name": "Morgan Stanley",
+   "segment": "FinTech & Trading",
+   "careers": "https://www.morganstanley.com/careers",
+   "jobs": null,
+   "facts": {
+    "summary": "Morgan Stanley is an American multinational banking institution headquartered in New York City. It is the sixth-largest bank in the United States and the world's eighth-largest bank by market capitalization as of 2026.",
+    "wikipedia": "https://en.wikipedia.org/wiki/Morgan_Stanley",
+    "founded": "2008",
+    "hq": "New York City",
+    "employees": 80006,
+    "employeesYear": "2023",
+    "website": "https://morganstanley.com",
+    "logo": "Morgan Stanley Logo 2024.png"
+   },
+   "counts": {
+    "total": 60,
+    "easy": 14,
+    "medium": 37,
+    "hard": 9,
+    "d30": 0,
+    "d90": 3
+   },
+   "topTopics": [
+    "Array",
+    "Dynamic Programming",
+    "Hash Table",
+    "String",
+    "Sorting",
+    "Two Pointers"
+   ]
+  },
+  {
+   "id": "de-shaw",
+   "name": "D. E. Shaw",
+   "segment": "FinTech & Trading",
+   "careers": "https://www.deshawindia.com/careers",
+   "jobs": null,
+   "facts": {
+    "summary": "D. E. Shaw & Co., L.P. is a multinational investment management firm founded in 1988 by David E. Shaw and based in New York City. The company is known for developing mathematical models and computer programs to exploit anomalies in financial markets.",
+    "wikipedia": "https://en.wikipedia.org/wiki/D._E._Shaw_%26_Co.",
+    "founded": "1988",
+    "hq": "New York City",
+    "employees": 1300,
+    "website": "https://www.deshaw.com",
+    "logo": "D. E. Shaw & Co. logo.png"
+   },
+   "counts": {
+    "total": 107,
+    "easy": 15,
+    "medium": 63,
+    "hard": 29,
+    "d30": 0,
+    "d90": 7
+   },
+   "topTopics": [
+    "Array",
+    "Dynamic Programming",
+    "String",
+    "Hash Table",
+    "Sorting",
+    "Greedy"
+   ]
+  },
+  {
+   "id": "arcesium",
+   "name": "Arcesium",
+   "segment": "FinTech & Trading",
+   "careers": "https://www.arcesium.com/careers",
+   "jobs": null,
+   "facts": {
+    "summary": "Arcesium is a financial technology and software-enabled services company that provides post-trade operations and enterprise data management tools to asset managers, hedge funds, banks, and allocators. Its cloud-native products operate on a Software-as-Service (SaaS) model.",
+    "wikipedia": "https://en.wikipedia.org/wiki/Arcesium",
+    "founded": "2015",
+    "employees": 700,
+    "employeesYear": "2018",
+    "website": "https://www.arcesium.com/aboutus.html"
+   },
+   "counts": {
+    "total": 14,
+    "easy": 0,
+    "medium": 8,
+    "hard": 6,
+    "d30": 0,
+    "d90": 3
+   },
+   "topTopics": [
+    "Array",
+    "Binary Search",
+    "Dynamic Programming",
+    "Sorting",
+    "Two Pointers",
+    "Greedy"
+   ]
+  },
+  {
+   "id": "paypal",
+   "name": "PayPal",
+   "segment": "FinTech & Trading",
+   "careers": "https://careers.pypl.com/",
+   "jobs": null,
+   "facts": {
+    "summary": "PayPal Holdings, Inc. is an American multinational financial technology company operating an online payments system in the majority of countries that support online money transfers; it serves as an electronic alternative to traditional paper methods such as checks and money orders.",
+    "wikipedia": "https://en.wikipedia.org/wiki/PayPal",
+    "founded": "1998",
+    "website": "https://www.paypal.com/",
+    "logo": "PayPal 2024.svg"
+   },
+   "counts": {
+    "total": 93,
+    "easy": 16,
+    "medium": 63,
+    "hard": 14,
+    "d30": 0,
+    "d90": 1
+   },
+   "topTopics": [
+    "Array",
+    "String",
+    "Hash Table",
+    "Sorting",
+    "Dynamic Programming",
+    "Binary Search"
+   ]
+  },
+  {
+   "id": "visa",
+   "name": "Visa",
+   "segment": "FinTech & Trading",
+   "careers": "https://corporate.visa.com/en/jobs/",
+   "jobs": null,
+   "facts": {
+    "summary": "Visa Inc. () is an American multinational payment card services corporation headquartered in San Francisco, California, United States.",
+    "wikipedia": "https://en.wikipedia.org/wiki/Visa_Inc.",
+    "founded": "1958",
+    "hq": "Mission Rock",
+    "employees": 31600,
+    "employeesYear": "2024",
+    "website": "https://corporate.visa.com/",
+    "logo": "Visa Inc. logo (2021–present).svg"
+   },
+   "counts": {
+    "total": 150,
+    "easy": 33,
+    "medium": 92,
+    "hard": 25,
+    "d30": 1,
+    "d90": 7
+   },
+   "topTopics": [
+    "Array",
+    "String",
+    "Hash Table",
+    "Dynamic Programming",
+    "Sorting",
+    "Two Pointers"
+   ]
+  },
+  {
+   "id": "american-express",
+   "name": "American Express",
+   "segment": "FinTech & Trading",
+   "careers": "https://www.americanexpress.com/en-us/careers/",
+   "jobs": null,
+   "facts": {
+    "summary": "American Express Company (Amex) is an American bank holding company and multinational financial services corporation that specializes in payment cards. It is headquartered at 200 Vesey Street, also known as American Express Tower, in the Battery Park City neighborhood of Lower Manhattan; in 2026, the company announced that it would develop and be the sole occupant of the new 2 World Trade Center skyscraper in the nearby World Trade Center complex.",
+    "wikipedia": "https://en.wikipedia.org/wiki/American_Express",
+    "founded": "1850",
+    "hq": "New York City",
+    "employees": 64000,
+    "employeesYear": "2021",
+    "website": "https://www.americanexpress.com/",
+    "logo": "American Express logo (2018).svg"
+   },
+   "counts": {
+    "total": 28,
+    "easy": 8,
+    "medium": 14,
+    "hard": 6,
+    "d30": 0,
+    "d90": 3
+   },
+   "topTopics": [
+    "Array",
+    "Hash Table",
+    "String",
+    "Sorting",
+    "Math",
+    "Dynamic Programming"
+   ]
+  },
+  {
+   "id": "bloomberg",
+   "name": "Bloomberg",
+   "segment": "FinTech & Trading",
+   "careers": "https://www.bloomberg.com/company/careers/",
+   "jobs": null,
+   "facts": {
+    "summary": "Bloomberg L.P. is an American privately held financial, software, data, and media company headquartered in Midtown Manhattan, New York City. It was co-founded by Michael Bloomberg in 1981, with Thomas Secunda, Duncan MacMillan, Charles Zegar, and a 12% ownership investment by Merrill Lynch.",
+    "wikipedia": "https://en.wikipedia.org/wiki/Bloomberg_L.P.",
+    "founded": "1981",
+    "hq": "731 Lexington Avenue",
+    "employees": 20000,
+    "employeesYear": "2019",
+    "website": "https://www.bloomberg.com/",
+    "logo": "Bloomberg News logo.svg"
+   },
+   "counts": {
+    "total": 1239,
+    "easy": 114,
+    "medium": 192,
+    "hard": 35,
+    "d30": 24,
+    "d90": 180
+   },
+   "topTopics": [
+    "Array",
+    "String",
+    "Hash Table",
+    "Math",
+    "Two Pointers",
+    "Dynamic Programming"
+   ]
+  },
+  {
+   "id": "flipkart",
+   "name": "Flipkart",
+   "segment": "Startup",
+   "careers": "https://www.flipkartcareers.com/",
+   "jobs": null,
+   "facts": {
+    "summary": "Flipkart Internet Private Limited is an Indian e-commerce company, headquartered in Bengaluru. The company initially focused on online book sales before expanding into other product categories such as consumer electronics, fashion, home essentials, groceries, and lifestyle products.",
+    "wikipedia": "https://en.wikipedia.org/wiki/Flipkart",
+    "founded": "2007",
+    "hq": "Bengaluru",
+    "website": "https://www.flipkart.com/",
+    "logo": "Flipkart logo (2026).svg"
+   },
+   "counts": {
+    "total": 93,
+    "easy": 6,
+    "medium": 61,
+    "hard": 26,
+    "d30": 1,
+    "d90": 5
+   },
+   "topTopics": [
+    "Array",
+    "Dynamic Programming",
+    "Depth-First Search",
+    "Hash Table",
+    "Breadth-First Search",
+    "Sorting"
+   ]
+  },
+  {
+   "id": "phonepe",
+   "name": "PhonePe",
+   "segment": "Startup",
+   "careers": "https://www.phonepe.com/careers/",
+   "jobs": null,
+   "facts": {
+    "summary": "PhonePe is an Indian digital payments and financial services company, headquartered in Bengaluru. It was founded in December 2015, by Sameer Nigam, Rahul Chari and Burzin Engineer.",
+    "wikipedia": "https://en.wikipedia.org/wiki/PhonePe",
+    "hq": "Bengaluru",
+    "website": "https://www.phonepe.com",
+    "logo": "PhonePe Logo.svg"
+   },
+   "counts": {
+    "total": 92,
+    "easy": 3,
+    "medium": 52,
+    "hard": 37,
+    "d30": 0,
+    "d90": 5
+   },
+   "topTopics": [
+    "Array",
+    "Dynamic Programming",
+    "Hash Table",
+    "String",
+    "Breadth-First Search",
+    "Sorting"
+   ]
+  },
+  {
+   "id": "swiggy",
+   "name": "Swiggy",
+   "segment": "Startup",
+   "careers": "https://careers.swiggy.com/",
+   "jobs": null,
+   "facts": {
+    "summary": "Swiggy is an Indian online food ordering and delivery company, headquartered in Bengaluru. As of 2025, it operates food delivery services in more than 700 Indian cities, and quick-commerce services under the name Instamart in 100 cities.",
+    "wikipedia": "https://en.wikipedia.org/wiki/Swiggy",
+    "founded": "2014",
+    "hq": "Bengaluru",
+    "website": "https://www.swiggy.com",
+    "logo": "Swiggy Logo 2024.webp"
+   },
+   "counts": {
+    "total": 35,
+    "easy": 6,
+    "medium": 24,
+    "hard": 5,
+    "d30": 0,
+    "d90": 1
+   },
+   "topTopics": [
+    "Array",
+    "Hash Table",
+    "Dynamic Programming",
+    "Sorting",
+    "String",
+    "Math"
+   ]
+  },
+  {
+   "id": "zomato",
+   "name": "Zomato",
+   "segment": "Startup",
+   "careers": "https://www.zomato.com/careers",
+   "jobs": null,
+   "facts": {
+    "summary": "Zomato is an Indian online food ordering and delivery service owned by Eternal Limited. Created in 2008 by Deepinder Goyal and Pankaj Chaddah, it began as a restaurant aggregator, providing menu information, user reviews, and recommendations, and expanding to more than 20 countries by 2015.",
+    "wikipedia": "https://en.wikipedia.org/wiki/Zomato",
+    "founded": "2008",
+    "hq": "New Delhi",
+    "website": "https://www.zomato.com/",
+    "logo": "Zomato logo.png"
+   },
+   "counts": {
+    "total": 30,
+    "easy": 2,
+    "medium": 18,
+    "hard": 10,
+    "d30": 1,
+    "d90": 2
+   },
+   "topTopics": [
+    "Array",
+    "Hash Table",
+    "Matrix",
+    "Breadth-First Search",
+    "Sorting",
+    "Dynamic Programming"
+   ]
+  },
+  {
+   "id": "razorpay",
+   "name": "Razorpay",
+   "segment": "Startup",
+   "careers": "https://razorpay.com/jobs/",
+   "jobs": null,
+   "facts": {},
+   "counts": {
+    "total": 11,
+    "easy": 1,
+    "medium": 8,
+    "hard": 2,
+    "d30": 0,
+    "d90": 0
+   },
+   "topTopics": [
+    "Array",
+    "Binary Search",
+    "Hash Table",
+    "Sorting",
+    "Math",
+    "Counting"
+   ]
+  },
+  {
+   "id": "meesho",
+   "name": "Meesho",
+   "segment": "Startup",
+   "careers": "https://www.meesho.io/jobs",
+   "jobs": {
+    "type": "lever",
+    "slug": "meesho"
+   },
+   "facts": {
+    "summary": "Meesho Limited (short for Meri shop, transl. My shop) is an Indian e-commerce company, headquartered in Bengaluru.",
+    "wikipedia": "https://en.wikipedia.org/wiki/Meesho",
+    "hq": "Bengaluru",
+    "website": "https://meesho.com",
+    "logo": "Meesho logo.png"
+   },
+   "counts": {
+    "total": 36,
+    "easy": 1,
+    "medium": 19,
+    "hard": 16,
+    "d30": 1,
+    "d90": 1
+   },
+   "topTopics": [
+    "Array",
+    "Dynamic Programming",
+    "Math",
+    "Hash Table",
+    "Binary Search",
+    "Bit Manipulation"
+   ]
+  },
+  {
+   "id": "paytm",
+   "name": "Paytm",
+   "segment": "Startup",
+   "careers": "https://paytm.com/careers",
+   "jobs": {
+    "type": "lever",
+    "slug": "paytm"
+   },
+   "facts": {
+    "summary": "PayTM (short for Pay Through Mobile) is an Indian multinational financial technology company, that specializes in digital payments and financial services, based in Noida. PayTM was founded in 2010 by Vijay Shekhar Sharma under One97 Communications.",
+    "wikipedia": "https://en.wikipedia.org/wiki/Paytm",
+    "founded": "2010",
+    "hq": "Noida",
+    "website": "https://www.paytm.com"
+   },
+   "counts": {
+    "total": 25,
+    "easy": 5,
+    "medium": 17,
+    "hard": 3,
+    "d30": 0,
+    "d90": 1
+   },
+   "topTopics": [
+    "Array",
+    "Hash Table",
+    "Stack",
+    "String",
+    "Greedy",
+    "Two Pointers"
+   ]
+  },
+  {
+   "id": "juspay",
+   "name": "Juspay",
+   "segment": "Startup",
+   "careers": "https://juspay.io/careers",
+   "jobs": null,
+   "facts": {},
+   "counts": {
+    "total": 19,
+    "easy": 1,
+    "medium": 13,
+    "hard": 5,
+    "d30": 0,
+    "d90": 4
+   },
+   "topTopics": [
+    "Array",
+    "Hash Table",
+    "Depth-First Search",
+    "Graph Theory",
+    "Greedy",
+    "Breadth-First Search"
+   ]
+  },
+  {
+   "id": "makemytrip",
+   "name": "MakeMyTrip",
+   "segment": "Startup",
+   "careers": "https://careers.makemytrip.com/",
+   "jobs": null,
+   "facts": {
+    "summary": "MakeMyTrip Limited is an Indian online travel company, headquartered in Gurgaon. Founded in 2000, it operates an online travel-booking platform for travel services such as airline tickets, hotel reservations, holiday packages, and rail and bus tickets.",
+    "wikipedia": "https://en.wikipedia.org/wiki/MakeMyTrip",
+    "founded": "2000",
+    "hq": "Gurgaon",
+    "employees": 3426,
+    "website": "https://www.makemytrip.com/",
+    "logo": "Makemytrip logo.svg"
+   },
+   "counts": {
+    "total": 13,
+    "easy": 0,
+    "medium": 10,
+    "hard": 3,
+    "d30": 0,
+    "d90": 0
+   },
+   "topTopics": [
+    "Array",
+    "Hash Table",
+    "Dynamic Programming",
+    "String",
+    "Sliding Window",
+    "Sorting"
+   ]
+  },
+  {
+   "id": "tcs-prime",
+   "name": "TCS",
+   "segment": "Service & IT",
+   "careers": "https://www.tcs.com/careers",
+   "jobs": null,
+   "facts": {
+    "summary": "Tata Consultancy Services Limited (TCS) is an Indian multinational technology company specialising in information technology services and consulting. Headquartered in Mumbai, it is a part of the Tata Group and operates in 150 locations across 46 countries.",
+    "wikipedia": "https://en.wikipedia.org/wiki/Tata_Consultancy_Services",
+    "founded": "1968",
+    "hq": "Mumbai",
+    "employees": 600000,
+    "website": "https://www.tcs.com/",
+    "logo": "Tcs-logo-1.svg"
+   },
+   "counts": {
+    "total": 264,
+    "easy": 119,
+    "medium": 121,
+    "hard": 24,
+    "d30": 2,
+    "d90": 39
+   },
+   "topTopics": [
+    "Array",
+    "Hash Table",
+    "String",
+    "Math",
+    "Sorting",
+    "Two Pointers"
+   ]
+  },
+  {
+   "id": "infosys",
+   "name": "Infosys",
+   "segment": "Service & IT",
+   "careers": "https://www.infosys.com/careers/",
+   "jobs": null,
+   "facts": {
+    "summary": "Infosys Limited is an Indian multinational technology company that offers information technology, business consulting, and outsourcing services. Founded in 1981 by seven engineers, the company is headquartered in Bengaluru and considered one of the Big Six Indian IT companies.",
+    "wikipedia": "https://en.wikipedia.org/wiki/Infosys",
+    "founded": "1981",
+    "hq": "Bengaluru",
+    "employees": 200364,
+    "employeesYear": "2017",
+    "website": "https://www.infosys.com/",
+    "logo": "Infosys logo.svg"
+   },
+   "counts": {
+    "total": 254,
+    "easy": 55,
+    "medium": 138,
+    "hard": 61,
+    "d30": 4,
+    "d90": 77
+   },
+   "topTopics": [
+    "Array",
+    "Dynamic Programming",
+    "String",
+    "Hash Table",
+    "Math",
+    "Greedy"
+   ]
+  },
+  {
+   "id": "wipro",
+   "name": "Wipro",
+   "segment": "Service & IT",
+   "careers": "https://careers.wipro.com/",
+   "jobs": null,
+   "facts": {
+    "summary": "Wipro Limited ( ) is an Indian multinational technology company based in Bengaluru. It provides information technology, consulting and business process services, and is one of India's Big Six IT services companies.",
+    "wikipedia": "https://en.wikipedia.org/wiki/Wipro",
+    "founded": "1945",
+    "hq": "Bengaluru",
+    "website": "https://www.wipro.com/",
+    "logo": "Wipro new logo.svg"
+   },
+   "counts": {
+    "total": 18,
+    "easy": 15,
+    "medium": 3,
+    "hard": 0,
+    "d30": 0,
+    "d90": 1
+   },
+   "topTopics": [
+    "Array",
+    "String",
+    "Hash Table",
+    "Sorting",
+    "Math",
+    "Two Pointers"
+   ]
+  },
+  {
+   "id": "accenture",
+   "name": "Accenture",
+   "segment": "Service & IT",
+   "careers": "https://www.accenture.com/in-en/careers",
+   "jobs": null,
+   "facts": {
+    "summary": "Accenture plc is a technology consulting company headquartered in Dublin, Ireland. Founded in 1989 in the United States, Accenture provides information technology and management consulting services across 120 countries globally.",
+    "wikipedia": "https://en.wikipedia.org/wiki/Accenture",
+    "founded": "2001",
+    "hq": "Dublin",
+    "employees": 779000,
+    "employeesYear": "2025",
+    "website": "https://www.accenture.com/",
+    "logo": "Accenture.svg"
+   },
+   "counts": {
+    "total": 101,
+    "easy": 47,
+    "medium": 43,
+    "hard": 11,
+    "d30": 1,
+    "d90": 6
+   },
+   "topTopics": [
+    "Array",
+    "String",
+    "Hash Table",
+    "Two Pointers",
+    "Math",
+    "Sorting"
+   ]
+  },
+  {
+   "id": "cognizant",
+   "name": "Cognizant",
+   "segment": "Service & IT",
+   "careers": "https://careers.cognizant.com/",
+   "jobs": null,
+   "facts": {
+    "summary": "Cognizant Technology Solutions Corporation is an American domiciled Indian multinational information technology services and outsourcing company, headquartered in Teaneck, New Jersey. It was originally founded in Chennai, India, as an in-house technology unit of Dun & Bradstreet in 1994.",
+    "wikipedia": "https://en.wikipedia.org/wiki/Cognizant",
+    "founded": "1994",
+    "hq": "Teaneck",
+    "employees": 266200,
+    "employeesYear": "2016",
+    "website": "https://www.cognizant.com"
+   },
+   "counts": {
+    "total": 51,
+    "easy": 29,
+    "medium": 18,
+    "hard": 4,
+    "d30": 1,
+    "d90": 2
+   },
+   "topTopics": [
+    "Array",
+    "Two Pointers",
+    "Database",
+    "Sorting",
+    "String",
+    "Hash Table"
+   ]
+  },
+  {
+   "id": "capgemini",
+   "name": "Capgemini",
+   "segment": "Service & IT",
+   "careers": "https://www.capgemini.com/in-en/careers/",
+   "jobs": null,
+   "facts": {
+    "summary": "Capgemini SE is a French multinational information technology (IT) services and consulting company. It is headquartered in Paris, France.",
+    "wikipedia": "https://en.wikipedia.org/wiki/Capgemini",
+    "founded": "1967",
+    "hq": "Paris",
+    "employees": 336900,
+    "employeesYear": "2024",
+    "website": "https://www.capgemini.com/",
+    "logo": "Capgemini 201x logo.svg"
+   },
+   "counts": {
+    "total": 33,
+    "easy": 17,
+    "medium": 14,
+    "hard": 2,
+    "d30": 0,
+    "d90": 0
+   },
+   "topTopics": [
+    "Array",
+    "Two Pointers",
+    "String",
+    "Hash Table",
+    "Sorting",
+    "Math"
+   ]
+  },
+  {
+   "id": "hcl",
+   "name": "HCLTech",
+   "segment": "Service & IT",
+   "careers": "https://www.hcltech.com/careers",
+   "jobs": null,
+   "facts": {
+    "summary": "HCL Technologies Limited (HCLTech) is an Indian multinational technology company headquartered in Noida, Uttar Pradesh. It was spun out of HCL Group in 1991 when HCL entered into the software services business.",
+    "wikipedia": "https://en.wikipedia.org/wiki/HCLTech",
+    "founded": "1991",
+    "hq": "Noida",
+    "website": "https://www.hcltech.com",
+    "logo": "HCLTech-new-logo.svg"
+   },
+   "counts": {
+    "total": 17,
+    "easy": 9,
+    "medium": 6,
+    "hard": 2,
+    "d30": 2,
+    "d90": 2
+   },
+   "topTopics": [
+    "Array",
+    "String",
+    "Two Pointers",
+    "Hash Table",
+    "Dynamic Programming",
+    "Sorting"
+   ]
+  },
+  {
+   "id": "ibm",
+   "name": "IBM",
+   "segment": "Service & IT",
+   "careers": "https://www.ibm.com/careers",
+   "jobs": null,
+   "facts": {
+    "summary": "International Business Machines Corporation (IBM) is an American multinational technology company headquartered in Armonk, New York, and present in over 175 countries. It is a publicly traded company and one of the 30 companies in the Dow Jones Industrial Average.",
+    "wikipedia": "https://en.wikipedia.org/wiki/IBM",
+    "founded": "1911",
+    "hq": "Armonk",
+    "employees": 352600,
+    "employeesYear": "2019",
+    "website": "https://www.ibm.com/",
+    "logo": "IBM logo.svg"
+   },
+   "counts": {
+    "total": 166,
+    "easy": 51,
+    "medium": 98,
+    "hard": 17,
+    "d30": 7,
+    "d90": 14
+   },
+   "topTopics": [
+    "Array",
+    "String",
+    "Sorting",
+    "Two Pointers",
+    "Hash Table",
+    "Greedy"
+   ]
+  },
+  {
+   "id": "deloitte",
+   "name": "Deloitte",
+   "segment": "Service & IT",
+   "careers": "https://www.deloitte.com/global/en/careers.html",
+   "jobs": null,
+   "facts": {
+    "summary": "Deloitte is a multinational professional services network based in London, England. It is the largest professional services network in the world by revenue and number of employees, and is one of the Big Four accounting firms, along with EY, KPMG, and PwC. The Deloitte network is composed of member firms of Deloitte Touche Tohmatsu Limited ( də-LOYT TOOSH TOH-maht-soo), a private company limited by guarantee incorporated in England and Wales.",
+    "wikipedia": "https://en.wikipedia.org/wiki/Deloitte",
+    "founded": "1845",
+    "hq": "New York City",
+    "employees": 345374,
+    "employeesYear": "2021",
+    "website": "https://www.deloitte.com",
+    "logo": "Logo of Deloitte.svg"
+   },
+   "counts": {
+    "total": 40,
+    "easy": 16,
+    "medium": 22,
+    "hard": 2,
+    "d30": 0,
+    "d90": 1
+   },
+   "topTopics": [
+    "Array",
+    "String",
+    "Two Pointers",
+    "Hash Table",
+    "Database",
+    "Stack"
+   ]
+  }
+ ],
+ "demand": {
+  "total": 6379,
+  "topics": {
+   "Arrays": {
+    "q": 3629,
+    "by": [
+     [
+      2,
+      276
+     ],
+     [
+      0,
+      263
+     ],
+     [
+      9,
+      194
+     ],
+     [
+      1,
+      174
+     ],
+     [
+      3,
+      172
+     ],
+     [
+      41,
+      170
+     ],
+     [
+      30,
+      165
+     ],
+     [
+      23,
+      156
+     ],
+     [
+      4,
+      154
+     ],
+     [
+      6,
+      144
+     ],
+     [
+      40,
+      144
+     ],
+     [
+      7,
+      114
+     ],
+     [
+      28,
+      104
+     ],
+     [
+      47,
+      95
+     ],
+     [
+      5,
+      87
+     ],
+     [
+      20,
+      82
+     ],
+     [
+      16,
+      80
+     ],
+     [
+      10,
+      79
+     ],
+     [
+      13,
+      72
+     ],
+     [
+      25,
+      69
+     ],
+     [
+      27,
+      64
+     ],
+     [
+      32,
+      64
+     ],
+     [
+      31,
+      63
+     ],
+     [
+      43,
+      58
+     ],
+     [
+      19,
+      44
+     ],
+     [
+      12,
+      40
+     ],
+     [
+      24,
+      40
+     ],
+     [
+      8,
+      38
+     ],
+     [
+      17,
+      38
+     ],
+     [
+      15,
+      36
+     ],
+     [
+      11,
+      35
+     ],
+     [
+      22,
+      29
+     ],
+     [
+      21,
+      28
+     ],
+     [
+      36,
+      23
+     ],
+     [
+      14,
+      22
+     ],
+     [
+      44,
+      22
+     ],
+     [
+      18,
+      21
+     ],
+     [
+      33,
+      21
+     ],
+     [
+      34,
+      21
+     ],
+     [
+      29,
+      20
+     ],
+     [
+      48,
+      19
+     ],
+     [
+      45,
+      18
+     ],
+     [
+      37,
+      14
+     ],
+     [
+      38,
+      14
+     ],
+     [
+      26,
+      10
+     ],
+     [
+      42,
+      10
+     ],
+     [
+      39,
+      9
+     ],
+     [
+      46,
+      8
+     ],
+     [
+      35,
+      6
+     ]
+    ]
+   },
+   "Strings": {
+    "q": 1509,
+    "by": [
+     [
+      0,
+      115
+     ],
+     [
+      2,
+      107
+     ],
+     [
+      1,
+      88
+     ],
+     [
+      3,
+      82
+     ],
+     [
+      30,
+      80
+     ],
+     [
+      6,
+      77
+     ],
+     [
+      9,
+      77
+     ],
+     [
+      4,
+      72
+     ],
+     [
+      23,
+      60
+     ],
+     [
+      20,
+      52
+     ],
+     [
+      40,
+      51
+     ],
+     [
+      7,
+      50
+     ],
+     [
+      47,
+      48
+     ],
+     [
+      41,
+      45
+     ],
+     [
+      28,
+      42
+     ],
+     [
+      16,
+      36
+     ],
+     [
+      10,
+      35
+     ],
+     [
+      13,
+      31
+     ],
+     [
+      5,
+      30
+     ],
+     [
+      25,
+      29
+     ],
+     [
+      43,
+      26
+     ],
+     [
+      12,
+      24
+     ],
+     [
+      27,
+      23
+     ],
+     [
+      32,
+      20
+     ],
+     [
+      8,
+      17
+     ],
+     [
+      11,
+      16
+     ],
+     [
+      17,
+      16
+     ],
+     [
+      24,
+      15
+     ],
+     [
+      48,
+      14
+     ],
+     [
+      19,
+      13
+     ],
+     [
+      31,
+      13
+     ],
+     [
+      14,
+      10
+     ],
+     [
+      21,
+      9
+     ],
+     [
+      42,
+      9
+     ],
+     [
+      44,
+      9
+     ],
+     [
+      45,
+      9
+     ],
+     [
+      33,
+      7
+     ],
+     [
+      18,
+      6
+     ],
+     [
+      29,
+      6
+     ],
+     [
+      37,
+      6
+     ],
+     [
+      46,
+      6
+     ],
+     [
+      15,
+      5
+     ],
+     [
+      39,
+      5
+     ],
+     [
+      22,
+      4
+     ],
+     [
+      34,
+      4
+     ],
+     [
+      36,
+      4
+     ],
+     [
+      26,
+      2
+     ],
+     [
+      35,
+      2
+     ],
+     [
+      38,
+      2
+     ]
+    ]
+   },
+   "Hashing": {
+    "q": 1402,
+    "by": [
+     [
+      2,
+      112
+     ],
+     [
+      0,
+      108
+     ],
+     [
+      9,
+      76
+     ],
+     [
+      30,
+      74
+     ],
+     [
+      4,
+      70
+     ],
+     [
+      3,
+      69
+     ],
+     [
+      6,
+      67
+     ],
+     [
+      1,
+      63
+     ],
+     [
+      40,
+      52
+     ],
+     [
+      23,
+      50
+     ],
+     [
+      7,
+      48
+     ],
+     [
+      41,
+      44
+     ],
+     [
+      10,
+      38
+     ],
+     [
+      28,
+      38
+     ],
+     [
+      16,
+      35
+     ],
+     [
+      20,
+      34
+     ],
+     [
+      13,
+      31
+     ],
+     [
+      47,
+      30
+     ],
+     [
+      5,
+      28
+     ],
+     [
+      8,
+      24
+     ],
+     [
+      25,
+      24
+     ],
+     [
+      43,
+      23
+     ],
+     [
+      27,
+      22
+     ],
+     [
+      32,
+      21
+     ],
+     [
+      12,
+      20
+     ],
+     [
+      31,
+      17
+     ],
+     [
+      17,
+      16
+     ],
+     [
+      19,
+      16
+     ],
+     [
+      24,
+      15
+     ],
+     [
+      11,
+      11
+     ],
+     [
+      33,
+      11
+     ],
+     [
+      29,
+      10
+     ],
+     [
+      15,
+      8
+     ],
+     [
+      21,
+      8
+     ],
+     [
+      22,
+      8
+     ],
+     [
+      44,
+      8
+     ],
+     [
+      48,
+      8
+     ],
+     [
+      18,
+      7
+     ],
+     [
+      34,
+      7
+     ],
+     [
+      37,
+      7
+     ],
+     [
+      45,
+      7
+     ],
+     [
+      14,
+      6
+     ],
+     [
+      36,
+      6
+     ],
+     [
+      38,
+      6
+     ],
+     [
+      39,
+      6
+     ],
+     [
+      42,
+      4
+     ],
+     [
+      46,
+      4
+     ],
+     [
+      35,
+      3
+     ],
+     [
+      26,
+      2
+     ]
+    ]
+   },
+   "Two Pointers": {
+    "q": 842,
+    "by": [
+     [
+      0,
+      58
+     ],
+     [
+      2,
+      57
+     ],
+     [
+      3,
+      51
+     ],
+     [
+      1,
+      50
+     ],
+     [
+      30,
+      47
+     ],
+     [
+      4,
+      39
+     ],
+     [
+      40,
+      39
+     ],
+     [
+      6,
+      36
+     ],
+     [
+      47,
+      31
+     ],
+     [
+      41,
+      30
+     ],
+     [
+      23,
+      29
+     ],
+     [
+      9,
+      23
+     ],
+     [
+      10,
+      22
+     ],
+     [
+      28,
+      22
+     ],
+     [
+      16,
+      21
+     ],
+     [
+      20,
+      21
+     ],
+     [
+      13,
+      20
+     ],
+     [
+      43,
+      19
+     ],
+     [
+      5,
+      18
+     ],
+     [
+      7,
+      18
+     ],
+     [
+      25,
+      17
+     ],
+     [
+      12,
+      14
+     ],
+     [
+      27,
+      13
+     ],
+     [
+      44,
+      13
+     ],
+     [
+      31,
+      12
+     ],
+     [
+      14,
+      11
+     ],
+     [
+      15,
+      11
+     ],
+     [
+      45,
+      11
+     ],
+     [
+      17,
+      10
+     ],
+     [
+      24,
+      10
+     ],
+     [
+      48,
+      9
+     ],
+     [
+      32,
+      7
+     ],
+     [
+      11,
+      6
+     ],
+     [
+      18,
+      5
+     ],
+     [
+      33,
+      5
+     ],
+     [
+      37,
+      5
+     ],
+     [
+      46,
+      5
+     ],
+     [
+      8,
+      4
+     ],
+     [
+      19,
+      4
+     ],
+     [
+      21,
+      3
+     ],
+     [
+      42,
+      3
+     ],
+     [
+      22,
+      2
+     ],
+     [
+      26,
+      2
+     ],
+     [
+      29,
+      2
+     ],
+     [
+      34,
+      2
+     ],
+     [
+      35,
+      2
+     ],
+     [
+      36,
+      2
+     ],
+     [
+      38,
+      1
+     ]
+    ]
+   },
+   "Sliding Window": {
+    "q": 338,
+    "by": [
+     [
+      2,
+      37
+     ],
+     [
+      0,
+      26
+     ],
+     [
+      3,
+      18
+     ],
+     [
+      30,
+      17
+     ],
+     [
+      41,
+      17
+     ],
+     [
+      1,
+      16
+     ],
+     [
+      7,
+      16
+     ],
+     [
+      9,
+      16
+     ],
+     [
+      40,
+      14
+     ],
+     [
+      23,
+      13
+     ],
+     [
+      4,
+      10
+     ],
+     [
+      5,
+      10
+     ],
+     [
+      16,
+      9
+     ],
+     [
+      47,
+      9
+     ],
+     [
+      6,
+      8
+     ],
+     [
+      10,
+      8
+     ],
+     [
+      25,
+      7
+     ],
+     [
+      28,
+      7
+     ],
+     [
+      32,
+      7
+     ],
+     [
+      20,
+      6
+     ],
+     [
+      12,
+      5
+     ],
+     [
+      13,
+      5
+     ],
+     [
+      17,
+      5
+     ],
+     [
+      19,
+      5
+     ],
+     [
+      24,
+      4
+     ],
+     [
+      36,
+      4
+     ],
+     [
+      21,
+      3
+     ],
+     [
+      27,
+      3
+     ],
+     [
+      29,
+      3
+     ],
+     [
+      31,
+      3
+     ],
+     [
+      15,
+      2
+     ],
+     [
+      22,
+      2
+     ],
+     [
+      26,
+      2
+     ],
+     [
+      33,
+      2
+     ],
+     [
+      37,
+      2
+     ],
+     [
+      38,
+      2
+     ],
+     [
+      39,
+      2
+     ],
+     [
+      43,
+      2
+     ],
+     [
+      45,
+      2
+     ],
+     [
+      46,
+      2
+     ],
+     [
+      8,
+      1
+     ],
+     [
+      14,
+      1
+     ],
+     [
+      18,
+      1
+     ],
+     [
+      34,
+      1
+     ],
+     [
+      42,
+      1
+     ],
+     [
+      44,
+      1
+     ],
+     [
+      48,
+      1
+     ]
+    ]
+   },
+   "Prefix Sum": {
+    "q": 336,
+    "by": [
+     [
+      2,
+      31
+     ],
+     [
+      0,
+      29
+     ],
+     [
+      41,
+      23
+     ],
+     [
+      3,
+      20
+     ],
+     [
+      23,
+      18
+     ],
+     [
+      9,
+      17
+     ],
+     [
+      1,
+      14
+     ],
+     [
+      6,
+      13
+     ],
+     [
+      30,
+      13
+     ],
+     [
+      40,
+      12
+     ],
+     [
+      4,
+      11
+     ],
+     [
+      28,
+      11
+     ],
+     [
+      47,
+      11
+     ],
+     [
+      7,
+      9
+     ],
+     [
+      25,
+      9
+     ],
+     [
+      16,
+      8
+     ],
+     [
+      32,
+      8
+     ],
+     [
+      5,
+      7
+     ],
+     [
+      10,
+      7
+     ],
+     [
+      22,
+      6
+     ],
+     [
+      19,
+      5
+     ],
+     [
+      27,
+      5
+     ],
+     [
+      43,
+      5
+     ],
+     [
+      13,
+      4
+     ],
+     [
+      31,
+      4
+     ],
+     [
+      8,
+      3
+     ],
+     [
+      11,
+      3
+     ],
+     [
+      12,
+      3
+     ],
+     [
+      20,
+      3
+     ],
+     [
+      21,
+      3
+     ],
+     [
+      15,
+      2
+     ],
+     [
+      17,
+      2
+     ],
+     [
+      24,
+      2
+     ],
+     [
+      34,
+      2
+     ],
+     [
+      36,
+      2
+     ],
+     [
+      37,
+      2
+     ],
+     [
+      44,
+      2
+     ],
+     [
+      48,
+      2
+     ],
+     [
+      18,
+      1
+     ],
+     [
+      26,
+      1
+     ],
+     [
+      33,
+      1
+     ],
+     [
+      45,
+      1
+     ],
+     [
+      46,
+      1
+     ]
+    ]
+   },
+   "Sorting": {
+    "q": 956,
+    "by": [
+     [
+      2,
+      82
+     ],
+     [
+      0,
+      68
+     ],
+     [
+      23,
+      45
+     ],
+     [
+      1,
+      44
+     ],
+     [
+      30,
+      43
+     ],
+     [
+      40,
+      43
+     ],
+     [
+      9,
+      42
+     ],
+     [
+      3,
+      40
+     ],
+     [
+      6,
+      40
+     ],
+     [
+      41,
+      38
+     ],
+     [
+      7,
+      37
+     ],
+     [
+      47,
+      37
+     ],
+     [
+      4,
+      33
+     ],
+     [
+      28,
+      27
+     ],
+     [
+      13,
+      22
+     ],
+     [
+      25,
+      22
+     ],
+     [
+      16,
+      21
+     ],
+     [
+      20,
+      21
+     ],
+     [
+      27,
+      20
+     ],
+     [
+      5,
+      18
+     ],
+     [
+      32,
+      18
+     ],
+     [
+      10,
+      16
+     ],
+     [
+      31,
+      16
+     ],
+     [
+      43,
+      16
+     ],
+     [
+      8,
+      11
+     ],
+     [
+      12,
+      10
+     ],
+     [
+      15,
+      10
+     ],
+     [
+      24,
+      10
+     ],
+     [
+      44,
+      10
+     ],
+     [
+      11,
+      9
+     ],
+     [
+      19,
+      9
+     ],
+     [
+      33,
+      9
+     ],
+     [
+      17,
+      7
+     ],
+     [
+      45,
+      7
+     ],
+     [
+      14,
+      6
+     ],
+     [
+      48,
+      6
+     ],
+     [
+      21,
+      5
+     ],
+     [
+      29,
+      5
+     ],
+     [
+      34,
+      5
+     ],
+     [
+      18,
+      4
+     ],
+     [
+      42,
+      4
+     ],
+     [
+      26,
+      3
+     ],
+     [
+      35,
+      3
+     ],
+     [
+      36,
+      3
+     ],
+     [
+      46,
+      3
+     ],
+     [
+      22,
+      2
+     ],
+     [
+      37,
+      2
+     ],
+     [
+      38,
+      2
+     ],
+     [
+      39,
+      2
+     ]
+    ]
+   },
+   "Binary Search": {
+    "q": 677,
+    "by": [
+     [
+      2,
+      59
+     ],
+     [
+      0,
+      58
+     ],
+     [
+      3,
+      39
+     ],
+     [
+      23,
+      35
+     ],
+     [
+      30,
+      35
+     ],
+     [
+      9,
+      34
+     ],
+     [
+      1,
+      33
+     ],
+     [
+      6,
+      32
+     ],
+     [
+      41,
+      31
+     ],
+     [
+      40,
+      30
+     ],
+     [
+      4,
+      29
+     ],
+     [
+      7,
+      25
+     ],
+     [
+      47,
+      16
+     ],
+     [
+      10,
+      15
+     ],
+     [
+      5,
+      14
+     ],
+     [
+      25,
+      14
+     ],
+     [
+      27,
+      14
+     ],
+     [
+      16,
+      12
+     ],
+     [
+      20,
+      11
+     ],
+     [
+      28,
+      11
+     ],
+     [
+      31,
+      11
+     ],
+     [
+      32,
+      11
+     ],
+     [
+      13,
+      8
+     ],
+     [
+      15,
+      8
+     ],
+     [
+      43,
+      8
+     ],
+     [
+      12,
+      7
+     ],
+     [
+      19,
+      7
+     ],
+     [
+      11,
+      6
+     ],
+     [
+      18,
+      5
+     ],
+     [
+      22,
+      5
+     ],
+     [
+      26,
+      5
+     ],
+     [
+      36,
+      5
+     ],
+     [
+      8,
+      4
+     ],
+     [
+      24,
+      4
+     ],
+     [
+      34,
+      4
+     ],
+     [
+      35,
+      4
+     ],
+     [
+      14,
+      3
+     ],
+     [
+      17,
+      3
+     ],
+     [
+      21,
+      3
+     ],
+     [
+      29,
+      3
+     ],
+     [
+      33,
+      3
+     ],
+     [
+      37,
+      3
+     ],
+     [
+      45,
+      3
+     ],
+     [
+      46,
+      3
+     ],
+     [
+      48,
+      2
+     ],
+     [
+      38,
+      1
+     ],
+     [
+      44,
+      1
+     ]
+    ]
+   },
+   "Recursion": {
+    "q": 332,
+    "by": [
+     [
+      0,
+      25
+     ],
+     [
+      2,
+      24
+     ],
+     [
+      30,
+      24
+     ],
+     [
+      3,
+      20
+     ],
+     [
+      1,
+      18
+     ],
+     [
+      40,
+      17
+     ],
+     [
+      4,
+      16
+     ],
+     [
+      6,
+      16
+     ],
+     [
+      23,
+      15
+     ],
+     [
+      41,
+      14
+     ],
+     [
+      9,
+      11
+     ],
+     [
+      10,
+      11
+     ],
+     [
+      13,
+      11
+     ],
+     [
+      5,
+      10
+     ],
+     [
+      7,
+      9
+     ],
+     [
+      20,
+      9
+     ],
+     [
+      12,
+      7
+     ],
+     [
+      28,
+      7
+     ],
+     [
+      14,
+      6
+     ],
+     [
+      16,
+      6
+     ],
+     [
+      17,
+      6
+     ],
+     [
+      32,
+      6
+     ],
+     [
+      11,
+      5
+     ],
+     [
+      19,
+      4
+     ],
+     [
+      24,
+      4
+     ],
+     [
+      25,
+      4
+     ],
+     [
+      27,
+      4
+     ],
+     [
+      43,
+      4
+     ],
+     [
+      18,
+      3
+     ],
+     [
+      47,
+      3
+     ],
+     [
+      22,
+      2
+     ],
+     [
+      44,
+      2
+     ],
+     [
+      45,
+      2
+     ],
+     [
+      8,
+      1
+     ],
+     [
+      21,
+      1
+     ],
+     [
+      31,
+      1
+     ],
+     [
+      35,
+      1
+     ],
+     [
+      37,
+      1
+     ],
+     [
+      38,
+      1
+     ],
+     [
+      48,
+      1
+     ]
+    ]
+   },
+   "Stack & Queue": {
+    "q": 668,
+    "by": [
+     [
+      0,
+      54
+     ],
+     [
+      1,
+      45
+     ],
+     [
+      2,
+      45
+     ],
+     [
+      30,
+      43
+     ],
+     [
+      3,
+      39
+     ],
+     [
+      4,
+      29
+     ],
+     [
+      6,
+      29
+     ],
+     [
+      23,
+      28
+     ],
+     [
+      7,
+      26
+     ],
+     [
+      9,
+      26
+     ],
+     [
+      41,
+      23
+     ],
+     [
+      40,
+      21
+     ],
+     [
+      10,
+      18
+     ],
+     [
+      16,
+      17
+     ],
+     [
+      47,
+      16
+     ],
+     [
+      28,
+      15
+     ],
+     [
+      20,
+      14
+     ],
+     [
+      5,
+      13
+     ],
+     [
+      13,
+      13
+     ],
+     [
+      25,
+      13
+     ],
+     [
+      31,
+      13
+     ],
+     [
+      19,
+      11
+     ],
+     [
+      32,
+      11
+     ],
+     [
+      17,
+      10
+     ],
+     [
+      21,
+      10
+     ],
+     [
+      24,
+      10
+     ],
+     [
+      14,
+      7
+     ],
+     [
+      48,
+      7
+     ],
+     [
+      11,
+      6
+     ],
+     [
+      12,
+      6
+     ],
+     [
+      27,
+      6
+     ],
+     [
+      37,
+      6
+     ],
+     [
+      43,
+      6
+     ],
+     [
+      33,
+      4
+     ],
+     [
+      36,
+      4
+     ],
+     [
+      22,
+      3
+     ],
+     [
+      26,
+      3
+     ],
+     [
+      35,
+      3
+     ],
+     [
+      38,
+      3
+     ],
+     [
+      18,
+      2
+     ],
+     [
+      39,
+      2
+     ],
+     [
+      46,
+      2
+     ],
+     [
+      8,
+      1
+     ],
+     [
+      15,
+      1
+     ],
+     [
+      29,
+      1
+     ],
+     [
+      42,
+      1
+     ],
+     [
+      44,
+      1
+     ],
+     [
+      45,
+      1
+     ]
+    ]
+   },
+   "Linked List": {
+    "q": 385,
+    "by": [
+     [
+      2,
+      34
+     ],
+     [
+      30,
+      30
+     ],
+     [
+      1,
+      28
+     ],
+     [
+      0,
+      27
+     ],
+     [
+      6,
+      25
+     ],
+     [
+      3,
+      24
+     ],
+     [
+      4,
+      23
+     ],
+     [
+      40,
+      18
+     ],
+     [
+      23,
+      15
+     ],
+     [
+      13,
+      13
+     ],
+     [
+      9,
+      12
+     ],
+     [
+      10,
+      12
+     ],
+     [
+      41,
+      11
+     ],
+     [
+      5,
+      9
+     ],
+     [
+      14,
+      9
+     ],
+     [
+      16,
+      8
+     ],
+     [
+      47,
+      8
+     ],
+     [
+      7,
+      7
+     ],
+     [
+      19,
+      6
+     ],
+     [
+      12,
+      5
+     ],
+     [
+      18,
+      5
+     ],
+     [
+      24,
+      5
+     ],
+     [
+      17,
+      4
+     ],
+     [
+      20,
+      4
+     ],
+     [
+      28,
+      4
+     ],
+     [
+      31,
+      4
+     ],
+     [
+      43,
+      4
+     ],
+     [
+      8,
+      3
+     ],
+     [
+      15,
+      3
+     ],
+     [
+      27,
+      3
+     ],
+     [
+      37,
+      3
+     ],
+     [
+      45,
+      3
+     ],
+     [
+      25,
+      2
+     ],
+     [
+      29,
+      2
+     ],
+     [
+      33,
+      2
+     ],
+     [
+      36,
+      2
+     ],
+     [
+      11,
+      1
+     ],
+     [
+      21,
+      1
+     ],
+     [
+      22,
+      1
+     ],
+     [
+      32,
+      1
+     ],
+     [
+      34,
+      1
+     ],
+     [
+      35,
+      1
+     ],
+     [
+      44,
+      1
+     ],
+     [
+      48,
+      1
+     ]
+    ]
+   },
+   "Matrix": {
+    "q": 503,
+    "by": [
+     [
+      2,
+      39
+     ],
+     [
+      9,
+      39
+     ],
+     [
+      0,
+      37
+     ],
+     [
+      4,
+      29
+     ],
+     [
+      3,
+      28
+     ],
+     [
+      23,
+      23
+     ],
+     [
+      6,
+      22
+     ],
+     [
+      1,
+      21
+     ],
+     [
+      30,
+      20
+     ],
+     [
+      28,
+      19
+     ],
+     [
+      20,
+      17
+     ],
+     [
+      5,
+      15
+     ],
+     [
+      7,
+      15
+     ],
+     [
+      40,
+      15
+     ],
+     [
+      31,
+      14
+     ],
+     [
+      16,
+      12
+     ],
+     [
+      19,
+      11
+     ],
+     [
+      13,
+      10
+     ],
+     [
+      32,
+      10
+     ],
+     [
+      25,
+      9
+     ],
+     [
+      10,
+      8
+     ],
+     [
+      11,
+      8
+     ],
+     [
+      12,
+      8
+     ],
+     [
+      15,
+      8
+     ],
+     [
+      27,
+      8
+     ],
+     [
+      41,
+      8
+     ],
+     [
+      47,
+      7
+     ],
+     [
+      34,
+      6
+     ],
+     [
+      17,
+      5
+     ],
+     [
+      8,
+      4
+     ],
+     [
+      18,
+      4
+     ],
+     [
+      22,
+      4
+     ],
+     [
+      29,
+      3
+     ],
+     [
+      43,
+      3
+     ],
+     [
+      14,
+      2
+     ],
+     [
+      21,
+      2
+     ],
+     [
+      24,
+      2
+     ],
+     [
+      37,
+      2
+     ],
+     [
+      38,
+      2
+     ],
+     [
+      26,
+      1
+     ],
+     [
+      36,
+      1
+     ],
+     [
+      42,
+      1
+     ],
+     [
+      44,
+      1
+     ]
+    ]
+   },
+   "Bit Manipulation": {
+    "q": 251,
+    "by": [
+     [
+      0,
+      26
+     ],
+     [
+      2,
+      21
+     ],
+     [
+      1,
+      15
+     ],
+     [
+      23,
+      11
+     ],
+     [
+      40,
+      11
+     ],
+     [
+      3,
+      10
+     ],
+     [
+      4,
+      10
+     ],
+     [
+      9,
+      10
+     ],
+     [
+      30,
+      10
+     ],
+     [
+      5,
+      9
+     ],
+     [
+      7,
+      9
+     ],
+     [
+      13,
+      8
+     ],
+     [
+      41,
+      8
+     ],
+     [
+      22,
+      7
+     ],
+     [
+      47,
+      7
+     ],
+     [
+      6,
+      6
+     ],
+     [
+      16,
+      6
+     ],
+     [
+      14,
+      5
+     ],
+     [
+      20,
+      5
+     ],
+     [
+      21,
+      5
+     ],
+     [
+      25,
+      5
+     ],
+     [
+      10,
+      4
+     ],
+     [
+      28,
+      4
+     ],
+     [
+      36,
+      4
+     ],
+     [
+      29,
+      3
+     ],
+     [
+      31,
+      3
+     ],
+     [
+      32,
+      3
+     ],
+     [
+      34,
+      3
+     ],
+     [
+      43,
+      3
+     ],
+     [
+      8,
+      2
+     ],
+     [
+      15,
+      2
+     ],
+     [
+      24,
+      2
+     ],
+     [
+      33,
+      2
+     ],
+     [
+      11,
+      1
+     ],
+     [
+      12,
+      1
+     ],
+     [
+      17,
+      1
+     ],
+     [
+      18,
+      1
+     ],
+     [
+      26,
+      1
+     ],
+     [
+      27,
+      1
+     ],
+     [
+      37,
+      1
+     ],
+     [
+      42,
+      1
+     ],
+     [
+      44,
+      1
+     ],
+     [
+      45,
+      1
+     ],
+     [
+      46,
+      1
+     ],
+     [
+      48,
+      1
+     ]
+    ]
+   },
+   "Greedy": {
+    "q": 606,
+    "by": [
+     [
+      2,
+      50
+     ],
+     [
+      41,
+      41
+     ],
+     [
+      0,
+      40
+     ],
+     [
+      1,
+      34
+     ],
+     [
+      47,
+      28
+     ],
+     [
+      6,
+      27
+     ],
+     [
+      23,
+      27
+     ],
+     [
+      3,
+      26
+     ],
+     [
+      30,
+      24
+     ],
+     [
+      7,
+      23
+     ],
+     [
+      9,
+      22
+     ],
+     [
+      28,
+      22
+     ],
+     [
+      25,
+      20
+     ],
+     [
+      4,
+      17
+     ],
+     [
+      20,
+      15
+     ],
+     [
+      5,
+      14
+     ],
+     [
+      40,
+      14
+     ],
+     [
+      16,
+      13
+     ],
+     [
+      32,
+      12
+     ],
+     [
+      19,
+      11
+     ],
+     [
+      13,
+      10
+     ],
+     [
+      10,
+      9
+     ],
+     [
+      24,
+      9
+     ],
+     [
+      31,
+      9
+     ],
+     [
+      8,
+      8
+     ],
+     [
+      17,
+      8
+     ],
+     [
+      27,
+      8
+     ],
+     [
+      15,
+      7
+     ],
+     [
+      43,
+      7
+     ],
+     [
+      37,
+      5
+     ],
+     [
+      11,
+      4
+     ],
+     [
+      12,
+      4
+     ],
+     [
+      22,
+      4
+     ],
+     [
+      34,
+      4
+     ],
+     [
+      38,
+      4
+     ],
+     [
+      48,
+      4
+     ],
+     [
+      21,
+      3
+     ],
+     [
+      29,
+      3
+     ],
+     [
+      36,
+      3
+     ],
+     [
+      14,
+      2
+     ],
+     [
+      18,
+      2
+     ],
+     [
+      26,
+      2
+     ],
+     [
+      33,
+      2
+     ],
+     [
+      44,
+      2
+     ],
+     [
+      45,
+      2
+     ],
+     [
+      35,
+      1
+     ]
+    ]
+   },
+   "Trees": {
+    "q": 534,
+    "by": [
+     [
+      2,
+      46
+     ],
+     [
+      3,
+      43
+     ],
+     [
+      0,
+      38
+     ],
+     [
+      1,
+      38
+     ],
+     [
+      6,
+      36
+     ],
+     [
+      9,
+      34
+     ],
+     [
+      30,
+      34
+     ],
+     [
+      4,
+      32
+     ],
+     [
+      10,
+      28
+     ],
+     [
+      7,
+      21
+     ],
+     [
+      23,
+      16
+     ],
+     [
+      40,
+      16
+     ],
+     [
+      5,
+      15
+     ],
+     [
+      41,
+      12
+     ],
+     [
+      28,
+      11
+     ],
+     [
+      13,
+      9
+     ],
+     [
+      19,
+      9
+     ],
+     [
+      8,
+      8
+     ],
+     [
+      16,
+      8
+     ],
+     [
+      31,
+      8
+     ],
+     [
+      22,
+      7
+     ],
+     [
+      25,
+      7
+     ],
+     [
+      32,
+      7
+     ],
+     [
+      21,
+      6
+     ],
+     [
+      12,
+      5
+     ],
+     [
+      27,
+      5
+     ],
+     [
+      11,
+      4
+     ],
+     [
+      17,
+      4
+     ],
+     [
+      43,
+      4
+     ],
+     [
+      15,
+      3
+     ],
+     [
+      47,
+      3
+     ],
+     [
+      14,
+      2
+     ],
+     [
+      18,
+      2
+     ],
+     [
+      20,
+      2
+     ],
+     [
+      36,
+      2
+     ],
+     [
+      38,
+      2
+     ],
+     [
+      26,
+      1
+     ],
+     [
+      29,
+      1
+     ],
+     [
+      33,
+      1
+     ],
+     [
+      39,
+      1
+     ],
+     [
+      42,
+      1
+     ],
+     [
+      45,
+      1
+     ],
+     [
+      48,
+      1
+     ]
+    ]
+   },
+   "Heap": {
+    "q": 435,
+    "by": [
+     [
+      2,
+      31
+     ],
+     [
+      9,
+      30
+     ],
+     [
+      0,
+      28
+     ],
+     [
+      7,
+      26
+     ],
+     [
+      4,
+      24
+     ],
+     [
+      6,
+      21
+     ],
+     [
+      23,
+      21
+     ],
+     [
+      3,
+      18
+     ],
+     [
+      1,
+      15
+     ],
+     [
+      28,
+      15
+     ],
+     [
+      31,
+      13
+     ],
+     [
+      47,
+      13
+     ],
+     [
+      16,
+      12
+     ],
+     [
+      25,
+      12
+     ],
+     [
+      41,
+      12
+     ],
+     [
+      10,
+      11
+     ],
+     [
+      30,
+      11
+     ],
+     [
+      40,
+      11
+     ],
+     [
+      13,
+      10
+     ],
+     [
+      5,
+      9
+     ],
+     [
+      15,
+      9
+     ],
+     [
+      32,
+      9
+     ],
+     [
+      19,
+      8
+     ],
+     [
+      8,
+      7
+     ],
+     [
+      12,
+      6
+     ],
+     [
+      27,
+      6
+     ],
+     [
+      20,
+      5
+     ],
+     [
+      11,
+      4
+     ],
+     [
+      29,
+      4
+     ],
+     [
+      34,
+      4
+     ],
+     [
+      14,
+      3
+     ],
+     [
+      17,
+      3
+     ],
+     [
+      21,
+      3
+     ],
+     [
+      22,
+      3
+     ],
+     [
+      37,
+      3
+     ],
+     [
+      43,
+      3
+     ],
+     [
+      33,
+      2
+     ],
+     [
+      36,
+      2
+     ],
+     [
+      48,
+      2
+     ],
+     [
+      18,
+      1
+     ],
+     [
+      24,
+      1
+     ],
+     [
+      26,
+      1
+     ],
+     [
+      35,
+      1
+     ],
+     [
+      38,
+      1
+     ],
+     [
+      45,
+      1
+     ]
+    ]
+   },
+   "Backtracking": {
+    "q": 274,
+    "by": [
+     [
+      0,
+      22
+     ],
+     [
+      2,
+      21
+     ],
+     [
+      3,
+      19
+     ],
+     [
+      1,
+      17
+     ],
+     [
+      4,
+      16
+     ],
+     [
+      6,
+      16
+     ],
+     [
+      9,
+      15
+     ],
+     [
+      30,
+      15
+     ],
+     [
+      23,
+      12
+     ],
+     [
+      10,
+      10
+     ],
+     [
+      20,
+      10
+     ],
+     [
+      7,
+      9
+     ],
+     [
+      16,
+      8
+     ],
+     [
+      28,
+      8
+     ],
+     [
+      41,
+      8
+     ],
+     [
+      5,
+      6
+     ],
+     [
+      40,
+      6
+     ],
+     [
+      47,
+      6
+     ],
+     [
+      17,
+      5
+     ],
+     [
+      13,
+      4
+     ],
+     [
+      24,
+      4
+     ],
+     [
+      27,
+      4
+     ],
+     [
+      43,
+      4
+     ],
+     [
+      12,
+      3
+     ],
+     [
+      31,
+      3
+     ],
+     [
+      8,
+      2
+     ],
+     [
+      11,
+      2
+     ],
+     [
+      14,
+      2
+     ],
+     [
+      15,
+      2
+     ],
+     [
+      19,
+      2
+     ],
+     [
+      21,
+      2
+     ],
+     [
+      25,
+      2
+     ],
+     [
+      29,
+      2
+     ],
+     [
+      32,
+      2
+     ],
+     [
+      34,
+      2
+     ],
+     [
+      18,
+      1
+     ],
+     [
+      26,
+      1
+     ],
+     [
+      33,
+      1
+     ]
+    ]
+   },
+   "Graphs": {
+    "q": 739,
+    "by": [
+     [
+      9,
+      67
+     ],
+     [
+      2,
+      55
+     ],
+     [
+      0,
+      54
+     ],
+     [
+      6,
+      43
+     ],
+     [
+      3,
+      41
+     ],
+     [
+      4,
+      41
+     ],
+     [
+      10,
+      33
+     ],
+     [
+      1,
+      32
+     ],
+     [
+      30,
+      31
+     ],
+     [
+      32,
+      30
+     ],
+     [
+      23,
+      26
+     ],
+     [
+      7,
+      24
+     ],
+     [
+      5,
+      22
+     ],
+     [
+      31,
+      20
+     ],
+     [
+      16,
+      16
+     ],
+     [
+      13,
+      15
+     ],
+     [
+      19,
+      14
+     ],
+     [
+      41,
+      14
+     ],
+     [
+      28,
+      13
+     ],
+     [
+      27,
+      12
+     ],
+     [
+      11,
+      11
+     ],
+     [
+      15,
+      11
+     ],
+     [
+      25,
+      11
+     ],
+     [
+      12,
+      10
+     ],
+     [
+      17,
+      10
+     ],
+     [
+      40,
+      10
+     ],
+     [
+      8,
+      9
+     ],
+     [
+      47,
+      9
+     ],
+     [
+      22,
+      8
+     ],
+     [
+      20,
+      7
+     ],
+     [
+      34,
+      6
+     ],
+     [
+      38,
+      6
+     ],
+     [
+      36,
+      5
+     ],
+     [
+      43,
+      5
+     ],
+     [
+      14,
+      4
+     ],
+     [
+      18,
+      2
+     ],
+     [
+      21,
+      2
+     ],
+     [
+      24,
+      2
+     ],
+     [
+      33,
+      2
+     ],
+     [
+      44,
+      2
+     ],
+     [
+      26,
+      1
+     ],
+     [
+      37,
+      1
+     ],
+     [
+      39,
+      1
+     ],
+     [
+      48,
+      1
+     ]
+    ]
+   },
+   "Dynamic Programming": {
+    "q": 1133,
+    "by": [
+     [
+      0,
+      83
+     ],
+     [
+      41,
+      78
+     ],
+     [
+      2,
+      77
+     ],
+     [
+      1,
+      55
+     ],
+     [
+      23,
+      51
+     ],
+     [
+      9,
+      47
+     ],
+     [
+      3,
+      46
+     ],
+     [
+      30,
+      46
+     ],
+     [
+      6,
+      42
+     ],
+     [
+      7,
+      41
+     ],
+     [
+      4,
+      38
+     ],
+     [
+      40,
+      34
+     ],
+     [
+      28,
+      32
+     ],
+     [
+      25,
+      30
+     ],
+     [
+      32,
+      30
+     ],
+     [
+      10,
+      26
+     ],
+     [
+      20,
+      26
+     ],
+     [
+      5,
+      22
+     ],
+     [
+      21,
+      22
+     ],
+     [
+      31,
+      21
+     ],
+     [
+      47,
+      21
+     ],
+     [
+      16,
+      20
+     ],
+     [
+      11,
+      19
+     ],
+     [
+      13,
+      19
+     ],
+     [
+      24,
+      18
+     ],
+     [
+      27,
+      18
+     ],
+     [
+      17,
+      15
+     ],
+     [
+      43,
+      15
+     ],
+     [
+      22,
+      14
+     ],
+     [
+      15,
+      12
+     ],
+     [
+      19,
+      12
+     ],
+     [
+      8,
+      10
+     ],
+     [
+      12,
+      10
+     ],
+     [
+      33,
+      10
+     ],
+     [
+      36,
+      10
+     ],
+     [
+      14,
+      8
+     ],
+     [
+      39,
+      6
+     ],
+     [
+      44,
+      6
+     ],
+     [
+      48,
+      6
+     ],
+     [
+      18,
+      5
+     ],
+     [
+      26,
+      5
+     ],
+     [
+      34,
+      5
+     ],
+     [
+      37,
+      5
+     ],
+     [
+      29,
+      4
+     ],
+     [
+      46,
+      4
+     ],
+     [
+      38,
+      3
+     ],
+     [
+      35,
+      2
+     ],
+     [
+      42,
+      2
+     ],
+     [
+      45,
+      2
+     ]
+    ]
+   },
+   "SQL": {
+    "q": 189,
+    "by": [
+     [
+      2,
+      29
+     ],
+     [
+      0,
+      25
+     ],
+     [
+      1,
+      21
+     ],
+     [
+      30,
+      20
+     ],
+     [
+      40,
+      16
+     ],
+     [
+      44,
+      13
+     ],
+     [
+      3,
+      12
+     ],
+     [
+      43,
+      7
+     ],
+     [
+      41,
+      6
+     ],
+     [
+      48,
+      6
+     ],
+     [
+      9,
+      5
+     ],
+     [
+      47,
+      5
+     ],
+     [
+      10,
+      4
+     ],
+     [
+      16,
+      4
+     ],
+     [
+      36,
+      3
+     ],
+     [
+      6,
+      2
+     ],
+     [
+      45,
+      2
+     ],
+     [
+      46,
+      2
+     ],
+     [
+      5,
+      1
+     ],
+     [
+      8,
+      1
+     ],
+     [
+      11,
+      1
+     ],
+     [
+      18,
+      1
+     ],
+     [
+      27,
+      1
+     ],
+     [
+      33,
+      1
+     ],
+     [
+      34,
+      1
+     ]
+    ]
+   }
+  }
+ }
+}

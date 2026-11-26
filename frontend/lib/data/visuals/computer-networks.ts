@@ -159,21 +159,16 @@ export const cnVisuals: VisualMap = {
   [`${c}/dns`]: {
     plain:
       "DNS is the internet's phone book: it turns google.com into an IP address. Your resolver asks the root servers, which point to the .com servers, which point to Google's own name server, which gives the answer. The result is cached so next time is instant.",
-    diagram: `sequenceDiagram
-  participant B as Browser
-  participant R as Resolver
-  participant Root as Root server
-  participant T as .com server
-  participant A as google.com name server
-  B->>R: google.com?
-  R->>Root: google.com?
-  Root-->>R: ask .com
-  R->>T: google.com?
-  T-->>R: ask ns1.google.com
-  R->>A: google.com?
-  A-->>R: 142.250.183.14
-  R-->>B: 142.250.183.14 (cached)`,
-    caption: "Iterative DNS resolution.",
+    diagram: `flowchart LR
+  B["Browser"] -->|"1 google.com?"| R["Resolver<br/>(your ISP)"]
+  R -->|"2 ask"| Root["Root server"]
+  Root -.->|"3 try .com"| R
+  R -->|"4 ask"| T[".com server"]
+  T -.->|"5 try ns1.google.com"| R
+  R -->|"6 ask"| A["google.com<br/>name server"]
+  A -.->|"7 142.250.183.14"| R
+  R -.->|"8 answer, cached"| B`,
+    caption: "Iterative DNS resolution: the resolver asks each server in turn (numbers show the order).",
   },
   [`${c}/http-and-https`]: {
     plain:

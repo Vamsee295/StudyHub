@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-import { directoryCompanies } from '../lib/data/companiesData';
+import { COMPANIES, monogram } from '../lib/data/companyData';
 import { libraryCategories } from '../lib/data/resourcesData';
 import { RESOURCE_CATALOG } from '../lib/resources';
 
@@ -12,7 +12,15 @@ if (!fs.existsSync(outputDir)) {
 
 // Only what backend/scripts/seed_data.py reads.
 const seedData = {
-    companies: directoryCompanies,
+    // the companies /companies shows (real data from scripts/import-company-data.py), in the fields seed_data.py reads
+    companies: COMPANIES.map((c) => ({
+        id: c.id,
+        name: c.name,
+        monogram: monogram(c.name),
+        segment: c.segment,
+        location: c.facts.hq ?? '',
+        processSummary: `${c.counts.total} interview questions reported`,
+    })),
     // the real PDF catalog, shaped like the fields seed_data.py reads
     resources: RESOURCE_CATALOG.map((r) => ({ id: r.id, title: r.title, description: r.description, track: r.category, slug: r.id, author: 'StudyHub', isVerified: false })),
     resourceCategories: libraryCategories

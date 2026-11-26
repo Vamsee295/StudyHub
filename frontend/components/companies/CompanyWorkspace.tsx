@@ -1,86 +1,110 @@
-import { CompanyWorkspaceDetail } from "@/types";
-import { HiringPipeline } from "./HiringPipeline";
-import { QuestionWeighting } from "./QuestionWeighting";
-import { RecentInterviewQuestions } from "./RecentInterviewQuestions";
-import { CompanyPrepPlan } from "./CompanyPrepPlan";
-import { Terminal, MapPin, Target, ArrowRight } from "lucide-react";
-import { buttonClass } from "@/components/ui/Button";
 import Link from "next/link";
+import { ArrowRight, ExternalLink, Terminal } from "lucide-react";
+import type { CompanyWorkspaceDetail } from "@/types";
+import { buttonClass } from "@/components/ui/Button";
+import type { CompanyEntry } from "@/lib/data/companyData";
+import { HiringPipeline } from "./HiringPipeline";
+import { CompanyPrepPlan } from "./CompanyPrepPlan";
+import { CompanyQuestions } from "./CompanyQuestions";
+import { CompanyLogo } from "./CompanyLogo";
+import { OpenRoles } from "./OpenRoles";
 
-interface CompanyWorkspaceProps {
-  workspace: CompanyWorkspaceDetail;
-}
-
-export function CompanyWorkspace({ workspace }: CompanyWorkspaceProps) {
+/** One company: who they are, what's open now, how they hire, and the questions they're reported to ask. */
+export function CompanyWorkspace({ company, curated }: { company: CompanyEntry; curated?: CompanyWorkspaceDetail }) {
+  const f = company.facts;
+  const facts = [
+    f.founded && { k: "Founded", v: f.founded },
+    f.hq && { k: "Headquarters", v: f.hq },
+    f.employees && { k: "Employees", v: `${f.employees.toLocaleString()}${f.employeesYear ? ` (${f.employeesYear})` : ""}` },
+  ].filter(Boolean) as { k: string; v: string }[];
 
   return (
-    <div className="flex flex-col gap-8 bg-card border-[1.5px] border-hair rounded-2xl p-6 md:p-8">
-      {/* Workspace Header */}
-      <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
-        <div className="flex gap-5">
-          <div className="w-16 h-16 shrink-0 rounded-xl bg-paper-2 border-[1.5px] border-hair flex items-center justify-center text-ink font-cond text-3xl font-bold">
-            {workspace.monogram}
-          </div>
-          <div className="flex flex-col gap-2">
-            <div className="flex items-center gap-3">
-              <h2 className="display text-[30px]">{workspace.name}</h2>
-              <span className="hidden sm:inline-flex px-2 py-1 bg-paper-2 border-[1.5px] border-hair rounded text-[11px] font-semibold text-body">
-                {workspace.category}
-              </span>
+    <div className="flex min-w-0 flex-col gap-8 rounded-2xl border-[1.5px] border-hair bg-card p-5 md:p-8">
+      <div className="flex flex-col justify-between gap-6 md:flex-row md:items-start">
+        <div className="flex min-w-0 gap-4">
+          <CompanyLogo company={company} size={64} />
+          <div className="flex min-w-0 flex-col gap-2">
+            <div className="flex flex-wrap items-center gap-3">
+              <h2 className="display text-[30px]">{company.name}</h2>
+              <span className="rounded border-[1.5px] border-hair bg-paper-2 px-2 py-1 text-[11px] font-semibold text-body">{company.segment}</span>
             </div>
-            
-            <div className="flex flex-wrap items-center gap-3 text-[13px] text-body font-medium">
-              <span className="flex items-center gap-1"><Target className="w-4 h-4" /> {workspace.targetRole}</span>
-              <span className="w-1 h-1 rounded-full bg-ink/25" />
-              <span className="flex items-center gap-1"><MapPin className="w-4 h-4" /> {workspace.locations.join(", ")}</span>
-            </div>
-            
-            <div className="flex flex-wrap items-center gap-2 mt-1">
-              <span className="text-[11px] font-mono font-bold px-2 py-1 rounded bg-paper border-[1.5px] border-hair text-body uppercase tracking-wider">
-                {workspace.recruitmentWindow}
-              </span>
-            </div>
+            {curated && <p className="text-[13px] font-medium text-body">Hires freshers as {curated.targetRole} · {curated.locations.join(", ")}</p>}
+            {facts.length > 0 && (
+              <dl className="flex flex-wrap gap-x-5 gap-y-1 text-[13px]">
+                {facts.map((x) => (
+                  <div key={x.k} className="flex gap-1.5">
+                    <dt className="text-mute">{x.k}</dt>
+                    <dd className="font-medium text-ink">{x.v}</dd>
+                  </div>
+                ))}
+              </dl>
+            )}
           </div>
         </div>
-
-        <div className="flex items-center gap-3 shrink-0">
+        <div className="flex shrink-0 flex-wrap items-center gap-2">
+          <a href={company.careers} target="_blank" rel="noopener noreferrer" className={buttonClass("secondary", "sm")}>
+            Careers <ExternalLink className="size-3.5" />
+          </a>
           <Link href="/tools/interview-simulator" className={`${buttonClass("secondary", "sm")} max-sm:hidden`}>
             <Terminal className="size-4" /> Mock interview
           </Link>
-          <Link 
-            href={`/tools/company-prep?company=${workspace.id}`}
-            className={buttonClass("primary", "sm")}
-          >
-            Prepare for {workspace.name} <ArrowRight className="w-4 h-4" />
-          </Link>
+          {curated && (
+            <Link href={`/tools/company-prep?company=${company.id}`} className={buttonClass("primary", "sm")}>
+              Prepare for {company.name} <ArrowRight className="size-4" />
+            </Link>
+          )}
         </div>
       </div>
 
+      {f.summary && (
+        <p className="-mt-2 max-w-3xl text-[14.5px] leading-relaxed text-body">
+          {f.summary}{" "}
+          {f.wikipedia && (
+            <a href={f.wikipedia} target="_blank" rel="noopener noreferrer" className="whitespace-nowrap text-[12.5px] text-mute underline">
+              Wikipedia
+            </a>
+          )}
+        </p>
+      )}
+
+      {company.jobs && (
+        <>
+          <hr className="border-hair" />
+          <OpenRoles company={{ ...company, jobs: company.jobs }} />
+        </>
+      )}
 
       <hr className="border-hair" />
 
-      {/* Hiring Pipeline */}
-      <HiringPipeline stages={workspace.hiringStages} />
+      {curated ? (
+        <>
+          <HiringPipeline stages={curated.hiringStages} />
+          <hr className="border-hair" />
+          <CompanyPrepPlan workspace={curated} />
+        </>
+      ) : (
+        <div className="flex flex-col gap-1.5">
+          <h3 className="label-cond text-[20px]">How {company.name} hires</h3>
+          <p className="max-w-3xl text-[14px] text-body">
+            We haven&apos;t mapped {company.name}&apos;s rounds yet.{" "}
+            {company.segment === "Service & IT"
+              ? "Service companies usually start with an aptitude and coding test, then a technical interview on core CS and your project, then HR."
+              : "Most companies like this start with an online coding test, then two or three interviews on data structures, problem solving and your projects, and end with a behavioural round."}{" "}
+            <a href="#hiring-basics" className="text-accent-ink underline">
+              What each round checks
+            </a>
+            . Their{" "}
+            <a href={company.careers} target="_blank" rel="noopener noreferrer" className="text-accent-ink underline">
+              careers page
+            </a>{" "}
+            lists current openings.
+          </p>
+        </div>
+      )}
 
       <hr className="border-hair" />
 
-      {/* The rounds as a picture, and what to study for each */}
-      <CompanyPrepPlan workspace={workspace} />
-
-      <hr className="border-hair" />
-
-      {/* Question Weighting */}
-      <QuestionWeighting 
-        weights={workspace.questionWeights} 
-      />
-
-      <hr className="border-hair" />
-
-      {/* Recent Questions */}
-      <RecentInterviewQuestions 
-        questions={workspace.recentQuestions} 
-        companyName={workspace.name}
-      />
+      <CompanyQuestions company={company} />
     </div>
   );
 }
