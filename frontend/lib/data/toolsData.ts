@@ -1,171 +1,102 @@
-import {
-  ToolCategory,
-  CoreToolItem,
-  InterviewUtilityItem,
-  CalculatorTrackerItem,
-} from "@/types";
+// The tools on /tools. Every entry has a working page under app/tools, and each tool appears once.
+// SQL practice lives in Practice → SQL Lab (the tables the SQL lessons use), so it isn't repeated here.
 
-// Every tool listed here has a working page under app/tools. The ten placeholder tools that
-// were never built (coding timer, bullet generator, HR practice, DSA tracker and others) were dropped.
+export type ToolGroup = "Interview prep" | "Resume & companies" | "Coding" | "Calculators & trackers";
 
-export const corePlacementTools: CoreToolItem[] = [
-  {
-    id: "cp-1",
-    title: "DSA Visualizer",
-    description: "Step through sorting and searching algorithms and watch each comparison and swap.",
-    category: "coding",
-    tag: "Coding",
-    codeAst: "Step-by-step animation",
-    href: "/tools/dsa-visualizer",
-  },
-  {
-    id: "cp-2",
-    title: "Resume Analyzer",
-    description: "Compare PDF or pasted resume text with a target company and role.",
-    category: "resume",
-    tag: "Resume & Career",
-    codeAst: "PDF / Text + Structured Report",
-    href: "/tools/resume-analyzer",
-  },
-  {
-    id: "cp-3",
-    title: "SQL Playground",
-    description: "Practice queries against sample schemas, executed in your browser.",
-    category: "sql",
-    tag: "SQL",
-    codeAst: "SQLite In-Memory",
-    href: "/tools/sql-playground",
-  },
-  {
-    id: "cp-4",
-    title: "Technical Question Drill",
-    description: "Flashcard drill from every course's question bank; misses go to your review queue.",
-    category: "interview",
-    tag: "Interview",
-    codeAst: "13 courses, spaced repetition",
-    href: "/tools/tech-questions",
-  },
-  {
-    id: "cp-5",
-    title: "Aptitude Pacing Timer",
-    description: "Time each question in a section and see where you lose minutes.",
-    category: "aptitude",
-    tag: "Aptitude",
-    codeAst: "Per-question laps",
-    href: "/tools/aptitude-timer",
-  },
-  {
-    id: "cp-6",
-    title: "Company Prep Sheet",
-    description: "One printable page per company: reported process, topics to cover and your progress on them.",
-    category: "placement",
-    tag: "Placement",
-    codeAst: "Sourced profiles",
-    href: "/tools/company-prep",
-  },
-  {
-    id: "cp-7",
-    title: "Placement Readiness",
-    description: "A readiness score per subject from your real lesson progress, test scores and review queue.",
-    category: "placement",
-    tag: "Placement",
-    codeAst: "From your own data",
-    href: "/tools/readiness-calculator",
-  },
+export interface ToolItem {
+  href: string;
+  title: string;
+  /** One line on what you do with it. */
+  description: string;
+  /** Short mono label: what powers it or what you get. */
+  meta: string;
+  badge: string;
+  group: ToolGroup;
+}
+
+export const TOOL_GROUPS: { name: ToolGroup; blurb: string }[] = [
+  { name: "Interview prep", blurb: "Practise answering out loud before the real rounds." },
+  { name: "Resume & companies", blurb: "Get your resume and your target list ready." },
+  { name: "Coding", blurb: "See algorithms run step by step." },
+  { name: "Calculators & trackers", blurb: "Quick numbers for forms, readiness and test pacing." },
 ];
 
-export const interviewUtilities: InterviewUtilityItem[] = [
+export const TOOLS: ToolItem[] = [
   {
-    id: "iu-1",
-    title: "Mock Interview Simulator",
-    description: "VOICE & CODING",
-    tag: "VOICE & CODING",
-    durationOrStep: "30–45 min",
-    meta: "Role-based questions",
-    actionLabel: "Launch Simulator ↗",
     href: "/tools/interview-simulator",
-    isPrimaryAction: true,
+    title: "Mock Interview",
+    description: "Answer real interview questions from the courses, then compare with a model answer and the trap interviewers look for.",
+    meta: "Questions from 8 courses",
+    badge: "INTERVIEW",
+    group: "Interview prep",
   },
   {
-    id: "iu-2",
-    title: "STAR Answer Builder",
-    description: "FRAMEWORK",
-    tag: "FRAMEWORK",
-    durationOrStep: "4-Step",
-    meta: "Speaking-time estimate",
-    actionLabel: "Build Story",
-    href: "/tools/star-builder",
-  },
-  {
-    id: "iu-3",
-    title: "Technical Question Drill",
-    description: "FLASHCARDS",
-    tag: "FLASHCARDS",
-    durationOrStep: "10–30 cards",
-    meta: "Feeds your review queue",
-    actionLabel: "Start Drill",
     href: "/tools/tech-questions",
+    title: "Question Drill",
+    description: "A quick multiple-choice drill across every course's question bank. Misses join your review queue.",
+    meta: "13 courses · spaced repetition",
+    badge: "FLASHCARDS",
+    group: "Interview prep",
   },
-];
-
-export const calculatorsTrackers: CalculatorTrackerItem[] = [
   {
-    id: "ct-1",
-    title: "CGPA → %",
-    subtitle: "CONVERTER",
-    description: "CONVERTER",
-    tag: "CONVERTER",
-    actionLabel: "Calculate →",
+    href: "/tools/star-builder",
+    title: "STAR Answer Builder",
+    description: "Shape behavioural stories as Situation, Task, Action, Result, with a speaking-time estimate.",
+    meta: "Saved to your account",
+    badge: "HR ROUND",
+    group: "Interview prep",
+  },
+  {
+    href: "/tools/resume-analyzer",
+    title: "Resume Analyzer",
+    description: "Check a PDF or pasted resume against a target company and role: skills, formatting and gaps.",
+    meta: "PDF or text",
+    badge: "RESUME",
+    group: "Resume & companies",
+  },
+  {
+    href: "/tools/company-prep",
+    title: "Company Prep Sheet",
+    description: "One printable page per company: the reported process, topics to cover and your progress on them.",
+    meta: "Sourced company profiles",
+    badge: "COMPANIES",
+    group: "Resume & companies",
+  },
+  {
+    href: "/tools/dsa-visualizer",
+    title: "DSA Visualizer",
+    description: "Step through sorting and searching algorithms and watch every comparison and swap.",
+    meta: "5 algorithms",
+    badge: "CODING",
+    group: "Coding",
+  },
+  {
     href: "/tools/cgpa-converter",
+    title: "CGPA to Percentage",
+    description: "Convert a 10-point CGPA with a common formula or the one your university prints.",
+    meta: "3 conventions + custom",
+    badge: "CALCULATOR",
+    group: "Calculators & trackers",
   },
   {
-    id: "ct-2",
-    title: "Readiness %",
-    subtitle: "DIAGNOSTIC",
-    description: "DIAGNOSTIC",
-    tag: "DIAGNOSTIC",
-    actionLabel: "Inspect →",
     href: "/tools/readiness-calculator",
+    title: "Placement Readiness",
+    description: "A readiness score per subject from your real lessons, mock tests and review queue.",
+    meta: "From your own data",
+    badge: "DIAGNOSTIC",
+    group: "Calculators & trackers",
   },
   {
-    id: "ct-3",
-    title: "Pacing Timer",
-    subtitle: "STOPWATCH",
-    description: "STOPWATCH",
-    tag: "STOPWATCH",
-    actionLabel: "Start →",
     href: "/tools/aptitude-timer",
+    title: "Aptitude Pacing Timer",
+    description: "Time each question in a section and see exactly where the minutes went.",
+    meta: "Per-question laps",
+    badge: "STOPWATCH",
+    group: "Calculators & trackers",
   },
 ];
 
-/** Title and badge for every tool page, used by the real "Continue using" list. */
-export const TOOL_REGISTRY: Record<string, { title: string; badge: string }> = {
-  "/tools/dsa-visualizer": { title: "DSA Visualizer", badge: "CODING" },
-  "/tools/resume-analyzer": { title: "Resume Analyzer", badge: "RESUME" },
-  "/tools/sql-playground": { title: "SQL Playground", badge: "SQL" },
-  "/tools/interview-simulator": { title: "Mock Interview Simulator", badge: "INTERVIEW" },
-  "/tools/tech-questions": { title: "Technical Question Drill", badge: "FLASHCARDS" },
-  "/tools/aptitude-timer": { title: "Aptitude Pacing Timer", badge: "STOPWATCH" },
-  "/tools/company-prep": { title: "Company Prep Sheet", badge: "PLACEMENT" },
-  "/tools/readiness-calculator": { title: "Placement Readiness", badge: "DIAGNOSTIC" },
-  "/tools/cgpa-converter": { title: "CGPA Converter", badge: "CALCULATOR" },
-  "/tools/star-builder": { title: "STAR Answer Builder", badge: "INTERVIEW" },
-};
-
-export const toolsCategories: { id: ToolCategory; label: string; count: number }[] = (
-  [
-    { id: "all", label: "All Tools" },
-    { id: "coding", label: "Coding" },
-    { id: "interview", label: "Interview" },
-    { id: "resume", label: "Resume & Career" },
-    { id: "aptitude", label: "Aptitude" },
-    { id: "sql", label: "SQL" },
-    { id: "placement", label: "Placement" },
-    { id: "productivity", label: "Productivity" },
-  ] as { id: ToolCategory; label: string }[]
-)
-  .map((c) => ({
-    ...c,
-    count: c.id === "all" ? corePlacementTools.length : corePlacementTools.filter((t) => t.category === c.id).length,
-  }))
-  .filter((c) => c.id === "all" || c.count > 0);
+/** Title and badge for every tool page, used by the "Continue where you left off" list. */
+export const TOOL_REGISTRY: Record<string, { title: string; badge: string }> = Object.fromEntries(
+  TOOLS.map((t) => [t.href, { title: t.title, badge: t.badge }])
+);

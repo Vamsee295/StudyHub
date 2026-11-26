@@ -136,7 +136,7 @@ export default function StarBuilderPage() {
         <aside aria-label="Story check" className="flex flex-col gap-4">
           <div className="p-5 rounded-xl border-[1.5px] border-hair bg-card flex flex-col gap-1">
             <h2 className="text-[12px] font-bold uppercase tracking-wider text-mute">Speaking time</h2>
-            <p className="text-3xl font-bold tabular-nums text-ink">{Math.floor(secs / 60)}:{String(secs % 60).padStart(2, "0")}</p>
+            <p className="display text-[40px] tabular-nums text-ink">{Math.floor(secs / 60)}:{String(secs % 60).padStart(2, "0")}</p>
             <p className="text-[12px] text-mute">{total} words at about {WPM} words per minute. Aim for 1:00 to 2:00.</p>
           </div>
           <div className="p-5 rounded-xl border-[1.5px] border-hair bg-card flex flex-col gap-2">
@@ -150,7 +150,7 @@ export default function StarBuilderPage() {
             )}
           </div>
           <div className="flex gap-2">
-            <button type="button" onClick={copy} className={`flex-1 inline-flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-accent text-paper text-[13px] font-semibold hover:bg-accent-ink ${focusRing}`}>
+            <button type="button" onClick={copy} className={`flex-1 inline-flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-ink text-paper text-[13px] font-semibold hover:bg-ink/85 ${focusRing}`}>
               {copied ? <><Check aria-hidden="true" className="w-4 h-4" /> Copied</> : <><Copy aria-hidden="true" className="w-4 h-4" /> Copy story</>}
             </button>
             <button type="button" onClick={remove} aria-label="Delete this story" className={`px-3 py-2 rounded-lg border-[1.5px] border-hair text-body hover:text-danger ${focusRing}`}>

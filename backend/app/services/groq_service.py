@@ -50,33 +50,17 @@ async def generate_personalized_roadmap(profile_data: Dict[str, Any]) -> Dict[st
         raise ValueError("Failed to parse LLM response as JSON")
 
 async def explain_code_error(code: str, error_message: str, language: str) -> str:
-    if not client:
-        raise ValueError("Groq API Key not configured")
-        
-    prompt = f"""
-    You are an expert technical tutor. A student is trying to solve a coding problem in {language}.
-    They encountered the following error:
-    ```
-    {error_message}
-    ```
-    
-    Here is their code:
-    ```
-    {code}
-    ```
-    
-    Please explain this error in a clear, concise, and beginner-friendly way.
-    Identify the exact line(s) causing the issue if possible, and provide a hint on how to fix it without writing the complete solution for them.
-    Keep your response brief (1-3 short paragraphs). Do not use JSON. Use markdown formatting.
-    """
+    """Explains a compile or runtime error as a hint. Uses the shared provider (Groq, falling back to Ollama)."""
+    from app.ai.provider.factory import get_ai_provider
 
-    response = client.chat.completions.create(
-        model=settings.groq_model or "llama3-70b-8192",
-        messages=[{"role": "user", "content": prompt}]
+    system = (
+        "You are a patient programming tutor. A student's code failed. Explain what the error means and point at the "
+        "line or idea that causes it, in 1 to 3 short paragraphs of markdown. Give a hint toward the fix. "
+        "Never write the corrected code or the solution to the problem; the student must write it themselves. "
+        "A one-line syntax reminder unrelated to the problem's logic is fine."
     )
-    
-    result = response.choices[0].message.content
-    if not result:
-        return "Sorry, I could not generate an explanation at this time."
-        
-    return result
+    user = f"Language: {language}\n\nError:\n```\n{error_message[:4000]}\n```\n\nCode:\n```\n{code[:8000]}\n```"
+    text, _ = await get_ai_provider().generate(
+        [{"role": "system", "content": system}, {"role": "user", "content": user}], max_tokens=700, temperature=0.3
+    )
+    return text.strip() or "Sorry, I could not generate an explanation at this time."

@@ -2,12 +2,69 @@ import { FunctionSignature, TestCase } from "../execution/executionTypes";
 import { dsaCatalog } from "../data/dsaCatalog";
 import { companiesForProblem } from "../data/askedIn";
 import ladder from "./ladder.json";
+import core from "./core.json";
+
+/** Topic sections of the problem set, in the order a beginner should learn them. */
+export const CATEGORY_ORDER = [
+  "Basics",
+  "Arrays",
+  "Strings",
+  "Hashing",
+  "Two Pointers",
+  "Sliding Window",
+  "Prefix Sum",
+  "Sorting",
+  "Binary Search",
+  "Recursion",
+  "Stack & Queue",
+  "Linked List",
+  "Matrix",
+  "Bit Manipulation",
+  "Greedy",
+  "Trees",
+  "Heap",
+  "Backtracking",
+  "Graphs",
+  "Dynamic Programming",
+] as const;
+export type ProblemCategory = (typeof CATEGORY_ORDER)[number];
+
+// For problems without an explicit category: the most specific technique in their tags wins.
+const TAG_TO_CATEGORY: [RegExp, ProblemCategory][] = [
+  [/dynamic programming/i, "Dynamic Programming"],
+  [/graph|bfs|union find|topolog/i, "Graphs"],
+  [/backtracking/i, "Backtracking"],
+  [/tree/i, "Trees"],
+  [/heap|priority queue/i, "Heap"],
+  [/linked list/i, "Linked List"],
+  [/stack|queue/i, "Stack & Queue"],
+  [/binary search/i, "Binary Search"],
+  [/sliding window/i, "Sliding Window"],
+  [/two pointers/i, "Two Pointers"],
+  [/prefix sum/i, "Prefix Sum"],
+  [/matrix/i, "Matrix"],
+  [/bit manipulation/i, "Bit Manipulation"],
+  [/recursion|divide/i, "Recursion"],
+  [/greedy/i, "Greedy"],
+  [/sorting/i, "Sorting"],
+  [/hash/i, "Hashing"],
+  [/string/i, "Strings"],
+  [/array/i, "Arrays"],
+];
+
+export function categoryOf(p: { category?: string; topics: string[] }): ProblemCategory {
+  if (p.category && (CATEGORY_ORDER as readonly string[]).includes(p.category)) return p.category as ProblemCategory;
+  for (const [re, cat] of TAG_TO_CATEGORY) if (p.topics.some((t) => re.test(t))) return cat;
+  return "Basics"; // maths, loops, conditionals
+}
 
 export interface ProblemDefinition {
   id: string;
   slug: string;
   title: string;
   difficulty: "Easy" | "Medium" | "Hard";
+  /** Section on the problems page; derived from topics when absent (see categoryOf). */
+  category?: string;
   topics: string[];
   companies?: string[];
   acceptance?: string;
@@ -25,10 +82,35 @@ export interface ProblemDefinition {
   source?: { name: string; license: string; url: string };
 }
 
+// Shown above the starter code when a problem uses list or tree nodes; the runner defines the classes.
+const NODE_DOCS: Record<string, Record<string, string>> = {
+  java: {
+    ListNode: "// class ListNode { int val; ListNode next; }  (provided)",
+    TreeNode: "// class TreeNode { int val; TreeNode left, right; }  (provided)",
+  },
+  python: {
+    ListNode: "# class ListNode: val, next  (provided)",
+    TreeNode: "# class TreeNode: val, left, right  (provided)",
+  },
+  cpp: {
+    ListNode: "// struct ListNode { int val; ListNode* next; };  (provided)",
+    TreeNode: "// struct TreeNode { int val; TreeNode* left; TreeNode* right; };  (provided)",
+  },
+};
+
+function nodeDocs(sig: FunctionSignature, language: string): string {
+  const used = new Set([sig.returnType, ...sig.parameters.map((p) => p.type)]);
+  const lines = Object.entries(NODE_DOCS[language] ?? {})
+    .filter(([t]) => used.has(t))
+    .map(([, d]) => d);
+  return lines.length ? lines.join("\n") + "\n" : "";
+}
+
 export function generateStarterCode(sig: FunctionSignature, language: string = "java"): string {
+  const docs = nodeDocs(sig, language);
   if (language === "python") {
     const params = sig.parameters.map((p) => p.name).join(", ");
-    return `class ${sig.className}:\n    def ${sig.methodName}(self, ${params}):\n        # Write your solution here\n        pass\n`;
+    return `${docs}class ${sig.className}:\n    def ${sig.methodName}(self, ${params}):\n        # Write your solution here\n        pass\n`;
   }
   if (language === "cpp") {
     const valueTypes: Record<string, string> = {
@@ -40,6 +122,8 @@ export function generateStarterCode(sig: FunctionSignature, language: string = "
       "int[]": "vector<int>",
       "String[]": "vector<string>",
       "int[][]": "vector<vector<int>>",
+      ListNode: "ListNode*",
+      TreeNode: "TreeNode*",
     };
     // Containers are passed by reference, returned by value.
     const typeMapping: Record<string, string> = Object.fromEntries(
@@ -47,12 +131,14 @@ export function generateStarterCode(sig: FunctionSignature, language: string = "
     );
     const returnType = valueTypes[sig.returnType] || sig.returnType;
     const params = sig.parameters.map((p) => `${typeMapping[p.type] || p.type} ${p.name}`).join(", ");
-    return `class ${sig.className} {\npublic:\n    ${returnType} ${sig.methodName}(${params}) {\n        // Write your solution here\n        \n    }\n};`;
+    return `${docs}class ${sig.className} {\npublic:\n    ${returnType} ${sig.methodName}(${params}) {\n        // Write your solution here\n        \n    }\n};`;
   }
-  
-  // default to Java
+
+  // default to Java; java.util covers the stacks, queues, maps and heaps most problems need
   const params = sig.parameters.map((p) => `${p.type} ${p.name}`).join(", ");
-  return `class ${sig.className} {
+  return `import java.util.*;
+
+${docs}class ${sig.className} {
     public ${sig.returnType} ${sig.methodName}(${params}) {
         // Write your solution here
         
@@ -717,11 +803,20 @@ export const problems: Record<string, ProblemDefinition> = {
   }
 };
 
+// Core topic-wise set, generated with tested expected outputs by scripts/build-core-problems.py.
+Object.assign(problems, core as unknown as Record<string, ProblemDefinition>);
+
 // "Reported in interviews at" tags come from module-level research in lib/data/askedIn.ts.
 for (const p of Object.values(problems)) p.companies = companiesForProblem(p.topics);
 
 // Warm-ups from exercism: no company tags, they are fundamentals practice, not interview reports.
-Object.assign(problems, ladder as unknown as Record<string, ProblemDefinition>);
+// Song lyrics, text generation and trivia don't build problem-solving skill, so they're left out.
+const TOY_WARMUPS = new Set(
+  "bob house twelve-days food-chain beer-song bottle-song proverb kindergarten-garden space-age gigasecond ocr-numbers rectangles line-up protein-translation rna-transcription resistor-color resistor-color-duo darts matrix wordy tournament yacht pig-latin diamond say phone-number transpose flower-field crypto-square book-store variable-length-quantity eliuds-eggs high-scores"
+    .split(" ")
+    .map((s) => `ex-${s}`)
+);
+for (const [id, p] of Object.entries(ladder as unknown as Record<string, ProblemDefinition>)) if (!TOY_WARMUPS.has(id)) problems[id] = p;
 
 export const getProblem = (id: string): ProblemDefinition | null => {
   if (problems[id]) {
@@ -783,3 +878,20 @@ export const getProblem = (id: string): ProblemDefinition | null => {
     hiddenTests: []
   };
 };
+
+const LEVEL_RANK: Record<string, number> = { Easy: 0, Medium: 1, Hard: 2 };
+let order: string[] | null = null;
+/** Problem ids in the problems page's order: topic sections in learning order, easy to hard inside each. */
+export function problemOrder(): string[] {
+  order ??= Object.values(problems)
+    .sort(
+      (a, b) =>
+        CATEGORY_ORDER.indexOf(categoryOf(a)) - CATEGORY_ORDER.indexOf(categoryOf(b)) ||
+        LEVEL_RANK[a.difficulty] - LEVEL_RANK[b.difficulty] ||
+        (a.ladder ?? 1e9) - (b.ladder ?? 1e9) ||
+        (Number(a.id) || 0) - (Number(b.id) || 0) ||
+        a.title.localeCompare(b.title)
+    )
+    .map((p) => p.id);
+  return order;
+}

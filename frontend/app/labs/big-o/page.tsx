@@ -3,15 +3,16 @@
 import { useState } from "react";
 import { clsx } from "clsx";
 import { LabShell, cardCls, focusRing } from "@/components/labs/LabShell";
+import { bigOContent } from "@/components/labs/theory/BigOTheory";
 
 const OPS_PER_SEC = 1e8;
 const CLASSES = [
-  { label: "O(1)", f: () => 1, color: "#0ea5e9" },
-  { label: "O(log n)", f: (n: number) => Math.max(1, Math.log2(n)), color: "#10b981" },
-  { label: "O(n)", f: (n: number) => n, color: "#6366f1" },
-  { label: "O(n log n)", f: (n: number) => n * Math.max(1, Math.log2(n)), color: "#f59e0b" },
-  { label: "O(n²)", f: (n: number) => n * n, color: "#ef4444" },
-  { label: "O(2ⁿ)", f: (n: number) => 2 ** Math.min(n, 1024), color: "#a855f7" },
+  { label: "O(1)", f: () => 1, color: "var(--note)" },
+  { label: "O(log n)", f: (n: number) => Math.max(1, Math.log2(n)), color: "var(--gold)" },
+  { label: "O(n)", f: (n: number) => n, color: "var(--ink)" },
+  { label: "O(n log n)", f: (n: number) => n * Math.max(1, Math.log2(n)), color: "var(--warning)" },
+  { label: "O(n²)", f: (n: number) => n * n, color: "var(--accent)" },
+  { label: "O(2ⁿ)", f: (n: number) => 2 ** Math.min(n, 1024), color: "var(--danger)" },
 ];
 
 const fmtOps = (x: number) => (x >= 1e15 ? x.toExponential(1) : Math.round(x).toLocaleString());
@@ -40,7 +41,7 @@ export default function BigOLab() {
   const x = (v: number) => PAD + ((v - 1) / Math.max(1, n - 1)) * (W - 2 * PAD);
 
   return (
-    <LabShell slug="big-o">
+    <LabShell slug="big-o" content={bigOContent}>
       <section className={cardCls}>
         <label htmlFor="n" className="text-[13px] font-medium text-ink">
           Input size n = <span className="font-mono tabular-nums">{n.toLocaleString()}</span>

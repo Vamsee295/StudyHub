@@ -7,7 +7,8 @@ import { dsaCatalog, DSA_STAGES, DsaProblem } from '@/lib/data/dsaCatalog';
 import { roadmapApi, DsaProblemProgress } from '@/lib/api/roadmaps';
 import { DsaProblemDetailModal } from './DsaProblemDetailModal';
 
-export const DsaRoadmapView = () => {
+/** `embedded`: shown inside the roadmap page, which already titles the section. */
+export const DsaRoadmapView = ({ embedded = false }: { embedded?: boolean }) => {
   const [progress, setProgress] = useState<Record<number, DsaProblemProgress>>({});
   const [loading, setLoading] = useState(true);
   const [selectedProblem, setSelectedProblem] = useState<DsaProblem | null>(null);
@@ -110,15 +111,19 @@ export const DsaRoadmapView = () => {
   }
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
+    <div className="space-y-6">
       {/* Header section */}
-      <div className="bg-card rounded-2xl border-[1.5px] border-hair p-8">
+      <div className={embedded ? "" : "bg-card rounded-2xl border-[1.5px] border-hair p-8"}>
         <div className="max-w-3xl">
-          <p className="eyebrow mb-3">Roadmap · DSA</p>
-          <h1 className="display mb-4 text-[36px] md:text-[44px]">Data structures &amp; algorithms</h1>
-          <p className="text-body leading-relaxed text-lg mb-8">
-            The data structures and problem patterns that technical interviews ask about most.
-          </p>
+          {!embedded && (
+            <>
+              <p className="eyebrow mb-3">Roadmap · DSA</p>
+              <h1 className="display mb-4 text-[36px] md:text-[44px]">Data structures &amp; algorithms</h1>
+              <p className="text-body leading-relaxed text-lg mb-8">
+                The data structures and problem patterns that technical interviews ask about most.
+              </p>
+            </>
+          )}
 
           {/* Progress Card */}
           <div className="bg-paper-2 rounded-xl p-6 border-[1.5px] border-hair">
@@ -133,18 +138,13 @@ export const DsaRoadmapView = () => {
             </div>
             
             <div className="h-3 w-full bg-ink/10 rounded-full overflow-hidden mb-6">
-              <motion.div 
-                className="h-full bg-accent rounded-full"
-                initial={{ width: 0 }}
-                animate={{ width: `${(solvedCount / totalProblems) * 100}%` }}
-                transition={{ duration: 1, ease: "easeOut" }}
-              />
+              <div className="h-full bg-accent rounded-full" style={{ width: `${(solvedCount / totalProblems) * 100}%` }} />
             </div>
 
             <div className="grid grid-cols-3 gap-4">
               <DifficultyStat label="Easy" solved={diffStats.easy.solved} total={diffStats.easy.total} color="bg-note" />
               <DifficultyStat label="Medium" solved={diffStats.medium.solved} total={diffStats.medium.total} color="bg-gold" />
-              <DifficultyStat label="Hard" solved={diffStats.hard.solved} total={diffStats.hard.total} color="bg-danger" />
+              <DifficultyStat label="Hard" solved={diffStats.hard.solved} total={diffStats.hard.total} color="bg-accent" />
             </div>
           </div>
         </div>

@@ -47,11 +47,11 @@ export default function DsaVisualizerPage() {
   const currentStep = steps.length > 0 ? steps[currentStepIndex] : null;
 
   return (
-    <div className="min-h-screen bg-paper-2/50 p-4 md:p-8">
-      <div className="max-w-[1600px] mx-auto h-full flex flex-col">
+    <div className="w-full min-w-0">
+      <div className="flex flex-col">
         <ToolWorkspaceHeader
           title="DSA Visualizer"
-          description="Interactive visualization of common data structures and algorithms to help you understand how they work under the hood."
+          description="Pick a sorting or searching algorithm and step through it. Every comparison and swap is shown, with the line of pseudocode it runs."
           badge="Step-through"
           icon={<Activity className="w-5 h-5" />}
         />

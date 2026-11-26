@@ -27,7 +27,7 @@ import { useProfile } from "@/components/providers/ProfileProvider";
 
 const CACHE_KEY = "pathward-dashboard-cache";
 const quickTools = [
-  { name: "SQL Playground", icon: Database, href: "/tools/sql-playground" },
+  { name: "SQL Lab", icon: Database, href: "/practice/sql" },
   { name: "DSA Visualizer", icon: PlaySquare, href: "/tools/dsa-visualizer" },
   { name: "Resume Analyzer", icon: FileText, href: "/tools/resume-analyzer" },
   { name: "Interview Simulator", icon: Briefcase, href: "/tools/interview-simulator" },

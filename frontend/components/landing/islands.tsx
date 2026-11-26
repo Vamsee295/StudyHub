@@ -5,12 +5,18 @@ import Link from "next/link";
 import { ArrowLeft, ArrowRight, Check, Pause, Play } from "lucide-react";
 import { roadmap } from "@/lib/data/roadmap";
 import { companies } from "@/lib/data/companies";
+import { COMPANY_PROFILES } from "@/lib/data/askedIn";
 import { buttonClass } from "@/components/ui/Button";
 
 const SIGNUP = "/login?mode=signup";
-// "TCS Digital / Prime" -> "TCS", matched against roadmap testedBy entries like "TCS NQT".
+// "Study these first" comes from the sourced company research in lib/data/askedIn.ts:
+// the roadmap stages whose courses that company is reported to test. "TCS Digital / Prime" -> "TCS".
 const shortName = (name: string) => name.split(" ")[0];
-const stagesFor = (name: string) => roadmap.filter((s) => s.testedBy.some((t) => t.startsWith(shortName(name))));
+const stagesFor = (name: string) => {
+  const profile = COMPANY_PROFILES.find((p) => p.name.startsWith(shortName(name)));
+  const courses = new Set(profile?.areas.map((a) => a.course) ?? []);
+  return roadmap.filter((s) => s.courses.some((c) => courses.has(c)));
+};
 const wrap = "mx-auto w-full max-w-[1180px] px-4 md:px-8";
 
 const ROTATE_MS = 5000;
@@ -223,7 +229,7 @@ export function Hero() {
   );
 }
 
-// Click through the real roadmap: every stage's topics, an interview question and who tests it.
+// Click through the real roadmap: every stage's topics and a sample interview question.
 export function StageExplorer() {
   const [i, setI] = useState(0);
   const s = roadmap[i];
@@ -277,16 +283,8 @@ export function StageExplorer() {
             ))}
           </ul>
           <div className="mt-5 rounded-xl bg-night px-4 py-3.5 text-[#f5efe6]">
-            <p className="font-mono text-[13px] uppercase tracking-wider text-[#f5efe6]/55">Asked in interviews</p>
+            <p className="font-mono text-[13px] uppercase tracking-wider text-[#f5efe6]/55">Sample interview question</p>
             <p className="mt-1 text-[15px] font-semibold leading-snug">&ldquo;{s.sampleQuestion}&rdquo;</p>
-          </div>
-          <div className="mt-4 flex flex-wrap items-center gap-2">
-            <span className="mr-1 font-mono text-[13px] uppercase tracking-wider text-mute">Tested by</span>
-            {s.testedBy.map((c) => (
-              <span key={c} className="rounded-full border-[1.5px] border-hair px-2.5 py-0.5 text-[13px] font-semibold">
-                {c}
-              </span>
-            ))}
           </div>
         </div>
       <Link prefetch={false} href="/roadmaps" className="label-cond flex items-center justify-between border-t-[1.5px] border-hair px-5 py-3.5 text-[17px] hover:bg-card-2">

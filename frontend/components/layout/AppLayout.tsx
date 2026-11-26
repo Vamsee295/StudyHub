@@ -1,5 +1,6 @@
 "use client";
 
+import { useStudyPrefs } from "@/lib/prefs";
 import { Avatar } from "@/components/ui/Avatar";
 import { useState, useEffect, useSyncExternalStore, ViewTransition } from "react";
 import Link from "next/link";
@@ -21,7 +22,6 @@ import {
   Lightbulb,
   ListChecks,
   Loader2,
-  Network,
   PanelLeftClose,
   PanelLeftOpen,
   Route,
@@ -32,7 +32,9 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { clsx } from "clsx";
+import { guardViewTransitions } from "@/lib/viewTransitionGuard";
 import { ProfileDropdown } from "@/components/layout/ProfileDropdown";
+import { Assistant } from "@/components/layout/Assistant";
 import { NotificationDropdown } from "@/components/layout/NotificationDropdown";
 import { notificationService, AppNotification } from "@/lib/services/notificationService";
 import { authApi } from "@/lib/api/auth";
@@ -59,7 +61,6 @@ const groups: { title: string; items: NavItem[] }[] = [
     items: [
       ["/learn", "Learn", BookOpen],
       ["/roadmaps", "Roadmaps", Route],
-      ["/learn/map", "Knowledge map", Network],
       ["/learn/saved", "Saved", Bookmark],
     ],
   },
@@ -120,6 +121,8 @@ const subscribeNarrow = (cb: () => void) => {
 };
 // The first page to appear is the app opening, not a navigation, so it doesn't slide in.
 let started = false;
+
+guardViewTransitions(); // no page transitions while the tab is hidden (see lib/viewTransitionGuard.ts)
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname() ?? "";
@@ -191,6 +194,13 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     });
   }, [mounted, user?.id]);
 
+  // Types muted in Settings > Learning are hidden from the bell; system notices always show.
+  const [studyPrefs] = useStudyPrefs();
+  const muted = new Set(studyPrefs.mutedNotifications);
+  const isMuted = (n: AppNotification) => n.type !== "SYSTEM" && muted.has(n.type);
+  const shownNotifications = muted.size ? notifications.filter((n) => !isMuted(n)) : notifications;
+  const shownUnread = Math.max(0, unreadCount - notifications.filter((n) => !n.read && isMuted(n)).length);
+
   const handleMarkAsRead = async (id: string) => {
     try {
       await notificationService.markAsRead(id);
@@ -241,9 +251,11 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const displayAvatar = profile.identity?.avatarUrl;
 
   // Lessons and editors fill the screen and scroll inside themselves
+  // /learn/<subject>/<lesson>, but not the subject's own pages (test, review, …), which scroll normally
+  const isLesson = /^\/learn\/[^/]+\/[^/]+$/.test(pathname) && !/\/(test|review|revise|reading-order)$/.test(pathname);
   const isWorkspace =
-    // /learn/<subject>/<lesson>, but not the subject's own pages (test, review, …), which scroll normally
-    (/^\/learn\/[^/]+\/[^/]+$/.test(pathname) && !/\/(test|review|revise|reading-order)$/.test(pathname)) ||
+    isLesson ||
+    pathname === "/learn/daily" ||
     pathname === "/practice/code" ||
     pathname === "/practice/sql" ||
     (pathname.startsWith("/practice/problems/") && pathname !== "/practice/problems");
@@ -276,7 +288,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     <button
       type="button"
       onClick={toggle}
-      aria-label={unreadCount ? `Notifications, ${unreadCount} unread` : "Notifications"}
+      aria-label={shownUnread ? `Notifications, ${shownUnread} unread` : "Notifications"}
       aria-expanded={open}
       className={clsx(
         "tap relative grid size-9 shrink-0 place-items-center rounded-xl transition-colors",
@@ -284,9 +296,9 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       )}
     >
       <Bell className="size-[18px]" />
-      {unreadCount > 0 && (
+      {shownUnread > 0 && (
         <span className="absolute -right-0.5 -top-0.5 grid h-4 min-w-4 place-items-center rounded-full bg-accent px-1 font-mono text-[10px] font-bold text-paper">
-          {unreadCount > 99 ? "99+" : unreadCount}
+          {shownUnread > 99 ? "99+" : shownUnread}
         </span>
       )}
     </button>
@@ -296,7 +308,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     <NotificationDropdown
       isOpen={notificationsOpen}
       onClose={() => setNotificationsOpen(false)}
-      notifications={notifications}
+      notifications={shownNotifications}
       isLoading={isLoadingNotifications}
       onMarkAsRead={handleMarkAsRead}
       onMarkAllAsRead={handleMarkAllAsRead}
@@ -443,6 +455,8 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       </div>
 
       <AskDialog />
+      {/* not in the code editors, where it would cover Run and Submit */}
+      {(!isWorkspace || isLesson) && <Assistant />}
 
       {/* ── Phone tab bar (hidden in full-screen workspaces) ── */}
       {!isWorkspace && (

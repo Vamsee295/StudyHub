@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { clsx } from "clsx";
 import { LabShell, cardCls, focusRing, inputCls } from "@/components/labs/LabShell";
+import { pageReplacementContent } from "@/components/labs/theory/PageReplacementTheory";
 import { PagingAlgorithm, simulatePaging } from "@/lib/labs/paging";
 
 const ALGOS: { id: PagingAlgorithm; label: string }[] = [{ id: "FIFO", label: "FIFO" }, { id: "LRU", label: "LRU" }, { id: "OPT", label: "Optimal" }];
@@ -21,7 +22,7 @@ export default function PageReplacementLab() {
   const anomaly = table.find((t) => t.id === "FIFO")!.byFrames.some((v, i, a) => i > 0 && v > a[i - 1]);
 
   return (
-    <LabShell slug="page-replacement">
+    <LabShell slug="page-replacement" content={pageReplacementContent}>
       <section className={cardCls}>
         <div className="grid sm:grid-cols-[1fr_auto] gap-4">
           <label className="flex flex-col gap-1.5 text-[13px] font-medium text-ink">
@@ -37,7 +38,7 @@ export default function PageReplacementLab() {
           {ALGOS.map((a) => (
             <button key={a.id} type="button" aria-pressed={algo === a.id} onClick={() => setAlgo(a.id)}
               className={clsx("px-3 py-1.5 rounded-lg border text-[13px] font-medium", focusRing,
-                algo === a.id ? "border-accent bg-accent text-paper" : "border-hair text-ink hover:border-accent")}>
+                algo === a.id ? "border-ink bg-ink text-paper" : "border-hair text-ink hover:border-accent")}>
               {a.label}
             </button>
           ))}

@@ -37,7 +37,8 @@ function timeAgo(at: number, now = Date.now()): string {
 
 /** The most recently opened tools, newest first, shaped for the "Continue using" section. */
 export function recentToolItems(limit = 3): ContinueToolItem[] {
-  return read().slice(0, limit).map((v) => {
+  // skip tools that no longer exist (the SQL playground moved to Practice)
+  return read().filter((v) => TOOL_REGISTRY[v.href]).slice(0, limit).map((v) => {
     const t = TOOL_REGISTRY[v.href];
     return {
       id: v.href, title: t.title, description: t.badge, badge: t.badge,

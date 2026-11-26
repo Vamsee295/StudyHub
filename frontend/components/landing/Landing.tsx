@@ -151,13 +151,20 @@ function TrackList() {
     <ul className="brut divide-y-[1.5px] divide-hair rounded-2xl bg-card">
       {paths.map((p) => (
         <li key={p.slug}>
-          <Link prefetch={false} href="/roadmaps" className="group flex items-center justify-between gap-4 px-5 py-4 hover:bg-card-2">
-            <span className="label-cond text-[19px]">{p.name}</span>
-            <span className="flex items-center gap-2 font-mono text-[13px] uppercase text-mute">
-              {p.weeks.replace(" Prep", "")}
-              <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" aria-hidden />
-            </span>
-          </Link>
+          {p.available ? (
+            <Link prefetch={false} href="/roadmaps" className="group flex items-center justify-between gap-4 px-5 py-4 hover:bg-card-2">
+              <span className="label-cond text-[19px]">{p.name}</span>
+              <span className="flex items-center gap-2 font-mono text-[13px] uppercase text-accent-ink">
+                Open roadmap
+                <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" aria-hidden />
+              </span>
+            </Link>
+          ) : (
+            <div className="flex items-center justify-between gap-4 px-5 py-4">
+              <span className="label-cond text-[19px] text-ink/60">{p.name}</span>
+              <span className="font-mono text-[13px] uppercase text-mute">Planned</span>
+            </div>
+          )}
         </li>
       ))}
     </ul>
@@ -215,8 +222,8 @@ function HowItWorks() {
       </div>
 
       <Step n={1} title="Choose the role you want." aside={<TrackList />}>
-        <p>Each track is built for one job and says how many weeks to plan for and which subjects matter for it.</p>
-        <p>Not sure yet? Start with Software Engineer. Every track shares the same core CS stages, so switching later costs you nothing.</p>
+        <p>The Software Engineer track is ready today: twelve stages from programming basics to the HR round, with the courses, practice and tools for each.</p>
+        <p>More roles are planned. They will share the same core CS stages, so anything you finish now still counts.</p>
       </Step>
       <Step n={2} title="Learn the stages in order." aside={<StageExplorer />}>
         <p>Placement prep in {roadmap.length} stages, from programming basics to system design. Each one builds on the last.</p>
@@ -235,10 +242,10 @@ function HowItWorks() {
 /* ---------- Tools (the one night section) ---------- */
 
 const tools = [
-  { t: "SQL playground", d: "Run real queries against sample databases.", href: "/tools/sql-playground" },
+  { t: "SQL lab", d: "Run real queries on the same tables the SQL lessons use.", href: "/practice/sql" },
   { t: "Resume analyser", d: "Upload your resume, get specific fixes.", href: "/tools/resume-analyzer" },
   { t: "Interview simulator", d: "Answer technical questions against the clock.", href: "/tools/interview-simulator" },
-  { t: "DSA visualiser", d: "Watch arrays, trees and graphs change step by step.", href: "/tools/dsa-visualizer" },
+  { t: "DSA visualiser", d: "Watch sorting and searching algorithms run, one comparison at a time.", href: "/tools/dsa-visualizer" },
   { t: "STAR builder", d: "Shape your behavioural answers before the HR round.", href: "/tools/star-builder" },
   { t: "Study with me", d: "Timed focus sessions, so the hours add up.", href: "/study-with-me" },
 ];
@@ -277,9 +284,9 @@ function Tools() {
 /* ---------- FAQ ---------- */
 
 const faqs = [
-  { q: "Does StudyHub cost anything?", a: "No. Creating an account and following any track is free." },
+  { q: "Does StudyHub cost anything?", a: "No. Creating an account and following the roadmap is free." },
   { q: "I'm in my first or second year. Is it too early?", a: "No, it's the best time. The roadmap starts at programming fundamentals, so you can begin at stage one and go at your own pace." },
-  { q: "Which track should I pick?", a: "The role you plan to apply for. If you're unsure, start with Software Engineer: every track shares the same core CS stages." },
+  { q: "Which track should I pick?", a: "Software Engineer is the track available today, and it covers the core CS subjects most campus drives test. Other roles are planned and will build on the same stages." },
   { q: "Do I need to install anything?", a: "No. Lessons, practice, the SQL playground and every other tool run in the browser." },
   { q: "Where does the company information come from?", a: `It's compiled from recent hiring rounds and reviewed periodically. Last checked: ${lastVerified}.` },
 ];
@@ -320,7 +327,7 @@ function Closing() {
             <br />
             today.
           </h2>
-          <p className="mt-6 max-w-[48ch] text-[17px] leading-relaxed text-body">Free account. Pick a track and your first lesson is ready in under a minute.</p>
+          <p className="mt-6 max-w-[48ch] text-[17px] leading-relaxed text-body">Free account. Open the roadmap and your first lesson is ready in under a minute.</p>
           <Link prefetch={false} href={SIGNUP} className={`${buttonClass("accent", "lg")} mt-8`}>
             Create your free account <ArrowRight className="size-5" />
           </Link>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo, useRef, type ReactNode } from "react";
+import { READING_SCALE, useReadingSize, useStudyPrefs } from "@/lib/prefs";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { clsx } from "clsx";
@@ -43,6 +44,17 @@ import { useAuth } from "@/components/providers/AuthProvider";
 // --- INTERACTIVE BLOCKS ---
 
 /** Hairline card with a mono header row: the frame for every interactive lesson block. */
+/** Runs `run` once when it mounts (auto-complete when the reader reaches the end, Settings > Learning). */
+function OnMount({ run }: { run: () => void }) {
+  const done = useRef(false);
+  useEffect(() => {
+    if (done.current) return;
+    done.current = true;
+    run();
+  }, [run]);
+  return null;
+}
+
 function Block({ icon: Icon, title, aside, tone, children }: { icon: typeof Code; title: string; aside?: ReactNode; tone?: "danger"; children: ReactNode }) {
   return (
     <section className="overflow-hidden rounded-2xl border-[1.5px] border-hair bg-card">
@@ -428,6 +440,8 @@ export default function TopicPage() {
   // Reading bar: `here` is where the reader is now, `furthest` the deepest point reached (saved as the lesson's progress).
   const [here, setHere] = useState(0);
   const [furthest, setFurthest] = useState(0);
+  const [readingSize] = useReadingSize();
+  const [studyPrefs] = useStudyPrefs();
   // Course outline (desktop): open by default, the reader's choice is remembered on this device.
   // Safe to read on first render: the outline only renders after the lesson loads on the client.
   const [outlineOpen, setOutlineOpen] = useState(() => {
@@ -728,7 +742,8 @@ export default function TopicPage() {
         </header>
 
         <div ref={lessonScrollRef} className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden">
-          <article className="mx-auto flex w-full max-w-[760px] flex-col gap-10 px-5 py-10 md:px-10">
+          {/* Reading size (Settings > Appearance) scales the lesson, column width included. */}
+          <article className="mx-auto flex w-full max-w-[760px] flex-col gap-10 px-5 py-10 md:px-10" style={{ zoom: READING_SCALE[readingSize] }}>
             <header>
               <p className="eyebrow mb-3">
                 {subject.name} · {topic.estimated_minutes} min
@@ -763,6 +778,7 @@ export default function TopicPage() {
               <p className="text-body">This lesson has no content yet.</p>
             )}
             <div ref={contentEndRef} aria-hidden />
+            {!isCompleted && read >= 100 && studyPrefs.autoComplete && !updating && <OnMount run={markComplete} />}
             {!isCompleted && read >= 100 && (
               <div className="brut flex flex-wrap items-center justify-between gap-4 rounded-2xl bg-card p-5">
                 <span>

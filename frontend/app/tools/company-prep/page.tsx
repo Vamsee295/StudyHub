@@ -50,7 +50,7 @@ export default function CompanyPrepPage() {
           description="One page per company: the reported interview process, the topics to cover with your progress on each, and the sources behind it. Print it or save it as PDF before a drive."
           icon={<Building2 className="w-5 h-5" />}
           actions={
-            <button type="button" onClick={() => window.print()} className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-accent text-paper text-[13px] font-semibold hover:bg-accent-ink ${focusRing}`}>
+            <button type="button" onClick={() => window.print()} className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-ink text-paper text-[13px] font-semibold hover:bg-ink/85 ${focusRing}`}>
               <Printer aria-hidden="true" className="w-4 h-4" /> Print / save PDF
             </button>
           }

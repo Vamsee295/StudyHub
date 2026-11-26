@@ -5,6 +5,11 @@
    Same system as vamsee.tech and Mimo. Paper is the default theme;
    .theme-dark / html[data-theme="dark"] recolours everything through these tokens.
    =========================================================== */
+/* Motion: the strong UI ease-out (animate skill / Emil Kowalski). JS twin: EASE_OUT in components/tools/shared/ResultMotion.tsx */
+:root {
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+}
+
 :root,
 .theme-paper {
   --paper: #f5efe6;
@@ -491,6 +496,8 @@ main {
   background: var(--card-2);
 }
 
+/* In the components layer so utilities on an input (pl-10 beside a search icon, h-9) win over these defaults. */
+@layer components {
 .field {
   height: 42px;
   background: var(--card);
@@ -513,6 +520,7 @@ main {
 }
 .field-error {
   border-color: var(--danger) !important;
+}
 }
 
 .arrow {

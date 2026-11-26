@@ -11,6 +11,11 @@ logger = logging.getLogger(__name__)
 
 T = TypeVar("T", bound=BaseModel)
 
+
+def _reasoning(model: str) -> dict:
+    # gpt-oss models think before answering and the thinking counts against max_tokens; keep it short
+    return {"reasoning_effort": "low"} if "gpt-oss" in model else {}
+
 class GroqProvider(BaseAIProvider):
     """Implementation of the AI provider using Groq's API."""
 
@@ -26,7 +31,7 @@ class GroqProvider(BaseAIProvider):
 
     @property
     def default_model(self) -> str:
-        return settings.groq_model or "llama3-70b-8192"
+        return settings.groq_model or "openai/gpt-oss-120b"
 
     async def generate(
         self,
@@ -36,7 +41,8 @@ class GroqProvider(BaseAIProvider):
         **kwargs: Any,
     ) -> tuple[str, dict[str, int]]:
         
-        model = kwargs.get("model", self.default_model)
+        model = kwargs.pop("model", self.default_model)
+        kwargs = {**_reasoning(model), **kwargs}
         
         response = await self.client.chat.completions.create(
             messages=messages,
@@ -66,7 +72,8 @@ class GroqProvider(BaseAIProvider):
         **kwargs: Any,
     ) -> AsyncGenerator[str, None]:
         
-        model = kwargs.get("model", self.default_model)
+        model = kwargs.pop("model", self.default_model)
+        kwargs = {**_reasoning(model), **kwargs}
         
         stream = await self.client.chat.completions.create(
             messages=messages,
@@ -89,7 +96,8 @@ class GroqProvider(BaseAIProvider):
         **kwargs: Any,
     ) -> T:
         
-        model = kwargs.get("model", self.default_model)
+        model = kwargs.pop("model", self.default_model)
+        kwargs = {**_reasoning(model), **kwargs}
         
         # Instruct the model to return JSON matching the schema
         schema_json = schema.model_json_schema()
@@ -101,7 +109,9 @@ class GroqProvider(BaseAIProvider):
         # Ensure system message exists or inject it
         has_system = any(m.get("role") == "system" for m in messages)
         if has_system:
-            messages = [{"role": "system", "content": system_instruction}] + [
+            # keep the caller's instructions; add the JSON contract after them
+            own = "\n\n".join(m["content"] for m in messages if m.get("role") == "system")
+            messages = [{"role": "system", "content": own + "\n\n" + system_instruction}] + [
                 m for m in messages if m.get("role") != "system"
             ]
         else:

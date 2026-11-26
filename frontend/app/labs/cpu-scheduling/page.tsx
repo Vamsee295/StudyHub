@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import { clsx } from "clsx";
 import { LabShell, cardCls, focusRing, inputCls } from "@/components/labs/LabShell";
+import { cpuSchedulingContent } from "@/components/labs/theory/CpuSchedulingTheory";
 import { Algorithm, Proc, schedule } from "@/lib/labs/scheduling";
 
 const ALGOS: { id: Algorithm; label: string }[] = [
@@ -31,13 +32,13 @@ export default function CpuSchedulingLab() {
     setProcs((ps) => ps.map((p, k) => (k === i ? { ...p, [field]: field === "id" ? v : Math.max(0, Math.floor(Number(v) || 0)) } : p)));
 
   return (
-    <LabShell slug="cpu-scheduling">
+    <LabShell slug="cpu-scheduling" content={cpuSchedulingContent}>
       <section className={cardCls}>
         <div className="flex flex-wrap items-center gap-2 mb-4" role="group" aria-label="Scheduling algorithm">
           {ALGOS.map((a) => (
             <button key={a.id} type="button" aria-pressed={algo === a.id} onClick={() => setAlgo(a.id)}
               className={clsx("px-3 py-1.5 rounded-lg border text-[13px] font-medium", focusRing,
-                algo === a.id ? "border-accent bg-accent text-paper" : "border-hair text-ink hover:border-accent")}>
+                algo === a.id ? "border-ink bg-ink text-paper" : "border-hair text-ink hover:border-accent")}>
               {a.label}
             </button>
           ))}

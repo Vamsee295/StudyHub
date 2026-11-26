@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 import { clsx } from "clsx";
 import { ArrowLeft, ArrowRight, CheckCircle2, XCircle } from "lucide-react";
 import { getCourseBySlug } from "@/lib/data/courses/index";
+import { useStudyPrefs } from "@/lib/prefs";
 import { BankQuestion, dueItems, getReviewItems, questionBank, recordAnswers } from "@/lib/learn/study";
 import { PageHeader } from "@/components/ui/Page";
 import { buttonClass } from "@/components/ui/Button";
@@ -18,11 +19,14 @@ export default function ReviewPage() {
 
   // client-only render (AppLayout), so the local review queue is readable on first render
   const [items] = useState(() => getReviewItems(subjectSlug));
-  const [queue, setQueue] = useState<BankQuestion[]>(() =>
-    dueItems(items)
+  const [{ reviewBatch }] = useStudyPrefs();
+  // Settings > Learning can cap a session; the rest stays due for next time.
+  const [queue, setQueue] = useState<BankQuestion[]>(() => {
+    const due = dueItems(items)
       .map((x) => bank.get(x.id))
-      .filter((q): q is BankQuestion => !!q)
-  );
+      .filter((q): q is BankQuestion => !!q);
+    return reviewBatch > 0 ? due.slice(0, reviewBatch) : due;
+  });
   const [pick, setPick] = useState<number | null>(null);
   const [done, setDone] = useState({ right: 0, wrong: 0 });
   const [now] = useState(Date.now);

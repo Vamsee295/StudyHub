@@ -121,7 +121,7 @@ The old `.grid-texture` / `.elevate-*` classes are deleted.
 **Sidebar groups:**
 ```
 TODAY      Dashboard · Daily · Study With Me
-LEARN      Learn · Roadmaps · Knowledge map · Saved
+LEARN      Learn · Roadmaps · Saved   (the concept map is linked from the Learn page)
 PRACTICE   Practice · Problems · SQL · Code
 CAREER     Companies · Resources · Templates · Tools · Labs
            ─────────

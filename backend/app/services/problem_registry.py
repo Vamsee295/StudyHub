@@ -136,3 +136,8 @@ HIDDEN_TESTS.update(json.loads(
 
 def get_hidden_tests(problem_id: str):
     return HIDDEN_TESTS.get(problem_id, [])
+
+# Core topic-wise set (frontend/scripts/build-core-problems.py); expected outputs come from reference solutions.
+HIDDEN_TESTS.update(json.loads(
+    (Path(__file__).resolve().parents[2] / "data" / "core_hidden_tests.json").read_text(encoding="utf-8")
+))

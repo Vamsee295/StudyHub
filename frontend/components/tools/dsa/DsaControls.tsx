@@ -47,7 +47,7 @@ export function DsaControls({
             "p-3 rounded-full flex items-center justify-center transition-all disabled:opacity-50 disabled:cursor-not-allowed",
             isPlaying 
               ? "bg-warning-soft text-warning hover:bg-warning-line" 
-              : "bg-accent text-paper hover:bg-accent hover:shadow-[4px_5px_0_var(--hard)]"
+              : "bg-ink text-paper hover:bg-ink/85 hover:shadow-[4px_5px_0_var(--hard)]"
           )}
         >
           {isPlaying ? <Pause className="w-6 h-6 fill-current" /> : <Play className="w-6 h-6 fill-current ml-1" />}

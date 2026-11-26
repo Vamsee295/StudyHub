@@ -19,12 +19,15 @@ from app.models.user_sync import UserSyncData
 
 ALLOWED_KEY = re.compile(
     r"^(studyhub:daily"
+    r"|studyhub:daily-code"
     r"|studyhub:tests:[a-z0-9-]{1,60}"
+    r"|studyhub:submissions"
     r"|studyhub:review:[a-z0-9-]{1,60}"
     r"|studyhub_lesson_bookmarks_v1"
     r"|studyhub_star_stories_v1"
     r"|studyhub_readiness_subjects_v1"
-    r"|studyhub_recent_tools_v1)$"
+    r"|studyhub_recent_tools_v1"
+    r"|studyhub_problem_notes_v1)$"
 )
 MAX_VALUE_BYTES = 200_000
 MAX_KEYS_PER_USER = 60

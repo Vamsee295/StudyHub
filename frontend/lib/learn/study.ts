@@ -148,4 +148,17 @@ export function recordAnswers(subject: string, results: { id: string; correct: b
   write(reviewKey(subject), items);
 }
 
+/** Empties every course's review queue (Settings > Learning). Synced like any other change. */
+export function clearReviewQueues() {
+  const keys: string[] = [];
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k?.startsWith("studyhub:review:")) keys.push(k);
+    }
+  } catch {}
+  keys.forEach((k) => write(k, []));
+  return keys.length;
+}
+
 export const dueItems = (items: ReviewItem[], now = Date.now()) => items.filter((x) => x.due <= now);

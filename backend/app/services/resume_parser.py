@@ -27,6 +27,17 @@ class ScannedPdfError(ResumeParserError):
     """Raised when the PDF appears to be scanned (no extractable text)."""
 
 
+def normalize_lines(text: str) -> str:
+    """Tidies spacing inside each line but keeps the line breaks: headings, the name line and
+    one-entry-per-line layout are how sections and entries are recognised later."""
+    out: list[str] = []
+    for line in text.splitlines():
+        line = " ".join(line.split())
+        if line or (out and out[-1]):
+            out.append(line)
+    return "\n".join(out).strip()
+
+
 class ResumeParser:
     """
     Service for parsing PDF resumes and extracting text.
@@ -91,15 +102,7 @@ class ResumeParser:
                 "No text could be extracted from the PDF. The file may be scanned or image-based."
             )
 
-        # Normalize whitespace: replace multiple spaces/newlines with a single space, but preserve paragraphs
-        # We'll split by double newline to preserve paragraphs, then normalize within each paragraph.
-        paragraphs = full_text.split("\n\n")
-        normalized_paragraphs = []
-        for para in paragraphs:
-            # Replace any whitespace (including newlines and tabs) with a single space
-            normalized = " ".join(para.split())
-            normalized_paragraphs.append(normalized)
-        normalized_text = "\n\n".join(normalized_paragraphs)
+        normalized_text = normalize_lines(full_text)
 
         # Count words and characters (without normalization)
         word_count = len(full_text.split())
@@ -138,13 +141,7 @@ class ResumeParser:
         if not text or not text.strip():
             raise ValueError("Resume text is empty.")
 
-        # Normalize whitespace similarly to PDF
-        paragraphs = text.split("\n\n")
-        normalized_paragraphs = []
-        for para in paragraphs:
-            normalized = " ".join(para.split())
-            normalized_paragraphs.append(normalized)
-        normalized_text = "\n\n".join(normalized_paragraphs)
+        normalized_text = normalize_lines(text)
 
         word_count = len(text.split())
         character_count = len(text)

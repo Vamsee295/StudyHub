@@ -64,7 +64,7 @@ export default function TechQuestionDrillPage() {
   return (
     <div className="w-full max-w-[860px] mx-auto pb-20">
       <ToolWorkspaceHeader
-        title="Technical Question Drill"
+        title="Question Drill"
         description="Quick multiple-choice drill from each course's question bank. Questions you miss join that course's spaced-repetition review queue, the same one the mock tests use."
         icon={<Layers className="w-5 h-5" />}
       />
@@ -74,7 +74,7 @@ export default function TechQuestionDrillPage() {
           {finished && deck && (
             <div className="flex flex-col gap-1 pb-4 border-b border-hair">
               <p className="text-[12px] font-bold uppercase tracking-wider text-mute">Drill complete</p>
-              <p className="text-3xl font-bold text-ink tabular-nums">{correct} / {deck.length}</p>
+              <p className="display text-[40px] text-ink tabular-nums">{correct} / {deck.length}</p>
               <p className="text-[13.5px] text-body">
                 {deck.length - correct > 0
                   ? `${deck.length - correct} missed question${deck.length - correct === 1 ? " was" : "s were"} added to your ${courseTitle} review queue.`
@@ -104,7 +104,7 @@ export default function TechQuestionDrillPage() {
           </div>
           <p className="text-[12.5px] text-mute">{bank.length} questions available in {courseTitle}.</p>
           <button type="button" onClick={start} disabled={bank.length === 0 || (source === "due" && dueCount === 0)}
-            className={`self-start inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-accent text-paper text-[14px] font-semibold hover:bg-accent-ink disabled:opacity-50 ${focusRing}`}>
+            className={`self-start inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-ink text-paper text-[14px] font-semibold hover:bg-ink/85 disabled:opacity-50 ${focusRing}`}>
             {finished ? <><RotateCcw aria-hidden="true" className="w-4 h-4" /> Start another drill</> : "Start drill"}
           </button>
         </section>
@@ -142,7 +142,7 @@ export default function TechQuestionDrillPage() {
                 <strong className="text-ink">{picked === q.answer ? "Correct. " : "Not quite. "}</strong>{q.explanation}
               </p>
               <div className="flex items-center gap-3">
-                <button type="button" onClick={next} autoFocus className={`px-5 py-2 rounded-lg bg-accent text-paper text-[14px] font-semibold hover:bg-accent-ink ${focusRing}`}>
+                <button type="button" onClick={next} autoFocus className={`px-5 py-2 rounded-lg bg-ink text-paper text-[14px] font-semibold hover:bg-ink/85 ${focusRing}`}>
                   {index + 1 < deck.length ? "Next question" : "Finish"}
                 </button>
                 <Link href={`/learn/${course}/${q.lessonSlug}`} className={`text-[13px] text-accent-ink underline rounded ${focusRing}`}>Read the lesson: {q.lessonTitle}</Link>

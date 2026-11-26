@@ -1,7 +1,8 @@
 export interface LearningPath {
   slug: string;
   name: string;
-  weeks: string;
+  /** true when the track has a roadmap and courses behind it; the rest are planned, not offered yet. */
+  available: boolean;
   description: string;
   tags: string[];
   ctaLabel: string;
@@ -13,8 +14,7 @@ export interface RoadmapStage {
   phase: string;
   description: string;
   topics: string[];
-  testedBy: string[];
-  resourceHighlight: { title: string; detail: string };
+  courses: string[]; // Learn courses behind the stage
   sampleQuestion: string;
 }
 
@@ -102,19 +102,6 @@ export interface RecommendedDiagnostic {
 // TOOLS MODULE TYPES
 // ----------------------------------------------------
 
-export type ToolCategory = 'all' | 'coding' | 'interview' | 'resume' | 'aptitude' | 'sql' | 'placement' | 'productivity';
-
-export interface CoreToolItem {
-  id: string;
-  title: string;
-  description: string;
-  category: ToolCategory;
-  tag: string;
-  codeAst?: string;
-  href: string;
-  icon?: string;
-}
-
 export interface ContinueToolItem {
   id: string;
   title: string;
@@ -122,29 +109,6 @@ export interface ContinueToolItem {
   badge: string;
   timeAgo: string;
   meta: string;
-  href: string;
-}
-
-export interface InterviewUtilityItem {
-  id: string;
-  title: string;
-  description: string;
-  tag: string;
-  durationOrStep: string;
-  meta: string;
-  actionLabel: string;
-  actionIcon?: string;
-  href: string;
-  isPrimaryAction?: boolean;
-}
-
-export interface CalculatorTrackerItem {
-  id: string;
-  title: string;
-  subtitle: string;
-  description: string;
-  tag: string;
-  actionLabel: string;
   href: string;
 }
 
@@ -266,51 +230,10 @@ export interface ResourceCategoryItem {
 // TEMPLATES MODULE TYPES
 // ----------------------------------------------------
 
-export interface TemplateCategoryItem {
-  id: string;
-  label: string;
-  count: number;
-}
 
-export interface TemplateItem {
-  id: string;
-  title: string;
-  description: string;
-  category: string;
-  targetRole: string;
-  estimatedTime: string;
-  tags: string[];
-  badge?: string;
-  content: string; // The raw template text or ID mapping
-}
 
-export interface TemplateDraft {
-  id: string;
-  title: string;
-  description: string;
-  targetRole: string;
-  progress: number;
-  lastEdited: string;
-  href: string;
-}
 
-export interface SavedTemplateRecord {
-  id: string;
-  templateName: string;
-  type: string;
-  targetRole: string;
-  lastUpdated: string;
-  status: "Draft" | "Ready" | "Archived";
-  href: string;
-}
 
-export interface TemplateWorkspaceData {
-  id: string;
-  title: string;
-  category: string;
-  fields: { key: string; label: string; placeholder: string; value: string }[];
-  structure: { section: string; body: string }[];
-}
 
 // ----------------------------------------------------
 // ONBOARDING & USER PROFILE TYPES

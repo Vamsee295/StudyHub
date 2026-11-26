@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Calculator, ExternalLink } from "lucide-react";
 import { ToolWorkspaceHeader } from "@/components/tools/shared/ToolWorkspaceHeader";
+import { AnimatedNumber, MeterBar } from "@/components/tools/shared/ResultMotion";
 
 const focusRing = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent";
 
@@ -78,25 +79,51 @@ export default function CgpaConverterPage() {
           )}
         </section>
 
-        <aside aria-label="Result" className="p-6 rounded-xl border-[1.5px] border-hair bg-card flex flex-col gap-3 self-start">
-          <h2 className="text-[12px] font-bold uppercase tracking-wider text-mute">Equivalent percentage</h2>
-          <p className="text-5xl font-bold tabular-nums text-ink" aria-live="polite">{pct === null ? "—" : `${pct.toFixed(2)}%`}</p>
+        <aside aria-label="Result" className="brut flex flex-col gap-4 self-start rounded-2xl bg-card p-6">
+          <h2 className="eyebrow">Equivalent percentage</h2>
+          {/* the screen-reader text updates instantly; the visible number tweens */}
+          <p className="sr-only" aria-live="polite">{pct === null ? "No result" : `${pct.toFixed(2)} percent`}</p>
+          <p className="display text-[64px] leading-none tabular-nums text-ink" aria-hidden>
+            {pct === null ? "—" : (
+              <>
+                <AnimatedNumber value={pct} decimals={2} />
+                <span className="text-[32px]">%</span>
+              </>
+            )}
+          </p>
           {pct !== null && (
-            <p className="text-[12.5px] text-body font-mono tabular-nums">
-              {value} × {mult}{offset ? ` ${offset < 0 ? "−" : "+"} ${Math.abs(offset)}` : ""}
-            </p>
+            <>
+              <div>
+                <MeterBar pct={pct} className="h-3" />
+                <div className="mt-1 flex justify-between font-mono text-[10px] text-mute" aria-hidden>
+                  <span>0</span>
+                  <span>50</span>
+                  <span>100</span>
+                </div>
+              </div>
+              <p className="font-mono text-[12.5px] tabular-nums text-body">
+                {value} × {mult}{offset ? ` ${offset < 0 ? "−" : "+"} ${Math.abs(offset)}` : ""} = {pct.toFixed(2)}%
+              </p>
+            </>
           )}
-          <table className="text-[12.5px] tabular-nums mt-2">
-            <caption className="text-left text-[11px] uppercase tracking-wider text-mute mb-1">Same CGPA, each convention</caption>
-            <tbody>
-              {FORMULAS.filter((x) => x.id !== "custom").map((x) => (
-                <tr key={x.id}>
-                  <th scope="row" className="text-left font-mono font-normal text-body pr-3 py-0.5">{x.label}</th>
-                  <td className="text-right font-semibold text-ink">{valid ? `${Math.min(100, Math.max(0, value * x.m + x.c)).toFixed(2)}%` : "—"}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <div className="border-t-[1.5px] border-hair pt-4">
+            <p className="mb-2.5 font-mono text-[11px] uppercase tracking-wider text-mute">Same CGPA, each convention</p>
+            <ul className="space-y-3">
+              {FORMULAS.filter((x) => x.id !== "custom").map((x) => {
+                const p = Math.min(100, Math.max(0, value * x.m + x.c));
+                const active = formula === x.id;
+                return (
+                  <li key={x.id}>
+                    <div className="mb-1 flex items-baseline justify-between gap-3 text-[12.5px]">
+                      <span className={`font-mono ${active ? "font-bold text-ink" : "text-body"}`}>{x.label}</span>
+                      <span className="font-semibold tabular-nums text-ink">{valid ? <><AnimatedNumber value={p} decimals={2} />%</> : "—"}</span>
+                    </div>
+                    <MeterBar pct={valid ? p : 0} className="h-1.5" color={active ? "var(--accent)" : "var(--mute)"} />
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
         </aside>
       </div>
 

@@ -95,7 +95,7 @@ export function ResumeDropzone({ onAnalyze, isAnalyzing }: ResumeDropzoneProps) 
             <p className="text-note font-medium">{selectedFile.name}</p>
             <p className="text-note text-xs mt-1">{(selectedFile.size / 1024 / 1024).toFixed(2)} MB</p>
             <button 
-              className="mt-6 px-6 py-2.5 bg-accent text-paper rounded-lg font-medium hover:bg-accent transition-colors"
+              className="mt-6 px-6 py-2.5 bg-ink text-paper rounded-lg font-medium hover:bg-ink/85 transition-colors"
               onClick={(e) => {
                 e.stopPropagation();
                 onAnalyze(selectedFile);

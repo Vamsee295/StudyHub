@@ -3,6 +3,7 @@
 import { clsx } from "clsx";
 import { Check } from "lucide-react";
 import { useTheme, type Theme } from "@/lib/theme";
+import { READING_SCALE, useReadingSize, type ReadingSize } from "@/lib/prefs";
 
 const options: { id: Theme; label: string; hint: string; swatch: [string, string, string] }[] = [
   { id: "paper", label: "Paper", hint: "Cream paper, ink type", swatch: ["#f5efe6", "#191614", "#c8603a"] },
@@ -10,9 +11,17 @@ const options: { id: Theme; label: string; hint: string; swatch: [string, string
   { id: "system", label: "System", hint: "Follows your device", swatch: ["#f5efe6", "#121110", "#c8603a"] },
 ];
 
-/** Theme + motion. Saved on this device (localStorage), applied before first paint by THEME_SCRIPT. */
+const sizes: { id: ReadingSize; label: string }[] = [
+  { id: "sm", label: "Small" },
+  { id: "md", label: "Default" },
+  { id: "lg", label: "Large" },
+  { id: "xl", label: "Extra large" },
+];
+
+/** Theme, reading size + motion. Saved on this device (localStorage), applied before first paint by THEME_SCRIPT. */
 export function AppearanceSettings() {
   const { theme, setTheme, reduceMotion, setReduceMotion } = useTheme();
+  const [readingSize, setReadingSize] = useReadingSize();
   return (
     <div className="space-y-8">
       <div>
@@ -53,6 +62,32 @@ export function AppearanceSettings() {
             );
           })}
         </div>
+      </fieldset>
+
+      <fieldset className="border-t-[1.5px] border-hair pt-6">
+        <legend className="sr-only">Lesson text size</legend>
+        <p className="font-semibold">Lesson text size</p>
+        <p className="mb-3 text-[13px] text-mute">Scales lesson text, code and diagrams while you read.</p>
+        <div role="radiogroup" aria-label="Lesson text size" className="inline-flex flex-wrap gap-1 rounded-xl border-[1.5px] border-hair p-1">
+          {sizes.map((s) => (
+            <button
+              key={s.id}
+              type="button"
+              role="radio"
+              aria-checked={readingSize === s.id}
+              onClick={() => setReadingSize(s.id)}
+              className={clsx(
+                "label-cond rounded-lg px-3 py-1.5 text-[15px] transition-colors",
+                readingSize === s.id ? "bg-ink text-paper" : "text-ink/70 hover:bg-ink/[0.06] hover:text-ink"
+              )}
+            >
+              {s.label}
+            </button>
+          ))}
+        </div>
+        <p className="mt-3 rounded-xl bg-paper-2 px-4 py-3 text-[16px] leading-relaxed" style={{ zoom: READING_SCALE[readingSize] }}>
+          A variable is a named storage location that holds a value your program can read and change.
+        </p>
       </fieldset>
 
       <label className="flex cursor-pointer items-center justify-between gap-4 border-t-[1.5px] border-hair pt-6">

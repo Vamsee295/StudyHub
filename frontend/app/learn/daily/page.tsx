@@ -1,165 +1,126 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, CheckCircle2, XCircle } from "lucide-react";
-import { PageHeader, Section } from "@/components/ui/Page";
-import { optionClass } from "@/components/learn/optionClass";
-import { clsx } from "clsx";
-import { bestStreak, currentStreak, dailyQuestion, dateKey, dayNumber, getDailyHistory, keyFromDayNumber, saveDailyAnswer, DailyHistory } from "@/lib/learn/daily";
-import { recordAnswers } from "@/lib/learn/study";
+import { CalendarCheck, CheckCircle2, Loader2, Share2, Timer } from "lucide-react";
+import { ProblemWorkspace, type WorkspaceEvent } from "@/components/practice/ProblemWorkspace";
+import { buttonClass } from "@/components/ui/Button";
+import { captureElement, warmShareFonts } from "@/lib/shareImage";
+import {
+  dailyProblem,
+  dateKey,
+  draftKeyFor,
+  getDailyCodeHistory,
+  msUntilMidnight,
+  recordDailyResult,
+  type DailyCodeHistory,
+} from "@/lib/learn/dailyCode";
 
-const WEEKS = 6;
+const prettyDate = (key: string) =>
+  new Date(`${key}T00:00:00`).toLocaleDateString(undefined, { weekday: "short", day: "numeric", month: "short", year: "numeric" });
 
-export default function DailyQuestionPage() {
-  // Dates come from the learner's own clock; AppLayout renders pages on the client only, so read them directly.
-  const [today] = useState(dateKey);
-  const [history, setHistory] = useState<DailyHistory>(getDailyHistory);
-  const [viewDate, setViewDate] = useState(today);
-  const [practicePick, setPracticePick] = useState<number | null>(null);
+function hms(ms: number) {
+  const s = Math.max(0, Math.floor(ms / 1000));
+  return [Math.floor(s / 3600), Math.floor((s % 3600) / 60), s % 60].map((n) => String(n).padStart(2, "0")).join(":");
+}
 
-  const q = useMemo(() => dailyQuestion(viewDate), [viewDate]);
+export default function DailyPage() {
+  // AppLayout renders pages on the client only, so the learner's clock and storage are readable on first render.
+  const [today, setToday] = useState(dateKey);
+  const [history, setHistory] = useState<DailyCodeHistory>(getDailyCodeHistory);
+  const [left, setLeft] = useState(msUntilMidnight);
+  const [sharing, setSharing] = useState<"idle" | "busy" | "done" | "error">("idle");
+  const pageRef = useRef<HTMLDivElement>(null);
 
-  const isToday = viewDate === today;
-  const entry = history[viewDate];
-  // Past days can be practised, but only today's answer counts toward the streak.
-  const pick = isToday ? (entry ? entry.pick ?? (entry.correct ? q.answer : -1) : practicePick) : practicePick;
-  const answered = isToday ? !!entry : practicePick !== null;
-  const correct = isToday ? entry?.correct : practicePick === q.answer;
+  // 12:00 AM: move to the new day's problem without a reload
+  useEffect(() => {
+    const tick = setInterval(() => {
+      const ms = msUntilMidnight();
+      setLeft(ms);
+      const now = dateKey();
+      setToday((t) => (t === now ? t : now));
+    }, 1000);
+    return () => clearInterval(tick);
+  }, []);
 
-  function choose(i: number) {
-    if (answered) return;
-    if (isToday) {
-      const ok = i === q.answer;
-      saveDailyAnswer(today, { id: q.id, correct: ok, pick: i });
-      recordAnswers(q.course, [{ id: q.id, correct: ok }]); // misses join that course's review queue
-      setHistory(getDailyHistory());
-      setPracticePick(i);
-    } else setPracticePick(i);
-  }
+  // get the share image's fonts ready while the learner reads, so Share is quick
+  useEffect(() => {
+    const t = setTimeout(warmShareFonts, 3000);
+    return () => clearTimeout(t);
+  }, []);
 
-  const answeredDays = Object.values(history);
-  const stats = [
-    { label: "Current streak", value: String(currentStreak(history, today)), unit: "days" },
-    { label: "Best streak", value: String(bestStreak(history)), unit: "days" },
-    { label: "Accuracy", value: answeredDays.length ? `${Math.round((100 * answeredDays.filter((d) => d.correct).length) / answeredDays.length)}%` : "–" },
-    { label: "Days answered", value: String(answeredDays.length) },
-  ];
+  const problem = dailyProblem(today);
+  const entry = history[today];
 
-  // Calendar: the last WEEKS weeks, Monday-first, ending with the current week.
-  const todayN = dayNumber(today);
-  const weekday = (new Date(todayN * 86_400_000).getUTCDay() + 6) % 7; // 0 = Monday
-  const firstN = todayN - weekday - (WEEKS - 1) * 7;
-  const cells = Array.from({ length: WEEKS * 7 }, (_, i) => firstN + i);
-  const now = new Date();
-  const msLeft = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).getTime() - now.getTime();
+  const onResult = useCallback(
+    (e: WorkspaceEvent) => setHistory(recordDailyResult(today, problem.id, e.accepted, e.kind, e.language)),
+    [today, problem.id]
+  );
+
+  const share = async () => {
+    const node = pageRef.current;
+    if (!node) return;
+    setSharing("busy");
+    try {
+      const blob = await captureElement(node);
+      const file = new File([blob], `studyhub-daily-${today}.png`, { type: "image/png" });
+      const text = `StudyHub daily problem, ${prettyDate(today)}: ${problem.title}${entry?.status === "solved" ? " ✓ solved" : ""}.`;
+      if (navigator.canShare?.({ files: [file] })) {
+        await navigator.share({ files: [file], title: "My StudyHub daily", text });
+      } else {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = file.name;
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      }
+      setSharing("done");
+    } catch (err) {
+      // closing the share sheet is not an error
+      setSharing(err instanceof DOMException && err.name === "AbortError" ? "idle" : "error");
+    }
+    setTimeout(() => setSharing("idle"), 2500);
+  };
 
   return (
-    <div className="max-w-4xl">
-      <Link href="/learn" className="mb-6 inline-flex items-center gap-1.5 font-mono text-[12px] uppercase tracking-wider text-mute hover:text-ink">
-        <ArrowLeft aria-hidden className="size-3.5" /> Learn
-      </Link>
-      <PageHeader eyebrow="Same question for everyone, every day" title="Daily" hl="question" />
-
-      <dl className="mb-8 grid grid-cols-2 gap-x-6 gap-y-4 border-y-[1.5px] border-hair py-5 sm:grid-cols-4">
-        {stats.map((s) => (
-          <div key={s.label}>
-            <dt className="font-mono text-[11px] uppercase tracking-wider text-mute">{s.label}</dt>
-            <dd className="display mt-1 text-[40px] tabular-nums">
-              {s.value}
-              {s.unit && <span className="ml-1.5 font-mono text-[12px] normal-case tracking-normal text-mute">{s.unit}</span>}
-            </dd>
-          </div>
-        ))}
-      </dl>
-
-      <section className="brut mb-12 rounded-2xl bg-card p-6 md:p-8">
-        <div className="mb-4 flex flex-wrap items-baseline justify-between gap-2">
-          <span className="eyebrow">
-            {isToday ? "Today" : new Intl.DateTimeFormat(undefined, { dateStyle: "medium", timeZone: "UTC" }).format(new Date(dayNumber(viewDate) * 86_400_000))} · {q.courseTitle} · {q.moduleTitle}
-          </span>
-          {!isToday && <span className="text-[12px] text-mute">Practice only: past days don&apos;t change your streak.</span>}
-        </div>
-        <h2 className="text-[20px] font-semibold leading-snug">{q.question}</h2>
-        <div role="radiogroup" aria-label="Answer options" className="mt-5 flex flex-col gap-2">
-          {q.options.map((opt, i) => (
-            <button
-              key={i}
-              type="button"
-              role="radio"
-              aria-checked={pick === i}
-              disabled={answered}
-              onClick={() => choose(i)}
-              className={optionClass(answered, i === q.answer, i === pick)}
-            >
-              <span className="font-mono text-[12px] text-mute">{String.fromCharCode(65 + i)}</span>
-              {opt}
-            </button>
-          ))}
-        </div>
-        {answered && (
-          <div aria-live="polite" className="fade-in mt-5 flex flex-col gap-2 rounded-xl bg-paper-2 p-4">
-            <p className={clsx("inline-flex items-center gap-1.5 text-[15px] font-semibold", correct ? "text-note" : "text-danger")}>
-              {correct ? <CheckCircle2 aria-hidden className="size-4" /> : <XCircle aria-hidden className="size-4" />}
-              {correct ? "Correct." : isToday ? "Not this time. It's in your review queue now." : "Not quite."}
-            </p>
-            {q.explanation && <p className="text-[15px] leading-relaxed text-body">{q.explanation}</p>}
-            <div className="flex flex-wrap gap-x-4 gap-y-1 text-[14px]">
-              <Link href={`/learn/${q.course}/${q.lessonSlug}`} className="font-semibold text-accent-ink underline underline-offset-2">
-                Read the lesson: {q.lessonTitle}
-              </Link>
-              {isToday && (
-                <span className="font-mono text-[13px] tabular-nums text-mute">
-                  Next question in {Math.floor(msLeft / 3_600_000)}h {Math.floor((msLeft % 3_600_000) / 60_000)}m
-                </span>
-              )}
-            </div>
-          </div>
-        )}
-      </section>
-
-      <Section title="Your calendar" kicker={`Last ${WEEKS} weeks`}>
-        <div className="grid max-w-md grid-cols-7 gap-1.5">
-          {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d) => (
-            <span key={d} className="text-center font-mono text-[10px] uppercase text-mute">
-              {d}
+    <div ref={pageRef} className="flex h-full flex-col bg-paper">
+      {/* slim LeetCode-style bar: what this is on the left, the clock and Share on the right */}
+      <header className="flex h-12 shrink-0 items-center justify-between gap-3 border-b-[1.5px] border-hair px-4 sm:px-6">
+        <div className="flex min-w-0 items-center gap-2.5">
+          <CalendarCheck className="size-4 shrink-0 text-accent-ink" aria-hidden />
+          <h1 className="truncate text-[15px] font-semibold">Daily Question</h1>
+          <span className="hidden truncate text-[13px] text-mute sm:inline">· {prettyDate(today)}</span>
+          {entry?.status === "solved" && (
+            <span className="inline-flex items-center gap-1 rounded-full bg-note/15 px-2 py-0.5 text-[12px] font-semibold text-note">
+              <CheckCircle2 className="size-3.5" aria-hidden /> Solved
             </span>
-          ))}
-          {cells.map((n) => {
-            const key = keyFromDayNumber(n);
-            const e = history[key];
-            const future = n > todayN;
-            const label = `${key}: ${future ? "upcoming" : e ? (e.correct ? "answered correctly" : "answered incorrectly") : "not answered"}`;
-            return (
-              <button
-                key={n}
-                type="button"
-                disabled={future}
-                aria-label={label}
-                aria-current={key === viewDate ? "date" : undefined}
-                onClick={() => {
-                  setViewDate(key);
-                  setPracticePick(null);
-                }}
-                className={clsx(
-                  "no-press aspect-square rounded-lg border-2 font-mono text-[11px] tabular-nums",
-                  key === viewDate && "outline-2 outline-offset-2 outline-accent",
-                  future
-                    ? "border-transparent text-mute/40"
-                    : e
-                      ? e.correct
-                        ? "border-note bg-note text-paper"
-                        : "border-danger bg-danger text-paper"
-                      : "border-hair text-body hover:border-line"
-                )}
-              >
-                {Number(key.slice(8))}
-              </button>
-            );
-          })}
+          )}
         </div>
-        <p className="mt-3 text-[13px] text-mute">Teal: right · Red: wrong · Outlined: skipped. Pick any past day to practise its question.</p>
-      </Section>
+        <div className="flex shrink-0 items-center gap-3">
+          <span className="hidden items-center gap-1.5 font-mono text-[12px] tabular-nums text-mute sm:flex" title="A new problem appears at midnight">
+            <Timer className="size-3.5" aria-hidden /> Next in <span className="font-bold text-ink">{hms(left)}</span>
+          </span>
+          <button type="button" onClick={share} disabled={sharing === "busy"} data-share-exclude className={buttonClass("secondary", "sm")} aria-live="polite">
+            {sharing === "busy" ? <Loader2 className="size-4 animate-spin" /> : <Share2 className="size-4" />}
+            <span className="max-sm:sr-only">{sharing === "busy" ? "Capturing…" : sharing === "done" ? "Shared" : sharing === "error" ? "Try again" : "Share"}</span>
+          </button>
+        </div>
+      </header>
+
+      <div className="min-h-0 flex-1">
+        <ProblemWorkspace
+          key={`${today}|${problem.id}`}
+          problemId={problem.id}
+          header={<></>}
+          onResult={onResult}
+          draftKey={draftKeyFor(today)}
+        />
+      </div>
+
+      <p className="sr-only">
+        A new problem appears every day at midnight. Solve it with Submit to keep your streak. <Link href="/practice/problems">All problems</Link>
+      </p>
     </div>
   );
 }

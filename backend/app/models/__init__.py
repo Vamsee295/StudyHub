@@ -16,6 +16,7 @@ from app.models.ai import AIUsageLog
 from app.models.ideas import Idea, IdeaVote
 from app.models.study_logs import StudyLog
 from app.models.user_sync import UserSyncData
+from app.models.submissions import CodeSubmission
 
 # This file imports all the models so that Alembic can auto-discover them via Base.metadata
 

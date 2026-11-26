@@ -4,15 +4,16 @@ import { useState } from "react";
 import Link from "next/link";
 import { ArrowRight, RotateCcw } from "lucide-react";
 import { ProfileNavTabs } from "@/components/profile/ProfileNavTabs";
+import { ActivityHeatmap } from "@/components/profile/ActivityHeatmap";
 import { PageHeader, Section, Progress } from "@/components/ui/Page";
 import { courseProgress } from "@/lib/learn/progress";
-import { currentStreak, dateKey, getDailyHistory } from "@/lib/learn/daily";
+import { activityByDay, activityCount, streakOf } from "@/lib/activity";
 import { dueItems, getAttempts, getReviewItems } from "@/lib/learn/study";
 import { problemStorage } from "@/lib/problems/problemStorage";
 import { problems } from "@/lib/problems/problemRegistry";
 
 // Everything on this page is computed from what you've actually done in this browser:
-// completed lessons, daily answers, solved problems, the review queue and mock-test history.
+// completed lessons, solved problems, the daily problem, the review queue and mock-test history.
 function readStats() {
   const courses = courseProgress();
   const due = courses
@@ -28,7 +29,7 @@ function readStats() {
     lessonsDone: courses.reduce((n, c) => n + c.done, 0),
     lessonsTotal: courses.reduce((n, c) => n + c.total, 0),
     started: courses.filter((c) => c.done > 0).length,
-    streak: currentStreak(getDailyHistory(), dateKey()),
+    streak: (() => { const m = activityByDay(); return streakOf((k) => activityCount(m[k]) > 0); })(),
     solved: Object.values(problemStorage.getAllStatuses()).filter((s) => s === "solved").length,
     due,
     tests,
@@ -43,7 +44,7 @@ export default function ProgressPage() {
     { n: s.lessonsDone, of: s.lessonsTotal, label: "Lessons done" },
     { n: s.started, of: s.courses.length, label: "Courses started" },
     { n: s.solved, of: totalProblems, label: "Problems solved" },
-    { n: s.streak, label: "Day streak" },
+    { n: s.streak, label: "Day streak (any study)" },
   ];
 
   return (
@@ -62,6 +63,8 @@ export default function ProgressPage() {
           </div>
         ))}
       </dl>
+
+      <ActivityHeatmap />
 
       <div className="grid items-start gap-10 lg:grid-cols-[minmax(0,1fr)_340px]">
         <Section title="By course" kicker="Lessons">

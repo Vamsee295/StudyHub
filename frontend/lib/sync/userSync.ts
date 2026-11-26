@@ -8,16 +8,20 @@
 //   review queue, STAR stories, settings), because a union would bring removed items back.
 //   The trade-off: if two devices edit the same key while offline, the later edit wins.
 import { apiClient } from "@/lib/api/client";
+import { mergeSubmissions, type Submission } from "@/lib/problems/submissions";
 
-type Strategy = "union-daily" | "union-tests" | "lww";
+type Strategy = "union-daily" | "union-daily-code" | "union-tests" | "union-submissions" | "lww";
 const RULES: [RegExp, Strategy][] = [
   [/^studyhub:daily$/, "union-daily"],
+  [/^studyhub:daily-code$/, "union-daily-code"],
   [/^studyhub:tests:[a-z0-9-]{1,60}$/, "union-tests"],
+  [/^studyhub:submissions$/, "union-submissions"],
   [/^studyhub:review:[a-z0-9-]{1,60}$/, "lww"],
   [/^studyhub_lesson_bookmarks_v1$/, "lww"],
   [/^studyhub_star_stories_v1$/, "lww"],
   [/^studyhub_readiness_subjects_v1$/, "lww"],
   [/^studyhub_recent_tools_v1$/, "lww"],
+  [/^studyhub_problem_notes_v1$/, "lww"],
 ];
 const strategyFor = (key: string) => RULES.find(([re]) => re.test(key))?.[1];
 
@@ -113,6 +117,21 @@ export function mergeDaily(a: Record<string, DailyEntry> | null, b: Record<strin
   return { ...(b ?? {}), ...(a ?? {}) };
 }
 
+type DailyCodeEntry = { status: "solved" | "attempted"; attempts?: number; [k: string]: unknown };
+/** Daily coding: per date, "solved" beats "attempted" so a solve on one device is never lost. */
+export function mergeDailyCode(a: Record<string, DailyCodeEntry> | null, b: Record<string, DailyCodeEntry> | null) {
+  const out: Record<string, DailyCodeEntry> = { ...(b ?? {}) };
+  for (const [date, x] of Object.entries(a ?? {})) {
+    const y = out[date];
+    if (!y) out[date] = x;
+    else {
+      const base = x.status === "solved" ? x : y.status === "solved" ? y : x;
+      out[date] = { ...base, status: x.status === "solved" || y.status === "solved" ? "solved" : "attempted", attempts: Math.max(x.attempts ?? 0, y.attempts ?? 0) };
+    }
+  }
+  return out;
+}
+
 const same = (x: unknown, y: unknown) => JSON.stringify(x) === JSON.stringify(y);
 
 // --- lesson progress -------------------------------------------------------
@@ -175,9 +194,13 @@ export function pull(): Promise<void> {
           continue;
         }
 
-        const merged = strategy === "union-tests"
+        const merged = strategy === "union-submissions"
+          ? mergeSubmissions(local as Submission[] | null, (s?.value as Submission[] | null) ?? null)
+          : strategy === "union-tests"
           ? mergeTests(local as Attempt[] | null, (s?.value as Attempt[] | null) ?? null)
-          : mergeDaily(local as Record<string, DailyEntry> | null, (s?.value as Record<string, DailyEntry> | null) ?? null);
+          : strategy === "union-daily-code"
+            ? mergeDailyCode(local as Record<string, DailyCodeEntry> | null, (s?.value as Record<string, DailyCodeEntry> | null) ?? null)
+            : mergeDaily(local as Record<string, DailyEntry> | null, (s?.value as Record<string, DailyEntry> | null) ?? null);
         if (!same(merged, local)) { writeRaw(key, merged); changed = true; }
         if (!s || !same(merged, s.value)) {
           const t = Date.now();

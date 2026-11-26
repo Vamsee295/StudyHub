@@ -66,4 +66,6 @@ export interface ExecutionResult {
   compilerError?: string;
   compilerMarkers?: CompilationErrorMarker[];
   runtimeError?: string;
+  /** Set on submit when the server stored it in your history. */
+  submissionId?: string | null;
 }

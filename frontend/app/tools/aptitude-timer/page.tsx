@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Flag, Pause, Play, RotateCcw, Timer } from "lucide-react";
 import { ToolWorkspaceHeader } from "@/components/tools/shared/ToolWorkspaceHeader";
+import { AnimatedNumber, MeterBar } from "@/components/tools/shared/ResultMotion";
 
 const focusRing = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent";
 const fmt = (ms: number) => {
@@ -11,6 +12,81 @@ const fmt = (ms: number) => {
 };
 
 type Lap = { ms: number; skipped: boolean };
+
+const paceColor = (ms: number, target: number) => (ms > 2 * target ? "var(--accent)" : ms > target ? "var(--gold)" : "var(--note)");
+
+/** End-of-section report: the one place this tool animates (a rare moment, explaining where the time went). */
+function SectionReport({ laps, target, limit, elapsed }: { laps: Lap[]; target: number; limit: number; elapsed: number }) {
+  const answered = laps.filter((l) => !l.skipped);
+  const used = laps.reduce((n, l) => n + l.ms, 0);
+  const sorted = [...laps].map((l, i) => ({ ...l, i })).sort((a, b) => b.ms - a.ms);
+  const slowest3 = sorted.slice(0, 3);
+  const share = used ? Math.round((100 * slowest3.reduce((n, l) => n + l.ms, 0)) / used) : 0;
+  const onPace = laps.filter((l) => l.ms <= target).length;
+  const maxMs = Math.max(target * 2, ...laps.map((l) => l.ms));
+  const stats: [string, number, (n: number) => string][] = [
+    ["Answered", answered.length, (n) => String(Math.round(n))],
+    ["Skipped", laps.length - answered.length, (n) => String(Math.round(n))],
+    ["On pace", onPace, (n) => `${Math.round(n)}/${laps.length}`],
+    ["Time used", Math.min(elapsed, limit) / 1000, (n) => fmt(n * 1000)],
+  ];
+
+  return (
+    <section aria-labelledby="report" className="brut mt-8 rounded-2xl bg-card p-6 md:p-8">
+      <p className="eyebrow">Section report</p>
+      <h2 id="report" className="display mt-1 text-[32px] md:text-[40px]">Where your minutes went</h2>
+
+      <dl className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4">
+        {stats.map(([label, value, show], k) => (
+          <div key={label} className="rounded-xl border-[1.5px] border-hair p-4">
+            <dt className="font-mono text-[11px] uppercase tracking-wider text-mute">{label}</dt>
+            <dd className="display mt-1 text-[36px] tabular-nums">
+              <span className="sr-only">{show(value)}</span>
+              <span aria-hidden>
+                <AnimatedNumber value={value} format={show} fromZero duration={0.6} delay={k * 0.06} />
+              </span>
+            </dd>
+          </div>
+        ))}
+      </dl>
+
+      <div className="mt-8">
+        <div className="mb-3 flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[11px] uppercase tracking-wider text-mute">
+          <span>Per question</span>
+          <span className="flex items-center gap-1.5"><span className="size-2 rounded-full bg-note" /> on pace</span>
+          <span className="flex items-center gap-1.5"><span className="size-2 rounded-full bg-gold" /> over target</span>
+          <span className="flex items-center gap-1.5"><span className="size-2 rounded-full bg-accent" /> over 2× target</span>
+        </div>
+        <ol className="grid gap-1.5">
+          {laps.map((l, i) => (
+            <li key={i} className="grid grid-cols-[2.5rem_1fr_3.5rem] items-center gap-3 text-[13px] tabular-nums">
+              <span className="text-mute">Q{i + 1}</span>
+              <MeterBar
+                pct={(100 * l.ms) / maxMs}
+                color={paceColor(l.ms, target)}
+                className="h-3"
+                duration={0.4}
+                delay={0.25 + Math.min(i, 30) * 0.04}
+                label={`Question ${i + 1}: ${fmt(l.ms)}${l.skipped ? ", skipped" : ""}`}
+              />
+              <span className="text-right">
+                {fmt(l.ms)}
+                {l.skipped && <span className="ml-1 text-[10px] text-mute">skip</span>}
+              </span>
+            </li>
+          ))}
+        </ol>
+      </div>
+
+      {laps.length >= 6 && ( /* with fewer questions "the slowest three" is most of the section, so it says nothing */
+        <p className="mt-6 max-w-[64ch] text-[15px] leading-relaxed text-body">
+          Your three slowest questions (Q{slowest3.map((l) => l.i + 1).join(", Q")}) took <strong className="text-ink">{share}%</strong> of
+          the time you spent. {share > 40 ? "In the next section, skip a question once it passes twice the target and come back if time is left." : "Your time was spread fairly evenly."}
+        </p>
+      )}
+    </section>
+  );
+}
 
 export default function AptitudeTimerPage() {
   const [questions, setQuestions] = useState(20);
@@ -95,14 +171,14 @@ export default function AptitudeTimerPage() {
 
           <div className="text-center flex flex-col gap-1">
             <p className="text-[12px] uppercase tracking-wider text-mute">Question {Math.min(laps.length + 1, questions)} of {questions}</p>
-            <p className={`text-6xl font-bold tabular-nums ${current > target ? "text-warning" : "text-ink"}`} aria-live="off">{fmt(current)}</p>
+            <p className={`display text-[72px] leading-none tabular-nums ${current > target ? "text-warning" : "text-ink"}`} aria-live="off">{fmt(current)}</p>
             <p className="text-[13px] text-body tabular-nums">Target {fmt(target)} per question · {fmt(remainingT)} left in section</p>
             {done && <p className="text-[14px] font-semibold text-accent-ink mt-2" role="status">{elapsed >= limit ? "Time's up." : "Section complete."}</p>}
           </div>
 
           <div className="flex flex-wrap justify-center gap-3">
             <button type="button" onClick={() => setRunning((r) => !r)} disabled={done}
-              className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-accent text-paper font-semibold text-[14px] hover:bg-accent-ink disabled:opacity-50 ${focusRing}`}>
+              className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-ink text-paper font-semibold text-[14px] hover:bg-ink/85 disabled:opacity-50 ${focusRing}`}>
               {running ? <><Pause aria-hidden="true" className="w-4 h-4" /> Pause</> : <><Play aria-hidden="true" className="w-4 h-4" /> {elapsed ? "Resume" : "Start"}</>}
             </button>
             <button type="button" onClick={() => lap(false)} disabled={!running}
@@ -139,9 +215,7 @@ export default function AptitudeTimerPage() {
               {laps.map((l, i) => (
                 <li key={i} className="flex items-center gap-2">
                   <span className="w-8 text-mute">Q{i + 1}</span>
-                  <span className="flex-1 h-1.5 rounded-full bg-hair overflow-hidden" aria-hidden="true">
-                    <span className="block h-full rounded-full" style={{ width: `${Math.min(100, (50 * l.ms) / target)}%`, background: l.ms > 2 * target ? "var(--danger)" : l.ms > target ? "var(--warning)" : "var(--note)" }} />
-                  </span>
+                  <MeterBar pct={Math.min(100, (50 * l.ms) / target)} color={paceColor(l.ms, target)} className="h-1.5 flex-1" duration={0.2} />
                   <span className="w-12 text-right">{fmt(l.ms)}</span>
                   {l.skipped && <span className="text-[11px] text-mute">skip</span>}
                 </li>
@@ -150,6 +224,8 @@ export default function AptitudeTimerPage() {
           )}
         </aside>
       </div>
+
+      {done && laps.length > 0 && <SectionReport laps={laps} target={target} limit={limit} elapsed={elapsed} />}
     </div>
   );
 }

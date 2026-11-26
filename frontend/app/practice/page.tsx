@@ -2,27 +2,16 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { ArrowRight, Clock, Code2, Database, ListChecks, type LucideIcon } from "lucide-react";
+import { ArrowRight, Clock, Code2, Database, Flame, ListChecks, type LucideIcon } from "lucide-react";
 import { PageHeader, Section } from "@/components/ui/Page";
 import { practiceApi, PracticeSet } from "@/lib/api/practice";
 import { problemStorage } from "@/lib/problems/problemStorage";
 import { problems } from "@/lib/problems/problemRegistry";
+import { activityByDay, streakOf } from "@/lib/activity";
+import { dateKey } from "@/lib/learn/dailyCode";
 
 // Backend timestamps are naive UTC
 const parseUtc = (s: string) => new Date(/[zZ]|[+-]\d\d:?\d\d$/.test(s) ? s : `${s}Z`);
-
-// Consecutive days with a completed sprint, ending today (or yesterday, so the streak survives until today is over)
-function streakFrom(dates: Date[]) {
-  const days = new Set(dates.map((d) => d.toDateString()));
-  const cursor = new Date();
-  if (!days.has(cursor.toDateString())) cursor.setDate(cursor.getDate() - 1);
-  let n = 0;
-  while (days.has(cursor.toDateString())) {
-    n++;
-    cursor.setDate(cursor.getDate() - 1);
-  }
-  return n;
-}
 
 type MappedSession = { id: string; title: string; score: number; totalQuestions: number; durationStr: string; completedDate: string; track: string };
 
@@ -60,7 +49,14 @@ export default function PracticeHubPage() {
   const [solved] = useState(() => Object.values(problemStorage.getAllStatuses()).filter((s) => s === "solved").length);
   const [recent, setRecent] = useState<MappedSession[]>([]);
   const [sprints, setSprints] = useState<PracticeSet[]>([]);
-  const [streakDays, setStreakDays] = useState(0);
+  // Practice days: a problem solved or the daily problem solved (local), plus finished sprints (from the server).
+  const [localDays] = useState(() => {
+    const m = activityByDay();
+    return Object.keys(m).filter((k) => m[k].problems > 0 || m[k].daily);
+  });
+  const [sprintDays, setSprintDays] = useState<string[]>([]);
+  const practiceDays = new Set([...localDays, ...sprintDays]);
+  const streakDays = streakOf((k) => practiceDays.has(k));
 
   useEffect(() => {
     practiceApi
@@ -71,7 +67,7 @@ export default function PracticeHubPage() {
       .getLedger()
       .then((res) => {
         if (!res.ledger) return;
-        setStreakDays(streakFrom(res.ledger.map((l) => parseUtc(l.completed_at))));
+        setSprintDays(res.ledger.map((l) => dateKey(parseUtc(l.completed_at))));
         setRecent(
           res.ledger.slice(0, 5).map((l) => ({
             id: l.id,
@@ -99,8 +95,13 @@ export default function PracticeHubPage() {
             <dt className="mt-1 font-mono text-[11px] uppercase tracking-wider text-mute">Solved</dt>
           </div>
           <div>
-            <dd className="display text-[44px] leading-none tabular-nums">{streakDays}</dd>
-            <dt className="mt-1 font-mono text-[11px] uppercase tracking-wider text-mute">Sprint streak</dt>
+            <dd className="flex items-center justify-end gap-1 display text-[44px] leading-none tabular-nums max-md:justify-start">
+              <Flame className={streakDays > 0 ? "size-8 text-accent" : "size-8 text-mute"} aria-hidden />
+              {streakDays}
+            </dd>
+            <dt className="mt-1 font-mono text-[11px] uppercase tracking-wider text-mute" title="Days in a row with a problem solved, the daily problem solved or a sprint finished">
+              Day streak
+            </dt>
           </div>
         </dl>
       </PageHeader>

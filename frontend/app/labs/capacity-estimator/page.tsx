@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { LabShell, cardCls, focusRing, inputCls } from "@/components/labs/LabShell";
+import { capacityContent } from "@/components/labs/theory/CapacityTheory";
 import { EstimateInput, estimate, formatBits, formatBytes, formatCount } from "@/lib/labs/estimate";
 
 const FIELDS: { key: keyof EstimateInput; label: string; hint: string; step?: number }[] = [
@@ -43,7 +44,7 @@ export default function CapacityLab() {
   if (r.totalStorageBytes > 1e14) hints.push("Storage passes 100 TB: keep large blobs in object storage, with metadata in the database.");
 
   return (
-    <LabShell slug="capacity-estimator">
+    <LabShell slug="capacity-estimator" content={capacityContent}>
       <section className={cardCls}>
         <div className="flex flex-wrap gap-2 mb-4">
           {Object.keys(PRESETS).map((k) => (

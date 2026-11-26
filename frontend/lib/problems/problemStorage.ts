@@ -1,15 +1,34 @@
+import { acceptedAt } from "@/lib/problems/submissions";
+
 export type ProblemStatus = "unsolved" | "attempted" | "solved";
 
 const STATUS_KEY = "studyhub_problem_statuses";
+// When each problem was first solved (ms). Feeds the activity heatmap and the practice streak.
+const SOLVED_AT_KEY = "studyhub_problem_solved_at";
 
 export const problemStorage = {
   getAllStatuses(): Record<string, ProblemStatus> {
     if (typeof window === "undefined") return {};
     try {
       const raw = localStorage.getItem(STATUS_KEY);
-      return raw ? JSON.parse(raw) : {};
+      const statuses: Record<string, ProblemStatus> = raw ? JSON.parse(raw) : {};
+      // an accepted submission (possibly synced from another device) means solved
+      for (const id of Object.keys(acceptedAt())) statuses[id] = "solved";
+      return statuses;
     } catch (e) {
       console.warn("[problemStorage] Failed to read problem statuses:", e);
+      return {};
+    }
+  },
+
+  /** First-solve time per problem id, in ms. */
+  getSolvedAt(): Record<string, number> {
+    if (typeof window === "undefined") return {};
+    try {
+      const at: Record<string, number> = JSON.parse(localStorage.getItem(SOLVED_AT_KEY) || "{}");
+      for (const [id, t] of Object.entries(acceptedAt())) if (!at[id] || t < at[id]) at[id] = t;
+      return at;
+    } catch {
       return {};
     }
   },
@@ -29,6 +48,10 @@ export const problemStorage = {
         statuses[id] = status;
       }
       localStorage.setItem(STATUS_KEY, JSON.stringify(statuses));
+      const at = this.getSolvedAt();
+      if (status === "solved" && !at[id]) at[id] = Date.now(); // keep the first solve
+      if (status === "unsolved") delete at[id];
+      localStorage.setItem(SOLVED_AT_KEY, JSON.stringify(at));
       window.dispatchEvent(
         new CustomEvent("studyhub:problem_status_updated", {
           detail: { id, status },

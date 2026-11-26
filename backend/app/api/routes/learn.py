@@ -3,6 +3,7 @@ from typing import Any, List, Dict
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
+from sqlalchemy.exc import IntegrityError
 from datetime import datetime
 import json
 
@@ -158,6 +159,31 @@ async def get_subject_details(subject_slug: str, user: Any = Depends(get_current
             "modules": modules_data
         }
 
+async def _get_or_create_progress(session, user_id: str, topic_id: str, alias: str, **defaults):
+    """The user's progress row for a topic, created on first use.
+
+    Two requests can arrive together on a first visit (page load plus a progress save, or React
+    re-running an effect). Both see no row and both insert; the loser hits the primary key.
+    The insert runs in a savepoint so that case reloads the winner's row instead of returning a 500.
+    """
+    def lookup():
+        return select(UserLearningProgress).where(
+            UserLearningProgress.user_id == user_id,
+            (UserLearningProgress.topic_id == topic_id) | (UserLearningProgress.topic_id == alias),
+        )
+
+    progress = (await session.execute(lookup())).scalars().first()
+    if progress:
+        return progress, False
+    try:
+        async with session.begin_nested():
+            progress = UserLearningProgress(id=f"{user_id}_{topic_id}", user_id=user_id, topic_id=topic_id, **defaults)
+            session.add(progress)
+        return progress, True
+    except IntegrityError:
+        return (await session.execute(lookup())).scalars().one(), False
+
+
 @router.get("/topics/{topic_id_or_slug}")
 async def get_topic_content(topic_id_or_slug: str, user: Any = Depends(get_current_user)):
     async with AsyncSessionLocal() as session:
@@ -193,32 +219,15 @@ async def get_topic_content(topic_id_or_slug: str, user: Any = Depends(get_curre
         if not topic:
             raise HTTPException(status_code=404, detail="Topic not found")
             
-        # Get progress
-        prog_query = await session.execute(
-            select(UserLearningProgress).where(
-                UserLearningProgress.user_id == user.id,
-                (UserLearningProgress.topic_id == topic.id) | (UserLearningProgress.topic_id == topic_id_or_slug)
-            )
+        # First visit marks the topic in progress; later visits just touch last_accessed_at.
+        now = datetime.utcnow()
+        progress, _ = await _get_or_create_progress(
+            session, user.id, topic.id, topic_id_or_slug,
+            status="in_progress", progress=0, started_at=now, last_accessed_at=now,
         )
-        progress = prog_query.scalars().first()
-        
-        # If user accessing topic for first time, mark as in_progress
-        if not progress:
-            progress = UserLearningProgress(
-                id=f"{user.id}_{topic.id}",
-                user_id=user.id,
-                topic_id=topic.id,
-                status="in_progress",
-                progress=0,
-                started_at=datetime.utcnow(),
-                last_accessed_at=datetime.utcnow()
-            )
-            session.add(progress)
-            await session.commit()
-            await session.refresh(progress)
-        else:
-            progress.last_accessed_at = datetime.utcnow()
-            await session.commit()
+        progress.last_accessed_at = now
+        await session.commit()
+        await session.refresh(progress)
             
         content_json = {}
         if topic.content:
@@ -270,24 +279,11 @@ async def update_topic_progress(topic_id: str, payload: TopicProgressUpdate, use
             
         target_topic_id = topic.id
 
-        # Get progress record
-        prog_query = await session.execute(
-            select(UserLearningProgress).where(
-                UserLearningProgress.user_id == user.id,
-                (UserLearningProgress.topic_id == target_topic_id) | (UserLearningProgress.topic_id == topic_id)
-            )
+        progress, _ = await _get_or_create_progress(
+            session, user.id, target_topic_id, topic_id, started_at=datetime.utcnow(),
         )
-        progress = prog_query.scalars().first()
-        
-        if not progress:
-            progress = UserLearningProgress(
-                id=f"{user.id}_{target_topic_id}",
-                user_id=user.id,
-                topic_id=target_topic_id,
-                started_at=datetime.utcnow()
-            )
-            session.add(progress)
-            
+
+
         progress.status = payload.status
         progress.last_accessed_at = datetime.utcnow()
         if payload.notes is not None:

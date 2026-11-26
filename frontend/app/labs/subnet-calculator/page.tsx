@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { LabShell, cardCls, inputCls } from "@/components/labs/LabShell";
+import { subnetContent } from "@/components/labs/theory/SubnetTheory";
 import { parseCidr, splitSubnet, subnetInfo } from "@/lib/labs/subnet";
 
 const toBinary = (ip: string) => ip.split(".").map((o) => Number(o).toString(2).padStart(8, "0")).join(".");
@@ -25,7 +26,7 @@ export default function SubnetLab() {
   ] : [];
 
   return (
-    <LabShell slug="subnet-calculator">
+    <LabShell slug="subnet-calculator" content={subnetContent}>
       <section className={cardCls}>
         <label className="flex flex-col gap-1.5 text-[13px] font-medium text-ink max-w-md">
           IPv4 address with prefix (CIDR)
