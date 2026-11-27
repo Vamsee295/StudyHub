@@ -1,8 +1,9 @@
+import path from "node:path";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Silence Turbopack warning — we configure WASM separately below
-  turbopack: {},
+  // The repo root has its own package-lock.json (a thin wrapper), so tell Turbopack the app lives here.
+  turbopack: { root: path.join(__dirname) },
 
   // Study With Me became the Community board; old links (and notifications already sent) keep working.
   // Query strings such as ?post=… are passed through.

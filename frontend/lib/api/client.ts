@@ -131,7 +131,6 @@ async function fetchAPI(endpoint: string, options: RequestInit) {
   }
 
   if (!response.ok) {
-    console.log(`[API CLIENT] Error from ${endpoint}: ${response.status}`);
     if (response.status === 401) {
       invalidateTokenCache();
     }

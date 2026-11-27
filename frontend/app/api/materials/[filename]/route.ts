@@ -67,14 +67,15 @@ export async function GET(
     }
 
     // Security check: Ensure resolved path is strictly within materials directory
-    const resolvedPath = path.resolve(filePath);
+    const resolvedPath = path.resolve(/*turbopackIgnore: true*/ filePath);
     const resolvedMaterialsDir = path.resolve(materialsDir);
-    if (!resolvedPath.startsWith(resolvedMaterialsDir)) {
+    if (!resolvedPath.startsWith(resolvedMaterialsDir + path.sep)) {
       return new NextResponse("Invalid file path.", { status: 400 });
     }
 
-    const fileBuffer = await fs.promises.readFile(resolvedPath);
-    const fileStat = await fs.promises.stat(resolvedPath);
+    // read at request time from materials/, so the build shouldn't trace (and bundle) the whole project for it
+    const fileBuffer = await fs.promises.readFile(/*turbopackIgnore: true*/ resolvedPath);
+    const fileStat = await fs.promises.stat(/*turbopackIgnore: true*/ resolvedPath);
 
     const isDownload = request.nextUrl.searchParams.get("download") === "true";
     const dispositionType = isDownload ? "attachment" : "inline";

@@ -44,9 +44,11 @@ export function AtsPanel({
 
   const jdKeywords = useMemo(() => keywordsFromJD(jd), [jd]);
   const usingJd = jd.trim().length > 0;
-  const keywords = usingJd ? jdKeywords : ROLE_PRESETS.find((r) => r.id === role)!.keywords;
+  // the role comes from saved data, so an id that no longer exists falls back to the first preset
+  const preset = ROLE_PRESETS.find((r) => r.id === role) ?? ROLE_PRESETS[0];
+  const keywords = usingJd ? jdKeywords : preset.keywords;
   const result = useMemo(() => analyse(doc, keywords), [doc, keywords]);
-  const roleLabel = ROLE_PRESETS.find((r) => r.id === role)!.label;
+  const roleLabel = preset.label;
   const job = usingJd ? jd : roleLabel;
   useEffect(() => onJobChange?.(job), [job, onJobChange]);
   const tone = result.score >= 75 ? "text-note" : result.score >= 50 ? "text-warning" : "text-danger";

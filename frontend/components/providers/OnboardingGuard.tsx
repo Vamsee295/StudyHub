@@ -54,14 +54,12 @@ export function OnboardingGuard({ children }: { children: React.ReactNode }) {
 
     // If onboarding is not complete, redirect to /onboarding
     if (!isOnboardingComplete && pathname !== '/onboarding') {
-      console.log('[ONBOARDING GUARD] Onboarding incomplete, redirecting to /onboarding');
       router.replace('/onboarding');
       return;
     }
 
     // If onboarding is complete but user is on /onboarding, redirect to dashboard
     if (isOnboardingComplete && pathname === '/onboarding') {
-      console.log('[ONBOARDING GUARD] Onboarding already complete, redirecting to /dashboard');
       router.replace('/dashboard');
       return;
     }

@@ -136,9 +136,11 @@ export default function ConceptMapPage() {
               role="img" aria-label="Concept map of all course modules. Use the list view for a text version."
               onPointerDown={(e) => { drag.current = { x: e.clientX, y: e.clientY, vx: view.x, vy: view.y }; }}
               onPointerMove={(e) => {
-                if (!drag.current) return;
-                const { dx, dy } = toSvg(e.clientX - drag.current.x, e.clientY - drag.current.y);
-                setView((v) => ({ ...v, x: drag.current!.vx - dx, y: drag.current!.vy - dy }));
+                const d = drag.current;
+                if (!d) return;
+                // read the drag now: the updater runs later, when pointerup may already have cleared it
+                const { dx, dy } = toSvg(e.clientX - d.x, e.clientY - d.y);
+                setView((v) => ({ ...v, x: d.vx - dx, y: d.vy - dy }));
               }}
               onPointerUp={() => { drag.current = null; }} onPointerLeave={() => { drag.current = null; }}
               onWheel={(e) => zoom(e.deltaY < 0 ? 0.9 : 1.1)}>
