@@ -13,7 +13,8 @@ const protectedRoutes = [
   '/progress',
   '/profile',
   '/settings',
-  '/help'
+  '/help',
+  '/admin'
 ];
 
 export function middleware(request: NextRequest) {

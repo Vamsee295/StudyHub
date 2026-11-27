@@ -335,12 +335,12 @@ async def get_post(session: AsyncSession, post_id: str, viewer_id: Optional[str]
     return (await _posts_out(session, [post], viewer_id))[0] if post else None
 
 
-async def delete_post(session: AsyncSession, post_id: str, user_id: str) -> None:
-    """Deletes your own post, its likes and replies, and the activity it wraps."""
+async def delete_post(session: AsyncSession, post_id: str, user_id: str, as_admin: bool = False) -> None:
+    """Deletes your own post (or any post, for an admin), its likes and replies, and the activity it wraps."""
     post = await session.get(CommunityPost, post_id)
     if not post:
         raise ValueError("Post not found")
-    if post.user_id != user_id:
+    if post.user_id != user_id and not as_admin:
         raise PermissionError("You can only delete your own posts")
     await session.execute(delete(PostLike).where(PostLike.post_id == post_id))
     await session.execute(delete(PostComment).where(PostComment.post_id == post_id))
@@ -551,12 +551,13 @@ async def delete_comment(
     session: AsyncSession,
     comment_id: str,
     user_id: str,
+    as_admin: bool = False,
 ) -> None:
     result = await session.execute(select(PostComment).where(PostComment.id == comment_id))
     comment = result.scalars().first()
     if not comment:
         raise ValueError("Comment not found")
-    if comment.user_id != user_id:
+    if comment.user_id != user_id and not as_admin:
         raise PermissionError("Cannot delete another user's comment")
     await session.delete(comment)
     await session.commit()

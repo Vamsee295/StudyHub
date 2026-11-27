@@ -2,6 +2,9 @@ import { withTheory } from './utils';
 import { aptitudeTheory } from './aptitude-theory';
 import { Course } from './types';
 import { createAptitudeLesson } from './aptitude-factory';
+import { toLesson } from './apt-extra-types';
+import { moreQuant } from './apt-more-quant';
+import { syllabusQuant } from './apt-syllabus-quant';
 
 const raw_aptitudeQuantitativeCourse: Course = {
   id: "course-quant-aptitude",
@@ -580,5 +583,26 @@ const raw_aptitudeQuantitativeCourse: Course = {
 
 export const aptitudeQuantitativeCourse: Course = {
   ...raw_aptitudeQuantitativeCourse,
-  modules: raw_aptitudeQuantitativeCourse.modules.map((m) => ({ ...m, lessons: withTheory(m.lessons, aptitudeTheory) })),
+  modules: [
+    ...raw_aptitudeQuantitativeCourse.modules.map((m) => ({ ...m, lessons: withTheory(m.lessons, aptitudeTheory) })),
+    // added at the end so existing lesson ids and progress stay where they are
+    {
+      id: "quant-mod-6",
+      slug: "more-must-know-topics",
+      title: "More Must-Know Topics",
+      description: "Simplification, surds and logs, ages, mixtures, partnership, remainders and unit digits.",
+      difficulty: "Intermediate",
+      estimatedMinutes: 150,
+      lessons: moreQuant.map(toLesson),
+    },
+    {
+      id: "quant-mod-7",
+      slug: "complete-the-syllabus",
+      title: "Complete the Syllabus",
+      description: "Decimals, roots, chain rule, problems on numbers, races, heights and distances, stocks and shares, discounts.",
+      difficulty: "Intermediate",
+      estimatedMinutes: 200,
+      lessons: syllabusQuant.map(toLesson),
+    },
+  ],
 };

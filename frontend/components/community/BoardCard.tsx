@@ -3,7 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { clsx } from "clsx";
-import { ArrowUp, Link2, MessageCircle, MoreHorizontal, Trash2 } from "lucide-react";
+import { ArrowUp, Flag, Link2, MessageCircle, MoreHorizontal, Trash2 } from "lucide-react";
+import { askAndReport } from "@/components/community/report";
 import { communityApi } from "@/lib/api/community";
 import { activityLink, ACTIVITY_TYPE_LABELS, type ActivityType, type CommunityPost } from "@/lib/types/community";
 import { ago, fullDate, hashtags, postLink, splitHashtags } from "./feedUtils";
@@ -94,6 +95,19 @@ function Menu({ post, onDelete }: { post: CommunityPost; onDelete: () => void })
           <button role="menuitem" type="button" onClick={copy} className="flex w-full items-center gap-2.5 px-3.5 py-2 text-left hover:bg-card-2">
             <Link2 className="size-4" /> {copied ? "Link copied" : "Copy link"}
           </button>
+          {!post.is_mine && (
+            <button
+              role="menuitem"
+              type="button"
+              onClick={() => {
+                setOpen(false);
+                void askAndReport("post", post.id);
+              }}
+              className="flex w-full items-center gap-2.5 px-3.5 py-2 text-left hover:bg-card-2"
+            >
+              <Flag className="size-4" /> Report
+            </button>
+          )}
           {post.is_mine && (
             <button
               role="menuitem"

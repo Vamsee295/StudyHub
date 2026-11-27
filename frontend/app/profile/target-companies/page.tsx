@@ -9,6 +9,7 @@ import { ProfileNavTabs } from "@/components/profile/ProfileNavTabs";
 import { useProfile } from "@/components/providers/ProfileProvider";
 import { CompanyLogo } from "@/components/companies/CompanyLogo";
 import { COMPANIES, SEGMENTS, companyByName } from "@/lib/data/companyData";
+import { markChanged } from "@/lib/sync/userSync";
 
 const LEGACY_KEY = "pathward_tracked_companies_list"; // older builds kept the list here as objects with a name
 
@@ -29,6 +30,7 @@ export default function TargetCompaniesPage() {
   const save = (next: string[]) => {
     setNames(next);
     localStorage.setItem(LEGACY_KEY, JSON.stringify(next));
+    markChanged(LEGACY_KEY);
     updateDraft({ targets: { ...draftProfile.targets, companies: next } });
     saveProfile().catch(console.error);
   };

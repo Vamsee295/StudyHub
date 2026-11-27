@@ -28,6 +28,7 @@ const PROTECTED_ROUTES = [
   '/tools',
   '/profile',
   '/settings',
+  '/admin',
 ];
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {

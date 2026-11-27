@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ArrowLeft, Loader2, Trash2 } from "lucide-react";
+import { ArrowLeft, Flag, Loader2, Trash2 } from "lucide-react";
+import { askAndReport } from "@/components/community/report";
 import { Avatar } from "@/components/ui/Avatar";
 import { communityApi } from "@/lib/api/community";
 import type { CommunityAuthor, CommunityPost, PostComment } from "@/lib/types/community";
@@ -167,6 +168,17 @@ export function PostThread({
                         <time dateTime={c.created_at} title={fullDate(c.created_at)} className="text-[13px] text-mute">
                           {ago(c.created_at)}
                         </time>
+                        {c.user_id !== me.id && (
+                          <button
+                            type="button"
+                            onClick={() => void askAndReport("comment", c.id)}
+                            aria-label="Report reply"
+                            title="Report reply"
+                            className="ml-auto grid size-7 place-items-center rounded-full text-mute opacity-0 hover:bg-ink/[0.06] hover:text-ink focus-visible:opacity-100 group-hover:opacity-100 max-md:opacity-100"
+                          >
+                            <Flag className="size-3.5" />
+                          </button>
+                        )}
                         {c.user_id === me.id && (
                           <button
                             type="button"

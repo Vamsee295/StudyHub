@@ -9,6 +9,14 @@ import { oopQuestions } from "./oop";
 import { pfQuestions } from "./programming-fundamentals";
 import { systemDesignQuestions } from "./system-design";
 import { quantQuestions, logicalQuestions, verbalQuestions, diQuestions, placementAptitudeQuestions } from "./aptitude";
+import { questionsOf } from "../courses/apt-extra-types";
+import { pseudocodeLessons } from "../courses/aptitude-pseudocode";
+import { moreQuant } from "../courses/apt-more-quant";
+import { moreLogical } from "../courses/apt-more-logical";
+import { moreVerbal } from "../courses/apt-more-verbal";
+import { syllabusQuant } from "../courses/apt-syllabus-quant";
+import { syllabusLogical } from "../courses/apt-syllabus-logical";
+import { syllabusVerbal } from "../courses/apt-syllabus-verbal";
 
 /** q: question, o: four options, a: index of the correct option, e: explanation */
 export interface ExtraQuestion { q: string; o: string[]; a: number; e: string }
@@ -22,9 +30,10 @@ export const EXTRA_QUESTIONS: Record<string, LessonQuestions> = {
   sql: sqlQuestions,
   oop: oopQuestions,
   "programming-fundamentals": pfQuestions,
-  "quantitative-aptitude": quantQuestions,
-  "logical-reasoning": logicalQuestions,
-  "verbal-ability": verbalQuestions,
+  "quantitative-aptitude": { ...quantQuestions, ...questionsOf(moreQuant), ...questionsOf(syllabusQuant) },
+  "logical-reasoning": { ...logicalQuestions, ...questionsOf(moreLogical), ...questionsOf(syllabusLogical) },
+  "verbal-ability": { ...verbalQuestions, ...questionsOf(moreVerbal), ...questionsOf(syllabusVerbal) },
+  pseudocode: questionsOf(pseudocodeLessons),
   "data-interpretation": diQuestions,
   "placement-aptitude": placementAptitudeQuestions,
   "system-design": systemDesignQuestions,

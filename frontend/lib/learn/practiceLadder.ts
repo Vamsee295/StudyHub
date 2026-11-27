@@ -11,6 +11,13 @@ const MAP: [RegExp, ProblemCategory[]][] = [
   [/^programming-fundamentals\/(what-is-a-string|string-|length-method|charat-method|substring-method|basic-string-problems)/, ["Strings"]],
   [/^programming-fundamentals\/bitwise-operators$/, ["Bit Manipulation"]],
   [/^programming-fundamentals\/(control-flow|if-|else-if|nested-conditions|switch|ternary|why-loops|for-loop|while-loop|do-while|nested-loops|break|continue|counting|basic-pattern|problem-solving|breaking-problems|arithmetic|relational|logical-operators|what-is-control-flow)/, ["Basics"]],
+  // Pseudocode: trace it here, then write it as code
+  [/^pseudocode\/(operators-and-precedence|conditions-and-branches|loops-and-tracing)$/, ["Basics"]],
+  [/^pseudocode\/nested-loops-and-counting$/, ["Basics", "Matrix"]],
+  [/^pseudocode\/recursion-tracing$/, ["Recursion"]],
+  [/^pseudocode\/arrays-and-strings$/, ["Arrays", "Strings"]],
+  [/^pseudocode\/bitwise-operations$/, ["Bit Manipulation"]],
+  [/^pseudocode\/recognising-algorithms$/, ["Sorting", "Binary Search"]],
   // DSA
   [/^dsa\/(big-o-notation|analyzing-time-complexity|space-complexity|problem-solving-framework)$/, ["Arrays"]],
   [/^dsa\/two-sum-lesson$/, ["Hashing"]],

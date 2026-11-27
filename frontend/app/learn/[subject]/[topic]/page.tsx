@@ -29,6 +29,9 @@ import { learnService, SubjectDetails, TopicContent } from "@/lib/services/learn
 import { TheoryNotes, LessonSources, LessonHeading, prose } from "@/components/learn/TheoryNotes";
 import { labForLesson } from "@/lib/labs/catalog";
 import { AskedInChips } from "@/components/learn/AskedIn";
+import { PracticeSet } from "@/components/learn/PracticeSet";
+import { FormulaSheet } from "@/components/learn/FormulaSheet";
+import { formulasFor } from "@/lib/data/formulas";
 import { LessonBookmarkButton } from "@/components/learn/LessonBookmarkButton";
 import { LessonPrereqs } from "@/components/learn/LessonPrereqs";
 import { PictureIt } from "@/components/learn/PictureIt";
@@ -768,6 +771,8 @@ export default function TopicPage() {
                   <SectionRenderer key={idx} section={section} subjectSlug={subjectSlug} />
                 ))}
                 {!sections.some((s) => s.type === "practice") && <PracticeLadder course={subjectSlug} lesson={topicSlug} />}
+                <FormulaSheet rows={formulasFor(subjectSlug, topicSlug)} />
+                <PracticeSet course={subjectSlug} lesson={topicSlug} />
                 {content.sources?.length > 0 && <LessonSources sources={content.sources} />}
               </>
             ) : (

@@ -10,7 +10,7 @@
 import { apiClient } from "@/lib/api/client";
 import { mergeSubmissions, type Submission } from "@/lib/problems/submissions";
 
-type Strategy = "union-daily" | "union-daily-code" | "union-tests" | "union-submissions" | "lww";
+type Strategy = "union-daily" | "union-daily-code" | "union-tests" | "union-submissions" | "union-statuses" | "union-solved-at" | "lww";
 const RULES: [RegExp, Strategy][] = [
   [/^studyhub:daily$/, "union-daily"],
   [/^studyhub:daily-code$/, "union-daily-code"],
@@ -22,6 +22,9 @@ const RULES: [RegExp, Strategy][] = [
   [/^studyhub_readiness_subjects_v1$/, "lww"],
   [/^studyhub_recent_tools_v1$/, "lww"],
   [/^studyhub_problem_notes_v1$/, "lww"],
+  [/^studyhub_problem_statuses$/, "union-statuses"],
+  [/^studyhub_problem_solved_at$/, "union-solved-at"],
+  [/^pathward_tracked_companies_list$/, "lww"],
 ];
 const strategyFor = (key: string) => RULES.find(([re]) => re.test(key))?.[1];
 
@@ -132,6 +135,21 @@ export function mergeDailyCode(a: Record<string, DailyCodeEntry> | null, b: Reco
   return out;
 }
 
+type Statuses = Record<string, "attempted" | "solved">;
+/** Problem statuses: per problem, "solved" beats "attempted", so a solve on any device is kept. */
+export function mergeStatuses(a: Statuses | null, b: Statuses | null): Statuses {
+  const out: Statuses = { ...(b ?? {}) };
+  for (const [id, st] of Object.entries(a ?? {})) if (out[id] !== "solved") out[id] = st;
+  return out;
+}
+
+/** First-solve times: per problem, the earliest one. */
+export function mergeSolvedAt(a: Record<string, number> | null, b: Record<string, number> | null): Record<string, number> {
+  const out = { ...(b ?? {}) };
+  for (const [id, t] of Object.entries(a ?? {})) out[id] = out[id] ? Math.min(out[id], t) : t;
+  return out;
+}
+
 const same = (x: unknown, y: unknown) => JSON.stringify(x) === JSON.stringify(y);
 
 // --- lesson progress -------------------------------------------------------
@@ -194,7 +212,11 @@ export function pull(): Promise<void> {
           continue;
         }
 
-        const merged = strategy === "union-submissions"
+        const merged = strategy === "union-statuses"
+          ? mergeStatuses(local as Statuses | null, (s?.value as Statuses | null) ?? null)
+          : strategy === "union-solved-at"
+          ? mergeSolvedAt(local as Record<string, number> | null, (s?.value as Record<string, number> | null) ?? null)
+          : strategy === "union-submissions"
           ? mergeSubmissions(local as Submission[] | null, (s?.value as Submission[] | null) ?? null)
           : strategy === "union-tests"
           ? mergeTests(local as Attempt[] | null, (s?.value as Attempt[] | null) ?? null)
@@ -223,31 +245,64 @@ export function pull(): Promise<void> {
   return pulling;
 }
 
-const OWNER_KEY = "studyhub_sync_owner";   // account the synced local data belongs to
+const OWNER_KEY = "studyhub_sync_owner";   // account the study data in this browser belongs to
+const VAULT_PREFIX = "studyhub_vault:";     // + user id: that account's data, put aside while someone else is signed in
+// Kept for every account: device settings and shared caches, not anyone's progress.
+const DEVICE_KEYS = new Set([OWNER_KEY, "studyhub_gh_template_repos_v1", "pathward_access_token"]);
 
-/** Removes every synced key, the change log and the progress cache from this browser. */
-function clearLocalStudyData() {
-  for (const k of Object.keys(localStorage)) if (strategyFor(k)) localStorage.removeItem(k);
-  localStorage.removeItem(META_KEY);
-  localStorage.removeItem(PROGRESS_KEY);
+/** Everything StudyHub stores per learner: progress, statuses, notes, saved items, profile cache. */
+export const isAccountKey = (k: string) =>
+  (k.startsWith("studyhub") || k.startsWith("pathward")) && !k.startsWith(VAULT_PREFIX) && !DEVICE_KEYS.has(k);
+
+/** Move an account's data out of the way, into its own vault entry. */
+function stash(owner: string) {
+  const data: Record<string, string> = {};
+  for (const k of Object.keys(localStorage)) {
+    if (!isAccountKey(k)) continue;
+    data[k] = localStorage.getItem(k) ?? "";
+    localStorage.removeItem(k);
+  }
+  if (Object.keys(data).length) localStorage.setItem(VAULT_PREFIX + owner, JSON.stringify(data));
+}
+
+/** Bring back an account's own data, if this browser has it put aside. Returns whether anything came back. */
+function unstash(userId: string): boolean {
+  const raw = localStorage.getItem(VAULT_PREFIX + userId);
+  if (!raw) return false;
+  localStorage.removeItem(VAULT_PREFIX + userId);
+  try {
+    for (const [k, v] of Object.entries(JSON.parse(raw) as Record<string, string>)) if (isAccountKey(k)) localStorage.setItem(k, v);
+  } catch { /* a damaged vault: start from the server copy */ }
+  return true;
 }
 
 /**
- * Turn sync on for a signed-in user, or off on sign-out. If this browser's data belongs to a
- * different account (a shared computer), it is cleared rather than merged into the new
- * account; the previous account already has its copy on the server. Data created while
- * signed out has no owner and is adopted by whoever signs in next.
+ * Turn sync on for a signed-in user, or off on sign-out, and keep every account's study data separate
+ * on a shared browser: on sign-out the account's data is put aside, and when an account signs in it gets
+ * back only its own (then merges with the server). Data created while signed out has no owner and is
+ * adopted by whoever signs in next. Returns true when this browser's data changed hands, so the page
+ * should reload to drop anything already read into memory.
  */
-export function setSyncEnabled(userId: string | null) {
+export function setSyncEnabled(userId: string | null): boolean {
   enabled = !!userId;
   if (!userId) {
     dirty.clear();
     if (timer) clearTimeout(timer);
-    return;
   }
   try {
     const owner = localStorage.getItem(OWNER_KEY);
-    if (owner && owner !== userId) clearLocalStudyData();
+    if (!userId) {
+      if (!owner) return false;
+      stash(owner);
+      localStorage.removeItem(OWNER_KEY);
+      return true;
+    }
+    if (owner === userId) return false;
+    if (owner) stash(owner);
+    const restored = unstash(userId);
     localStorage.setItem(OWNER_KEY, userId);
-  } catch { /* storage blocked: nothing local to protect */ }
+    return !!owner || restored;
+  } catch {
+    return false; // storage blocked: nothing local to protect
+  }
 }

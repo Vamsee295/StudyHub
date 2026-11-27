@@ -15,6 +15,14 @@ import { dsaMoreVisuals } from "./dsa-more";
 import { dbmsMoreVisuals } from "./dbms-more";
 import { osCnMoreVisuals } from "./os-cn-more";
 import { aptitudeMoreVisuals } from "./aptitude-more";
+import { visualsOf } from "../courses/apt-extra-types";
+import { pseudocodeLessons } from "../courses/aptitude-pseudocode";
+import { moreQuant } from "../courses/apt-more-quant";
+import { moreLogical } from "../courses/apt-more-logical";
+import { moreVerbal } from "../courses/apt-more-verbal";
+import { syllabusQuant } from "../courses/apt-syllabus-quant";
+import { syllabusLogical } from "../courses/apt-syllabus-logical";
+import { syllabusVerbal } from "../courses/apt-syllabus-verbal";
 
 const ALL: VisualMap = {
   ...pfVisuals,
@@ -33,6 +41,13 @@ const ALL: VisualMap = {
   ...dbmsMoreVisuals,
   ...osCnMoreVisuals,
   ...aptitudeMoreVisuals,
+  ...visualsOf("pseudocode", pseudocodeLessons),
+  ...visualsOf("quantitative-aptitude", moreQuant),
+  ...visualsOf("logical-reasoning", moreLogical),
+  ...visualsOf("verbal-ability", moreVerbal),
+  ...visualsOf("quantitative-aptitude", syllabusQuant),
+  ...visualsOf("logical-reasoning", syllabusLogical),
+  ...visualsOf("verbal-ability", syllabusVerbal),
 };
 
 /** The "Picture it" block for a lesson, if it has one. */

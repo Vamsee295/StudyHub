@@ -13,7 +13,11 @@ export function SyncManager() {
 
   useEffect(() => {
     if (loading) return;
-    setSyncEnabled(userId);
+    // another account's data was swapped out: reload so nothing already read into memory leaks across
+    if (setSyncEnabled(userId)) {
+      window.location.reload();
+      return;
+    }
     if (!userId) return;
 
     let lastPull = Date.now();

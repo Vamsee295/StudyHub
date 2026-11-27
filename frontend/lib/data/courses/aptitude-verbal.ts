@@ -2,6 +2,9 @@ import { withTheory } from './utils';
 import { aptitudeTheory } from './aptitude-theory';
 import { Course } from './types';
 import { createAptitudeLesson } from './aptitude-factory';
+import { toLesson } from './apt-extra-types';
+import { moreVerbal } from './apt-more-verbal';
+import { syllabusVerbal } from './apt-syllabus-verbal';
 
 const raw_aptitudeVerbalCourse: Course = {
   id: "course-verbal-ability",
@@ -256,5 +259,26 @@ const raw_aptitudeVerbalCourse: Course = {
 
 export const aptitudeVerbalCourse: Course = {
   ...raw_aptitudeVerbalCourse,
-  modules: raw_aptitudeVerbalCourse.modules.map((m) => ({ ...m, lessons: withTheory(m.lessons, aptitudeTheory) })),
+  modules: [
+    ...raw_aptitudeVerbalCourse.modules.map((m) => ({ ...m, lessons: withTheory(m.lessons, aptitudeTheory) })),
+    // added at the end so existing lesson ids and progress stay where they are
+    {
+      id: "verbal-mod-4",
+      slug: "grammar-in-depth",
+      title: "Grammar in Depth",
+      description: "Articles and prepositions, voice, reported speech, idioms and cloze tests.",
+      difficulty: "Intermediate",
+      estimatedMinutes: 125,
+      lessons: moreVerbal.map(toLesson),
+    },
+    {
+      id: "verbal-mod-5",
+      slug: "test-formats",
+      title: "Test Formats",
+      description: "Spotting errors, sentence improvement, spellings, ordering of words, verbal analogies and completing statements.",
+      difficulty: "Intermediate",
+      estimatedMinutes: 125,
+      lessons: syllabusVerbal.map(toLesson),
+    },
+  ],
 };

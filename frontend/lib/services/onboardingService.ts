@@ -78,7 +78,6 @@ export const onboardingService = {
     };
 
     if (typeof window !== 'undefined') {
-      localStorage.setItem(PROFILE_KEY, JSON.stringify(finalProfile));
       if (userId) {
         localStorage.setItem(`${PROFILE_KEY}:${userId}`, JSON.stringify(finalProfile));
       }

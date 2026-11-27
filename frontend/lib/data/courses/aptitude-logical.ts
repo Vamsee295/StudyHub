@@ -2,6 +2,9 @@ import { withTheory } from './utils';
 import { aptitudeTheory } from './aptitude-theory';
 import { Course } from './types';
 import { createAptitudeLesson } from './aptitude-factory';
+import { toLesson } from './apt-extra-types';
+import { moreLogical } from './apt-more-logical';
+import { syllabusLogical } from './apt-syllabus-logical';
 
 const raw_aptitudeLogicalCourse: Course = {
   id: "course-logical-reasoning",
@@ -313,5 +316,26 @@ const raw_aptitudeLogicalCourse: Course = {
 
 export const aptitudeLogicalCourse: Course = {
   ...raw_aptitudeLogicalCourse,
-  modules: raw_aptitudeLogicalCourse.modules.map((m) => ({ ...m, lessons: withTheory(m.lessons, aptitudeTheory) })),
+  modules: [
+    ...raw_aptitudeLogicalCourse.modules.map((m) => ({ ...m, lessons: withTheory(m.lessons, aptitudeTheory) })),
+    // added at the end so existing lesson ids and progress stay where they are
+    {
+      id: "logical-mod-4",
+      slug: "puzzles-and-critical-reasoning",
+      title: "Puzzles and Critical Reasoning",
+      description: "Puzzles, cubes and dice, Venn diagrams, inequalities, input-output, assumptions and arguments.",
+      difficulty: "Advanced",
+      estimatedMinutes: 160,
+      lessons: moreLogical.map(toLesson),
+    },
+    {
+      id: "logical-mod-5",
+      slug: "more-reasoning-types",
+      title: "More Reasoning Types",
+      description: "Word sequences, essential part, coded languages, truth puzzles, arithmetic reasoning, symbol operations and judgments.",
+      difficulty: "Intermediate",
+      estimatedMinutes: 160,
+      lessons: syllabusLogical.map(toLesson),
+    },
+  ],
 };

@@ -27,7 +27,10 @@ ALLOWED_KEY = re.compile(
     r"|studyhub_star_stories_v1"
     r"|studyhub_readiness_subjects_v1"
     r"|studyhub_recent_tools_v1"
-    r"|studyhub_problem_notes_v1)$"
+    r"|studyhub_problem_notes_v1"
+    r"|studyhub_problem_statuses"
+    r"|studyhub_problem_solved_at"
+    r"|pathward_tracked_companies_list)$"
 )
 MAX_VALUE_BYTES = 200_000
 MAX_KEYS_PER_USER = 60

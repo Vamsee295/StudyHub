@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { clsx } from "clsx";
-import { ArrowLeft, ArrowRight, ChevronRight, ClipboardCheck, ExternalLink, FileText, ListOrdered, Loader2, RotateCcw } from "lucide-react";
+import { ArrowLeft, ArrowRight, ChevronRight, ClipboardCheck, ExternalLink, FileText, ListOrdered, Loader2, RotateCcw, Sigma } from "lucide-react";
+import { FORMULAS } from "@/lib/data/formulas";
 import { COURSE_RESOURCES } from "@/lib/data/learnResources";
 import { learnService, SubjectDetails } from "@/lib/services/learnService";
 import { dueItems, getReviewItems } from "@/lib/learn/study";
@@ -65,6 +66,7 @@ export default function SubjectPage() {
     { href: `/learn/${subject.slug}/revise`, label: "Revision sheet", icon: FileText },
     { href: `/learn/${subject.slug}/review`, label: "Review queue", icon: RotateCcw, badge: dueCount ? `${dueCount} due` : undefined },
     { href: `/learn/${subject.slug}/reading-order`, label: "Reading order", icon: ListOrdered },
+    ...(FORMULAS[subject.slug] ? [{ href: `/learn/${subject.slug}/formulas`, label: "Formula sheet", icon: Sigma }] : []),
   ];
 
   return (

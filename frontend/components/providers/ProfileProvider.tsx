@@ -55,7 +55,8 @@ export const ProfileProvider = ({ children }: { children: React.ReactNode }) => 
     let cachedProfile: UserProfile | null = null;
     if (typeof window !== 'undefined') {
       try {
-        const raw = localStorage.getItem(`pathward-user-profile:${user.id}`) || localStorage.getItem('pathward-user-profile');
+        // only this account's own cache: a shared key would show the last account's profile to the next one
+        const raw = localStorage.getItem(`pathward-user-profile:${user.id}`);
         if (raw) {
           cachedProfile = JSON.parse(raw);
           if (cachedProfile) {
@@ -119,7 +120,6 @@ export const ProfileProvider = ({ children }: { children: React.ReactNode }) => 
       if (typeof window !== 'undefined') {
         try {
           localStorage.setItem(`pathward-user-profile:${user.id}`, JSON.stringify(finalProfile));
-          localStorage.setItem('pathward-user-profile', JSON.stringify(finalProfile));
           if (finalProfile.profileCompleted) {
             document.cookie = "onboarding-complete=true; path=/; max-age=31536000";
           }

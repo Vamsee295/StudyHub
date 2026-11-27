@@ -119,7 +119,7 @@ export const READING_ORDERS: ReadingOrder[] = [
     course: "quantitative-aptitude",
     intro: "Most service-company tests start here. Learn each method, then drill until it's fast.",
     steps: [
-      m("number-fundamentals"), m("arithmetic"), m("time-based-problems"), m("algebra"), m("advanced-aptitude"),
+      m("number-fundamentals"), m("arithmetic"), m("time-based-problems"), m("algebra"), m("advanced-aptitude"), m("more-must-know-topics"), m("complete-the-syllabus"),
       r({ title: "IndiaBix: Aptitude questions", url: "https://www.indiabix.com/aptitude/questions-and-answers/", by: "IndiaBix", format: "Practice", why: "Thousands of free practice questions grouped by topic. Use them for speed drills after each module." }),
     ],
   },
@@ -127,7 +127,7 @@ export const READING_ORDERS: ReadingOrder[] = [
     course: "logical-reasoning",
     intro: "Patterns first, then puzzles. Speed comes from recognizing the question type quickly.",
     steps: [
-      m("patterns"), m("basic-reasoning"), m("advanced-reasoning"),
+      m("patterns"), m("basic-reasoning"), m("advanced-reasoning"), m("puzzles-and-critical-reasoning"), m("more-reasoning-types"),
       r({ title: "IndiaBix: Logical reasoning", url: "https://www.indiabix.com/logical-reasoning/questions-and-answers/", by: "IndiaBix", format: "Practice", why: "Free practice sets for series, coding-decoding, blood relations and seating arrangements." }),
     ],
   },
@@ -135,7 +135,7 @@ export const READING_ORDERS: ReadingOrder[] = [
     course: "verbal-ability",
     intro: "Vocabulary and grammar build up over weeks. Read a little every day alongside the modules.",
     steps: [
-      m("vocabulary"), m("grammar"), m("comprehension"),
+      m("vocabulary"), m("grammar"), m("comprehension"), m("grammar-in-depth"), m("test-formats"),
       r({ title: "IndiaBix: Verbal ability", url: "https://www.indiabix.com/verbal-ability/questions-and-answers/", by: "IndiaBix", format: "Practice", why: "Free sets for synonyms, sentence correction and reading comprehension." }),
     ],
   },
@@ -151,6 +151,14 @@ export const READING_ORDERS: ReadingOrder[] = [
     course: "placement-aptitude",
     intro: "Take this last, after the quantitative, reasoning and verbal courses. It's about strategy under time pressure.",
     steps: [m("company-specific"), m("test-strategies")],
+  },
+  {
+    course: "pseudocode",
+    intro: "Take this after Programming Fundamentals' basics. Trace every example on paper; speed comes from the tracing table, not from guessing.",
+    steps: [
+      m("reading-pseudocode"), m("core-patterns"), m("pro-level"),
+      r({ title: "Python Tutor", url: "https://pythontutor.com/c.html", by: "Philip Guo", format: "Practice", why: "Paste a snippet and watch each variable change line by line, then compare with your own trace." }),
+    ],
   },
 ];
 

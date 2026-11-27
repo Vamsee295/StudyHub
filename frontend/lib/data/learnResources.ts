@@ -60,15 +60,22 @@ export const COURSE_RESOURCES: Record<string, FreeResource[]> = {
     { title: "Khan Academy maths", url: "https://www.khanacademy.org/math", kind: "Course", why: "Rebuild any shaky maths basics, free and step by step." },
   ],
   "logical-reasoning": [{ title: "IndiaBix logical reasoning", url: "https://www.indiabix.com/", kind: "Practice", why: "Topic-wise reasoning questions with answers." }],
-  "verbal-ability": [{ title: "IndiaBix verbal ability", url: "https://www.indiabix.com/", kind: "Practice", why: "Grammar, vocabulary and comprehension practice." }],
+  "verbal-ability": [
+    { title: "IndiaBix verbal ability", url: "https://www.indiabix.com/", kind: "Practice", why: "Grammar, vocabulary and comprehension practice." },
+    { title: "Purdue OWL grammar", url: "https://owl.purdue.edu/owl/general_writing/grammar/index.html", kind: "Guide", why: "Clear, free explanations of every grammar rule tests check." },
+  ],
   "data-interpretation": [{ title: "IndiaBix data interpretation", url: "https://www.indiabix.com/", kind: "Practice", why: "Table, bar, line and pie chart sets." }],
+  pseudocode: [
+    { title: "Python Tutor", url: "https://pythontutor.com/c.html", kind: "Practice", why: "Paste any C, Java or Python snippet and watch every variable change, line by line." },
+    { title: "Harvard CS50", url: "https://cs50.harvard.edu/x/", kind: "Course", why: "Free intro course; weeks 1–3 build the exact tracing skills these tests check." },
+  ],
   "placement-aptitude": [{ title: "Tech Interview Handbook", url: "https://www.techinterviewhandbook.org/", kind: "Guide", why: "Free guide to the whole interview process." }],
 };
 
 /** The order to learn in when starting from nothing, grouped into stages from beginner to pro. */
 export const BEGINNER_PATH: { stage: string; goal: string; courses: string[] }[] = [
   { stage: "1 · Foundation", goal: "Write small programs with confidence.", courses: ["programming-fundamentals", "quantitative-aptitude"] },
-  { stage: "2 · Core", goal: "Model problems with objects and data.", courses: ["oop", "sql", "logical-reasoning"] },
+  { stage: "2 · Core", goal: "Model problems with objects and data, and reason through tests.", courses: ["oop", "sql", "pseudocode", "logical-reasoning", "verbal-ability"] },
   { stage: "3 · Interview-ready", goal: "Solve problems the way interviews ask.", courses: ["dsa", "dbms", "os", "computer-networks"] },
-  { stage: "4 · Pro", goal: "Design systems and ace the full process.", courses: ["system-design", "verbal-ability", "data-interpretation", "placement-aptitude"] },
+  { stage: "4 · Pro", goal: "Design systems and ace the full process.", courses: ["system-design", "data-interpretation", "placement-aptitude"] },
 ];

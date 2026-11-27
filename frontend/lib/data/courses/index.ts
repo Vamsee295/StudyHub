@@ -11,6 +11,7 @@ import { aptitudeLogicalCourse } from './aptitude-logical';
 import { aptitudeVerbalCourse } from './aptitude-verbal';
 import { aptitudeDataCourse } from './aptitude-data';
 import { aptitudePlacementCourse } from './aptitude-placement';
+import { aptitudePseudocodeCourse } from './aptitude-pseudocode';
 import { systemDesignCourse } from './system-design';
 
 export const ALL_COURSES: Course[] = [
@@ -26,6 +27,7 @@ export const ALL_COURSES: Course[] = [
   aptitudeVerbalCourse,
   aptitudeDataCourse,
   aptitudePlacementCourse,
+  aptitudePseudocodeCourse,
   systemDesignCourse,
 ].sort((a, b) => a.displayOrder - b.displayOrder);
 

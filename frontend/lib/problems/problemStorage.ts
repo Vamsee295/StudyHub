@@ -1,4 +1,5 @@
 import { acceptedAt } from "@/lib/problems/submissions";
+import { markChanged } from "@/lib/sync/userSync";
 
 export type ProblemStatus = "unsolved" | "attempted" | "solved";
 
@@ -52,6 +53,8 @@ export const problemStorage = {
       if (status === "solved" && !at[id]) at[id] = Date.now(); // keep the first solve
       if (status === "unsolved") delete at[id];
       localStorage.setItem(SOLVED_AT_KEY, JSON.stringify(at));
+      markChanged(STATUS_KEY); // follows the account to other devices
+      markChanged(SOLVED_AT_KEY);
       window.dispatchEvent(
         new CustomEvent("studyhub:problem_status_updated", {
           detail: { id, status },

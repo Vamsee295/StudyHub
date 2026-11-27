@@ -5,7 +5,8 @@ from app.core.supabase import get_supabase_client
 from supabase import Client
 import time
 import jwt
-from typing import Dict, Tuple, Any
+from datetime import datetime, timezone
+from typing import Dict, Tuple, Any, Optional
 
 security = HTTPBearer()
 
@@ -21,13 +22,50 @@ _jwks_client = (
 )
 
 class UserStub:
-    def __init__(self, uid: str, email: str, user_metadata: dict):
+    def __init__(self, uid: str, email: str, user_metadata: dict, app_metadata: Optional[dict] = None):
         self.id = uid
         self.email = email
         self.user_metadata = user_metadata or {}
+        self.app_metadata = app_metadata or {}
+        self.banned_until = None  # not in the token; only the Supabase lookup knows
+
+
+def _is_suspended(user: Any) -> bool:
+    """Suspended by an admin (Supabase banned_until in the future). Suspended accounts can't sign in again,
+    but an access token issued before the suspension stays valid until it expires, so block it here too."""
+    until = getattr(user, "banned_until", None)
+    if not until:
+        return False
+    if isinstance(until, str):
+        try:
+            until = datetime.fromisoformat(until.replace("Z", "+00:00"))
+        except ValueError:
+            return False
+    if until.tzinfo is None:
+        until = until.replace(tzinfo=timezone.utc)
+    return until > datetime.now(timezone.utc)
+
+
+def is_admin(user: Any) -> bool:
+    """Admin role from Supabase app_metadata, which only the server side (SQL / service role) can set."""
+    meta = getattr(user, "app_metadata", None) or {}
+    return meta.get("role") == "admin"
 
 def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
-    token = credentials.credentials
+    user = _verify(credentials.credentials)
+    if _is_suspended(user):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="This account is suspended")
+    return user
+
+
+def require_admin(user: Any = Depends(get_current_user)):
+    """Only admins. Everyone else gets a 404, so the admin API doesn't advertise itself."""
+    if not is_admin(user):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Not found")
+    return user
+
+
+def _verify(token: str):
     now = time.time()
 
     # 1. Fast path: check in-memory cache
@@ -62,7 +100,8 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(securit
         user = UserStub(
             uid=payload["sub"],
             email=payload.get("email", ""),
-            user_metadata=payload.get("user_metadata", {})
+            user_metadata=payload.get("user_metadata", {}),
+            app_metadata=payload.get("app_metadata", {}),
         )
         _TOKEN_CACHE[token] = (user, payload["exp"])
         return user

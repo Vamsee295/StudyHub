@@ -25,6 +25,7 @@ import {
   PanelLeftOpen,
   Route,
   Settings,
+  ShieldCheck,
   MessagesSquare,
   UserRound,
   Wrench,
@@ -44,6 +45,7 @@ import { SearchLauncher } from "@/components/learn/SearchLauncher";
 import { applyTheme } from "@/lib/theme";
 import { AskDialog } from "@/components/ui/AskDialog";
 import { WorkspaceGuideButton } from "@/components/ui/PageGuide";
+import { isAdmin } from "@/lib/admin";
 
 type NavItem = readonly [href: string, label: string, icon: LucideIcon];
 
@@ -100,7 +102,7 @@ const matches = (path: string, href: string) => path === href || path.startsWith
 /** The single most specific item for this path, so /learn/daily lights "Daily" and not also "Learn". */
 const activeHref = (path: string, items: NavItem[]) =>
   items.filter(([h]) => matches(path, h)).sort((a, b) => b[0].length - a[0].length)[0]?.[0];
-const allItems = [...groups.flatMap((g) => g.items), ...utility];
+const adminItem: NavItem = ["/admin", "Admin", ShieldCheck]; // shown only to admins
 
 const SIDEBAR_KEY = "sh-sidebar-collapsed";
 const readCollapsed = () => {
@@ -246,7 +248,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
   // Lessons and editors fill the screen and scroll inside themselves
   // /learn/<subject>/<lesson>, but not the subject's own pages (test, review, …), which scroll normally
-  const isLesson = /^\/learn\/[^/]+\/[^/]+$/.test(pathname) && !/\/(test|review|revise|reading-order)$/.test(pathname);
+  const isLesson = /^\/learn\/[^/]+\/[^/]+$/.test(pathname) && !/\/(test|review|revise|reading-order|formulas)$/.test(pathname);
   const isWorkspace =
     isLesson ||
     pathname === "/learn/daily" ||
@@ -254,7 +256,8 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     pathname === "/practice/sql" ||
     (pathname.startsWith("/practice/problems/") && pathname !== "/practice/problems");
 
-  const active = activeHref(pathname, allItems);
+  const utilityItems = isAdmin(user) ? [adminItem, ...utility] : utility;
+  const active = activeHref(pathname, [...groups.flatMap((g) => g.items), ...utilityItems]);
   const activeTab = activeHref(pathname, tabs);
 
   const navLink = ([href, label, Icon]: NavItem) => {
@@ -362,7 +365,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               <div className="flex flex-col gap-0.5">{g.items.map(navLink)}</div>
             </div>
           ))}
-          <div className="flex flex-col gap-0.5 border-t-[1.5px] border-hair pt-3">{utility.map(navLink)}</div>
+          <div className="flex flex-col gap-0.5 border-t-[1.5px] border-hair pt-3">{utilityItems.map(navLink)}</div>
         </nav>
 
         <div className={clsx("relative shrink-0 border-t-[2.4px] border-line p-3", rail && "flex flex-col items-center gap-2")}>
