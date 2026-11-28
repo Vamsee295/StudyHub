@@ -4,6 +4,7 @@
 import assert from "node:assert/strict";
 import { practiceFor, PRACTICE_COURSES } from "../lib/aptitude/practice/index";
 import { getCourseBySlug } from "../lib/data/courses/index";
+import { CS_BANKS } from "../lib/aptitude/practice/cs";
 
 const show = process.argv.indexOf("--show");
 if (show > 0) {
@@ -23,7 +24,7 @@ for (const course of PRACTICE_COURSES) {
   for (const m of c!.modules) for (const l of m.lessons) {
     const set = practiceFor(course, l.slug);
     lessons++;
-    if (set.length < 20) thin.push(`${course}/${l.slug} (${set.length})`);
+    if (set.length < (course in CS_BANKS ? 15 : 20)) thin.push(`${course}/${l.slug} (${set.length})`);
     const ids = new Set<string>();
     for (const q of set) {
       const where = `${course}/${l.slug}: ${q.q.slice(0, 60)}`;

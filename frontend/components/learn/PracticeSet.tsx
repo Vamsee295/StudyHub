@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { clsx } from "clsx";
 import { CheckCircle2, XCircle } from "lucide-react";
 import { practiceFor, type PracticeQ } from "@/lib/aptitude/practice/index";
+import { DataView } from "./DataView";
 
 const LEVELS = ["All", "Easy", "Medium", "Hard"] as const;
 
@@ -53,6 +54,8 @@ function Question({ q, n, pick, onPick }: { q: PracticeQ; n: number; pick?: numb
         Q{n} · {q.level}
       </p>
       <p className="mt-1 whitespace-pre-wrap text-[15px]">{q.q}</p>
+      {q.code && <pre className="mt-2 overflow-x-auto rounded-lg border-[1.5px] border-hair bg-card p-3 font-mono text-[13px] leading-relaxed">{q.code}</pre>}
+      {q.data && <DataView data={q.data} />}
       <div className="mt-2 grid gap-2 sm:grid-cols-2">
         {q.options.map((o, i) => (
           <button key={i} type="button" disabled={done} onClick={() => onPick(i)}

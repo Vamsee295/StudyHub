@@ -4,10 +4,18 @@
 
 export type Level = "Easy" | "Medium" | "Hard";
 
+/** Data shown with a question: a table, or a bar / line / pie chart. */
+export type DataSpec =
+  | { kind: "table"; title: string; headers: string[]; rows: (string | number)[][] }
+  | { kind: "bar" | "line"; title: string; labels: string[]; series: { name: string; values: number[] }[]; unit?: string }
+  | { kind: "pie"; title: string; labels: string[]; values: number[]; note?: string };
+
 export interface PracticeQ {
   id: string;
   level: Level;
   q: string;
+  code?: string; // pseudocode shown in a code block
+  data?: DataSpec;
   options: string[]; // four, shuffled
   answer: number; // index into options
   explanation: string; // the worked solution
@@ -16,6 +24,8 @@ export interface PracticeQ {
 /** A question before shuffling: the correct option first, then distractors. */
 export interface RawQ {
   q: string;
+  code?: string;
+  data?: DataSpec;
   correct: string;
   wrong: string[];
   explanation: string;
@@ -118,13 +128,16 @@ export function buildSet(key: string, gen: Generator, count = 30): PracticeQ[] {
     for (let attempt = 0; made < per && attempt < per * 6; attempt++) {
       const raw = makers[attempt % makers.length](r);
       const opts = [raw.correct, ...raw.wrong].map((s) => s.trim());
-      if (seen.has(raw.q) || new Set(opts).size !== 4) continue; // skip repeats and clashing options
-      seen.add(raw.q);
+      const sig = raw.q + (raw.code ?? "") + (raw.data ? JSON.stringify(raw.data) : "");
+      if (seen.has(sig) || new Set(opts).size !== 4 || opts.some((o) => !o)) continue; // skip repeats and clashing options
+      seen.add(sig);
       const order = r.shuffle([0, 1, 2, 3]);
       out.push({
         id: `${key}#${out.length}`,
         level,
         q: raw.q,
+        code: raw.code,
+        data: raw.data,
         options: order.map((i) => opts[i]),
         answer: order.indexOf(0),
         explanation: raw.explanation,

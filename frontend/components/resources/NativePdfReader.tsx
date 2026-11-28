@@ -65,7 +65,7 @@ export function NativePdfReader({
         setError(null);
         
         // We use a clean getDocument call
-        const loadingTask = pdfjsLib.getDocument(fileUrl);
+        const loadingTask = pdfjsLib.getDocument({ url: fileUrl });
         const doc = await loadingTask.promise;
         
         if (isMounted) {

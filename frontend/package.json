@@ -19,9 +19,9 @@
     "idb": "^8.0.3",
     "jszip": "^3.10.2",
     "lucide-react": "^1.47.0",
-    "mermaid": "11.4.1",
-    "next": "16.3.5",
-    "pdfjs-dist": "^5.6.205",
+    "mermaid": "^11.17.2",
+    "next": "^16.4.6",
+    "pdfjs-dist": "^6.5.438",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "sql.js": "^1.14.2"
@@ -33,8 +33,11 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "16.3.5",
+    "eslint-config-next": "^16.4.6",
     "tailwindcss": "^4",
     "typescript": "^5"
+  },
+  "overrides": {
+    "katex": "^0.19.1"
   }
 }
